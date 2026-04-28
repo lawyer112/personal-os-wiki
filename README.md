@@ -1,82 +1,178 @@
 # Personal OS + Personal Wiki
 
+[![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#data-safety)
+[![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-protocol)
+
 [中文说明](./README.zh-CN.md)
+
+**Category:** local-first agent workbench, Markdown knowledge base, task
+execution protocol.
 
 **Not a second brain. A follow-through engine for humans and agents.**
 
-Personal OS + Personal Wiki turns saved links, voice notes, half-formed ideas,
+Personal OS + Personal Wiki turns saved links, voice notes, rough ideas,
 project updates, and agent output into claimed work with evidence.
 
-Most tools help you capture more. This project is for the harder moment after
-capture, when the real question is:
+Most tools help you collect more. This project is for the harder moment after
+collection:
 
 > What should happen next? Who owns it? What evidence proves it moved?
 
-If your pain is "I saved it, but nothing happened," this is the missing layer:
-a local-first operating loop where humans can think messily and agents can work
-against explicit state instead of guessing from chat history.
-
-This repository gives you a local-first operating loop for humans and agents:
+If your pain is "I saved it, summarized it, and still nothing shipped," this is
+the missing layer: a local-first operating loop where humans can think messily
+and agents work against explicit state instead of guessing from chat history.
 
 ```text
-capture messy input -> compile durable knowledge -> extract executable tasks
-  -> let agents claim work -> review the output -> update the knowledge base
+messy input -> durable wiki memory -> executable tasks
+  -> agent claim -> evidence submission -> human/reviewer approval
+  -> knowledge base updated for the next run
 ```
 
-It is not another passive notebook. It is a small, local command center for:
+## What This Project Is
 
-- capturing rough thoughts, links, transcripts, files, and project updates;
-- turning the durable parts into Markdown Wiki notes;
-- turning the actionable parts into tasks with owners, status, and review gates;
-- giving agents a stable API to poll, claim, execute, heartbeat, and submit;
-- keeping private runtime data outside the public repository.
+Personal OS + Personal Wiki is a local-first workbench for people who want AI
+agents to help them move real projects forward, not just summarize notes.
 
-## Why This Exists
+It gives you three connected layers:
 
-Bookmarks become graveyards. Notes become archives. Chat history becomes fog.
-Agents get smarter, but they still lose context unless the work has a shared
-state machine.
-
-Personal OS + Personal Wiki makes the handoff explicit:
-
-- **Personal Wiki** is the memory: Markdown notes, concepts, tags, backlinks,
-  search, and graph data.
-- **Personal OS** is the work state: Inbox, Ideas, Tasks, Projects, Today,
-  agent runs, task claims, reviews, and notification payloads.
-- **Agent Guide** is the contract: agents do not guess what to do from chat
-  history; they read a manual and call APIs.
-
-The opinionated bet: a useful personal knowledge base should not only remember
-what you saw. It should help decide what is unfinished, what matters next, and
-which agent can push it forward.
-
-## What You Get
-
-- A Next.js + Postgres Personal OS app for inbox, ideas, tasks, projects, and
-  agent task execution.
-- A Python Markdown Wiki with ingest, search, tags, concepts, graph data,
-  browser pages, and read/write token boundaries.
-- Agent-facing APIs for context loading, task claiming, heartbeats,
-  contributions, submission, and review.
-- Local-first defaults: no private vault, database, token, cookie, or server
-  inventory belongs in Git.
-- CI that verifies tests, audit, typecheck, lint, app build, Docker builds, Wiki
-  compile, and secret scanning.
-
-## Components
-
-| Component | Path | Role |
+| Layer | Job | Why it matters |
 | --- | --- | --- |
-| Personal OS | [`personal-os-app/`](./personal-os-app) | Next.js + Postgres workbench for Inbox, Ideas, Tasks, Projects, Today planning, notifications, and agent task execution. |
-| Personal Wiki | [`personal-wiki/`](./personal-wiki) | Python Markdown wiki with ingestion, search, graph data, browser pages, auth handoff, and agent maintenance APIs. |
-| Agent contract | [`docs/AGENT_GUIDE.md`](./docs/AGENT_GUIDE.md) | The operating manual that tells Hermes, Codex, or any other agent how to capture, route, claim, execute, and review work. |
-| Release boundary | [`OPEN_SOURCE_RELEASE.md`](./OPEN_SOURCE_RELEASE.md) | The safety checklist for publishing the software without leaking private data. |
+| **Personal OS** | Inbox, ideas, projects, tasks, today view, agent runs, task claims, reviews, notifications. | This is the execution state. It says what is unfinished, who owns it, and what counts as done. |
+| **Personal Wiki** | Markdown notes, concepts, tags, backlinks, search, graph data, browser pages, sanitized long-term memory. | This is the durable knowledge base. It preserves context without dumping private runtime data into Git. |
+| **Agent Guide** | A written operating manual and API contract for Hermes, Codex, or any other worker agent. | Agents do not improvise from chat history. They read the manual, call APIs, claim work, submit evidence, and wait for review. |
 
-## Architecture In One Picture
+The project is opinionated: a useful personal knowledge base should not only
+remember what you saw. It should expose what is still unfinished and make it
+easy for another agent to push the work forward.
+
+## What You Can Do With It
+
+| Use case | What happens |
+| --- | --- |
+| Save links that usually die in bookmarks | Capture the raw link, summarize it into Wiki memory, and extract follow-up tasks. |
+| Dump "rambling" project thoughts | Preserve the original Inbox item, turn the stable part into knowledge, and turn the actionable part into tasks. |
+| Run several agents against one backlog | Agents poll tasks by tags, claim work, heartbeat while working, submit contributions, and request review. |
+| Keep a private project brain without leaking data | Source code and fake examples go to Git; real vaults, tokens, server inventories, and task history stay local. |
+| Build a revenue/work dashboard | Projects, today view, unfinished tasks, and review queues make "what moves the project" visible. |
+| Use the Wiki as agent memory | Agents can read curated Markdown context instead of relying on stale chat history. |
+
+## Feature Overview
+
+### Personal OS
+
+- Inbox for raw human input and agent observations.
+- Ideas, projects, tasks, notes, activity feed, and Today workspace.
+- Agent-facing task protocol: inbox polling, claim, heartbeat, contribution,
+  submit, review, block, archive.
+- Read and write token boundaries for agent integrations.
+- Planner and notification payloads for daily guidance.
+- Next.js app backed by PostgreSQL and Prisma.
+
+### Personal Wiki
+
+- Markdown vault with browser pages.
+- Ingest API for writing notes from agents or local tools.
+- Search, tags, concepts, graph data, backlinks, and wiki-style navigation.
+- Separate read and write token defaults.
+- Docker-friendly Python service.
+- Compatible with the "Markdown as durable memory" workflow.
+
+### Agent Workflow
+
+Agents use a predictable loop:
+
+```text
+poll -> claim -> load context -> execute -> heartbeat -> contribute -> submit -> review
+```
+
+That loop is the difference between "an agent wrote something in a chat" and
+"a task was claimed, worked, evidenced, and reviewed."
+
+## 10-Minute Demo Path
+
+This is the fastest way to understand the system locally.
+
+### 1. Start Personal Wiki
+
+```bash
+cd personal-wiki
+cp .env.example .env
+docker compose up -d --build
+```
+
+Open:
+
+```text
+http://localhost:3422
+```
+
+### 2. Start Personal OS
+
+```bash
+cd ../personal-os-app
+cp .env.example .env
+docker compose up -d postgres
+npm ci
+npm run prisma:generate
+npm run prisma:migrate
+npm run prisma:seed
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+For the full OS/Wiki integration, set `WIKI_API_TOKEN` and `WIKI_READ_TOKEN` in
+`personal-os-app/.env` to match `personal-wiki/.env`.
+
+### 3. Try the loop
+
+After seeding, you should see fictional demo data:
+
+| Surface | Demo item |
+| --- | --- |
+| Projects | `Acorn Launch Lab` |
+| Inbox | `Demo input: collect three customer notes...` |
+| Tasks | `Review the fictional launch checklist` |
+| Ideas | `Add a demo screenshot after UI polish` |
+| Notes | `Demo launch checklist` |
+
+Suggested path:
+
+1. Open `Today` to see the current work queue.
+2. Open `Tasks` and inspect `Review the fictional launch checklist`.
+3. Check the next action, definition of done, Wiki link, contribution, and
+   artifact.
+4. Open `Projects` and inspect `Acorn Launch Lab`.
+5. Open `Ideas` and confirm the screenshot idea stayed as an idea instead of
+   being forced into a task.
+
+The full walkthrough is in
+[`docs/GETTING_STARTED.md`](./docs/GETTING_STARTED.md).
+
+## Screenshots
+
+Public screenshots should use fake seed data only. The screenshot capture list
+is tracked in [`docs/assets/screenshots/README.md`](./docs/assets/screenshots/README.md).
+
+Planned captures:
+
+- Today workspace
+- Task review flow
+- Project timeline
+- Agent context panel
+- Wiki note graph
+
+## Architecture
 
 ```text
 Human input
-  |  text, link, file summary, voice transcript, project update
+  |  links, voice transcripts, project notes, file summaries, rough thoughts
   v
 Personal OS /api/intake
   |-- InboxItem: original trace
@@ -101,81 +197,70 @@ Worker agents
 Human or reviewer agent approves, requests changes, blocks, or archives
 ```
 
-The important boundary is simple: Personal OS owns work state. Personal Wiki
-owns durable knowledge. Agents connect the two.
-
-## Human Workflow
-
-1. Drop everything into one intake path: a link, a project concern, a voice
-   note, a server observation, or an unfinished idea.
-2. The intake flow preserves the raw input in Inbox.
-3. Knowledge-worthy material becomes readable Markdown.
-4. Execution-worthy material becomes a task with a next action and definition
-   of done.
-5. Agents poll tasks by tags such as `wiki`, `research`, `coding`, `ops`, or
-   `review`.
-6. Work is not complete just because an agent wrote something. The agent
-   submits evidence, artifacts, and a review request.
-
-## Agent Workflow
-
-Agents should not improvise their own protocol. The minimum execution loop is:
+The important boundary is simple:
 
 ```text
-poll -> claim -> load context -> execute -> heartbeat -> contribute -> submit -> review
+Personal OS   = work state
+Personal Wiki = durable knowledge
+Agent Guide   = portable operating rules
 ```
 
-The full manual is in [`docs/AGENT_GUIDE.md`](./docs/AGENT_GUIDE.md). The lower
-level API reference for Hermes-style integrations is in
-[`personal-os-app/docs/HERMES_API.md`](./personal-os-app/docs/HERMES_API.md).
+Read more:
 
-## Local Development
+- [Architecture](./docs/ARCHITECTURE.md)
+- [Agent Guide](./docs/AGENT_GUIDE.md)
+- [Hermes API contract](./personal-os-app/docs/HERMES_API.md)
 
-Personal OS:
+## Agent Protocol
+
+An agent should not scrape the whole vault or guess from chat history. It should
+follow the contract.
+
+Example task claiming flow:
 
 ```bash
-cd personal-os-app
-cp .env.example .env
-docker compose up -d postgres
-npm ci
-npm run prisma:migrate
-npm run prisma:seed
-npm run dev
+# 1. Poll work
+curl -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  "http://localhost:3000/api/agent-inbox?agentId=research-agent&tags=wiki,research"
+
+# 2. Claim one task
+curl -X POST \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"agentId":"research-agent","leaseMinutes":30}' \
+  "http://localhost:3000/api/tasks/<task-id>/claim"
+
+# 3. Load context
+curl -H "Authorization: Bearer $PERSONAL_OS_READ_TOKEN" \
+  "http://localhost:3000/api/agent/context?taskId=<task-id>"
+
+# 4. Submit evidence when done
+curl -X POST \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"agentId":"research-agent","summary":"What changed","artifactUrls":["https://example.com/demo"],"evidenceLinks":["wiki://demo/demo-launch-checklist.md"],"definitionOfDoneMet":true,"needsHumanDecision":true}' \
+  "http://localhost:3000/api/tasks/<task-id>/submit"
 ```
 
-Personal Wiki:
+For the complete protocol, read
+[`docs/AGENT_GUIDE.md`](./docs/AGENT_GUIDE.md) and
+[`docs/API_OVERVIEW.md`](./docs/API_OVERVIEW.md).
 
-```bash
-cd personal-wiki
-cp .env.example .env
-docker compose up -d --build
-```
+## What Makes This Different From A Normal Wiki
 
-Default local URLs:
-
-```text
-Personal OS:   http://localhost:3000
-Personal Wiki: http://localhost:3422
-```
-
-## Verification
-
-Run these before publishing or asking another agent to review the package:
-
-```bash
-cd personal-os-app
-npm ci
-npm run prisma:generate
-npm test
-npm audit --omit=dev --audit-level=moderate
-npx tsc --noEmit
-npm run build
-
-cd ../personal-wiki
-python -m py_compile api/server.py
-```
+| Normal note app | This project |
+| --- | --- |
+| Stores notes | Stores knowledge and extracts execution state |
+| Search is the main interface | Tasks, Today, projects, graph, and agent context all matter |
+| AI summarizes content | Agents can claim work and submit reviewable evidence |
+| Links can disappear into an archive | Links can become Wiki pages and follow-up tasks |
+| "Done" means text was written | "Done" means a task was reviewed or explicitly archived |
+| Private data often gets mixed with code | Runtime data is designed to stay outside Git |
 
 ## Data Safety
+
+This repository is the reusable engine, not a dump of a private life or private
+infrastructure.
 
 Safe to commit:
 
@@ -189,38 +274,55 @@ Safe to commit:
 Never commit:
 
 - `.env` files or agent credential exports
-- populated wiki vaults
-- server inventory with private LAN addresses, ports, paths, or business mapping
+- populated Wiki vaults
 - real inbox messages, task history, reminders, or project notes
+- server inventory with private LAN addresses, ports, paths, or business mapping
 - logs, pid files, generated bundles, screenshots, `.next`, `node_modules`
 
-Before pushing to a public repository, run a final secret scan and publish from
-a clean/squashed history that never contained private deployment artifacts.
+Read the full release checklist:
 
-## Repository Strategy
-
-This project should stay as a monorepo while Personal OS, Personal Wiki, and
-the agent protocol are still changing together. Split repositories later only
-if the Wiki becomes independently useful without Personal OS, or if developers
-want to embed only one component.
-
-Detailed strategy:
-
-- [Repository strategy, English](./docs/REPOSITORY_STRATEGY.md)
-- [仓库拆分与开源策略，中文](./docs/REPOSITORY_STRATEGY.zh-CN.md)
-
-## Documentation Map
-
-- [Architecture](./docs/ARCHITECTURE.md)
-- [架构说明](./docs/ARCHITECTURE.zh-CN.md)
-- [Agent guide](./docs/AGENT_GUIDE.md)
-- [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)
+- [Data safety](./docs/DATA_SAFETY.md)
 - [Open source release process](./OPEN_SOURCE_RELEASE.md)
 - [Security policy](./SECURITY.md)
 - [Repository permissions](./docs/PERMISSIONS.md)
-- [Contributing](./CONTRIBUTING.md)
-- [Personal OS README](./personal-os-app/README.md)
-- [Personal Wiki README](./personal-wiki/README.md)
+
+## Documentation Map
+
+| Goal | Read |
+| --- | --- |
+| Understand the product | This README |
+| Run it locally | [Getting Started](./docs/GETTING_STARTED.md) |
+| Understand architecture | [Architecture](./docs/ARCHITECTURE.md) |
+| Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
+| Operate Personal OS | [Personal OS README](./personal-os-app/README.md) |
+| Operate Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) and [Wiki usage](./personal-wiki/docs/USAGE.md) |
+| Understand data safety | [Data safety](./docs/DATA_SAFETY.md) |
+| Publish safely | [Open source release process](./OPEN_SOURCE_RELEASE.md) |
+| Decide monorepo vs split repos | [Repository strategy](./docs/REPOSITORY_STRATEGY.md) |
+| See what is next | [Roadmap](./docs/ROADMAP.md) |
+
+## Roadmap
+
+The short version:
+
+- Improve public screenshots and the browser walkthrough.
+- Add more agent task-claiming examples and smoke scripts.
+- Improve task extraction from messy input.
+- Add richer project dashboards and priority views.
+- Explore Wiki graph insights and knowledge-gap detection.
+
+Read the full [roadmap](./docs/ROADMAP.md).
+
+## Limitations And Maturity
+
+- This is not a hosted SaaS product.
+- This is not a multi-tenant organization system.
+- Built-in auth is token based; public deployments should sit behind an
+  authenticated reverse proxy.
+- Runtime data is not encrypted by the app itself.
+- Agents cannot bypass review by design, but bad submissions still require
+  human or reviewer-agent judgment.
+- The first-run demo is intentionally fake and small.
 
 ## Project Status
 
@@ -228,3 +330,14 @@ This is an early public release. It is useful for builders who want to study or
 adapt a local-first agent workbench, but it is not a hosted SaaS product and it
 does not include your private knowledge base. Treat it as an engine, not as a
 cloud service.
+
+## Contributing
+
+Contributions are welcome if they keep the same boundary:
+
+- do not add real private data;
+- keep local-first defaults safe;
+- document API behavior when changing agent-facing routes;
+- add or update tests for execution-state changes.
+
+Start with [CONTRIBUTING.md](./CONTRIBUTING.md).
