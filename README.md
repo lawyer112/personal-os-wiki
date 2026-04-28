@@ -2,43 +2,66 @@
 
 [中文说明](./README.zh-CN.md)
 
-Personal OS + Personal Wiki is a local-first workbench for turning messy human
-inputs into durable knowledge, executable tasks, and agent-readable context.
+**Not a second brain. A follow-through engine for humans and agents.**
 
-The project is built around one practical loop:
+Personal OS + Personal Wiki turns saved links, voice notes, half-formed ideas,
+project updates, and agent output into claimed work with evidence.
+
+Most tools help you capture more. This project is for the harder moment after
+capture, when the real question is:
+
+> What should happen next? Who owns it? What evidence proves it moved?
+
+If your pain is "I saved it, but nothing happened," this is the missing layer:
+a local-first operating loop where humans can think messily and agents can work
+against explicit state instead of guessing from chat history.
+
+This repository gives you a local-first operating loop for humans and agents:
 
 ```text
-capture -> understand -> write knowledge -> create tasks -> let agents claim work
-        -> review outputs -> update the knowledge base
+capture messy input -> compile durable knowledge -> extract executable tasks
+  -> let agents claim work -> review the output -> update the knowledge base
 ```
 
-It is not a hosted SaaS product and it is not a dump of a private vault. The
-repository contains the reusable engine: source code, schema, API contracts,
-tests, Docker examples, and documentation. Runtime data, private notes,
-credentials, server inventories, task history, and personal reminders must stay
-outside Git.
+It is not another passive notebook. It is a small, local command center for:
 
-The default deployment posture is local-first. Production compose examples bind
-the Personal OS web app to localhost; expose it to LAN or the Internet only
-behind an authenticated reverse proxy.
+- capturing rough thoughts, links, transcripts, files, and project updates;
+- turning the durable parts into Markdown Wiki notes;
+- turning the actionable parts into tasks with owners, status, and review gates;
+- giving agents a stable API to poll, claim, execute, heartbeat, and submit;
+- keeping private runtime data outside the public repository.
 
 ## Why This Exists
 
-Most personal knowledge systems stop at collection. Links are saved, notes are
-written, and reminders pile up, but nothing reliably turns that material into
-the next useful action. This project treats the knowledge base as an operating
-surface for agents:
+Bookmarks become graveyards. Notes become archives. Chat history becomes fog.
+Agents get smarter, but they still lose context unless the work has a shared
+state machine.
 
-- The user can send rough thoughts, links, transcripts, project updates, or
-  "rambling" ideas.
-- Personal Wiki stores the long-term Markdown memory: notes, concepts, tags,
-  backlinks, search, and graph data.
-- Personal OS stores execution state: inbox, ideas, tasks, projects, agent
-  runs, task claims, reviews, and notification payloads.
-- Agents use stable APIs instead of guessing from chat history or scraping the
-  entire vault.
-- The system is designed to push work forward: unfinished tasks remain visible,
-  agents can claim tasks by tag, and outputs are reviewed before becoming final.
+Personal OS + Personal Wiki makes the handoff explicit:
+
+- **Personal Wiki** is the memory: Markdown notes, concepts, tags, backlinks,
+  search, and graph data.
+- **Personal OS** is the work state: Inbox, Ideas, Tasks, Projects, Today,
+  agent runs, task claims, reviews, and notification payloads.
+- **Agent Guide** is the contract: agents do not guess what to do from chat
+  history; they read a manual and call APIs.
+
+The opinionated bet: a useful personal knowledge base should not only remember
+what you saw. It should help decide what is unfinished, what matters next, and
+which agent can push it forward.
+
+## What You Get
+
+- A Next.js + Postgres Personal OS app for inbox, ideas, tasks, projects, and
+  agent task execution.
+- A Python Markdown Wiki with ingest, search, tags, concepts, graph data,
+  browser pages, and read/write token boundaries.
+- Agent-facing APIs for context loading, task claiming, heartbeats,
+  contributions, submission, and review.
+- Local-first defaults: no private vault, database, token, cookie, or server
+  inventory belongs in Git.
+- CI that verifies tests, audit, typecheck, lint, app build, Docker builds, Wiki
+  compile, and secret scanning.
 
 ## Components
 
@@ -72,6 +95,7 @@ Worker agents
   |-- poll /api/agent-inbox
   |-- claim /api/tasks/:id/claim
   |-- read /api/agent/context
+  |-- heartbeat while working
   |-- submit contribution and artifacts
   v
 Human or reviewer agent approves, requests changes, blocks, or archives
@@ -82,14 +106,14 @@ owns durable knowledge. Agents connect the two.
 
 ## Human Workflow
 
-1. Capture everything in one place: a link, a project concern, a voice note, a
-   server observation, or an unfinished idea.
+1. Drop everything into one intake path: a link, a project concern, a voice
+   note, a server observation, or an unfinished idea.
 2. The intake flow preserves the raw input in Inbox.
-3. Knowledge-worthy material is written to the Wiki as readable Markdown.
-4. Execution-worthy material becomes tasks with a concrete next action and a
-   definition of done.
-5. Agents poll tasks by tags such as `wiki`, `research`, `coding`,
-   `ops`, or `review`.
+3. Knowledge-worthy material becomes readable Markdown.
+4. Execution-worthy material becomes a task with a next action and definition
+   of done.
+5. Agents poll tasks by tags such as `wiki`, `research`, `coding`, `ops`, or
+   `review`.
 6. Work is not complete just because an agent wrote something. The agent
    submits evidence, artifacts, and a review request.
 
@@ -175,10 +199,10 @@ a clean/squashed history that never contained private deployment artifacts.
 
 ## Repository Strategy
 
-This package should stay as one private review repository while the OS, Wiki,
-and agent protocol are still changing together. A split into separate public
-repositories is useful later only if the Wiki becomes independently useful
-without Personal OS, or if other developers want to embed only one component.
+This project should stay as a monorepo while Personal OS, Personal Wiki, and
+the agent protocol are still changing together. Split repositories later only
+if the Wiki becomes independently useful without Personal OS, or if developers
+want to embed only one component.
 
 Detailed strategy:
 
@@ -200,8 +224,7 @@ Detailed strategy:
 
 ## Project Status
 
-This tree is a public-release candidate. It is safe to review in the private
-staging repository, but the public repository should be created from a clean
-squashed or orphan history after the final review. The remaining release gates
-are Docker verification, dependency audit review, demo data review, and one more
-documentation pass.
+This is an early public release. It is useful for builders who want to study or
+adapt a local-first agent workbench, but it is not a hosted SaaS product and it
+does not include your private knowledge base. Treat it as an engine, not as a
+cloud service.
