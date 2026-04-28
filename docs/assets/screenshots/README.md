@@ -2,6 +2,9 @@
 
 Public screenshots should use fake seed data only.
 
+The decorative README diagrams live in `../readme/` and are safe to commit
+because they contain no runtime data.
+
 Planned captures:
 
 - `today-workspace.png`
