@@ -2,44 +2,58 @@
 
 [English README](./README.md)
 
-Personal OS + Personal Wiki 是一个本地优先、面向 Agent 的个人工作台。它的目标不是把笔记堆得更漂亮，而是把用户每天零散输入的想法、链接、语音转写、项目进展和服务器观察，稳定地变成三类东西：
+**不是第二大脑，是推进引擎。**
 
-- 可长期阅读的知识
-- 可执行、可认领、可验收的任务
-- Agent 下次工作前能读取的上下文
+Personal OS + Personal Wiki 把收藏夹、碎碎念、语音转写、项目进展和 Agent 产物，变成有人认领、有人验收、有证据链的任务。
 
-一句话说清楚：
+很多工具只解决“存下来”。这个项目解决的是存下来之后更难的部分：
 
-```text
-碎碎念进来 -> 知识沉淀到 Wiki -> 行动进入 Personal OS -> Agent 认领执行 -> 人或 Reviewer 复核 -> 结果回写知识库
-```
+> 接下来该做什么？谁来做？做到什么程度才算真的推进了？
 
-这个仓库不是你的私人知识库本体，也不是线上服务的数据备份。它只应该包含可复用的软件引擎：源码、数据库 schema、API 合约、测试、Docker 示例和文档。真实 vault、真实任务、真实服务器台账、token、cookie、日志、截图都不能进 Git。
+如果你的痛点是“我收藏了、记录了、也让 Agent 总结了，但最后还是没有产出”，那这里补的是中间缺失的一层：一个本地优先的推进闭环。人可以说得很乱，Agent 不能靠猜，它要面对明确的状态、任务和验收口径工作。
 
-## 为什么要做这个项目
-
-普通收藏夹和笔记软件最大的问题是：它们帮你“存”，但不帮你“推进”。你可能收藏很多链接，点赞很多帖子，写很多想法，但几天后它们就吃灰了。
-
-这个项目的第一性原理是：
+Personal OS + Personal Wiki 是一套本地优先的个人工作系统：
 
 ```text
-知识库必须服务于产出，尤其是服务于能挣钱、能落地、能推进的项目。
+碎片输入 -> 沉淀成 Wiki 知识 -> 抽取可执行任务
+  -> Agent 认领执行 -> 人或 Reviewer 复核 -> 结果回写知识库
 ```
 
-所以系统必须做四件事：
+它不是又一个被动笔记软件。它更像一个给你和 Agent 共用的小型作战室：
 
-- 保留原始输入，不让重要想法丢掉。
-- 把值得长期留存的内容整理成 Markdown 知识。
-- 把需要行动的部分拆成具体任务，而不是“优化一下”“整理一下”这种废话。
-- 让不同 Agent 能按标签获取任务、读取上下文、提交产物、等待复核。
+- 你可以随手丢链接、想法、文件摘要、语音转写、项目更新；
+- 值得长期保存的内容进入 Markdown Wiki；
+- 需要行动的内容进入任务系统，并带有状态、负责人和验收口径；
+- Agent 通过 API 拉任务、认领、心跳续约、提交产物、等待复核；
+- 真实 vault、数据库、token、服务器台账和私人任务都不进公开仓库。
+
+## 为什么做这个
+
+收藏夹会吃灰，笔记会变成档案馆，聊天记录会变成雾。Agent 能力越来越强，但如果没有共同的任务状态和证据链，它还是会靠上下文猜，今天说一套，明天又跑偏。
+
+这个项目把边界拆清楚：
+
+- **Personal Wiki 是记忆**：Markdown 笔记、概念、标签、双链、搜索、图谱。
+- **Personal OS 是工作状态**：Inbox、Ideas、Tasks、Projects、Today、AgentRun、任务认领、复核和通知 payload。
+- **Agent Guide 是合约**：Agent 不靠聊天记录猜流程，而是先读手册，再按 API 工作。
+
+这个项目的核心判断是：个人知识库不应该只帮你记住“看过什么”，还应该帮你判断“什么还没完成、下一步是什么、哪个 Agent 能把它往前顶”。
+
+## 你能得到什么
+
+- 一个 Next.js + Postgres 的 Personal OS：管理 Inbox、想法、任务、项目和 Agent 执行。
+- 一个 Python Markdown Wiki：支持入库、搜索、标签、概念、图谱、浏览器页面和读写 token 边界。
+- 一套面向 Agent 的任务协议：context、claim、heartbeat、contribution、submit、review。
+- 本地优先的安全默认值：私人 vault、数据库、token、cookie、服务器台账都不属于 Git。
+- 一套 CI：测试、依赖审计、类型检查、lint、Next build、Docker build、Wiki 编译和 secret scan。
 
 ## 两个核心组件
 
 | 组件 | 路径 | 负责什么 |
 | --- | --- | --- |
-| Personal OS | [`personal-os-app/`](./personal-os-app) | Inbox、Ideas、Tasks、Projects、Today、AgentRun、任务认领、贡献提交、通知 payload。 |
+| Personal OS | [`personal-os-app/`](./personal-os-app) | Inbox、Ideas、Tasks、Projects、Today、AgentRun、任务认领、产物提交、通知 payload。 |
 | Personal Wiki | [`personal-wiki/`](./personal-wiki) | Markdown vault、入库、搜索、标签、概念、图谱、浏览器页面、Wiki 维护 API。 |
-| Agent 手册 | [`docs/AGENT_GUIDE.zh-CN.md`](./docs/AGENT_GUIDE.zh-CN.md) | 告诉 Hermes、Codex、OpenClaw 或其他 Agent 应该怎么读、写、认领和复核任务。 |
+| Agent 手册 | [`docs/AGENT_GUIDE.zh-CN.md`](./docs/AGENT_GUIDE.zh-CN.md) | 告诉 Hermes、Codex、OpenClaw 或其他 Agent 怎么读、写、认领和复核任务。 |
 | 开源边界 | [`OPEN_SOURCE_RELEASE.md`](./OPEN_SOURCE_RELEASE.md) | 说明哪些能发 GitHub，哪些必须留在本地。 |
 
 ## 系统边界
@@ -89,6 +103,7 @@ Personal OS /api/intake
   |-- /api/agent-inbox 拉取任务
   |-- /api/tasks/:id/claim 认领任务
   |-- /api/agent/context 读取上下文
+  |-- /api/tasks/:id/heartbeat 执行中心跳续约
   |-- /api/tasks/:id/contributions 写进展
   |-- /api/tasks/:id/submit 提交复核
   v
@@ -97,15 +112,15 @@ Personal OS /api/intake
 
 ## 人怎么用
 
-你不用一开始就把话说得很结构化。正常使用方式应该是：
+你不需要一开始就把话说得很结构化。正常用法应该是：
 
 - 看到一个链接，发进去。
 - 想到一个项目方向，发进去。
-- 今天很迷茫，直接说现在卡在哪里。
+- 今天很迷茫，直接说卡在哪里。
 - 某台机器发现一个服务，发进去。
-- 一个 Agent 做完了事，把产物链接和判断发进去。
+- 一个 Agent 做完事，把产物链接和判断发进去。
 
-系统要做的不是复述你说的话，而是把它拆成：
+系统要做的不是复述你的话，而是拆成：
 
 - `Inbox`：原始记录
 - `Wiki`：长期知识
@@ -113,16 +128,16 @@ Personal OS /api/intake
 - `Project`：属于哪个项目
 - `Review`：哪些需要你拍板
 
-任务文案必须说人话，格式应该接近：
+任务文案必须说人话，格式接近：
 
 ```text
 动词 + 对象 + 验收结果
 ```
 
-比如：
+例如：
 
 - 不要写：整理 Wiki
-- 应该写：把 3 篇孤立的项目笔记补上“目标、当前状态、下一步、相关任务”四个小节
+- 应该写：给 3 篇孤立的项目笔记补上“目标、当前状态、下一步、相关任务”四个小节
 
 ## Agent 怎么用
 
@@ -138,7 +153,7 @@ Agent 不应该只靠聊天上下文猜。它应该先读手册，再按 API 工
 poll -> claim -> context -> execute -> heartbeat -> contribute -> submit -> review
 ```
 
-也就是说，Agent 不是“看见任务就偷偷改完”。它要先认领，执行期间续租，提交证据和产物，然后进入复核。
+也就是说，Agent 不是“看见任务就偷偷改完”。它要先认领，执行期间保持心跳，提交证据和产物，然后进入复核。
 
 ## 本地开发
 
@@ -212,9 +227,9 @@ python -m py_compile api/server.py
 
 原因很直接：现在 Personal OS、Personal Wiki、Agent 协议还在一起演化。任务认领、上下文读取、Wiki 入库、通知 payload、cookie handoff 都是联动设计。过早拆仓会让安装、文档和 review 成本变高。
 
-什么时候可以拆？
+什么时候可以拆：
 
-- Personal Wiki 可以脱离 Personal OS 独立安装、独立被别人使用。
+- Personal Wiki 可以脱离 Personal OS 独立安装、独立使用。
 - 有开发者只想用 Wiki，不想用 OS。
 - API 合约稳定，不再频繁一起改。
 - CI、Docker、文档和 demo 都能分别跑通。
@@ -238,4 +253,4 @@ python -m py_compile api/server.py
 
 ## 当前状态
 
-这棵源码树已经是公开发布候选。它可以继续放在私有 staging 仓库里接受评审，但真正公开时应该从干净的 squash/orphan 历史创建 public 仓库，而不是直接把 private-review 仓库改成 public。剩余发布门槛是 Docker 验证、依赖审计复核、demo 数据复核，以及最后一轮文档 review。
+这是一个早期公开版本。它适合给想研究或改造“本地优先 Agent 工作台”的开发者看，但它不是云服务，也不包含你的私人知识库。请把它当作一个可复用引擎，而不是直接托管好的产品。
