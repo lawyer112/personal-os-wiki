@@ -1,9 +1,23 @@
 # Personal OS + Personal Wiki
 
+<p align="center">
+  <img src="./docs/assets/readme/hero.svg" alt="Personal OS + Personal Wiki hero: Stop collecting. Start closing loops." width="100%">
+</p>
+
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#数据安全)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-协议)
+[![Markdown Wiki](https://img.shields.io/badge/markdown-wiki-7c3aed)](#personal-wiki)
+[![Task Protocol](https://img.shields.io/badge/task-protocol-f97316)](#agent-协议)
+
+<p align="center">
+  <a href="#10-分钟-demo"><img src="https://img.shields.io/badge/运行%20Demo-10%20分钟-0f766e?style=for-the-badge" alt="运行 Demo"></a>
+  <a href="./docs/GETTING_STARTED.zh-CN.md"><img src="https://img.shields.io/badge/快速上手-guide-1d4ed8?style=for-the-badge" alt="快速上手"></a>
+  <a href="./docs/AGENT_GUIDE.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20手册-protocol-7c3aed?style=for-the-badge" alt="Agent 手册"></a>
+  <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
+  <a href="./docs/DATA_SAFETY.zh-CN.md"><img src="https://img.shields.io/badge/数据安全-local--first-334155?style=for-the-badge" alt="数据安全"></a>
+</p>
 
 [English README](./README.md)
 
@@ -24,6 +38,10 @@ Personal OS + Personal Wiki 把收藏夹、语音转写、碎碎念、项目进�
   -> Agent 认领 -> 提交证据 -> 人或 Reviewer 复核
   -> 结果回写知识库，供下一轮继续使用
 ```
+
+<p align="center">
+  <img src="./docs/assets/readme/loop.svg" alt="输入、Wiki、任务、Agent、复核闭环" width="100%">
+</p>
 
 ## 这是什么
 
@@ -143,6 +161,10 @@ seed 后你会看到一组虚构数据：
 - [Getting Started](./docs/GETTING_STARTED.md)
 
 ## 架构图
+
+<p align="center">
+  <img src="./docs/assets/readme/architecture.svg" alt="Personal OS 管工作状态，Personal Wiki 管长期知识，Agent Guide 连接二者。" width="100%">
+</p>
 
 ```text
 用户输入

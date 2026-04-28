@@ -1,0 +1,62 @@
+<svg width="1280" height="520" viewBox="0 0 1280 520" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Personal OS + Personal Wiki hero</title>
+  <desc id="desc">A local-first workbench that turns messy input into wiki memory, claimable tasks, and reviewable agent output.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1280" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#09111F"/>
+      <stop offset="0.45" stop-color="#0F2A2D"/>
+      <stop offset="1" stop-color="#321A14"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(248 128) rotate(38) scale(320 220)">
+      <stop stop-color="#73FBD3" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#73FBD3" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1044 390) rotate(22) scale(360 260)">
+      <stop stop-color="#FFB86B" stop-opacity="0.46"/>
+      <stop offset="1" stop-color="#FFB86B" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="card" x1="170" y1="156" x2="1110" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="shadow" x="120" y="112" width="1040" height="368" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="24" stdDeviation="34" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="520" rx="36" fill="url(#bg)"/>
+  <rect width="1280" height="520" rx="36" fill="url(#glowA)"/>
+  <rect width="1280" height="520" rx="36" fill="url(#glowB)"/>
+
+  <path d="M70 80C170 118 210 37 304 78C398 119 448 55 540 90C632 125 680 73 764 105C848 137 904 82 1000 119C1096 156 1160 108 1210 144" stroke="#FFFFFF" stroke-opacity="0.11" stroke-width="2"/>
+  <path d="M58 430C160 380 206 472 314 420C422 368 486 448 590 398C694 348 764 430 872 376C980 322 1070 398 1220 338" stroke="#FFFFFF" stroke-opacity="0.11" stroke-width="2"/>
+
+  <g filter="url(#shadow)">
+    <rect x="150" y="126" width="980" height="268" rx="30" fill="url(#card)" stroke="#FFFFFF" stroke-opacity="0.18"/>
+    <rect x="178" y="154" width="216" height="48" rx="24" fill="#73FBD3" fill-opacity="0.16" stroke="#73FBD3" stroke-opacity="0.42"/>
+    <text x="286" y="184" fill="#A8FFE8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="19" font-weight="700" text-anchor="middle">LOCAL-FIRST AGENT WORKBENCH</text>
+
+    <text x="190" y="252" fill="#F7FFF9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="55" font-weight="800" letter-spacing="-1.4">
+      Stop collecting.
+    </text>
+    <text x="190" y="314" fill="#F7FFF9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="55" font-weight="800" letter-spacing="-1.4">
+      Start closing loops.
+    </text>
+    <text x="194" y="354" fill="#CBE7DF" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22">
+      Links, voice notes, rough ideas, and agent outputs become wiki memory,
+    </text>
+    <text x="194" y="382" fill="#CBE7DF" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22">
+      claimable tasks, submitted evidence, and reviewable work.
+    </text>
+
+    <g transform="translate(795 174)">
+      <rect width="270" height="178" rx="24" fill="#07131C" fill-opacity="0.7" stroke="#FFFFFF" stroke-opacity="0.14"/>
+      <circle cx="38" cy="40" r="10" fill="#73FBD3"/>
+      <text x="60" y="47" fill="#F7FFF9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Inbox captures source</text>
+      <circle cx="38" cy="88" r="10" fill="#B9A8FF"/>
+      <text x="60" y="95" fill="#F7FFF9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Wiki keeps memory</text>
+      <circle cx="38" cy="136" r="10" fill="#FFB86B"/>
+      <text x="60" y="143" fill="#F7FFF9" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="18" font-weight="700">Agents claim tasks</text>
+    </g>
+  </g>
+</svg>

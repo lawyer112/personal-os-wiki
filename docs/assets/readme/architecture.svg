@@ -1,0 +1,42 @@
+<svg width="1280" height="420" viewBox="0 0 1280 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Personal OS and Personal Wiki architecture</title>
+  <desc id="desc">Personal OS owns work state, Personal Wiki owns durable knowledge, and agents connect the two through a protocol.</desc>
+  <rect width="1280" height="420" rx="32" fill="#0B1020"/>
+  <defs>
+    <linearGradient id="os" x1="120" y1="90" x2="486" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="wiki" x1="794" y1="90" x2="1160" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#EA580C"/>
+    </linearGradient>
+  </defs>
+  <text x="640" y="58" fill="#F8FAFC" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="800" text-anchor="middle">Simple boundary, useful protocol</text>
+  <text x="640" y="88" fill="#94A3B8" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle">Work state lives in Personal OS. Durable memory lives in Personal Wiki. Agents bridge them.</text>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <rect x="100" y="122" width="360" height="206" rx="28" fill="url(#os)" fill-opacity="0.9"/>
+    <text x="280" y="170" fill="#FFFFFF" font-size="28" font-weight="800" text-anchor="middle">Personal OS</text>
+    <text x="280" y="205" fill="#DBEAFE" font-size="17" text-anchor="middle">Inbox • Today • Projects • Tasks</text>
+    <text x="280" y="233" fill="#DBEAFE" font-size="17" text-anchor="middle">Agent runs • Claims • Reviews</text>
+    <text x="280" y="273" fill="#FFFFFF" font-size="20" font-weight="700" text-anchor="middle">source of truth for work</text>
+
+    <rect x="820" y="122" width="360" height="206" rx="28" fill="url(#wiki)" fill-opacity="0.9"/>
+    <text x="1000" y="170" fill="#FFFFFF" font-size="28" font-weight="800" text-anchor="middle">Personal Wiki</text>
+    <text x="1000" y="205" fill="#F5E8FF" font-size="17" text-anchor="middle">Markdown • Tags • Concepts</text>
+    <text x="1000" y="233" fill="#F5E8FF" font-size="17" text-anchor="middle">Backlinks • Search • Graph</text>
+    <text x="1000" y="273" fill="#FFFFFF" font-size="20" font-weight="700" text-anchor="middle">source of truth for memory</text>
+
+    <rect x="515" y="142" width="250" height="166" rx="30" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.18"/>
+    <text x="640" y="185" fill="#FFFFFF" font-size="25" font-weight="800" text-anchor="middle">Agent Guide</text>
+    <text x="640" y="218" fill="#CBD5E1" font-size="16" text-anchor="middle">poll → claim → context</text>
+    <text x="640" y="244" fill="#CBD5E1" font-size="16" text-anchor="middle">heartbeat → submit → review</text>
+    <text x="640" y="278" fill="#73FBD3" font-size="18" font-weight="700" text-anchor="middle">portable operating rules</text>
+
+    <path d="M470 224H506" stroke="#73FBD3" stroke-width="5" stroke-linecap="round"/>
+    <path d="M493 210L510 224L493 238" stroke="#73FBD3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M776 224H812" stroke="#FFB86B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M799 210L816 224L799 238" stroke="#FFB86B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

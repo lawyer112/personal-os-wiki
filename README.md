@@ -1,9 +1,23 @@
 # Personal OS + Personal Wiki
 
+<p align="center">
+  <img src="./docs/assets/readme/hero.svg" alt="Personal OS + Personal Wiki hero: Stop collecting. Start closing loops." width="100%">
+</p>
+
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#data-safety)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-protocol)
+[![Markdown Wiki](https://img.shields.io/badge/markdown-wiki-7c3aed)](#personal-wiki)
+[![Task Protocol](https://img.shields.io/badge/task-protocol-f97316)](#agent-protocol)
+
+<p align="center">
+  <a href="#10-minute-demo-path"><img src="https://img.shields.io/badge/Run%20the%20demo-10%20minutes-0f766e?style=for-the-badge" alt="Run the demo"></a>
+  <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
+  <a href="./docs/AGENT_GUIDE.md"><img src="https://img.shields.io/badge/Agent%20Guide-protocol-7c3aed?style=for-the-badge" alt="Agent Guide"></a>
+  <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-overview-f97316?style=for-the-badge" alt="API Overview"></a>
+  <a href="./docs/DATA_SAFETY.md"><img src="https://img.shields.io/badge/Data%20Safety-local--first-334155?style=for-the-badge" alt="Data Safety"></a>
+</p>
 
 [中文说明](./README.zh-CN.md)
 
@@ -29,6 +43,10 @@ messy input -> durable wiki memory -> executable tasks
   -> agent claim -> evidence submission -> human/reviewer approval
   -> knowledge base updated for the next run
 ```
+
+<p align="center">
+  <img src="./docs/assets/readme/loop.svg" alt="Capture, Wiki, Task, Agent, Review loop" width="100%">
+</p>
 
 ## What This Project Is
 
@@ -169,6 +187,10 @@ Planned captures:
 - Wiki note graph
 
 ## Architecture
+
+<p align="center">
+  <img src="./docs/assets/readme/architecture.svg" alt="Personal OS owns work state. Personal Wiki owns durable knowledge. Agent Guide connects them." width="100%">
+</p>
 
 ```text
 Human input
