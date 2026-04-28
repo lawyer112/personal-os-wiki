@@ -1,0 +1,11 @@
+.env
+data/
+logs/
+run/
+*.pid
+*.log
+*.zip
+*.tgz
+__pycache__/
+*.py[cod]
+.DS_Store

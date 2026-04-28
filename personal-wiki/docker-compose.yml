@@ -1,0 +1,17 @@
+services:
+  personal-wiki:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: personal-wiki
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      WIKI_DATA_DIR: /data
+      WIKI_HOST: 0.0.0.0
+      WIKI_PORT: "3422"
+    ports:
+      - "3422:3422"
+    volumes:
+      - ./data:/data

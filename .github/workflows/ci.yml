@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  DOCKER_BUILDKIT: "1"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://personal_os:replace-with-a-long-random-database-password@localhost:54329/personal_os?schema=public
+      PERSONAL_OS_API_TOKEN: dev-test-token-0000
+      PERSONAL_OS_READ_TOKEN: dev-read-token-0000
+      WIKI_READ_TOKEN: dev-wiki-read-token-0000
+      WIKI_API_TOKEN: dev-wiki-write-token-0000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_WIKI_URL: http://localhost:3422
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: personal-os-app/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Personal OS dependencies
+        working-directory: personal-os-app
+        run: npm ci
+
+      - name: Generate Prisma client
+        working-directory: personal-os-app
+        run: npm run prisma:generate
+
+      - name: Test Personal OS
+        working-directory: personal-os-app
+        run: npm test
+
+      - name: Audit Personal OS dependencies
+        working-directory: personal-os-app
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - name: Type-check Personal OS
+        working-directory: personal-os-app
+        run: npx tsc --noEmit
+
+      - name: Lint Personal OS
+        working-directory: personal-os-app
+        run: npm run lint
+
+      - name: Build Personal OS
+        working-directory: personal-os-app
+        run: npm run build
+
+      - name: Build Personal OS Docker image
+        run: docker build --build-arg NPM_CONFIG_REGISTRY=https://registry.npmjs.org -t personal-os-app:test personal-os-app
+
+      - name: Compile Personal Wiki
+        run: python -m py_compile personal-wiki/api/server.py
+
+      - name: Build Personal Wiki Docker image
+        run: docker build -f personal-wiki/api/Dockerfile -t personal-wiki:test personal-wiki
+
+      - name: Secret and private-data scan
+        run: |
+          ! rg -n --hidden -S "(AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|ghp_[A-Za-z0-9_]{30,}|github_pat_[A-Za-z0-9_]{40,}|BEGIN (RSA|OPENSSH|EC|DSA|PRIVATE) KEY|mongodb(\+srv)?://|postgres(ql)?://[^\s]*:[^\s]*@[^/]*(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])))" .
