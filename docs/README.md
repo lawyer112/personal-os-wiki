@@ -5,10 +5,16 @@ README.
 
 ## Start Here
 
+- [Getting Started](./GETTING_STARTED.md)
+- [快速上手](./GETTING_STARTED.zh-CN.md)
 - [Architecture](./ARCHITECTURE.md)
 - [架构说明](./ARCHITECTURE.zh-CN.md)
 - [Agent guide](./AGENT_GUIDE.md)
 - [Agent 使用手册](./AGENT_GUIDE.zh-CN.md)
+- [API overview](./API_OVERVIEW.md)
+- [Data safety](./DATA_SAFETY.md)
+- [数据安全](./DATA_SAFETY.zh-CN.md)
+- [Roadmap](./ROADMAP.md)
 - [Repository strategy](./REPOSITORY_STRATEGY.md)
 - [仓库拆分与开源策略](./REPOSITORY_STRATEGY.zh-CN.md)
 
@@ -24,12 +30,16 @@ README.
 ## Release Docs
 
 - [Open source release process](../OPEN_SOURCE_RELEASE.md)
+- [Security policy](../SECURITY.md)
+- [Repository permissions](./PERMISSIONS.md)
 
 ## Reading Order For Reviewers
 
 1. Read the root [`README.md`](../README.md) or [`README.zh-CN.md`](../README.zh-CN.md).
-2. Read the architecture document in your preferred language.
-3. Read the Agent guide if you are reviewing task execution or autonomous
+2. Run or skim the Getting Started guide.
+3. Read the architecture document in your preferred language.
+4. Read the Agent guide if you are reviewing task execution or autonomous
    workers.
-4. Read `OPEN_SOURCE_RELEASE.md` before publishing or making the repository
+5. Read `DATA_SAFETY.md` before connecting real notes, tasks, or server data.
+6. Read `OPEN_SOURCE_RELEASE.md` before publishing or making the repository
    public.
