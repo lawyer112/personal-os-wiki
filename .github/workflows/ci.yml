@@ -12,6 +12,8 @@ env:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       DATABASE_URL: postgresql://personal_os:replace-with-a-long-random-database-password@localhost:54329/personal_os?schema=public
       PERSONAL_OS_API_TOKEN: dev-test-token-0000

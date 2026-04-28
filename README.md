@@ -193,6 +193,8 @@ Detailed strategy:
 - [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)
 - [Open source release process](./OPEN_SOURCE_RELEASE.md)
 - [Security policy](./SECURITY.md)
+- [Repository permissions](./docs/PERMISSIONS.md)
+- [Contributing](./CONTRIBUTING.md)
 - [Personal OS README](./personal-os-app/README.md)
 - [Personal Wiki README](./personal-wiki/README.md)
 

@@ -233,6 +233,8 @@ python -m py_compile api/server.py
 - [仓库拆分与开源策略](./docs/REPOSITORY_STRATEGY.zh-CN.md)
 - [Open Source Release Process](./OPEN_SOURCE_RELEASE.md)
 - [Security Policy](./SECURITY.md)
+- [Repository Permissions](./docs/PERMISSIONS.md)
+- [Contributing](./CONTRIBUTING.md)
 
 ## 当前状态
 
