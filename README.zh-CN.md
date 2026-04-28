@@ -1,7 +1,7 @@
 # Personal OS + Personal Wiki
 
 <p align="center">
-  <img src="./docs/assets/readme/hero.svg" alt="Personal OS + Personal Wiki hero: Stop collecting. Start closing loops." width="100%">
+  <img src="./docs/assets/readme/hero.zh-CN.svg" alt="Personal OS + Personal Wiki 中文产品预览：不是第二大脑，是推进引擎。" width="100%">
 </p>
 
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)

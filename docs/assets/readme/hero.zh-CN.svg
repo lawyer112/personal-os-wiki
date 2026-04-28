@@ -1,6 +1,6 @@
 <svg width="1280" height="560" viewBox="0 0 1280 560" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Personal OS + Personal Wiki product preview</title>
-  <desc id="desc">A clean product preview showing a local-first agent workbench with Inbox, Tasks, Wiki memory, and review flow.</desc>
+  <title id="title">Personal OS + Personal Wiki 中文产品预览</title>
+  <desc id="desc">一个中文产品预览图，展示 Inbox、今日工作台、任务、Wiki 记忆和 Agent 队列如何联动。</desc>
   <defs>
     <linearGradient id="page" x1="0" y1="0" x2="1280" y2="560" gradientUnits="userSpaceOnUse">
       <stop stop-color="#FFFDF8"/>
@@ -28,22 +28,22 @@
   <circle cx="1138" cy="540" r="178" fill="#BFDBFE" fill-opacity="0.44"/>
   <circle cx="930" cy="112" r="112" fill="#FED7AA" fill-opacity="0.32"/>
 
-  <g font-family="Inter, Segoe UI, Arial, sans-serif">
-    <text x="88" y="118" fill="#0F766E" font-size="17" font-weight="850" letter-spacing="1.8">LOCAL-FIRST AGENT WORKBENCH</text>
-    <text x="88" y="182" fill="url(#headline)" font-size="54" font-weight="850" letter-spacing="-1.2">Personal OS</text>
-    <text x="88" y="242" fill="url(#headline)" font-size="54" font-weight="850" letter-spacing="-1.2">+ Personal Wiki</text>
-    <text x="92" y="298" fill="#475569" font-size="22">Turn messy input into memory, tasks,</text>
-    <text x="92" y="328" fill="#475569" font-size="22">evidence, and reviewable agent work.</text>
+  <g font-family="Noto Sans SC, Microsoft YaHei, PingFang SC, Inter, Segoe UI, Arial, sans-serif">
+    <text x="88" y="118" fill="#0F766E" font-size="17" font-weight="850" letter-spacing="1.8">本地优先 AGENT 工作台</text>
+    <text x="88" y="184" fill="url(#headline)" font-size="50" font-weight="850" letter-spacing="-1.2">不是第二大脑</text>
+    <text x="88" y="244" fill="url(#headline)" font-size="50" font-weight="850" letter-spacing="-1.2">是推进引擎</text>
+    <text x="92" y="300" fill="#475569" font-size="22">把碎碎念变成 Wiki 记忆、可执行任务、</text>
+    <text x="92" y="330" fill="#475569" font-size="22">提交证据和可复核的 Agent 工作。</text>
 
     <g transform="translate(92 382)">
       <rect width="104" height="40" rx="20" fill="#0F766E"/>
       <text x="52" y="26" fill="#FFFFFF" font-size="15" font-weight="850" text-anchor="middle">Inbox</text>
       <rect x="118" width="104" height="40" rx="20" fill="#1D4ED8"/>
-      <text x="170" y="26" fill="#FFFFFF" font-size="15" font-weight="850" text-anchor="middle">Tasks</text>
+      <text x="170" y="26" fill="#FFFFFF" font-size="15" font-weight="850" text-anchor="middle">任务</text>
       <rect x="236" width="96" height="40" rx="20" fill="#7C3AED"/>
       <text x="284" y="26" fill="#FFFFFF" font-size="15" font-weight="850" text-anchor="middle">Wiki</text>
       <rect x="346" width="104" height="40" rx="20" fill="#EA580C"/>
-      <text x="398" y="26" fill="#FFFFFF" font-size="15" font-weight="850" text-anchor="middle">Review</text>
+      <text x="398" y="26" fill="#FFFFFF" font-size="15" font-weight="850" text-anchor="middle">复核</text>
     </g>
 
     <path d="M94 488C166 458 220 512 294 482C368 452 426 506 504 470" stroke="#0F766E" stroke-width="4" stroke-linecap="round" stroke-opacity="0.24"/>
@@ -57,40 +57,40 @@
     <circle cx="788" cy="115" r="7" fill="#34D399"/>
     <text x="820" y="122" fill="#CBD5E1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="750">localhost:3000 / Today</text>
 
-    <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <g font-family="Noto Sans SC, Microsoft YaHei, PingFang SC, Inter, Segoe UI, Arial, sans-serif">
       <rect x="728" y="170" width="126" height="338" rx="22" fill="#F1F5F9"/>
       <text x="746" y="207" fill="#0F172A" font-size="17" font-weight="850">Personal OS</text>
-      <text x="746" y="248" fill="#0F766E" font-size="14" font-weight="850">Today</text>
+      <text x="746" y="248" fill="#0F766E" font-size="14" font-weight="850">今日</text>
       <text x="746" y="281" fill="#475569" font-size="14">Inbox</text>
-      <text x="746" y="314" fill="#475569" font-size="14">Projects</text>
-      <text x="746" y="347" fill="#475569" font-size="14">Tasks</text>
-      <text x="746" y="380" fill="#475569" font-size="14">Reviews</text>
+      <text x="746" y="314" fill="#475569" font-size="14">项目</text>
+      <text x="746" y="347" fill="#475569" font-size="14">任务</text>
+      <text x="746" y="380" fill="#475569" font-size="14">复核</text>
       <text x="746" y="413" fill="#475569" font-size="14">Wiki</text>
 
-      <text x="884" y="203" fill="#0F172A" font-size="23" font-weight="850">Today workspace</text>
-      <text x="884" y="230" fill="#64748B" font-size="14">What should move next?</text>
+      <text x="884" y="203" fill="#0F172A" font-size="23" font-weight="850">今日工作台</text>
+      <text x="884" y="230" fill="#64748B" font-size="14">下一步该推进什么？</text>
 
       <g transform="translate(884 256)" filter="url(#cardShadow)">
         <rect width="248" height="86" rx="20" fill="#FFFFFF" stroke="#E2E8F0"/>
         <rect x="18" y="18" width="48" height="24" rx="12" fill="#DCFCE7"/>
         <text x="42" y="35" fill="#166534" font-size="12" font-weight="850" text-anchor="middle">P1</text>
-        <text x="82" y="36" fill="#0F172A" font-size="16" font-weight="850">Review checklist</text>
-        <text x="82" y="62" fill="#64748B" font-size="13">artifact + evidence required</text>
+        <text x="82" y="36" fill="#0F172A" font-size="16" font-weight="850">复核发布清单</text>
+        <text x="82" y="62" fill="#64748B" font-size="13">需要证据和产物链接</text>
       </g>
 
       <g transform="translate(884 366)" filter="url(#cardShadow)">
         <rect width="118" height="112" rx="20" fill="#FFFFFF" stroke="#E2E8F0"/>
         <text x="18" y="34" fill="#7C3AED" font-size="14" font-weight="850">Wiki</text>
-        <text x="18" y="61" fill="#475569" font-size="12">demo note</text>
-        <text x="18" y="79" fill="#475569" font-size="12">linked</text>
+        <text x="18" y="61" fill="#475569" font-size="12">长期记忆</text>
+        <text x="18" y="79" fill="#475569" font-size="12">已关联</text>
         <path d="M20 92H92" stroke="#DDD6FE" stroke-width="4" stroke-linecap="round"/>
       </g>
 
       <g transform="translate(1018 366)" filter="url(#cardShadow)">
         <rect width="118" height="112" rx="20" fill="#FFFFFF" stroke="#E2E8F0"/>
         <text x="18" y="34" fill="#EA580C" font-size="14" font-weight="850">Agent</text>
-        <text x="18" y="61" fill="#475569" font-size="12">claim lease</text>
-        <text x="18" y="79" fill="#475569" font-size="12">heartbeat</text>
+        <text x="18" y="61" fill="#475569" font-size="12">认领任务</text>
+        <text x="18" y="79" fill="#475569" font-size="12">心跳续约</text>
         <path d="M20 92H92" stroke="#FED7AA" stroke-width="4" stroke-linecap="round"/>
       </g>
     </g>
