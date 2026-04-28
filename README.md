@@ -13,6 +13,7 @@
 
 <p align="center">
   <a href="#10-minute-demo-path"><img src="https://img.shields.io/badge/Run%20the%20demo-10%20minutes-0f766e?style=for-the-badge" alt="Run the demo"></a>
+  <a href="./README.zh-CN.md"><img src="https://img.shields.io/badge/中文说明-完整中文版-dc2626?style=for-the-badge" alt="中文说明"></a>
   <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
   <a href="./docs/AGENT_GUIDE.md"><img src="https://img.shields.io/badge/Agent%20Guide-protocol-7c3aed?style=for-the-badge" alt="Agent Guide"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-overview-f97316?style=for-the-badge" alt="API Overview"></a>
@@ -23,6 +24,23 @@
 
 **Category:** local-first agent workbench, Markdown knowledge base, task
 execution protocol.
+
+<details>
+<summary><strong>中文速览：这不是第二大脑，是推进引擎</strong></summary>
+
+Personal OS + Personal Wiki 把收藏夹、语音转写、碎碎念、项目进展和 Agent 产物，变成有人认领、有人提交证据、有人复核的任务。
+
+它的核心闭环是：
+
+```text
+碎片输入 -> Wiki 长期记忆 -> 可执行任务
+  -> Agent 认领 -> 提交证据 -> 人或 Reviewer 复核
+  -> 结果回写知识库，供下一轮继续使用
+```
+
+完整中文说明见 [README.zh-CN.md](./README.zh-CN.md)。
+
+</details>
 
 **Not a second brain. A follow-through engine for humans and agents.**
 
