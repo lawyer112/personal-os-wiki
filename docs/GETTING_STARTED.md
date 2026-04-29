@@ -18,6 +18,9 @@ inventories, tokens, or task history into Git.
 - npm
 - Python 3.11 or newer
 
+For host sizing, ports, production-style compose, reverse proxy guidance, and
+backup requirements, read the [Deployment Guide](./DEPLOYMENT.md).
+
 ## 1. Clone The Repository
 
 ```bash
