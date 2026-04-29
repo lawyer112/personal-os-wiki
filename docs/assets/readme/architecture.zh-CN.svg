@@ -1,0 +1,50 @@
+<svg width="1280" height="420" viewBox="0 0 1280 420" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Personal OS 和 Personal Wiki 中文架构图</title>
+  <desc id="desc">Personal OS 管工作状态，Personal Wiki 管长期知识，Agent Guide 把二者连接成可执行协议。</desc>
+  <rect width="1280" height="420" rx="32" fill="#0B1020"/>
+  <defs>
+    <linearGradient id="os" x1="100" y1="120" x2="464" y2="334" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#0F766E"/>
+    </linearGradient>
+    <linearGradient id="wiki" x1="816" y1="120" x2="1180" y2="334" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#EA580C"/>
+    </linearGradient>
+    <filter id="soft" x="60" y="84" width="1160" height="286" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#020617" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <g font-family="Noto Sans SC, Microsoft YaHei, PingFang SC, Inter, Segoe UI, Arial, sans-serif">
+    <text x="640" y="58" fill="#F8FAFC" font-size="30" font-weight="850" text-anchor="middle">边界清楚，协作才稳定</text>
+    <text x="640" y="90" fill="#94A3B8" font-size="17" text-anchor="middle">Personal OS 管工作状态，Personal Wiki 管长期知识，Agent Guide 让任何 Agent 按同一套规则执行。</text>
+
+    <g filter="url(#soft)">
+      <rect x="100" y="124" width="360" height="206" rx="28" fill="url(#os)" fill-opacity="0.92"/>
+      <text x="280" y="169" fill="#FFFFFF" font-size="27" font-weight="850" text-anchor="middle">Personal OS</text>
+      <text x="280" y="204" fill="#DBEAFE" font-size="17" text-anchor="middle">Inbox / 今日 / 项目 / 任务</text>
+      <text x="280" y="232" fill="#DBEAFE" font-size="17" text-anchor="middle">认领 / 心跳 / 提交 / 复核</text>
+      <text x="280" y="273" fill="#FFFFFF" font-size="20" font-weight="760" text-anchor="middle">负责：今天推进什么</text>
+    </g>
+
+    <g filter="url(#soft)">
+      <rect x="820" y="124" width="360" height="206" rx="28" fill="url(#wiki)" fill-opacity="0.92"/>
+      <text x="1000" y="169" fill="#FFFFFF" font-size="27" font-weight="850" text-anchor="middle">Personal Wiki</text>
+      <text x="1000" y="204" fill="#F5E8FF" font-size="17" text-anchor="middle">Markdown / 标签 / 概念</text>
+      <text x="1000" y="232" fill="#F5E8FF" font-size="17" text-anchor="middle">反链 / 搜索 / 图谱</text>
+      <text x="1000" y="273" fill="#FFFFFF" font-size="20" font-weight="760" text-anchor="middle">负责：为什么这样做</text>
+    </g>
+
+    <rect x="515" y="142" width="250" height="166" rx="30" fill="#FFFFFF" fill-opacity="0.08" stroke="#FFFFFF" stroke-opacity="0.18"/>
+    <text x="640" y="184" fill="#FFFFFF" font-size="25" font-weight="850" text-anchor="middle">Agent Guide</text>
+    <text x="640" y="218" fill="#CBD5E1" font-size="16" text-anchor="middle">轮询 -> 认领 -> 取上下文</text>
+    <text x="640" y="244" fill="#CBD5E1" font-size="16" text-anchor="middle">心跳 -> 交证据 -> 等复核</text>
+    <text x="640" y="278" fill="#73FBD3" font-size="18" font-weight="760" text-anchor="middle">可复制的操作规程</text>
+
+    <path d="M470 224H506" stroke="#73FBD3" stroke-width="5" stroke-linecap="round"/>
+    <path d="M493 210L510 224L493 238" stroke="#73FBD3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M776 224H812" stroke="#FFB86B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M799 210L816 224L799 238" stroke="#FFB86B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
