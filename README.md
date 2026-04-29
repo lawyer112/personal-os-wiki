@@ -28,8 +28,8 @@
 
 [中文说明](./README.zh-CN.md)
 
-**Category:** local-first agent workbench, Markdown knowledge base, task
-execution protocol.
+**Category:** local-first agent workbench, LLM Wiki-style Markdown knowledge
+base, knowledge graph, task execution protocol.
 
 <details>
 <summary><strong>中文速览：这不是第二大脑，是推进引擎</strong></summary>
@@ -71,6 +71,21 @@ messy input -> durable wiki memory -> executable tasks
 <p align="center">
   <img src="./docs/assets/readme/loop.svg" alt="Capture, Wiki, Task, Agent, Review loop" width="100%">
 </p>
+
+## Related Ecosystem
+
+This project sits near the Karpathy-style LLM Wiki, Markdown-as-memory, personal
+knowledge graph, and agent-memory ecosystem.
+
+The difference is the execution layer. Tools in the LLM Wiki space are strong
+at turning documents into linked knowledge. Personal OS + Personal Wiki keeps
+that idea, then adds Inbox, Today, task claiming, heartbeats, evidence
+submission, reviews, and reminder payloads so agents can push projects forward
+instead of only making the knowledge base prettier.
+
+If you are exploring LLM Wiki, knowledge graphs, Obsidian-style vaults, or
+agent long-term memory, this repository is the "what happens next?" layer:
+turn knowledge into owned work.
 
 ## What This Project Is
 
