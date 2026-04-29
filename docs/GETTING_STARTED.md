@@ -116,11 +116,27 @@ Suggested click path:
 
 ## 5. Minimal API Smoke Test
 
-Use the values from `personal-os-app/.env`.
+For the root one-command demo, use the embedded demo tokens:
+
+```bash
+curl -H "Authorization: Bearer demo-read-token" \
+  http://localhost:3000/api/today
+```
+
+For manual dev or production-like installs, use the values from
+`personal-os-app/.env`. Dev mode normally runs on port `3000`; production
+compose runs on port `3100`.
 
 ```bash
 curl -H "Authorization: Bearer <PERSONAL_OS_READ_TOKEN>" \
   http://localhost:3000/api/today
+```
+
+Production compose variant:
+
+```bash
+curl -H "Authorization: Bearer <PERSONAL_OS_READ_TOKEN>" \
+  http://localhost:3100/api/today
 ```
 
 Capture a small input:

@@ -32,11 +32,16 @@ For a simple non-Docker deployment:
 
 ```bash
 cp .env.example .env
+export WIKI_HOST=127.0.0.1
 scripts/start.sh
 scripts/status.sh
 scripts/restart.sh
 tail -f logs/personal-wiki.log
 ```
+
+`scripts/start.sh` defaults to `127.0.0.1`. Keep that default for local and
+Mac installs. If you bind to `0.0.0.0`, put the service behind an authenticated
+reverse proxy first and keep read/write tokens enabled.
 
 ## Ingest Request
 

@@ -29,7 +29,7 @@ export WIKI_REQUIRE_API_READ_AUTH="${WIKI_REQUIRE_API_READ_AUTH:-1}"
 export WIKI_REQUIRE_PAGE_READ_AUTH="${WIKI_REQUIRE_PAGE_READ_AUTH:-1}"
 export WIKI_SITE_TITLE="$(sed -n 's/^WIKI_SITE_TITLE=//p' "$APP_DIR/.env" | head -1 | tr -d '\r')"
 export WIKI_DATA_DIR="$DATA_DIR"
-export WIKI_HOST="${WIKI_HOST:-0.0.0.0}"
+export WIKI_HOST="${WIKI_HOST:-127.0.0.1}"
 export WIKI_PORT="${WIKI_PORT:-3422}"
 
 if [[ -f "$APP_DIR/scripts/proxy-env.sh" ]]; then

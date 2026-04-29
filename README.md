@@ -17,6 +17,7 @@
   <a href="./README.zh-CN.md"><img src="https://img.shields.io/badge/中文说明-完整中文版-dc2626?style=for-the-badge" alt="中文说明"></a>
   <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
   <a href="./docs/DEPLOYMENT.md"><img src="https://img.shields.io/badge/Deployment-requirements-0f766e?style=for-the-badge" alt="Deployment requirements"></a>
+  <a href="./docs/MACOS_DEPLOYMENT.md"><img src="https://img.shields.io/badge/macOS-deploy-111827?style=for-the-badge" alt="macOS deployment"></a>
   <a href="./docs/RELEASES.md"><img src="https://img.shields.io/badge/Releases-versioned%20packages-0369a1?style=for-the-badge" alt="Versioned releases"></a>
   <a href="./docs/WHY_NOT_LONG_TERM_MEMORY.md"><img src="https://img.shields.io/badge/Not%20Just-Memory-f59e0b?style=for-the-badge" alt="Not just long-term memory"></a>
   <a href="./docs/MAC_AGENT_ADAPTER.md"><img src="https://img.shields.io/badge/Mac%20Adapter-reminders-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
@@ -168,6 +169,11 @@ For Mac-side reminder sync, see
 worker should call planner/reminder APIs, write Apple Reminders, deduplicate
 items, and avoid treating reminder completion as task completion.
 
+For running the full system on macOS, see
+[`docs/MACOS_DEPLOYMENT.md`](./docs/MACOS_DEPLOYMENT.md). It separates the
+one-command demo from a real private Mac install, covers Docker Desktop,
+Colima, backups, launchd-safe token handling, and Mac adapter wiring.
+
 ## Feature Overview
 
 ### Personal OS
@@ -222,6 +228,9 @@ supervision, upgrades, TLS, authentication, and backups.
 
 Read the full deployment guide:
 [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
+
+For macOS-specific setup, read
+[`docs/MACOS_DEPLOYMENT.md`](./docs/MACOS_DEPLOYMENT.md).
 
 ## Install A Versioned Release
 
@@ -458,11 +467,13 @@ Read the full release checklist:
 | Run it locally | [Getting Started](./docs/GETTING_STARTED.md) |
 | Run the one-command demo | `docker compose up -d --build` or [Getting Started](./docs/GETTING_STARTED.md) |
 | Check deployment requirements | [Deployment Guide](./docs/DEPLOYMENT.md) |
+| Deploy on macOS | [macOS Deployment Guide](./docs/MACOS_DEPLOYMENT.md) |
 | Install a fixed version | [Releases and packages](./docs/RELEASES.md) |
 | Understand architecture | [Architecture](./docs/ARCHITECTURE.md) |
 | Compare with memory/wiki/task tools | [Comparison](./docs/COMPARISON.md) |
 | Launch or package the repo | [Launch playbook](./docs/LAUNCH_PLAYBOOK.md) |
 | Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [Agent Prompt](./docs/AGENT_PROMPT.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
+| Schedule worker agents | [Agent Job Orchestration](./docs/AGENT_JOB_ORCHESTRATION.md) |
 | Operate Personal OS | [Personal OS README](./personal-os-app/README.md) |
 | Operate Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) and [Wiki usage](./personal-wiki/docs/USAGE.md) |
 | Understand data safety | [Data safety](./docs/DATA_SAFETY.md) |

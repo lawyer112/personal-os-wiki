@@ -44,7 +44,7 @@ Open `http://localhost:3000`.
 Production writes require a real token. Do not deploy with `change-me`.
 
 ```bash
-cp .env.example .env
+cp .env.prod.example .env
 # edit PERSONAL_OS_API_TOKEN, PERSONAL_OS_READ_TOKEN, WIKI_READ_TOKEN,
 # WIKI_API_TOKEN, NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_WIKI_URL
 docker compose -f docker-compose.prod.yml up -d --build
@@ -93,6 +93,7 @@ For proactive Telegram reminders, schedule Hermes or OpenClaw to call:
 GET /api/reminders/today?mode=morning
 GET /api/reminders/today?mode=checkin
 GET /api/reminders/today?mode=evening
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 The response contains `reminder.shouldSend` plus a ready-to-send Telegram
@@ -102,6 +103,7 @@ For actual daily planning, use the richer planner packet:
 
 ```http
 GET /api/planner/today?mode=morning
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 That returns tasks, ideas, projects, recent activity, Wiki candidates, and a

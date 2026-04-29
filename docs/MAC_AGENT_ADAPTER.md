@@ -38,6 +38,18 @@ MAC_REMINDER_LIST="Personal OS"
 MAC_REMINDER_TIMEZONE=local
 ```
 
+Prefer macOS Keychain for long-lived credentials. If you use an env file, keep
+it outside the repository and lock it down:
+
+```bash
+mkdir -p "$HOME/.config/personal-os"
+touch "$HOME/.config/personal-os/agent.env"
+chmod 600 "$HOME/.config/personal-os/agent.env"
+```
+
+Do not embed tokens directly in LaunchAgent plist files. Use a wrapper script
+that reads Keychain or sources the private env file.
+
 Optional:
 
 ```bash
@@ -61,14 +73,14 @@ For planning-quality messages, call:
 
 ```http
 GET /api/planner/today?mode=<morning|checkin|evening>
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 For a simpler ready-to-send nudge, call:
 
 ```http
 GET /api/reminders/today?mode=<morning|checkin|evening>
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 ## Write To Apple Reminders
@@ -174,7 +186,7 @@ notifications.
 Every scheduled run:
 1. Choose mode by time: morning, checkin, or evening.
 2. Call GET {PERSONAL_OS_BASE_URL}/api/planner/today?mode={mode}
-   with Authorization: Bearer {PERSONAL_OS_API_TOKEN}.
+   with Authorization: Bearer {PERSONAL_OS_READ_TOKEN}.
 3. Read planner.plannerInstruction, reminder metrics, tasks, projects, recent
    activity, and wiki candidates.
 4. Create or update a summary reminder in the configured Apple Reminders list.
@@ -195,11 +207,11 @@ Output a short delivery report:
 
 ## Smoke Test
 
-1. Verify the Mac worker has `PERSONAL_OS_API_TOKEN`.
+1. Verify the Mac worker has `PERSONAL_OS_READ_TOKEN`.
 2. Call:
 
    ```bash
-   curl -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+   curl -H "Authorization: Bearer $PERSONAL_OS_READ_TOKEN" \
      "$PERSONAL_OS_BASE_URL/api/reminders/today?mode=checkin"
    ```
 

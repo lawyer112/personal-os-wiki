@@ -107,6 +107,8 @@ curl -X POST \
 | Purpose | Endpoint | Method | Token |
 | --- | --- | --- | --- |
 | Read Today workspace | `/api/today` | `GET` | `PERSONAL_OS_READ_TOKEN` |
+| Read planner packet | `/api/planner/today?mode=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
+| Read reminder payload | `/api/reminders/today?mode=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Capture mixed input | `/api/intake` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Agent polls work | `/api/agent-inbox` | `GET` | `PERSONAL_OS_API_TOKEN` |
 | Agent loads context | `/api/agent/context?taskId=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |

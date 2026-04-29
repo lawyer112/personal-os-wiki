@@ -12,6 +12,11 @@ The recommended public template is Docker Compose on a Linux host, bound to
 localhost behind an authenticated reverse proxy. Do not expose the raw app ports
 directly to the internet.
 
+For a private workstation install on macOS, read
+[macOS Deployment Guide](./MACOS_DEPLOYMENT.md). It covers Docker Desktop,
+Colima, localhost boundaries, launchd-safe token handling, and Apple Reminders
+adapter wiring.
+
 For normal installs, start from a fixed GitHub Release or version tag. Tracking
 `main` is for contributors and reviewers, not for stable personal deployments.
 See [Releases and packages](./RELEASES.md).
@@ -91,7 +96,7 @@ WIKI_REQUIRE_PAGE_READ_AUTH="1"
 WIKI_TRUST_LOCALHOST_READ_AUTH="0"
 WIKI_ALLOW_UNAUTHENTICATED_WRITE="0"
 WIKI_SITE_TITLE="Personal Wiki"
-WIKI_HOST="0.0.0.0"
+WIKI_HOST="127.0.0.1"
 WIKI_PORT="3422"
 ```
 
@@ -109,6 +114,10 @@ NEXT_PUBLIC_WIKI_URL="http://localhost:3422"
 
 Use separate read and write tokens. Do not reuse the Wiki write token for browser
 handoff or read-only agent access.
+
+For `personal-os-app/docker-compose.prod.yml`, set
+`NEXT_PUBLIC_APP_URL="http://localhost:3100"` unless you are using a reverse
+proxy URL.
 
 ## Quick Deploy Paths
 
@@ -166,7 +175,7 @@ Open:
 
 ```bash
 cd personal-os-app
-cp .env.example .env
+cp .env.prod.example .env
 # set POSTGRES_PASSWORD, PERSONAL_OS_API_TOKEN, PERSONAL_OS_READ_TOKEN,
 # WIKI_READ_TOKEN, WIKI_API_TOKEN, NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_WIKI_URL
 docker compose -f docker-compose.prod.yml up -d --build
@@ -182,6 +191,9 @@ proxy in front of it rather than opening the container port directly.
 - Keep services on localhost unless a reverse proxy provides TLS and auth.
 - Keep `WIKI_TRUST_LOCALHOST_READ_AUTH=0` unless every localhost caller is trusted;
   same-host reverse proxies also appear as localhost to the Wiki service.
+- Use a dedicated hostname when proxying Personal OS and Personal Wiki. Do not
+  co-host untrusted apps on the same hostname because browser cookies are
+  scoped by host.
 - Use separate read/write tokens for Personal OS and Personal Wiki.
 - Back up Postgres and Wiki data before upgrades.
 - Test restore, not only backup creation.
@@ -198,6 +210,29 @@ Back up at least:
 
 For Docker volumes, use `pg_dump` for Postgres and a normal file backup for the
 Wiki data directory.
+
+Root demo compose backup:
+
+```bash
+mkdir -p backups
+docker compose exec -T postgres pg_dump -U personal_os -d personal_os > backups/personal_os_$(date +%Y%m%d).sql
+docker compose exec -T personal-wiki tar -czf - /data > backups/personal_wiki_data_$(date +%Y%m%d).tgz
+```
+
+Component Wiki compose backup:
+
+```bash
+tar -czf backups/personal_wiki_data_$(date +%Y%m%d).tgz -C personal-wiki data
+```
+
+Personal OS production compose backup:
+
+```bash
+cd personal-os-app
+mkdir -p ../backups
+docker compose -f docker-compose.prod.yml exec -T postgres \
+  pg_dump -U personal_os -d personal_os > ../backups/personal_os_$(date +%Y%m%d).sql
+```
 
 ## When Docker Is Not Required
 

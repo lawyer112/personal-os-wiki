@@ -56,14 +56,14 @@ MAC_REMINDER_MAX_TASKS=5
 
 ```http
 GET /api/planner/today?mode=<morning|checkin|evening>
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 如果只需要简单提醒，调用：
 
 ```http
 GET /api/reminders/today?mode=<morning|checkin|evening>
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 ## 写入 Apple 提醒事项
@@ -160,7 +160,7 @@ Reminder key: personal-os:morning:2026-04-29.
 每次定时运行：
 1. 根据当前时间选择 mode：morning、checkin 或 evening。
 2. 调用 GET {PERSONAL_OS_BASE_URL}/api/planner/today?mode={mode}
-   Header: Authorization: Bearer {PERSONAL_OS_API_TOKEN}
+   Header: Authorization: Bearer {PERSONAL_OS_READ_TOKEN}
 3. 读取 planner.plannerInstruction、reminder metrics、tasks、projects、recentActivity 和 wiki candidates。
 4. 在配置好的 Apple 提醒事项列表里创建或更新一条 summary reminder。
 5. 对高优先级任务，可创建或更新 task-specific reminder。
@@ -180,11 +180,11 @@ Reminder key: personal-os:morning:2026-04-29.
 
 ## 冒烟测试
 
-1. 确认 Mac worker 有 `PERSONAL_OS_API_TOKEN`。
+1. 确认 Mac worker 有 `PERSONAL_OS_READ_TOKEN`。
 2. 调用：
 
    ```bash
-   curl -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+   curl -H "Authorization: Bearer $PERSONAL_OS_READ_TOKEN" \
      "$PERSONAL_OS_BASE_URL/api/reminders/today?mode=checkin"
    ```
 

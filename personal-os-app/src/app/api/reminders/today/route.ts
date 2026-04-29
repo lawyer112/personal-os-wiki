@@ -1,12 +1,12 @@
 import { prisma } from "@/lib/db";
-import { handleRouteError, json, requireWriteAccess } from "@/lib/http";
+import { handleRouteError, json, requireReadAccess } from "@/lib/http";
 import { getTodayReminder, normalizeReminderMode } from "@/lib/reminders";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    requireWriteAccess(request);
+    requireReadAccess(request);
     const { searchParams } = new URL(request.url);
     const mode = normalizeReminderMode(searchParams.get("mode"));
     const appUrl = searchParams.get("appUrl") ?? undefined;

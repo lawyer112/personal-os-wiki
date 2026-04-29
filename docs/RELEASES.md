@@ -45,6 +45,13 @@ Verify the checksum, extract the archive, then follow:
 
 - [Getting Started](./GETTING_STARTED.md)
 - [Deployment Guide](./DEPLOYMENT.md)
+- [macOS Deployment Guide](./MACOS_DEPLOYMENT.md)
+
+On macOS or Linux:
+
+```bash
+shasum -a 256 -c SHA256SUMS.txt
+```
 
 ### Path B: Clone A Version Tag
 
@@ -78,7 +85,7 @@ Expected output:
 
 ```text
 dist/personal-os-wiki-v0.1.1.zip
-dist/personal-os-wiki-v0.1.1.tar.gz
+dist/personal-os-wiki-v0.1.1.tar.gz   # created when tar is available
 dist/SHA256SUMS.txt
 ```
 
@@ -101,8 +108,12 @@ Manual fallback:
 
 ```bash
 pwsh ./scripts/package-release.ps1 -Version 0.1.1
-gh release create v0.1.1 dist/personal-os-wiki-v0.1.1.zip dist/personal-os-wiki-v0.1.1.tar.gz dist/SHA256SUMS.txt --title v0.1.1 --generate-notes
+gh release create v0.1.1 dist/personal-os-wiki-v0.1.1.zip dist/SHA256SUMS.txt --title v0.1.1 --generate-notes
+gh release upload v0.1.1 dist/personal-os-wiki-v0.1.1.tar.gz --clobber
 ```
+
+Skip the `gh release upload ...tar.gz` command if the packaging script reports
+that `tar` is unavailable and only the zip archive was created.
 
 ## Docker Images
 

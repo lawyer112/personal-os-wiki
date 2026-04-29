@@ -492,7 +492,7 @@ scheduler as the clock, then let Personal OS generate the reminder payload.
 
 ```http
 GET /api/reminders/today?mode=morning
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 Allowed modes:
@@ -550,7 +550,7 @@ needs to actively decide what the user should focus on today.
 
 ```http
 GET /api/planner/today?mode=morning
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 The planner response includes:

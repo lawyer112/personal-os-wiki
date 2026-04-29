@@ -8,7 +8,7 @@ send the Telegram message.
 
 ```http
 GET /api/reminders/today?mode=checkin
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 Modes:
@@ -42,7 +42,7 @@ Use this as the scheduled job instruction:
 
 调用：
 GET <PERSONAL_OS_URL>/api/reminders/today?mode=<mode>
-Header: Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Header: Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 
 如果 reminder.shouldSend=false，不要发 Telegram。
 如果 reminder.shouldSend=true，把 reminder.payload.text 发给我。

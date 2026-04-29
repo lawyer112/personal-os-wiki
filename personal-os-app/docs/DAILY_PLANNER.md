@@ -8,7 +8,7 @@ plan through Telegram.
 
 ```http
 GET /api/planner/today?mode=morning
-Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 Modes:
@@ -36,7 +36,7 @@ Use this scheduled job instruction:
 
 每天定时调用：
 GET <PERSONAL_OS_URL>/api/planner/today?mode=<mode>
-Header: Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Header: Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 
 mode 规则：
 - 早上用 morning

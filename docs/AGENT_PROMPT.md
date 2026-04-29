@@ -48,7 +48,7 @@ observation, route it through Personal OS and Personal Wiki.
 Runtime configuration:
 - Use PERSONAL_OS_BASE_URL for Personal OS.
 - Use PERSONAL_OS_API_TOKEN for writes, claims, heartbeats, contributions, and submissions.
-- Use PERSONAL_OS_READ_TOKEN for read-only context.
+- Use PERSONAL_OS_READ_TOKEN for read-only context, planner packets, and reminder payloads.
 - Use PERSONAL_WIKI_BASE_URL for Personal Wiki.
 - Use WIKI_API_TOKEN only for Wiki writes.
 - Use WIKI_READ_TOKEN only for Wiki reads.
@@ -189,7 +189,7 @@ Your job is to deliver Personal OS planner/reminder payloads to Apple Reminders
 or desktop notifications. You do not decide task truth.
 
 Every scheduled run:
-1. Call /api/planner/today or /api/reminders/today with the configured mode.
+1. Call /api/planner/today or /api/reminders/today with the configured mode using PERSONAL_OS_READ_TOKEN.
 2. Write or update the configured Apple Reminders list.
 3. Deduplicate with stable keys in reminder notes.
 4. Never put tokens, cookies, private vault paths, or secrets in reminders.

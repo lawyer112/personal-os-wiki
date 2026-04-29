@@ -27,6 +27,8 @@
 
 [English README](./README.md)
 
+[macOS 部署指南](./docs/MACOS_DEPLOYMENT.zh-CN.md)
+
 **项目类型：** 本地优先 Agent 工作台、LLM Wiki 风格 Markdown 知识库、知识图谱、任务执行协议。
 
 **让 AI Agent 不再靠聊天记录瞎猜，而是从任务、证据和复核流程里干活。**
