@@ -1,0 +1,46 @@
+name: Feature request
+description: Suggest a feature for the local-first agent workbench.
+title: "feature: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: user-pain
+    attributes:
+      label: What user pain does this solve?
+      description: Start with the workflow problem, not the implementation.
+      placeholder: "When I ask an agent to..., it currently..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: What should Personal OS, Personal Wiki, or an agent do differently?
+    validations:
+      required: true
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Layer
+      options:
+        - Personal OS work state
+        - Personal Wiki knowledge layer
+        - Agent protocol
+        - Notification adapter
+        - Deployment/release
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: What evidence would prove this feature works?
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Boundary check
+      options:
+        - label: This does not require publishing private vaults, tokens, or real task history.
+          required: true

@@ -1,0 +1,77 @@
+<svg width="1200" height="520" viewBox="0 0 1200 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ecfeff"/>
+      <stop offset="0.55" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#fff7ed"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="22" flood-color="#0f172a" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="520" rx="34" fill="url(#bg)"/>
+  <circle cx="160" cy="82" r="130" fill="#99f6e4" opacity="0.35"/>
+  <circle cx="1010" cy="438" r="170" fill="#bfdbfe" opacity="0.45"/>
+  <text x="64" y="72" fill="#0f172a" font-family="Inter, ui-sans-serif, system-ui" font-size="34" font-weight="850">60 秒证据：从碎碎念到可复核的 Agent 工作</text>
+  <text x="64" y="112" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="18">虚构 demo 数据展示真实闭环：输入、知识、任务、认领、证据、复核、提醒。</text>
+
+  <g filter="url(#shadow)">
+    <rect x="64" y="158" width="205" height="230" rx="24" fill="white"/>
+    <rect x="86" y="184" width="70" height="24" rx="12" fill="#ccfbf1"/>
+    <text x="103" y="201" fill="#0f766e" font-family="Inter, ui-sans-serif, system-ui" font-size="12" font-weight="800">收集</text>
+    <text x="86" y="238" fill="#0f172a" font-family="Inter, ui-sans-serif, system-ui" font-size="22" font-weight="820">碎碎念</text>
+    <text x="86" y="272" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">“这个链接可能</text>
+    <text x="86" y="296" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">对 AI 视频项目</text>
+    <text x="86" y="320" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">有用...”</text>
+    <rect x="86" y="344" width="136" height="8" rx="4" fill="#99f6e4"/>
+  </g>
+
+  <path d="M286 272H346" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M336 258L350 272L336 286" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g filter="url(#shadow)">
+    <rect x="364" y="158" width="205" height="230" rx="24" fill="white"/>
+    <rect x="386" y="184" width="62" height="24" rx="12" fill="#ede9fe"/>
+    <text x="399" y="201" fill="#7c3aed" font-family="Inter, ui-sans-serif, system-ui" font-size="12" font-weight="800">知识</text>
+    <text x="386" y="238" fill="#0f172a" font-family="Inter, ui-sans-serif, system-ui" font-size="22" font-weight="820">Wiki 图谱</text>
+    <text x="386" y="272" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">Markdown 笔记</text>
+    <text x="386" y="296" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">标签、概念、</text>
+    <text x="386" y="320" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">双链和图谱</text>
+    <circle cx="408" cy="354" r="7" fill="#8b5cf6"/>
+    <circle cx="446" cy="334" r="7" fill="#22c55e"/>
+    <circle cx="484" cy="356" r="7" fill="#f97316"/>
+    <path d="M415 350L439 338M453 338L477 352" stroke="#c4b5fd" stroke-width="3"/>
+  </g>
+
+  <path d="M586 272H646" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M636 258L650 272L636 286" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g filter="url(#shadow)">
+    <rect x="664" y="158" width="205" height="230" rx="24" fill="white"/>
+    <rect x="686" y="184" width="64" height="24" rx="12" fill="#dbeafe"/>
+    <text x="701" y="201" fill="#2563eb" font-family="Inter, ui-sans-serif, system-ui" font-size="12" font-weight="800">任务</text>
+    <text x="686" y="238" fill="#0f172a" font-family="Inter, ui-sans-serif, system-ui" font-size="22" font-weight="820">Agent 认领</text>
+    <text x="686" y="272" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">拉任务、认领</text>
+    <text x="686" y="296" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">工作中心跳</text>
+    <text x="686" y="320" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">持续推进</text>
+    <rect x="686" y="344" width="128" height="10" rx="5" fill="#bfdbfe"/>
+    <rect x="686" y="344" width="82" height="10" rx="5" fill="#2563eb"/>
+  </g>
+
+  <path d="M886 272H946" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M936 258L950 272L936 286" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g filter="url(#shadow)">
+    <rect x="964" y="158" width="172" height="230" rx="24" fill="white"/>
+    <rect x="986" y="184" width="76" height="24" rx="12" fill="#ffedd5"/>
+    <text x="1000" y="201" fill="#ea580c" font-family="Inter, ui-sans-serif, system-ui" font-size="12" font-weight="800">复核</text>
+    <text x="986" y="238" fill="#0f172a" font-family="Inter, ui-sans-serif, system-ui" font-size="22" font-weight="820">提交证据</text>
+    <text x="986" y="272" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">产物链接</text>
+    <text x="986" y="296" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">复核入口</text>
+    <text x="986" y="320" fill="#475569" font-family="Inter, ui-sans-serif, system-ui" font-size="15">Mac 提醒</text>
+    <path d="M990 352L1014 374L1068 330" stroke="#22c55e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <rect x="64" y="430" width="1072" height="46" rx="23" fill="#0f172a"/>
+  <text x="92" y="459" fill="white" font-family="Inter, ui-sans-serif, system-ui" font-size="18" font-weight="780">让 AI Agent 不再靠聊天记录瞎猜，而是从任务、证据和复核流程里干活。</text>
+</svg>

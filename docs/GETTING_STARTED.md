@@ -10,13 +10,35 @@ capture -> wiki memory -> task -> agent claim -> evidence -> review
 The demo uses fake seed data only. Do not put real vaults, private server
 inventories, tokens, or task history into Git.
 
+## Fastest Path
+
+If you only want to see the product loop, run the root demo:
+
+```bash
+git clone https://github.com/lawyer112/personal-os-wiki.git
+cd personal-os-wiki
+docker compose up -d --build
+```
+
+Open:
+
+```text
+Personal OS:   http://localhost:3000/auth/read
+Read token:    demo-read-token
+
+Personal Wiki: http://localhost:3422/auth/read
+Read token:    demo-wiki-read-token
+```
+
+This path starts Postgres, Personal Wiki, Personal OS, and fake seed data.
+
 ## Prerequisites
 
 - Git
 - Docker and Docker Compose
-- Node.js 24 or newer
-- npm
-- Python 3.11 or newer
+- Node.js 24 or newer only for local app development
+- npm only for local app development
+- Python 3.11 or newer only for running Personal Wiki without Docker
 
 For host sizing, ports, production-style compose, reverse proxy guidance, and
 backup requirements, read the [Deployment Guide](./DEPLOYMENT.md).
@@ -28,7 +50,7 @@ git clone https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 
-## 2. Start Personal Wiki
+## 2. Start Personal Wiki Manually
 
 ```bash
 cd personal-wiki
@@ -46,7 +68,7 @@ The default `.env.example` enables read authentication and write
 authentication. Before exposing this service beyond your own machine, replace
 the placeholder tokens with long random values.
 
-## 3. Start Personal OS
+## 3. Start Personal OS Manually
 
 ```bash
 cd ../personal-os-app

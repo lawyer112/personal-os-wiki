@@ -11,6 +11,10 @@ README.
 - [部署指南](./DEPLOYMENT.zh-CN.md)
 - [Releases and packages](./RELEASES.md)
 - [版本发布与安装包](./RELEASES.zh-CN.md)
+- [Comparison](./COMPARISON.md)
+- [对比文](./COMPARISON.zh-CN.md)
+- [Launch playbook](./LAUNCH_PLAYBOOK.md)
+- [Launch 手册](./LAUNCH_PLAYBOOK.zh-CN.md)
 - [Architecture](./ARCHITECTURE.md)
 - [架构说明](./ARCHITECTURE.zh-CN.md)
 - [Why not just long-term memory?](./WHY_NOT_LONG_TERM_MEMORY.md)
@@ -44,14 +48,17 @@ README.
 - [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Security policy](../SECURITY.md)
 - [Repository permissions](./PERMISSIONS.md)
+- [Launch playbook](./LAUNCH_PLAYBOOK.md)
+- [Launch 手册](./LAUNCH_PLAYBOOK.zh-CN.md)
 
 ## Reading Order For Reviewers
 
 1. Read the root [`README.md`](../README.md) or [`README.zh-CN.md`](../README.zh-CN.md).
-2. Run or skim the Getting Started guide.
-3. Read the architecture document in your preferred language.
-4. Read the Agent guide if you are reviewing task execution or autonomous
+2. Run `docker compose up -d --build` or skim the Getting Started guide.
+3. Read the comparison document if you are judging positioning.
+4. Read the architecture document in your preferred language.
+5. Read the Agent guide if you are reviewing task execution or autonomous
    workers.
-5. Read `DATA_SAFETY.md` before connecting real notes, tasks, or server data.
-6. Read `OPEN_SOURCE_RELEASE.md` before publishing or making the repository
+6. Read `DATA_SAFETY.md` before connecting real notes, tasks, or server data.
+7. Read `OPEN_SOURCE_RELEASE.md` before publishing or making the repository
    public.

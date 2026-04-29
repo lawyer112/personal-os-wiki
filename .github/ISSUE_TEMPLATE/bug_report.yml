@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a reproducible problem with fake or sanitized data.
+title: "bug: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Personal OS + Personal Wiki.
+        Do not paste private vault content, tokens, server inventory, or real task history.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the visible behavior and why it is wrong.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Use fake data or the demo seed where possible.
+      placeholder: |
+        1. Run ...
+        2. Open ...
+        3. Click ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Personal OS
+        - Personal Wiki
+        - Agent protocol
+        - Docker/demo setup
+        - Documentation
+        - Security/auth
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Docker/Node/Python versions, browser, and deployment mode.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Data safety
+      options:
+        - label: I removed private data, tokens, cookies, server inventory, and real task history.
+          required: true

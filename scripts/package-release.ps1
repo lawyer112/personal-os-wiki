@@ -131,6 +131,7 @@ $IncludeItems = @(
   ".gitignore",
   "CHANGELOG.md",
   "CONTRIBUTING.md",
+  "docker-compose.yml",
   "LICENSE",
   "OPEN_SOURCE_RELEASE.md",
   "README.md",

@@ -9,6 +9,7 @@ data/
 logs/
 run/
 dist/
+metrics/
 *.pid
 *.log
 *.zip

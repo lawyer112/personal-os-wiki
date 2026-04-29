@@ -1,0 +1,92 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: personal_os
+      POSTGRES_PASSWORD: demo-postgres-password
+      POSTGRES_DB: personal_os
+    ports:
+      - "127.0.0.1:54329:5432"
+    volumes:
+      - personal_os_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U personal_os -d personal_os"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  personal-wiki:
+    build:
+      context: ./personal-wiki
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    environment:
+      WIKI_API_TOKEN: demo-wiki-write-token
+      WIKI_READ_TOKEN: demo-wiki-read-token
+      WIKI_REQUIRE_API_READ_AUTH: "1"
+      WIKI_REQUIRE_PAGE_READ_AUTH: "1"
+      WIKI_TRUST_LOCALHOST_READ_AUTH: "0"
+      WIKI_ALLOW_UNAUTHENTICATED_WRITE: "0"
+      WIKI_SITE_TITLE: Personal Wiki Demo
+      WIKI_DATA_DIR: /data
+      WIKI_HOST: 0.0.0.0
+      WIKI_PORT: "3422"
+    ports:
+      - "127.0.0.1:3422:3422"
+    volumes:
+      - personal_wiki_data:/data
+
+  personal-os-seed:
+    image: personal-os-app:demo
+    build:
+      context: ./personal-os-app
+      args:
+        NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public
+      PERSONAL_OS_API_TOKEN: demo-write-token
+      PERSONAL_OS_READ_TOKEN: demo-read-token
+      WIKI_READ_TOKEN: demo-wiki-read-token
+      WIKI_API_TOKEN: demo-wiki-write-token
+      PERSONAL_OS_VAULT_DIR: ./data/vault
+      PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_WIKI_URL: http://localhost:3422
+    command: sh -c "npm run prisma:deploy && npm run prisma:seed"
+    restart: "no"
+
+  personal-os:
+    image: personal-os-app:demo
+    build:
+      context: ./personal-os-app
+      args:
+        NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmjs.org}
+    depends_on:
+      personal-os-seed:
+        condition: service_completed_successfully
+      personal-wiki:
+        condition: service_started
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public
+      PERSONAL_OS_API_TOKEN: demo-write-token
+      PERSONAL_OS_READ_TOKEN: demo-read-token
+      WIKI_READ_TOKEN: demo-wiki-read-token
+      WIKI_API_TOKEN: demo-wiki-write-token
+      PERSONAL_OS_VAULT_DIR: ./data/vault
+      PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_WIKI_URL: http://localhost:3422
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - personal_os_data:/app/data
+
+volumes:
+  personal_os_postgres:
+  personal_os_data:
+  personal_wiki_data:

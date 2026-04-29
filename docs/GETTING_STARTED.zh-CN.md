@@ -8,13 +8,35 @@
 
 demo 只使用虚构数据。不要把真实 vault、服务器台账、token、任务历史提交到 Git。
 
+## 最快路径
+
+如果你只是想先看到产品闭环，直接跑根目录 demo：
+
+```bash
+git clone https://github.com/lawyer112/personal-os-wiki.git
+cd personal-os-wiki
+docker compose up -d --build
+```
+
+打开：
+
+```text
+Personal OS:   http://localhost:3000/auth/read
+Read token:    demo-read-token
+
+Personal Wiki: http://localhost:3422/auth/read
+Read token:    demo-wiki-read-token
+```
+
+这条路径会启动 Postgres、Personal Wiki、Personal OS，并写入虚构 seed 数据。
+
 ## 前置要求
 
 - Git
 - Docker 和 Docker Compose
-- Node.js 24 或更新版本
-- npm
-- Python 3.11 或更新版本
+- Node.js 24 或更新版本，仅本地开发 Personal OS 时需要
+- npm，仅本地开发 Personal OS 时需要
+- Python 3.11 或更新版本，仅不使用 Docker 跑 Personal Wiki 时需要
 
 如果要判断机器配置、端口、生产 compose、反向代理和备份要求，请先看
 [部署指南](./DEPLOYMENT.zh-CN.md)。
@@ -26,7 +48,7 @@ git clone https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 
-## 2. 启动 Personal Wiki
+## 2. 手动启动 Personal Wiki
 
 ```bash
 cd personal-wiki
@@ -42,7 +64,7 @@ http://localhost:3422
 
 `.env.example` 默认开启读写鉴权。只要你准备把服务暴露到本机之外，就应该把里面的占位 token 换成长随机值。
 
-## 3. 启动 Personal OS
+## 3. 手动启动 Personal OS
 
 ```bash
 cd ../personal-os-app
