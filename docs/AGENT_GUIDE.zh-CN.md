@@ -2,6 +2,9 @@
 
 这份文档是给 Hermes、Codex、OpenClaw、定时 worker 或任何其他 Agent 看的。只要它要使用 Personal OS + Personal Wiki，就应该按这份手册工作。
 
+如果你需要一段可以直接复制到 system/developer prompt 的提示词，先用
+[Agent 提示词模板](./AGENT_PROMPT.zh-CN.md)，再把这份手册作为详细协议参考。
+
 ## 第一原则
 
 不要只总结。要把有价值的输入变成：

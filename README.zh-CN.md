@@ -16,6 +16,7 @@
   <a href="./docs/GETTING_STARTED.zh-CN.md"><img src="https://img.shields.io/badge/快速上手-guide-1d4ed8?style=for-the-badge" alt="快速上手"></a>
   <a href="./docs/DEPLOYMENT.zh-CN.md"><img src="https://img.shields.io/badge/部署要求-requirements-0f766e?style=for-the-badge" alt="部署要求"></a>
   <a href="./docs/AGENT_GUIDE.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20手册-protocol-7c3aed?style=for-the-badge" alt="Agent 手册"></a>
+  <a href="./docs/AGENT_PROMPT.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20提示词-copyable-9333ea?style=for-the-badge" alt="Agent 提示词"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
   <a href="./docs/DATA_SAFETY.zh-CN.md"><img src="https://img.shields.io/badge/数据安全-local--first-334155?style=for-the-badge" alt="数据安全"></a>
 </p>
@@ -223,6 +224,7 @@ Agent Guide   = 可移植操作规则
 
 - [架构说明](./docs/ARCHITECTURE.zh-CN.md)
 - [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)
+- [可复制 Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md)
 - [Hermes API 合约](./personal-os-app/docs/HERMES_API.md)
 
 ## Agent 协议
@@ -307,7 +309,7 @@ curl -X POST \
 | 本地跑起来 | [快速上手](./docs/GETTING_STARTED.zh-CN.md) |
 | 查看部署要求 | [部署指南](./docs/DEPLOYMENT.zh-CN.md) |
 | 理解架构 | [架构说明](./docs/ARCHITECTURE.zh-CN.md) |
-| 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
+| 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)、[Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
 | 使用 Personal OS | [Personal OS README](./personal-os-app/README.md) |
 | 使用 Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) 和 [Wiki 使用手册](./personal-wiki/docs/USAGE.md) |
 | 安全发布 | [Open source release process](./OPEN_SOURCE_RELEASE.md) |

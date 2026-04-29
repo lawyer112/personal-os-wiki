@@ -13,6 +13,8 @@ README.
 - [架构说明](./ARCHITECTURE.zh-CN.md)
 - [Agent guide](./AGENT_GUIDE.md)
 - [Agent 使用手册](./AGENT_GUIDE.zh-CN.md)
+- [Agent prompt](./AGENT_PROMPT.md)
+- [Agent 提示词](./AGENT_PROMPT.zh-CN.md)
 - [API overview](./API_OVERVIEW.md)
 - [Data safety](./DATA_SAFETY.md)
 - [数据安全](./DATA_SAFETY.zh-CN.md)
