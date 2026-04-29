@@ -167,20 +167,20 @@ Remove-Item -Recurse -Force personal-os-app\node_modules, personal-os-app\.next
 Create a local release package:
 
 ```powershell
-pwsh ./scripts/package-release.ps1 -Version 0.1.0
+pwsh ./scripts/package-release.ps1 -Version 0.1.1
 ```
 
 On Windows PowerShell without `pwsh`:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.1.0
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.1.1
 ```
 
 Expected output:
 
 ```text
-dist/personal-os-wiki-v0.1.0.zip
-dist/personal-os-wiki-v0.1.0.tar.gz
+dist/personal-os-wiki-v0.1.1.zip
+dist/personal-os-wiki-v0.1.1.tar.gz
 dist/SHA256SUMS.txt
 ```
 
@@ -270,15 +270,15 @@ Release flow:
 Versioned release commands:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 Manual fallback if GitHub Actions is unavailable:
 
 ```bash
-pwsh ./scripts/package-release.ps1 -Version 0.1.0
-gh release create v0.1.0 dist/personal-os-wiki-v0.1.0.zip dist/personal-os-wiki-v0.1.0.tar.gz dist/SHA256SUMS.txt --title v0.1.0 --generate-notes
+pwsh ./scripts/package-release.ps1 -Version 0.1.1
+gh release create v0.1.1 dist/personal-os-wiki-v0.1.1.zip dist/personal-os-wiki-v0.1.1.tar.gz dist/SHA256SUMS.txt --title v0.1.1 --generate-notes
 ```
 
 To create a clean single-commit repository from this reviewed package on

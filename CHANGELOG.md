@@ -5,6 +5,22 @@ All notable changes to Personal OS + Personal Wiki are tracked here.
 This project uses semantic versioning for public release packages. The root
 `VERSION` file is the release version for the whole repository.
 
+## 0.1.1 - 2026-04-29
+
+Conversion-focused public release.
+
+### Added
+
+- One-command root Docker demo with fake seed data:
+  `docker compose up -d --build`.
+- README first-screen positioning, 60-second visual proof, and clearer
+  English/Chinese onboarding path.
+- Comparison docs for Personal OS vs agent long-term memory vs Obsidian task
+  plugins.
+- Launch playbook and GitHub Traffic snapshot helper.
+- Bug report and feature request issue templates.
+- Five `good first issue` starter tasks for contributors.
+
 ## 0.1.0 - 2026-04-29
 
 Initial public review release.

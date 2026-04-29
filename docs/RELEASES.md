@@ -11,7 +11,7 @@ not yet published as a one-click desktop app or a hosted SaaS service.
   releases.
 - Personal Wiki follows the root version because it is a Python service inside
   the same product package.
-- Git tags use `vX.Y.Z`, for example `v0.1.0`.
+- Git tags use `vX.Y.Z`, for example `v0.1.1`.
 - User-facing changes are recorded in [`CHANGELOG.md`](../CHANGELOG.md).
 
 ## What A Release Contains
@@ -36,8 +36,8 @@ Release archives do not include:
 Download one of the release assets:
 
 ```text
-personal-os-wiki-v0.1.0.zip
-personal-os-wiki-v0.1.0.tar.gz
+personal-os-wiki-v0.1.1.zip
+personal-os-wiki-v0.1.1.tar.gz
 SHA256SUMS.txt
 ```
 
@@ -49,7 +49,7 @@ Verify the checksum, extract the archive, then follow:
 ### Path B: Clone A Version Tag
 
 ```bash
-git clone --branch v0.1.0 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.1.1 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 
@@ -65,20 +65,20 @@ users should prefer a release tag.
 Create local release archives:
 
 ```powershell
-pwsh ./scripts/package-release.ps1 -Version 0.1.0
+pwsh ./scripts/package-release.ps1 -Version 0.1.1
 ```
 
 On Windows PowerShell without PowerShell 7:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.1.0
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.1.1
 ```
 
 Expected output:
 
 ```text
-dist/personal-os-wiki-v0.1.0.zip
-dist/personal-os-wiki-v0.1.0.tar.gz
+dist/personal-os-wiki-v0.1.1.zip
+dist/personal-os-wiki-v0.1.1.tar.gz
 dist/SHA256SUMS.txt
 ```
 
@@ -90,8 +90,8 @@ private `.env` files, and writes SHA256 checksums.
 After the release checklist is clean:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 The `Release` workflow verifies the app, packages the source archives, and
@@ -100,8 +100,8 @@ creates a GitHub Release with the generated artifacts.
 Manual fallback:
 
 ```bash
-pwsh ./scripts/package-release.ps1 -Version 0.1.0
-gh release create v0.1.0 dist/personal-os-wiki-v0.1.0.zip dist/personal-os-wiki-v0.1.0.tar.gz dist/SHA256SUMS.txt --title v0.1.0 --generate-notes
+pwsh ./scripts/package-release.ps1 -Version 0.1.1
+gh release create v0.1.1 dist/personal-os-wiki-v0.1.1.zip dist/personal-os-wiki-v0.1.1.tar.gz dist/SHA256SUMS.txt --title v0.1.1 --generate-notes
 ```
 
 ## Docker Images
