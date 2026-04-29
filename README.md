@@ -17,6 +17,7 @@
   <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
   <a href="./docs/DEPLOYMENT.md"><img src="https://img.shields.io/badge/Deployment-requirements-0f766e?style=for-the-badge" alt="Deployment requirements"></a>
   <a href="./docs/AGENT_GUIDE.md"><img src="https://img.shields.io/badge/Agent%20Guide-protocol-7c3aed?style=for-the-badge" alt="Agent Guide"></a>
+  <a href="./docs/AGENT_PROMPT.md"><img src="https://img.shields.io/badge/Agent%20Prompt-copyable-9333ea?style=for-the-badge" alt="Agent Prompt"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-overview-f97316?style=for-the-badge" alt="API Overview"></a>
   <a href="./docs/DATA_SAFETY.md"><img src="https://img.shields.io/badge/Data%20Safety-local--first-334155?style=for-the-badge" alt="Data Safety"></a>
 </p>
@@ -271,6 +272,7 @@ Read more:
 
 - [Architecture](./docs/ARCHITECTURE.md)
 - [Agent Guide](./docs/AGENT_GUIDE.md)
+- [Copyable Agent Prompt](./docs/AGENT_PROMPT.md)
 - [Hermes API contract](./personal-os-app/docs/HERMES_API.md)
 
 ## Agent Protocol
@@ -356,7 +358,7 @@ Read the full release checklist:
 | Run it locally | [Getting Started](./docs/GETTING_STARTED.md) |
 | Check deployment requirements | [Deployment Guide](./docs/DEPLOYMENT.md) |
 | Understand architecture | [Architecture](./docs/ARCHITECTURE.md) |
-| Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
+| Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [Agent Prompt](./docs/AGENT_PROMPT.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
 | Operate Personal OS | [Personal OS README](./personal-os-app/README.md) |
 | Operate Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) and [Wiki usage](./personal-wiki/docs/USAGE.md) |
 | Understand data safety | [Data safety](./docs/DATA_SAFETY.md) |

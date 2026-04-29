@@ -5,6 +5,10 @@ Personal Wiki. The agent can be Hermes, Codex, OpenClaw, a scheduled worker, or
 a model running behind an OpenAI-compatible API. The product contract is the
 same.
 
+If you need a copyable system/developer prompt, start with
+[Agent Prompt Template](./AGENT_PROMPT.md), then use this guide as the detailed
+protocol reference.
+
 ## Prime Directive
 
 Do not merely summarize. Convert useful input into durable knowledge, concrete
