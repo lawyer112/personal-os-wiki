@@ -132,8 +132,8 @@ This prevents two bad patterns:
 ## Notifications
 
 Personal OS generates notification payloads; it does not have to send them
-itself. A Telegram, Feishu, email, or desktop notification worker can read a
-payload and deliver it.
+itself. A Telegram, Feishu, Apple Reminders on a Mac, email, or desktop
+notification worker can read a payload and deliver it.
 
 This keeps the product boundary clean:
 
@@ -141,6 +141,28 @@ This keeps the product boundary clean:
 Personal OS decides what should be said.
 Notification adapters decide where and how to send it.
 ```
+
+Apple Reminders and similar apps should stay adapters. They can mirror or nudge
+from `/api/reminders/today` and `/api/planner/today`, but Personal OS remains the
+task source of truth.
+
+## Long-Term Memory Boundary
+
+Built-in agent memory is useful for stable preferences and durable operating
+rules. It is not the right place for task leases, review decisions, reminder
+payloads, or evidence trails.
+
+The product split is:
+
+```text
+Agent memory  = remembers the person
+Personal OS   = tracks the work
+Personal Wiki = preserves the evidence
+Adapters      = nudge the human
+```
+
+For the detailed comparison, see
+[`WHY_NOT_LONG_TERM_MEMORY.md`](./WHY_NOT_LONG_TERM_MEMORY.md).
 
 ## Security Model
 

@@ -37,10 +37,15 @@ private machine = real memory and real execution state
 Use this package as the public boundary:
 
 ```text
-20260426-github-publish/
+personal-os-wiki-public-clean/
   personal-os-app/
   personal-wiki/
+  docs/
+  scripts/
   README.md
+  README.zh-CN.md
+  VERSION
+  CHANGELOG.md
   OPEN_SOURCE_RELEASE.md
 ```
 
@@ -133,6 +138,13 @@ cd ../personal-wiki
 python -m py_compile api/server.py
 ```
 
+Check release metadata:
+
+```bash
+cat VERSION
+rg -n "## 0\\.1\\.0|versioned release|Release" CHANGELOG.md docs/RELEASES.md docs/RELEASES.zh-CN.md README.md README.zh-CN.md
+```
+
 Run Docker image checks from the package root when Docker is available:
 
 ```bash
@@ -151,6 +163,29 @@ On Windows PowerShell:
 ```powershell
 Remove-Item -Recurse -Force personal-os-app\node_modules, personal-os-app\.next
 ```
+
+Create a local release package:
+
+```powershell
+pwsh ./scripts/package-release.ps1 -Version 0.1.0
+```
+
+On Windows PowerShell without `pwsh`:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.1.0
+```
+
+Expected output:
+
+```text
+dist/personal-os-wiki-v0.1.0.zip
+dist/personal-os-wiki-v0.1.0.tar.gz
+dist/SHA256SUMS.txt
+```
+
+Do not commit `dist/`. It is ignored by Git and should be uploaded only as a
+GitHub Release asset.
 
 Run a final text scan:
 
@@ -227,7 +262,24 @@ Release flow:
 7. Review Git diff manually.
 8. Merge to `public/main`.
 9. Push to GitHub.
-10. Tag a release only after a clean clone can run the quickstart.
+10. Update `VERSION` and `CHANGELOG.md`.
+11. Run `pwsh ./scripts/package-release.ps1 -Version <version>`.
+12. Tag a release only after a clean clone can run the quickstart.
+13. Push `v<version>` to GitHub so the Release workflow publishes archives.
+
+Versioned release commands:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Manual fallback if GitHub Actions is unavailable:
+
+```bash
+pwsh ./scripts/package-release.ps1 -Version 0.1.0
+gh release create v0.1.0 dist/personal-os-wiki-v0.1.0.zip dist/personal-os-wiki-v0.1.0.tar.gz dist/SHA256SUMS.txt --title v0.1.0 --generate-notes
+```
 
 To create a clean single-commit repository from this reviewed package on
 Windows:

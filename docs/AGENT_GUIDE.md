@@ -171,6 +171,23 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 Agents submit. Reviewers approve. The worker should not mark its own work done
 unless the system explicitly allows that policy.
 
+## Notification Adapter Agents
+
+Some agents do not execute tasks. They deliver nudges to real user surfaces such
+as Telegram, Feishu, Apple Reminders on a Mac, email, or desktop notifications.
+
+Adapter agents must follow this boundary:
+
+- Read `/api/reminders/today` or `/api/planner/today`.
+- Deliver the returned payload to the configured surface.
+- Deduplicate messages or reminders using stable markers.
+- Do not mark tasks done from notification delivery or reminder completion.
+- Do not create tasks from notification text unless the user explicitly asks.
+- Report missing or duplicated destination lists/channels instead of guessing.
+
+For Apple Reminders and Mac-specific behavior, see
+[`MAC_AGENT_ADAPTER.md`](./MAC_AGENT_ADAPTER.md).
+
 ## Writing Wiki Notes
 
 Wiki notes should be useful to both humans and agents.

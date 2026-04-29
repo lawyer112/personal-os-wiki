@@ -12,6 +12,10 @@ The recommended public template is Docker Compose on a Linux host, bound to
 localhost behind an authenticated reverse proxy. Do not expose the raw app ports
 directly to the internet.
 
+For normal installs, start from a fixed GitHub Release or version tag. Tracking
+`main` is for contributors and reviewers, not for stable personal deployments.
+See [Releases and packages](./RELEASES.md).
+
 ## What Gets Deployed
 
 | Component | Runtime | Default port | Persistent data |
@@ -84,6 +88,7 @@ WIKI_API_TOKEN="replace-with-a-long-random-write-token"
 WIKI_READ_TOKEN="replace-with-a-long-random-read-token"
 WIKI_REQUIRE_API_READ_AUTH="1"
 WIKI_REQUIRE_PAGE_READ_AUTH="1"
+WIKI_TRUST_LOCALHOST_READ_AUTH="0"
 WIKI_ALLOW_UNAUTHENTICATED_WRITE="0"
 WIKI_SITE_TITLE="Personal Wiki"
 WIKI_HOST="0.0.0.0"
@@ -106,6 +111,24 @@ Use separate read and write tokens. Do not reuse the Wiki write token for browse
 handoff or read-only agent access.
 
 ## Quick Deploy Paths
+
+### Start from a release package
+
+Download and extract a release archive:
+
+```text
+personal-os-wiki-v0.1.0.zip
+personal-os-wiki-v0.1.0.tar.gz
+```
+
+Or clone a fixed tag:
+
+```bash
+git clone --branch v0.1.0 https://github.com/lawyer112/personal-os-wiki.git
+cd personal-os-wiki
+```
+
+Then continue with the Wiki-only, full local, or production-like path below.
 
 ### Wiki-only Docker install
 
@@ -157,6 +180,8 @@ proxy in front of it rather than opening the container port directly.
 - Replace every `replace-with-*` and `change-me` value.
 - Keep `.env`, Wiki vault data, Postgres data, logs, and screenshots out of Git.
 - Keep services on localhost unless a reverse proxy provides TLS and auth.
+- Keep `WIKI_TRUST_LOCALHOST_READ_AUTH=0` unless every localhost caller is trusted;
+  same-host reverse proxies also appear as localhost to the Wiki service.
 - Use separate read/write tokens for Personal OS and Personal Wiki.
 - Back up Postgres and Wiki data before upgrades.
 - Test restore, not only backup creation.

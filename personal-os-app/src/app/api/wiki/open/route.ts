@@ -1,38 +1,44 @@
 import { personalOsUrl, wikiUrl } from "@/lib/app-config";
+import { handleRouteError, requireReadAccess } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const next = normalizeWikiNext(url.searchParams.get("next"));
-  const token = process.env.WIKI_READ_TOKEN;
+  try {
+    requireReadAccess(request);
+    const url = new URL(request.url);
+    const next = normalizeWikiNext(url.searchParams.get("next"));
+    const token = process.env.WIKI_READ_TOKEN;
 
-  if (!token) {
+    if (!token) {
+      return Response.json(
+        { ok: false, error: "WIKI_READ_TOKEN is not configured" },
+        { status: 503 },
+      );
+    }
+
+    const targetUrl = wikiUrl(next);
+    if (canShareCookie(personalOsUrl, targetUrl) || canShareCookie(request.url, targetUrl)) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: targetUrl,
+          "Set-Cookie": readCookieHeader(token, targetUrl),
+        },
+      });
+    }
+
     return Response.json(
-      { ok: false, error: "WIKI_READ_TOKEN is not configured" },
-      { status: 503 },
-    );
-  }
-
-  const targetUrl = wikiUrl(next);
-  if (canShareCookie(personalOsUrl, targetUrl) || canShareCookie(request.url, targetUrl)) {
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: targetUrl,
-        "Set-Cookie": readCookieHeader(token, targetUrl),
+      {
+        ok: false,
+        error:
+          "Personal OS and Personal Wiki must share a hostname for browser handoff. Open Wiki directly or use a same-host reverse proxy.",
       },
-    });
+      { status: 409 },
+    );
+  } catch (error) {
+    return handleRouteError(error);
   }
-
-  return Response.json(
-    {
-      ok: false,
-      error:
-        "Personal OS and Personal Wiki must share a hostname for browser handoff. Open Wiki directly or use a same-host reverse proxy.",
-    },
-    { status: 409 },
-  );
 }
 
 function normalizeWikiNext(value: string | null) {

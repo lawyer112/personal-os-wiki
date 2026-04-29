@@ -7,8 +7,9 @@ files must stay outside Git.
 
 ## Supported Versions
 
-Security fixes target the latest `main` branch until the project starts cutting
-versioned releases.
+Security fixes target the latest public release and the latest `main` branch.
+Release packages are tagged as `vX.Y.Z`; see [`VERSION`](./VERSION) and
+[`CHANGELOG.md`](./CHANGELOG.md).
 
 ## Deployment Boundary
 

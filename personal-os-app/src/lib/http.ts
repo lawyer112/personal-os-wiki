@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { ZodError, type ZodType } from "zod";
+import { configuredReadTokens, requestHasReadAccess } from "@/lib/auth";
 
 export async function readJson<T>(request: Request, schema: ZodType<T>) {
   let body: unknown;
@@ -57,10 +58,7 @@ export function requireWriteAccess(request: Request) {
 }
 
 export function requireReadAccess(request: Request) {
-  const tokens = [
-    process.env.PERSONAL_OS_READ_TOKEN,
-    process.env.PERSONAL_OS_API_TOKEN,
-  ].filter((token): token is string => Boolean(token && token !== "change-me"));
+  const tokens = configuredReadTokens();
 
   if (tokens.length === 0) {
     if (process.env.NODE_ENV !== "production") {
@@ -72,13 +70,7 @@ export function requireReadAccess(request: Request) {
     );
   }
 
-  const header = request.headers.get("authorization") ?? "";
-  if (!header.startsWith("Bearer ")) {
-    throw new HttpError(401, "Missing or invalid API token");
-  }
-
-  const provided = header.slice("Bearer ".length);
-  if (!tokens.some((token) => token === provided)) {
+  if (!requestHasReadAccess(request.headers, tokens)) {
     throw new HttpError(401, "Missing or invalid API token");
   }
 }

@@ -165,6 +165,21 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 
 执行 Agent 提交，Reviewer 决定是否通过。除非策略明确允许，否则执行 Agent 不应该把自己的任务直接标成 done。
 
+## 通知 Adapter Agent
+
+有些 Agent 不负责执行任务，只负责把提醒投递到用户真正会看的地方，例如 Telegram、飞书、Mac 上的 Apple 提醒事项、邮件或桌面通知。
+
+Adapter Agent 必须遵守这个边界：
+
+- 读取 `/api/reminders/today` 或 `/api/planner/today`。
+- 把返回的 payload 投递到配置好的软件。
+- 用稳定 marker 去重，避免重复刷提醒。
+- 不能因为通知已投递或 Apple 提醒事项被勾掉，就把任务标记为 done。
+- 不能从通知文案自动创建任务，除非用户明确要求。
+- 如果目标列表或频道不存在、重名或权限不足，停止并报告，不要猜。
+
+Apple 提醒事项和 Mac 侧具体行为见：[Mac Agent Adapter 操作手册](./MAC_AGENT_ADAPTER.zh-CN.md)。
+
 ## Wiki 笔记应该怎么写
 
 Wiki 笔记要同时服务人和 Agent。最小可用结构：

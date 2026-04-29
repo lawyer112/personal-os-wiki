@@ -5,6 +5,7 @@
 </p>
 
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-0.1.0-0369a1)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#data-safety)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-protocol)
@@ -16,6 +17,9 @@
   <a href="./README.zh-CN.md"><img src="https://img.shields.io/badge/中文说明-完整中文版-dc2626?style=for-the-badge" alt="中文说明"></a>
   <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
   <a href="./docs/DEPLOYMENT.md"><img src="https://img.shields.io/badge/Deployment-requirements-0f766e?style=for-the-badge" alt="Deployment requirements"></a>
+  <a href="./docs/RELEASES.md"><img src="https://img.shields.io/badge/Releases-versioned%20packages-0369a1?style=for-the-badge" alt="Versioned releases"></a>
+  <a href="./docs/WHY_NOT_LONG_TERM_MEMORY.md"><img src="https://img.shields.io/badge/Not%20Just-Memory-f59e0b?style=for-the-badge" alt="Not just long-term memory"></a>
+  <a href="./docs/MAC_AGENT_ADAPTER.md"><img src="https://img.shields.io/badge/Mac%20Adapter-reminders-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
   <a href="./docs/AGENT_GUIDE.md"><img src="https://img.shields.io/badge/Agent%20Guide-protocol-7c3aed?style=for-the-badge" alt="Agent Guide"></a>
   <a href="./docs/AGENT_PROMPT.md"><img src="https://img.shields.io/badge/Agent%20Prompt-copyable-9333ea?style=for-the-badge" alt="Agent Prompt"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-overview-f97316?style=for-the-badge" alt="API Overview"></a>
@@ -85,6 +89,24 @@ The project is opinionated: a useful personal knowledge base should not only
 remember what you saw. It should expose what is still unfinished and make it
 easy for another agent to push the work forward.
 
+## Why Not Just Long-Term Memory?
+
+Agent memory remembers the person. Personal OS tracks the work. Personal Wiki
+preserves the evidence.
+
+This distinction matters because long-term memory is a poor source of truth for
+unfinished work. It can remember that something was discussed, but it does not
+usually provide task claims, heartbeats, review decisions, artifacts, reminder
+payloads, or a shared API contract for other agents.
+
+Hermes, Codex, OpenClaw, or a scheduled worker should use built-in memory for
+stable user preferences. They should use this project for external work state:
+Inbox traces, Wiki evidence, task ownership, Today planning, reminder payloads,
+and reviewable outputs.
+
+Read the detailed comparison:
+[`docs/WHY_NOT_LONG_TERM_MEMORY.md`](./docs/WHY_NOT_LONG_TERM_MEMORY.md).
+
 ## What You Can Do With It
 
 | Use case | What happens |
@@ -95,6 +117,12 @@ easy for another agent to push the work forward.
 | Keep a private project brain without leaking data | Source code and fake examples go to Git; real vaults, tokens, server inventories, and task history stay local. |
 | Build a revenue/work dashboard | Projects, today view, unfinished tasks, and review queues make "what moves the project" visible. |
 | Use the Wiki as agent memory | Agents can read curated Markdown context instead of relying on stale chat history. |
+| Push reminders to real surfaces | Hermes or a scheduled worker can call planner/reminder APIs, then send nudges through Telegram, Feishu, Apple Reminders on a Mac, email, or desktop notifications. |
+
+For Mac-side reminder sync, see
+[`docs/MAC_AGENT_ADAPTER.md`](./docs/MAC_AGENT_ADAPTER.md). It defines how a Mac
+worker should call planner/reminder APIs, write Apple Reminders, deduplicate
+items, and avoid treating reminder completion as task completion.
 
 ## Feature Overview
 
@@ -106,6 +134,8 @@ easy for another agent to push the work forward.
   submit, review, block, archive.
 - Read and write token boundaries for agent integrations.
 - Planner and notification payloads for daily guidance.
+- Reminder/planner APIs that external adapters can deliver to Telegram, Feishu,
+  Apple Reminders, email, or desktop notifications.
 - Next.js app backed by PostgreSQL and Prisma.
 
 ### Personal Wiki
@@ -148,6 +178,32 @@ supervision, upgrades, TLS, authentication, and backups.
 
 Read the full deployment guide:
 [`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
+
+## Install A Versioned Release
+
+Normal users should deploy from a tagged release instead of tracking `main`.
+
+Download a GitHub Release asset:
+
+```text
+personal-os-wiki-v0.1.0.zip
+personal-os-wiki-v0.1.0.tar.gz
+SHA256SUMS.txt
+```
+
+Then verify the checksum, extract the archive, copy `.env.example` to `.env`,
+replace the placeholder tokens, and follow the Getting Started or Deployment
+guide.
+
+Developers can also clone a fixed version:
+
+```bash
+git clone --branch v0.1.0 https://github.com/lawyer112/personal-os-wiki.git
+cd personal-os-wiki
+```
+
+Read the release packaging guide:
+[`docs/RELEASES.md`](./docs/RELEASES.md).
 
 ## 10-Minute Demo Path
 
@@ -357,6 +413,7 @@ Read the full release checklist:
 | Understand the product | This README |
 | Run it locally | [Getting Started](./docs/GETTING_STARTED.md) |
 | Check deployment requirements | [Deployment Guide](./docs/DEPLOYMENT.md) |
+| Install a fixed version | [Releases and packages](./docs/RELEASES.md) |
 | Understand architecture | [Architecture](./docs/ARCHITECTURE.md) |
 | Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [Agent Prompt](./docs/AGENT_PROMPT.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
 | Operate Personal OS | [Personal OS README](./personal-os-app/README.md) |
@@ -391,10 +448,11 @@ Read the full [roadmap](./docs/ROADMAP.md).
 
 ## Project Status
 
-This is an early public release. It is useful for builders who want to study or
-adapt a local-first agent workbench, but it is not a hosted SaaS product and it
-does not include your private knowledge base. Treat it as an engine, not as a
-cloud service.
+This is an early public release. The current package version is tracked in
+[`VERSION`](./VERSION) and [`CHANGELOG.md`](./CHANGELOG.md). It is useful for
+builders who want to study or adapt a local-first agent workbench, but it is not
+a hosted SaaS product and it does not include your private knowledge base. Treat
+it as an engine, not as a cloud service.
 
 ## Contributing
 

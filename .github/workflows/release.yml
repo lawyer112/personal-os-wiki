@@ -1,19 +1,20 @@
-name: CI
+name: Release
 
 on:
   push:
-    branches: [main]
-  pull_request:
+    tags:
+      - "v*"
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   DOCKER_BUILDKIT: "1"
 
+permissions:
+  contents: write
+
 jobs:
-  verify:
+  release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     env:
       DATABASE_URL: postgresql://personal_os:replace-with-a-long-random-database-password@localhost:54329/personal_os?schema=public
       PERSONAL_OS_API_TOKEN: dev-test-token-0000
@@ -34,6 +35,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Resolve release version
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          test "$(cat VERSION)" = "$VERSION"
 
       - name: Install Personal OS dependencies
         working-directory: personal-os-app
@@ -63,19 +71,21 @@ jobs:
         working-directory: personal-os-app
         run: npm run build
 
-      - name: Build Personal OS Docker image
-        run: docker build --build-arg NPM_CONFIG_REGISTRY=https://registry.npmjs.org -t personal-os-app:test personal-os-app
-
       - name: Compile Personal Wiki
         run: python -m py_compile personal-wiki/api/server.py
 
-      - name: Build Personal Wiki Docker image
-        run: docker build -f personal-wiki/api/Dockerfile -t personal-wiki:test personal-wiki
-
-      - name: Package release smoke test
+      - name: Package release archives
         shell: pwsh
-        run: ./scripts/package-release.ps1 -Version (Get-Content VERSION -Raw).Trim()
+        run: ./scripts/package-release.ps1 -Version $env:VERSION
 
-      - name: Secret and private-data scan
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          ! rg -n --hidden -S "(AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|ghp_[A-Za-z0-9_]{30,}|github_pat_[A-Za-z0-9_]{40,}|BEGIN (RSA|OPENSSH|EC|DSA|PRIVATE) KEY|mongodb(\+srv)?://|postgres(ql)?://[^\s]*:[^\s]*@[^/]*(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])))" .
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/personal-os-wiki-v${VERSION}.zip" \
+            "dist/personal-os-wiki-v${VERSION}.tar.gz" \
+            "dist/SHA256SUMS.txt" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes

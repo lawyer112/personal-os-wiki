@@ -5,6 +5,7 @@
 </p>
 
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-0.1.0-0369a1)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#数据安全)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-协议)
@@ -15,6 +16,9 @@
   <a href="#10-分钟-demo"><img src="https://img.shields.io/badge/运行%20Demo-10%20分钟-0f766e?style=for-the-badge" alt="运行 Demo"></a>
   <a href="./docs/GETTING_STARTED.zh-CN.md"><img src="https://img.shields.io/badge/快速上手-guide-1d4ed8?style=for-the-badge" alt="快速上手"></a>
   <a href="./docs/DEPLOYMENT.zh-CN.md"><img src="https://img.shields.io/badge/部署要求-requirements-0f766e?style=for-the-badge" alt="部署要求"></a>
+  <a href="./docs/RELEASES.zh-CN.md"><img src="https://img.shields.io/badge/版本发布-Release%20包-0369a1?style=for-the-badge" alt="版本发布"></a>
+  <a href="./docs/WHY_NOT_LONG_TERM_MEMORY.zh-CN.md"><img src="https://img.shields.io/badge/不只是-长期记忆-f59e0b?style=for-the-badge" alt="不只是长期记忆"></a>
+  <a href="./docs/MAC_AGENT_ADAPTER.zh-CN.md"><img src="https://img.shields.io/badge/Mac%20Adapter-提醒事项-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
   <a href="./docs/AGENT_GUIDE.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20手册-protocol-7c3aed?style=for-the-badge" alt="Agent 手册"></a>
   <a href="./docs/AGENT_PROMPT.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20提示词-copyable-9333ea?style=for-the-badge" alt="Agent 提示词"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
@@ -59,6 +63,16 @@ Personal OS + Personal Wiki 是一个本地优先的个人工作台，用来让 
 
 这个项目的核心判断是：个人知识库不应该只帮你记住“看过什么”，还应该暴露“什么还没完成”，并让另一个 Agent 能接着往前顶。
 
+## 为什么不只是长期记忆
+
+Agent 长期记忆记住“这个人”。Personal OS 管“工作状态”。Personal Wiki 保存“证据和知识”。
+
+这个区别很重要：长期记忆可以记住“我们聊过某件事”，但它通常没有任务认领、心跳、复核决定、产物链接、提醒 payload，也没有给其他 Agent 共用的 API 合约。
+
+Hermes、Codex、OpenClaw 或定时 worker 应该把长期记忆用来保存稳定偏好；把这个项目用来管理外部工作状态：Inbox 原始痕迹、Wiki 证据、任务归属、Today 规划、提醒 payload 和可复核产物。
+
+详细对比见：[为什么不只是长期记忆](./docs/WHY_NOT_LONG_TERM_MEMORY.zh-CN.md)。
+
 ## 它能做什么
 
 | 场景 | 系统会怎么处理 |
@@ -69,6 +83,9 @@ Personal OS + Personal Wiki 是一个本地优先的个人工作台，用来让 
 | 想要私有项目大脑但又要开源代码 | 源码和虚构 demo 可以进 Git，真实 vault、token、服务器台账和任务历史留在本地。 |
 | 想把知识库服务于挣钱和项目推进 | Projects、Today、未完成任务和 Review 队列让“什么能推动项目”变得可见。 |
 | 想把 Wiki 当成 Agent 记忆 | Agent 读取整理过的 Markdown 上下文，而不是依赖过期聊天记录。 |
+| 想把提醒发到真实软件 | Hermes 或定时 worker 调 planner/reminder API，再由 Telegram、飞书、Mac 上的 Apple 提醒事项、邮件或桌面通知 adapter 发出去。 |
+
+Mac 侧提醒同步的具体操作见：[Mac Agent Adapter 操作手册](./docs/MAC_AGENT_ADAPTER.zh-CN.md)。它写清楚了 Mac worker 怎么调用 planner/reminder API、怎么写 Apple 提醒事项、怎么去重，以及为什么“勾掉提醒”不能等于“任务完成”。
 
 ## 功能概览
 
@@ -79,6 +96,7 @@ Personal OS + Personal Wiki 是一个本地优先的个人工作台，用来让 
 - Agent 任务协议：拉任务、认领、心跳、写贡献、提交、复核、阻塞、归档。
 - 面向 Agent 的读写 token 边界。
 - 日计划和通知 payload。
+- 提醒/规划 API，可由外部 adapter 投递到 Telegram、飞书、Apple 提醒事项、邮件或桌面通知。
 - Next.js + PostgreSQL + Prisma。
 
 ### Personal Wiki
@@ -116,6 +134,30 @@ poll -> claim -> load context -> execute -> heartbeat -> contribute -> submit ->
 Docker 是推荐方案，不是硬性要求。也可以把 Personal Wiki 当 Python 服务跑，把 Personal OS 当 Node.js 服务跑；但这种方式需要你自己负责进程守护、升级、TLS、鉴权和备份。
 
 完整部署说明见：[部署指南](./docs/DEPLOYMENT.zh-CN.md)。
+
+## 按版本安装
+
+普通用户应该优先使用固定 Release 版本，而不是直接跟踪 `main`。
+
+下载 GitHub Release 里的产物：
+
+```text
+personal-os-wiki-v0.1.0.zip
+personal-os-wiki-v0.1.0.tar.gz
+SHA256SUMS.txt
+```
+
+校验 SHA256 后解压，把 `.env.example` 复制成 `.env`，替换占位 token，然后按
+快速上手或部署指南执行。
+
+开发者也可以按 tag 克隆：
+
+```bash
+git clone --branch v0.1.0 https://github.com/lawyer112/personal-os-wiki.git
+cd personal-os-wiki
+```
+
+完整说明见：[版本发布与安装包](./docs/RELEASES.zh-CN.md)。
 
 ## 10 分钟 Demo
 
@@ -308,6 +350,7 @@ curl -X POST \
 | 理解项目 | 本 README |
 | 本地跑起来 | [快速上手](./docs/GETTING_STARTED.zh-CN.md) |
 | 查看部署要求 | [部署指南](./docs/DEPLOYMENT.zh-CN.md) |
+| 安装固定版本 | [版本发布与安装包](./docs/RELEASES.zh-CN.md) |
 | 理解架构 | [架构说明](./docs/ARCHITECTURE.zh-CN.md) |
 | 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)、[Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
 | 使用 Personal OS | [Personal OS README](./personal-os-app/README.md) |
@@ -333,7 +376,7 @@ curl -X POST \
 
 ## 项目状态
 
-这是一个早期公开版本。它适合给想研究或改造“本地优先 Agent 工作台”的开发者看，但它不是云服务，也不包含你的私人知识库。请把它当作一个可复用引擎，而不是直接托管好的产品。
+这是一个早期公开版本。当前包版本记录在 [`VERSION`](./VERSION) 和 [`CHANGELOG.md`](./CHANGELOG.md)。它适合给想研究或改造“本地优先 Agent 工作台”的开发者看，但它不是云服务，也不包含你的私人知识库。请把它当作一个可复用引擎，而不是直接托管好的产品。
 
 ## 贡献
 

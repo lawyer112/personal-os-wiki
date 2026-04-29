@@ -21,6 +21,10 @@ docker compose up -d --build
 
 Open `http://localhost:3422/`.
 
+The Docker Compose file binds the browser/API port to `127.0.0.1` by default.
+For LAN or public access, keep the service behind a TLS reverse proxy with
+authentication and replace every placeholder token first.
+
 For user-mode Python deployment instead of Docker, see
 `deploy/README.md`.
 
@@ -30,4 +34,6 @@ For user-mode Python deployment instead of Docker, see
 - Use `WIKI_API_TOKEN` only for writes.
 - Use `WIKI_READ_TOKEN` for read-only agent and browser access.
 - Replace placeholder tokens before binding the service to a LAN or public host.
+- Keep `WIKI_TRUST_LOCALHOST_READ_AUTH=0` unless every same-host caller is
+  trusted; reverse proxies also reach the Wiki service from localhost.
 - Do not publish a populated vault unless it has been explicitly scrubbed.

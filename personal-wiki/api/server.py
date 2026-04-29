@@ -61,6 +61,7 @@ def env_flag(name: str, default: bool = False) -> bool:
 
 REQUIRE_API_READ_AUTH = env_flag("WIKI_REQUIRE_API_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
 REQUIRE_PAGE_READ_AUTH = env_flag("WIKI_REQUIRE_PAGE_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
+TRUST_LOCALHOST_READ_AUTH = env_flag("WIKI_TRUST_LOCALHOST_READ_AUTH", False)
 ALLOW_UNAUTHENTICATED_WRITE = env_flag("WIKI_ALLOW_UNAUTHENTICATED_WRITE", False)
 READ_AUTH_COOKIE = "personal_wiki_read"
 
@@ -2044,7 +2045,7 @@ class Handler(BaseHTTPRequestHandler):
     def authorized_read(self, required: bool) -> bool:
         if not required:
             return True
-        if self.client_address[0] in {"127.0.0.1", "::1"}:
+        if TRUST_LOCALHOST_READ_AUTH and self.client_address[0] in {"127.0.0.1", "::1"}:
             return True
         allowed_tokens = self.read_auth_tokens()
         if not allowed_tokens:

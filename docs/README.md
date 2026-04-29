@@ -9,8 +9,14 @@ README.
 - [快速上手](./GETTING_STARTED.zh-CN.md)
 - [Deployment guide](./DEPLOYMENT.md)
 - [部署指南](./DEPLOYMENT.zh-CN.md)
+- [Releases and packages](./RELEASES.md)
+- [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Architecture](./ARCHITECTURE.md)
 - [架构说明](./ARCHITECTURE.zh-CN.md)
+- [Why not just long-term memory?](./WHY_NOT_LONG_TERM_MEMORY.md)
+- [为什么不只是长期记忆？](./WHY_NOT_LONG_TERM_MEMORY.zh-CN.md)
+- [Mac Agent Adapter](./MAC_AGENT_ADAPTER.md)
+- [Mac Agent Adapter 操作手册](./MAC_AGENT_ADAPTER.zh-CN.md)
 - [Agent guide](./AGENT_GUIDE.md)
 - [Agent 使用手册](./AGENT_GUIDE.zh-CN.md)
 - [Agent prompt](./AGENT_PROMPT.md)
@@ -34,6 +40,8 @@ README.
 ## Release Docs
 
 - [Open source release process](../OPEN_SOURCE_RELEASE.md)
+- [Releases and packages](./RELEASES.md)
+- [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Security policy](../SECURITY.md)
 - [Repository permissions](./PERMISSIONS.md)
 

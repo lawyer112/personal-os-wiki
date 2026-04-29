@@ -11,6 +11,8 @@
 推荐公开模板：Linux 主机 + Docker Compose + localhost 绑定 + 带鉴权的反向代理。
 不要把原始 app 端口直接暴露到公网。
 
+普通安装建议从固定 GitHub Release 或版本 tag 开始。`main` 更适合贡献者和审查者，不适合当作稳定个人部署入口。见：[版本发布与安装包](./RELEASES.zh-CN.md)。
+
 ## 会部署哪些组件
 
 | 组件 | 运行时 | 默认端口 | 持久化数据 |
@@ -80,6 +82,7 @@ WIKI_API_TOKEN="replace-with-a-long-random-write-token"
 WIKI_READ_TOKEN="replace-with-a-long-random-read-token"
 WIKI_REQUIRE_API_READ_AUTH="1"
 WIKI_REQUIRE_PAGE_READ_AUTH="1"
+WIKI_TRUST_LOCALHOST_READ_AUTH="0"
 WIKI_ALLOW_UNAUTHENTICATED_WRITE="0"
 WIKI_SITE_TITLE="Personal Wiki"
 WIKI_HOST="0.0.0.0"
@@ -101,6 +104,24 @@ NEXT_PUBLIC_WIKI_URL="http://localhost:3422"
 读 token 和写 token 要分开。不要把 Wiki 写 token 用作浏览器 handoff 或只读 Agent 访问。
 
 ## 快速部署路径
+
+### 从 Release 包开始
+
+下载并解压：
+
+```text
+personal-os-wiki-v0.1.0.zip
+personal-os-wiki-v0.1.0.tar.gz
+```
+
+或者按固定 tag 克隆：
+
+```bash
+git clone --branch v0.1.0 https://github.com/lawyer112/personal-os-wiki.git
+cd personal-os-wiki
+```
+
+然后继续选择下面的 Wiki-only、本地完整环境或偏生产 compose 路径。
 
 ### 只部署 Wiki
 
@@ -151,6 +172,8 @@ docker compose -f docker-compose.prod.yml up -d --build
 - 替换所有 `replace-with-*` 和 `change-me`。
 - `.env`、Wiki vault、Postgres 数据、日志、截图都不能进 Git。
 - 服务保持 localhost 绑定，除非反向代理已经提供 TLS 和鉴权。
+- 保持 `WIKI_TRUST_LOCALHOST_READ_AUTH=0`，除非你确认所有 localhost
+  调用者都可信；同机反向代理转发到 Wiki 时也会表现为 localhost。
 - Personal OS 和 Personal Wiki 都使用分离的读写 token。
 - 升级前备份 Postgres 和 Wiki 数据。
 - 不只要创建备份，还要测试恢复。

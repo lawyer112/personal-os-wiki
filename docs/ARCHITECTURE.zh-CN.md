@@ -129,7 +129,7 @@ GET /api/agent/context?taskId=<id>
 
 ## 通知设计
 
-Personal OS 可以生成通知 payload，但不一定自己发送。Telegram、飞书、邮件、桌面通知都可以是独立 adapter。
+Personal OS 可以生成通知 payload，但不一定自己发送。Telegram、飞书、Mac 上的 Apple 提醒事项、邮件、桌面通知都可以是独立 adapter。
 
 边界应该是：
 
@@ -138,7 +138,24 @@ Personal OS 决定“该说什么”
 通知 adapter 决定“发到哪里、怎么发”
 ```
 
-这样以后换 Telegram、飞书、企业微信、邮箱或本机通知，都不需要重写任务系统。
+Apple 提醒事项这类软件应该只是 adapter。它可以镜像或投递 `/api/reminders/today` 和 `/api/planner/today` 的结果，但 Personal OS 仍然是任务真相。
+
+这样以后换 Telegram、飞书、企业微信、邮箱、Apple 提醒事项或本机通知，都不需要重写任务系统。
+
+## 长期记忆边界
+
+Agent 自带长期记忆适合保存稳定偏好和固定操作规则，但不适合作为任务租约、复核决定、提醒 payload 或证据链的真相来源。
+
+产品分工是：
+
+```text
+Agent 长期记忆 = 记住这个人
+Personal OS   = 管工作状态
+Personal Wiki = 存证据和知识
+通知 adapter   = 提醒用户
+```
+
+详细对比见：[为什么不只是长期记忆](./WHY_NOT_LONG_TERM_MEMORY.zh-CN.md)。
 
 ## 安全模型
 
