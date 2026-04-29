@@ -15,6 +15,7 @@
   <a href="#10-minute-demo-path"><img src="https://img.shields.io/badge/Run%20the%20demo-10%20minutes-0f766e?style=for-the-badge" alt="Run the demo"></a>
   <a href="./README.zh-CN.md"><img src="https://img.shields.io/badge/中文说明-完整中文版-dc2626?style=for-the-badge" alt="中文说明"></a>
   <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
+  <a href="./docs/DEPLOYMENT.md"><img src="https://img.shields.io/badge/Deployment-requirements-0f766e?style=for-the-badge" alt="Deployment requirements"></a>
   <a href="./docs/AGENT_GUIDE.md"><img src="https://img.shields.io/badge/Agent%20Guide-protocol-7c3aed?style=for-the-badge" alt="Agent Guide"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-overview-f97316?style=for-the-badge" alt="API Overview"></a>
   <a href="./docs/DATA_SAFETY.md"><img src="https://img.shields.io/badge/Data%20Safety-local--first-334155?style=for-the-badge" alt="Data Safety"></a>
@@ -125,6 +126,27 @@ poll -> claim -> load context -> execute -> heartbeat -> contribute -> submit ->
 
 That loop is the difference between "an agent wrote something in a chat" and
 "a task was claimed, worked, evidenced, and reviewed."
+
+## Deployment Requirements
+
+Recommended path: Docker Compose on a Linux host, with app ports bound to
+localhost and exposed only through an authenticated HTTPS reverse proxy.
+
+| Item | Recommendation |
+| --- | --- |
+| Host | Linux server, macOS, or Windows with WSL2/Docker Desktop |
+| Minimum size | 2 CPU cores, 2 GB RAM, 10 GB free disk |
+| Comfortable size | 4 CPU cores, 4-8 GB RAM, 20+ GB disk plus backups |
+| Required tools | Docker Compose, Git, `curl`; Node.js 24+ for local OS development |
+| Main ports | Wiki `3422`, OS dev `3000`, OS prod `3100`, local Postgres `54329` |
+| Data to back up | Wiki data directory, Postgres database, and out-of-Git secret storage |
+
+Docker is recommended, not mandatory. Operators can also run Personal Wiki as a
+Python service and Personal OS as a Node.js service, but then they own process
+supervision, upgrades, TLS, authentication, and backups.
+
+Read the full deployment guide:
+[`docs/DEPLOYMENT.md`](./docs/DEPLOYMENT.md).
 
 ## 10-Minute Demo Path
 
@@ -332,6 +354,7 @@ Read the full release checklist:
 | --- | --- |
 | Understand the product | This README |
 | Run it locally | [Getting Started](./docs/GETTING_STARTED.md) |
+| Check deployment requirements | [Deployment Guide](./docs/DEPLOYMENT.md) |
 | Understand architecture | [Architecture](./docs/ARCHITECTURE.md) |
 | Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
 | Operate Personal OS | [Personal OS README](./personal-os-app/README.md) |

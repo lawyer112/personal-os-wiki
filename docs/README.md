@@ -7,6 +7,8 @@ README.
 
 - [Getting Started](./GETTING_STARTED.md)
 - [快速上手](./GETTING_STARTED.zh-CN.md)
+- [Deployment guide](./DEPLOYMENT.md)
+- [部署指南](./DEPLOYMENT.zh-CN.md)
 - [Architecture](./ARCHITECTURE.md)
 - [架构说明](./ARCHITECTURE.zh-CN.md)
 - [Agent guide](./AGENT_GUIDE.md)

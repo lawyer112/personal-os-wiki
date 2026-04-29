@@ -14,6 +14,7 @@
 <p align="center">
   <a href="#10-分钟-demo"><img src="https://img.shields.io/badge/运行%20Demo-10%20分钟-0f766e?style=for-the-badge" alt="运行 Demo"></a>
   <a href="./docs/GETTING_STARTED.zh-CN.md"><img src="https://img.shields.io/badge/快速上手-guide-1d4ed8?style=for-the-badge" alt="快速上手"></a>
+  <a href="./docs/DEPLOYMENT.zh-CN.md"><img src="https://img.shields.io/badge/部署要求-requirements-0f766e?style=for-the-badge" alt="部署要求"></a>
   <a href="./docs/AGENT_GUIDE.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20手册-protocol-7c3aed?style=for-the-badge" alt="Agent 手册"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
   <a href="./docs/DATA_SAFETY.zh-CN.md"><img src="https://img.shields.io/badge/数据安全-local--first-334155?style=for-the-badge" alt="数据安全"></a>
@@ -97,6 +98,23 @@ poll -> claim -> load context -> execute -> heartbeat -> contribute -> submit ->
 ```
 
 这个循环的意义是：不是“Agent 在聊天里写了一段话”，而是“任务被认领、执行、提交证据，并进入复核”。
+
+## 部署环境要求
+
+推荐路线：Linux 主机 + Docker Compose，应用端口只绑定 localhost，对外通过带鉴权的 HTTPS 反向代理访问。
+
+| 项目 | 建议 |
+| --- | --- |
+| 主机 | Linux 服务器、macOS，或 Windows + WSL2/Docker Desktop |
+| 最低配置 | 2 核 CPU、2 GB 内存、10 GB 可用磁盘 |
+| 更舒服的配置 | 4 核 CPU、4-8 GB 内存、20+ GB 磁盘并预留备份空间 |
+| 必装工具 | Docker Compose、Git、`curl`；本地开发 Personal OS 需要 Node.js 24+ |
+| 主要端口 | Wiki `3422`、OS 开发 `3000`、OS 生产 `3100`、本地 Postgres `54329` |
+| 必备备份 | Wiki 数据目录、Postgres 数据库、通过密码管理器保存的密钥 |
+
+Docker 是推荐方案，不是硬性要求。也可以把 Personal Wiki 当 Python 服务跑，把 Personal OS 当 Node.js 服务跑；但这种方式需要你自己负责进程守护、升级、TLS、鉴权和备份。
+
+完整部署说明见：[部署指南](./docs/DEPLOYMENT.zh-CN.md)。
 
 ## 10 分钟 Demo
 
@@ -287,6 +305,7 @@ curl -X POST \
 | --- | --- |
 | 理解项目 | 本 README |
 | 本地跑起来 | [快速上手](./docs/GETTING_STARTED.zh-CN.md) |
+| 查看部署要求 | [部署指南](./docs/DEPLOYMENT.zh-CN.md) |
 | 理解架构 | [架构说明](./docs/ARCHITECTURE.zh-CN.md) |
 | 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
 | 使用 Personal OS | [Personal OS README](./personal-os-app/README.md) |
