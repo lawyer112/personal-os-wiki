@@ -81,15 +81,17 @@ read token: demo-wiki-read-token
 
 ## 产品演示
 
-这段演示来自一次真实的 `/api/intake` 跑通，但使用的是公开安全的假数据：
-一条 Telegram 风格的链接输入，会进入输入箱，写成 Wiki 笔记，拆成可复核任务，
-保留一个想法，并生成可发送到 Telegram 的提醒 payload。
+这段演示只使用公开安全的假数据，展示完整产品闭环：网页采集先把链接记进输入箱，
+不立即消耗大模型；Agent 稍后把它处理成知识库内容、可复核任务和 Telegram 提醒消息。
 
 <p align="center">
-  <a href="./docs/assets/demo/personal-os-wiki-readme-demo.mp4">
-    <img src="./docs/assets/demo/personal-os-wiki-readme-demo.gif" alt="演示：Telegram 链接输入变成 Personal Wiki 知识、Personal OS 任务和 Telegram-ready 提醒。" width="100%">
+  <a href="./docs/assets/demo/personal-os-wiki-readme-demo.zh-CN.mp4">
+    <img src="./docs/assets/demo/personal-os-wiki-readme-demo.zh-CN.gif" alt="演示：网页采集变成知识库内容、Personal OS 任务和 Telegram 提醒消息。" width="100%">
   </a>
 </p>
+
+[中文 MP4](./docs/assets/demo/personal-os-wiki-readme-demo.zh-CN.mp4) ·
+[English MP4](./docs/assets/demo/personal-os-wiki-readme-demo.en.mp4)
 
 ## 相关生态
 

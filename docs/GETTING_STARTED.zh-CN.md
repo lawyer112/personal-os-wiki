@@ -101,11 +101,12 @@ http://localhost:3000
 建议点击路径：
 
 1. 打开 `Today`，看系统认为当前最该处理的工作。
-2. 打开 `Tasks`，点进 `Review the fictional launch checklist`。
-3. 查看下一步动作、完成定义、Wiki 链接、贡献记录和 artifact。
-4. 打开 `Projects`，查看 `Acorn Launch Lab`。
-5. 打开 `Ideas`，确认截图想法还停留在想法池，没有被强行变成任务。
-6. 打开 Wiki 服务，单独体验 Markdown 入库和浏览。
+2. 打开 `Capture`，保存一个测试链接或备注，再打开 `Inbox`，确认它只是被记录成一条新输入。
+3. 打开 `Tasks`，点进 `Review the fictional launch checklist`。
+4. 查看下一步动作、完成定义、Wiki 链接、贡献记录和 artifact。
+5. 打开 `Projects`，查看 `Acorn Launch Lab`。
+6. 打开 `Ideas`，确认截图想法还停留在想法池，没有被强行变成任务。
+7. 打开 Wiki 服务，单独体验 Markdown 入库和浏览。
 
 ## 5. 最小 API 测试
 
@@ -165,6 +166,7 @@ curl -H "Authorization: Bearer <PERSONAL_OS_READ_TOKEN>" \
 | 目的 | Endpoint | Token |
 | --- | --- | --- |
 | 读取今日工作台 | `GET /api/today` | 生产环境需要 read token |
+| 保存被动网页采集 | `GET /capture` | 私有应用会话 / 本地访问 |
 | 写入混合输入 | `POST /api/intake` | `PERSONAL_OS_API_TOKEN` |
 | Agent 拉任务 | `GET /api/agent-inbox` | `PERSONAL_OS_API_TOKEN` |
 | Agent 读上下文 | `GET /api/agent/context?taskId=...` | `PERSONAL_OS_READ_TOKEN` |

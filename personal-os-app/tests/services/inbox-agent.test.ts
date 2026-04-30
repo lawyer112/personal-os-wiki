@@ -25,6 +25,7 @@ describe("inbox and agent run services", () => {
     expect(db.activityLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
+          actorType: "user",
           action: "inbox.created",
           targetId: "inbox_1",
         }),

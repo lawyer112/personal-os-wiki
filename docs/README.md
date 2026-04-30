@@ -29,6 +29,8 @@ for Personal OS + Personal Wiki.
 - [Agent Prompt](./AGENT_PROMPT.md)
 - [Agent 提示词](./AGENT_PROMPT.zh-CN.md)
 - [Agent Job Orchestration](./AGENT_JOB_ORCHESTRATION.md)
+- [Web Capture](./WEB_CAPTURE.md)
+- [网页采集](./WEB_CAPTURE.zh-CN.md)
 - [Mac Agent Adapter](./MAC_AGENT_ADAPTER.md)
 - [Mac Agent Adapter 操作手册](./MAC_AGENT_ADAPTER.zh-CN.md)
 - [API Overview](./API_OVERVIEW.md)

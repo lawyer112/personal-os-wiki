@@ -12,6 +12,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
     title: "工作台",
     items: [
       { href: "/", label: "今日" },
+      { href: "/capture", label: "采集" },
       { href: "/inbox", label: "输入箱" },
       { href: "/ideas", label: "想法池" },
       { href: "/projects", label: "项目" },

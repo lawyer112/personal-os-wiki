@@ -104,15 +104,19 @@ The demo uses invented data only and binds ports to `127.0.0.1`.
 
 ## Product Demo
 
-This demo was generated from a real `/api/intake` run using fake public data:
-a Telegram-style link becomes an Inbox item, a Wiki note, a reviewable task, an
-idea, and a Telegram-ready reminder payload.
+This demo uses fake public data and shows the full product loop: web capture
+records a link without spending LLM tokens, an agent later processes the Inbox
+item into Wiki knowledge, a reviewable task, and a Telegram-ready reminder
+payload.
 
 <p align="center">
-  <a href="./docs/assets/demo/personal-os-wiki-readme-demo.mp4">
-    <img src="./docs/assets/demo/personal-os-wiki-readme-demo.gif" alt="Demo: Telegram link intake becomes Personal Wiki knowledge, a Personal OS task, and a Telegram-ready reminder." width="100%">
+  <a href="./docs/assets/demo/personal-os-wiki-readme-demo.en.mp4">
+    <img src="./docs/assets/demo/personal-os-wiki-readme-demo.en.gif" alt="Demo: Web capture becomes Personal Wiki knowledge, a Personal OS task, and a Telegram-ready reminder." width="100%">
   </a>
 </p>
+
+[English MP4](./docs/assets/demo/personal-os-wiki-readme-demo.en.mp4) ·
+[Chinese MP4](./docs/assets/demo/personal-os-wiki-readme-demo.zh-CN.mp4)
 
 ## Related Ecosystem
 

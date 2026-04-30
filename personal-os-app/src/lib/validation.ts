@@ -2,6 +2,17 @@ import { z } from "zod";
 
 const jsonRecord = z.record(z.string(), z.unknown());
 const optionalJsonRecord = jsonRecord.optional();
+const optionalFormString = (max: number) =>
+  z.preprocess(
+    (value) => {
+      if (typeof value !== "string") {
+        return value;
+      }
+      const trimmed = value.trim();
+      return trimmed.length > 0 ? trimmed : undefined;
+    },
+    z.string().min(1).max(max).optional(),
+  );
 
 export const taskStatuses = [
   "review",
@@ -41,6 +52,23 @@ export const inboxCreateSchema = z.object({
   attachments: z.array(jsonRecord).default([]),
   createdBy: z.string().min(1).default("hermes"),
 });
+
+export const captureCreateSchema = z
+  .object({
+    url: optionalFormString(2048).pipe(z.url().optional()),
+    title: optionalFormString(300),
+    selection: optionalFormString(6000),
+    note: optionalFormString(6000),
+    sourcePlatform: z.string().min(1).default("web"),
+    createdBy: z.string().min(1).default("user"),
+  })
+  .refine(
+    (input) => Boolean(input.url || input.title || input.selection || input.note),
+    {
+      message: "Capture needs at least one URL, title, selection, or note.",
+      path: ["note"],
+    },
+  );
 
 export const agentRunCreateSchema = z.object({
   inboxItemId: z.string().min(1),
@@ -265,6 +293,7 @@ export const intakeSchema = z.object({
 });
 
 export type InboxCreateInput = z.infer<typeof inboxCreateSchema>;
+export type CaptureCreateInput = z.infer<typeof captureCreateSchema>;
 export type AgentRunCreateInput = z.infer<typeof agentRunCreateSchema>;
 export type AgentRunCompleteInput = z.infer<typeof agentRunCompleteSchema>;
 export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;

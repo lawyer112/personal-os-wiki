@@ -106,13 +106,15 @@ After `npm run prisma:seed`, the app contains fictional demo data:
 Suggested click path:
 
 1. Open `Today` to see what the app treats as current work.
-2. Open `Tasks` and click `Review the fictional launch checklist`.
-3. Check the next action, definition of done, Wiki link, contribution, and
+2. Open `Capture`, save a test URL or note, then open `Inbox` and confirm it is
+   only recorded as a new input.
+3. Open `Tasks` and click `Review the fictional launch checklist`.
+4. Check the next action, definition of done, Wiki link, contribution, and
    artifact.
-4. Open `Projects` and inspect `Acorn Launch Lab`.
-5. Open `Ideas` and confirm the screenshot idea stayed as an idea instead of
+5. Open `Projects` and inspect `Acorn Launch Lab`.
+6. Open `Ideas` and confirm the screenshot idea stayed as an idea instead of
    becoming a fake task.
-6. Open the Wiki service and ingest or browse Markdown notes separately.
+7. Open the Wiki service and ingest or browse Markdown notes separately.
 
 ## 5. Minimal API Smoke Test
 
@@ -188,6 +190,7 @@ curl -H "Authorization: Bearer <PERSONAL_OS_READ_TOKEN>" \
 | Purpose | Endpoint | Token |
 | --- | --- | --- |
 | Read today workspace | `GET /api/today` | read token in production |
+| Save passive web capture | `GET /capture` | private app session / local access |
 | Capture mixed input | `POST /api/intake` | `PERSONAL_OS_API_TOKEN` |
 | Agent polls work | `GET /api/agent-inbox` | `PERSONAL_OS_API_TOKEN` |
 | Agent loads context | `GET /api/agent/context?taskId=...` | `PERSONAL_OS_READ_TOKEN` |

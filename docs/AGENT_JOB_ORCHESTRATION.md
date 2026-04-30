@@ -37,17 +37,36 @@ thing is that each mode has a narrow prompt, narrow schedule, and narrow token.
 
 ## Scheduling Model
 
-Recommended first schedule:
+Scheduling is an operator policy, not a Personal OS hard rule. The application
+records state; the agent decides when it is worth spending tokens.
+
+Passive web capture should be especially cheap:
+
+```text
+/capture -> InboxItem(status=new)
+```
+
+That path records the URL, selection, and user note only. It does not classify,
+write the Wiki, create tasks, or send notifications. A worker can later read the
+Inbox and decide whether to call `/api/intake`.
+
+Recommended low-cost starting schedule:
 
 ```text
 09:30 planner-notify   Pull planner packet and send the user a short plan.
+12:30 capture-review   Optional: batch new web captures if the user enabled it.
 15:00 reminder-checkin Pull reminder payload and nudge stale work.
+18:30 capture-review   Optional: batch new web captures if the user enabled it.
 21:30 evening-review   Summarize open loops; do not invent new priorities.
 */30 task-poll         Poll claimable tasks only if the user enabled agent work.
 ```
 
 The planner job should speak to the user. The task worker should work on a
 specific task. Do not mix those two responsibilities in one prompt.
+
+If the user is in an active research session, a capture worker can run more
+often. If the model is expensive, run it less often or only on demand. The point
+is to avoid turning every saved webpage into an immediate LLM job by default.
 
 ## Task Claim Rules
 

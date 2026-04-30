@@ -30,7 +30,17 @@ curl -H "Authorization: Bearer $PERSONAL_OS_READ_TOKEN" \
   http://localhost:3000/api/today
 ```
 
-Capture mixed input:
+Record a passive browser capture without spending LLM tokens:
+
+```text
+Open http://localhost:3000/capture
+```
+
+The capture page writes one `InboxItem(status=new)`. Agent timing is external
+policy: process it immediately, batch it every few hours, once per day, or only
+on explicit request.
+
+Capture mixed input through an active agent:
 
 ```bash
 curl -X POST http://localhost:3000/api/intake \
@@ -109,7 +119,9 @@ curl -X POST \
 | Read Today workspace | `/api/today` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Read planner packet | `/api/planner/today?mode=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Read reminder payload | `/api/reminders/today?mode=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
+| Browser capture form | `/capture` | `GET/POST form action` | private app session / local access |
 | Capture mixed input | `/api/intake` | `POST` | `PERSONAL_OS_API_TOKEN` |
+| Create raw Inbox item | `/api/inbox/items` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Agent polls work | `/api/agent-inbox` | `GET` | `PERSONAL_OS_API_TOKEN` |
 | Agent loads context | `/api/agent/context?taskId=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Agent claims work | `/api/tasks/:id/claim` | `POST` | `PERSONAL_OS_API_TOKEN` |

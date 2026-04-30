@@ -28,7 +28,7 @@ export async function createInboxItem<TDb extends InboxDb>(
   });
 
   await recordActivity(db, {
-    actorType: "hermes",
+    actorType: activityActorType(input.createdBy),
     action: "inbox.created",
     targetType: "inboxItem",
     targetId: item.id,
@@ -40,6 +40,18 @@ export async function createInboxItem<TDb extends InboxDb>(
   });
 
   return item;
+}
+
+function activityActorType(createdBy: string) {
+  if (
+    createdBy === "user" ||
+    createdBy === "hermes" ||
+    createdBy === "codex" ||
+    createdBy === "system"
+  ) {
+    return createdBy;
+  }
+  return "hermes";
 }
 
 export async function startAgentRun<TDb extends InboxDb>(
