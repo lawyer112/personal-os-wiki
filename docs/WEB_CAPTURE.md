@@ -4,6 +4,9 @@ Web capture is the lowest-friction input surface. The user gives Personal OS one
 raw thing: usually a URL, sometimes a short note. Personal OS records it. Agents
 do the enrichment later.
 
+For browser-extension direction and knowledge-system governance, see
+[Knowledge System Plan](./KNOWLEDGE_SYSTEM_PLAN.md).
+
 ## Product Boundary
 
 Use `/capture` when the user wants to save an entry point and move on.

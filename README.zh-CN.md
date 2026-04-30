@@ -105,6 +105,10 @@ Agent memory 这些方向是相邻的。
 如果你正在研究 LLM Wiki、知识图谱、Obsidian 风格 vault 或 Agent 长期记忆，
 这个仓库更像是“下一步怎么办”的那一层：把知识变成有人负责、能检查进度的工作。
 
+具体实现方向见：[知识系统落地方案](./docs/KNOWLEDGE_SYSTEM_PLAN.zh-CN.md)。它把
+“一字段原始采集、按策略 enrichment、Wiki lint、关系强弱分数”写成后续实现准绳，
+避免弱关联把图谱画乱。
+
 ## 这是什么
 
 Personal OS + Personal Wiki 是一个本地优先的个人工作台，用来让 AI Agent 不只是总结笔记，而是真的帮助你推进项目。

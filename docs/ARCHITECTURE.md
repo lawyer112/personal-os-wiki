@@ -35,7 +35,7 @@ Personal OS
 Personal Wiki
   durable knowledge system
   Markdown-backed
-  owns notes, tags, concepts, search index, graph, browser rendering
+  owns notes, tags, concepts, search index, scored graph, browser rendering
 
 Agents
   reasoning and execution layer
@@ -107,7 +107,7 @@ surface. Any agent can participate if it follows the protocol.
 | Project | Personal OS | Product/workstream container. |
 | ProjectEvent | Personal OS | Timeline of decisions and progress. |
 | Markdown note | Personal Wiki | Durable human-readable knowledge. |
-| Graph edge | Personal Wiki | Relationship between notes, concepts, and links. |
+| Graph edge | Personal Wiki | Relationship between notes, concepts, and links, with relationship strength. |
 
 ## Agent Context
 

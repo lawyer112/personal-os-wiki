@@ -166,6 +166,10 @@ GET http://localhost:3422/api/concepts
 GET http://localhost:3422/api/graph
 ```
 
+`/api/graph` 的 link 会包含 `score` 和 `strength`。显式 `[[概念]]` 连接是高置信；
+标签连接是低置信；笔记之间的 `related` 连接只有关系分数达到阈值才会输出，避免
+图谱因为 3% 或 10% 这类弱关系变成乱线。
+
 ## Hermes 维护动作
 
 这些写操作都需要：
@@ -355,4 +359,3 @@ data/
 ```
 
 每次成功写入或维护都会刷新索引，并提交到 Git。出问题时先看日志，再看 Git 历史。
-

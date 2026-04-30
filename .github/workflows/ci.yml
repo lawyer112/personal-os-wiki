@@ -69,6 +69,9 @@ jobs:
       - name: Compile Personal Wiki
         run: python -m py_compile personal-wiki/api/server.py
 
+      - name: Test Personal Wiki graph relations
+        run: python -m unittest discover -s personal-wiki/tests
+
       - name: Build Personal Wiki Docker image
         run: docker build -f personal-wiki/api/Dockerfile -t personal-wiki:test personal-wiki
 

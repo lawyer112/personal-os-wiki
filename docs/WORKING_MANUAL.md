@@ -14,6 +14,9 @@ raw input -> durable knowledge -> owned work -> evidence -> review -> reminder
 Personal OS owns execution state. Personal Wiki owns durable public/private
 knowledge. Agents bridge the two.
 
+For the concrete knowledge-system, browser-extension, and relationship-scoring
+direction, see [Knowledge System Plan](./KNOWLEDGE_SYSTEM_PLAN.md).
+
 ## Responsibilities
 
 | Surface | Responsibility | Must not do |

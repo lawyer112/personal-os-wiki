@@ -3,6 +3,8 @@
 Personal Wiki is a small private Markdown knowledge service for agents and
 operators. It stores source items and curated notes in a local vault, maintains a
 JSON index and graph, renders browser pages, and exposes read/write APIs.
+Graph links include relationship scores so explicit links and strong related
+notes are visible without drawing every weak association.
 
 Personal Wiki is one half of the larger Personal OS + Personal Wiki stack:
 

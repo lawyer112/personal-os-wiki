@@ -73,6 +73,10 @@ GET /api/concepts
 GET /api/graph
 ```
 
+`/api/graph` links include `score` and `strength`; note-to-note `related` links
+are emitted only for useful relationships, while weak associations remain search
+signals instead of graph lines.
+
 Write endpoints require `Authorization: Bearer $WIKI_API_TOKEN`:
 
 ```text

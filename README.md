@@ -133,6 +133,11 @@ If you are exploring LLM Wiki, knowledge graphs, Obsidian-style vaults, or
 agent long-term memory, this repository is the "what happens next?" layer:
 turn knowledge into owned work.
 
+The implementation direction is captured in
+[`docs/KNOWLEDGE_SYSTEM_PLAN.md`](./docs/KNOWLEDGE_SYSTEM_PLAN.md): one-field
+raw capture, policy-driven enrichment, Wiki linting, and scored relationship
+edges so weak associations do not clutter the graph.
+
 ## What This Project Is
 
 Personal OS + Personal Wiki is a local-first workbench for people who want AI

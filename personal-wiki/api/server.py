@@ -50,6 +50,23 @@ WIKILINK_RENDER_RE = re.compile(r"\[\[([^\]\|#]+)(?:#[^\]\|]+)?(?:\|([^\]]+))?\]
 MARKDOWN_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 TAG_RE = re.compile(r"(?<!\w)#([\w\u4e00-\u9fff-]+)")
 SAFE_MARKDOWN_SCHEMES = {"http", "https", "mailto"}
+NOTE_RELATION_LINK_THRESHOLD = 0.50
+MAX_RELATED_LINKS_PER_NOTE = 8
+GENERIC_RELATION_TAGS = {
+    "auto-ingested",
+    "demo",
+    "draft",
+    "file",
+    "hermes",
+    "inbox",
+    "link",
+    "manual",
+    "source",
+    "telegram",
+    "text",
+    "web",
+    "web-capture",
+}
 
 
 def env_flag(name: str, default: bool = False) -> bool:
@@ -624,19 +641,19 @@ def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
             target_id = title_to_id.get(concept)
             if not target_id:
                 target_id = f"concept:{concept}"
-                if target_id not in nodes:
-                    nodes[target_id] = {
-                        "id": target_id,
-                        "label": concept,
-                        "title": concept,
-                        "path": "",
-                        "url": f"/notes?concept={quote(concept)}",
-                        "tags": ["concept"],
-                        "source_type": "concept",
-                        "kind": "concept",
-                        "weight": 3,
-                    }
-            add_link(links, link_keys, source_id, target_id, "wikilink", 2)
+            if target_id not in nodes:
+                nodes[target_id] = {
+                    "id": target_id,
+                    "label": concept,
+                    "title": concept,
+                    "path": "",
+                    "url": f"/notes?concept={quote(concept)}",
+                    "tags": ["concept"],
+                    "source_type": "concept",
+                    "kind": "concept",
+                    "weight": 3,
+                }
+            add_link(links, link_keys, source_id, target_id, "wikilink", 2, score=0.9)
         fm_tags = record.get("tags") if isinstance(record.get("tags"), list) else []
         body_tags = TAG_RE.findall(body)
         for tag in sorted({str(tag).strip().lstrip("#") for tag in list(fm_tags) + body_tags if str(tag).strip()}):
@@ -653,13 +670,89 @@ def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
                     "kind": "tag",
                     "weight": 2,
                 }
-            add_link(links, link_keys, source_id, tag_id, "tag", 1)
+            add_link(links, link_keys, source_id, tag_id, "tag", 1, score=0.25)
+
+    add_related_note_links(records, links, link_keys)
 
     return {
         "generated_at": now_utc().isoformat(),
         "vault_signature": vault_signature(),
         "nodes": list(nodes.values()),
         "links": links,
+    }
+
+
+def add_related_note_links(
+    records: list[dict[str, Any]],
+    links: list[dict[str, Any]],
+    link_keys: set[tuple[str, str, str]],
+) -> None:
+    notes = [record for record in records if str(record.get("path", "")).strip()]
+    terms = {str(record.get("path", "")): relation_terms(record) for record in notes}
+    candidates: list[tuple[float, str, str, dict[str, Any]]] = []
+    for index, left in enumerate(notes):
+        left_id = str(left.get("path", ""))
+        for right in notes[index + 1 :]:
+            right_id = str(right.get("path", ""))
+            score, reason = note_relation_score(terms.get(left_id, {}), terms.get(right_id, {}))
+            if score < NOTE_RELATION_LINK_THRESHOLD:
+                continue
+            candidates.append((score, left_id, right_id, reason))
+
+    related_counts: dict[str, int] = {}
+    for score, left_id, right_id, reason in sorted(candidates, key=lambda item: (-item[0], item[1], item[2])):
+        if related_counts.get(left_id, 0) >= MAX_RELATED_LINKS_PER_NOTE:
+            continue
+        if related_counts.get(right_id, 0) >= MAX_RELATED_LINKS_PER_NOTE:
+            continue
+        add_link(
+            links,
+            link_keys,
+            left_id,
+            right_id,
+            "related",
+            max(1, round(score * 4)),
+            score=score,
+            reason=reason,
+        )
+        related_counts[left_id] = related_counts.get(left_id, 0) + 1
+        related_counts[right_id] = related_counts.get(right_id, 0) + 1
+
+
+def relation_terms(record: dict[str, Any]) -> dict[str, set[str]]:
+    concepts = {
+        normalize_relation_term(item)
+        for item in record.get("concepts", [])
+        if normalize_relation_term(item)
+    }
+    tags = {
+        normalize_relation_term(item)
+        for item in record.get("tags", [])
+        if normalize_relation_term(item) and normalize_relation_term(item) not in GENERIC_RELATION_TAGS
+    }
+    return {"concepts": concepts, "tags": tags}
+
+
+def normalize_relation_term(value: Any) -> str:
+    return str(value or "").strip().lstrip("#").casefold()
+
+
+def note_relation_score(
+    left: dict[str, set[str]],
+    right: dict[str, set[str]],
+) -> tuple[float, dict[str, Any]]:
+    shared_concepts = sorted((left.get("concepts") or set()) & (right.get("concepts") or set()))
+    shared_tags = sorted((left.get("tags") or set()) & (right.get("tags") or set()))
+    score = min(0.72, len(shared_concepts) * 0.28)
+    if len(shared_concepts) >= 2:
+        score += 0.10
+    score += min(0.30, len(shared_tags) * 0.12)
+    if shared_concepts and shared_tags:
+        score += 0.12
+    score = min(0.95, score)
+    return round(score, 2), {
+        "shared_concepts": shared_concepts[:8],
+        "shared_tags": shared_tags[:8],
     }
 
 
@@ -670,12 +763,21 @@ def add_link(
     target: str,
     link_type: str,
     weight: int,
+    score: float | None = None,
+    reason: dict[str, Any] | None = None,
 ) -> None:
     key = (source, target, link_type)
     if source == target or key in link_keys:
         return
     link_keys.add(key)
-    links.append({"source": source, "target": target, "type": link_type, "weight": weight})
+    link = {"source": source, "target": target, "type": link_type, "weight": weight}
+    if score is not None:
+        normalized = max(0.0, min(1.0, score))
+        link["score"] = round(normalized, 2)
+        link["strength"] = f"{round(normalized * 100)}%"
+    if reason:
+        link["reason"] = reason
+    links.append(link)
 
 
 def ensure_dirs_no_git() -> None:
@@ -1418,8 +1520,12 @@ const GRAPH = {graph_json};
         const dx = target.x - source.x;
         const dy = target.y - source.y;
         const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
-        const desired = link.type === "tag" ? Math.max(118, span * 0.24) : Math.max(78, span * 0.15);
-        const strength = (link.type === "tag" ? 0.010 : 0.028) * Number(link.weight || 1);
+        const desired = link.type === "tag"
+          ? Math.max(118, span * 0.24)
+          : link.type === "related"
+            ? Math.max(94, span * 0.18)
+            : Math.max(78, span * 0.15);
+        const strength = (link.type === "tag" ? 0.010 : link.type === "related" ? 0.018 : 0.028) * Number(link.weight || 1);
         const force = (dist - desired) * strength;
         const fx = (dx / dist) * force;
         const fy = (dy / dist) * force;
@@ -1585,12 +1691,14 @@ const GRAPH = {graph_json};
       const source = pointById.get(String(link.source));
       const target = pointById.get(String(link.target));
       if (!source || !target) return;
+      const relationScore = Number(link.score || (link.type === "tag" ? 0.25 : link.type === "related" ? 0.5 : 0.9));
+      const opacity = link.type === "tag" ? "0.30" : String(Math.min(0.78, Math.max(0.34, 0.26 + relationScore * 0.5)));
       const el = svgEl("path", {{
         d: linkPath(source, target, index, link.type),
         class: "link-line",
         "data-source": String(link.source),
         "data-target": String(link.target),
-        opacity: link.type === "tag" ? "0.34" : "0.52"
+        opacity: opacity
       }});
       linksLayer.appendChild(el);
       linkElements.push(el);

@@ -33,7 +33,7 @@ Personal OS
 Personal Wiki
   长期知识系统
   Markdown-backed
-  负责笔记、标签、概念、搜索索引、图谱、浏览器渲染
+  负责笔记、标签、概念、搜索索引、带关系分数的图谱、浏览器渲染
 
 Agents
   推理和执行层
@@ -100,7 +100,7 @@ Agent submit 进入 review
 | Project | Personal OS | 项目或工作流容器。 |
 | ProjectEvent | Personal OS | 项目时间线。 |
 | Markdown note | Personal Wiki | 长期可读知识。 |
-| Graph edge | Personal Wiki | 笔记、概念和链接之间的关系。 |
+| Graph edge | Personal Wiki | 笔记、概念和链接之间的关系，包含关系强度分数。 |
 
 ## Agent 上下文
 

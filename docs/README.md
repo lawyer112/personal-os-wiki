@@ -21,6 +21,8 @@ for Personal OS + Personal Wiki.
 - [架构说明](./ARCHITECTURE.zh-CN.md)
 - [Human-Agent Collaboration Roadmap](./HUMAN_AGENT_COLLABORATION_ROADMAP.md)
 - [人机协同路线图](./HUMAN_AGENT_COLLABORATION_ROADMAP.zh-CN.md)
+- [Knowledge System Plan](./KNOWLEDGE_SYSTEM_PLAN.md)
+- [知识系统落地方案](./KNOWLEDGE_SYSTEM_PLAN.zh-CN.md)
 - [Working Manual](./WORKING_MANUAL.md)
 - [工作手册](./WORKING_MANUAL.zh-CN.md)
 - [Why Not Just Long-Term Memory?](./WHY_NOT_LONG_TERM_MEMORY.md)
@@ -64,7 +66,8 @@ for Personal OS + Personal Wiki.
 
 1. Read the root [`README.md`](../README.md) or [`README.zh-CN.md`](../README.zh-CN.md).
 2. Run `docker compose up -d --build` or skim the Getting Started guide.
-3. Read the human-agent collaboration roadmap if you are judging product direction.
+3. Read the human-agent collaboration roadmap and knowledge-system plan if you
+   are judging product direction.
 4. Read the macOS guide if the target host is a Mac.
 5. Read the comparison document if you are judging positioning.
 6. Read the architecture document in your preferred language.
