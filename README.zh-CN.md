@@ -413,6 +413,7 @@ curl -X POST \
 | 查看部署要求 | [部署指南](./docs/DEPLOYMENT.zh-CN.md) |
 | 安装固定版本 | [版本发布与安装包](./docs/RELEASES.zh-CN.md) |
 | 理解架构 | [架构说明](./docs/ARCHITECTURE.zh-CN.md) |
+| 理解原始采集和 Agent 后处理 | [知识系统落地方案](./docs/KNOWLEDGE_SYSTEM_PLAN.zh-CN.md) 和 [网页采集](./docs/WEB_CAPTURE.zh-CN.md) |
 | 对比长期记忆和 Obsidian 插件 | [对比文](./docs/COMPARISON.zh-CN.md) |
 | 发布和运营项目 | [Launch 手册](./docs/LAUNCH_PLAYBOOK.zh-CN.md) |
 | 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)、[Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
