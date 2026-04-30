@@ -11,10 +11,7 @@ export type CaptureActionState = {
   itemId?: string;
   error?: string;
   values?: {
-    url?: string;
-    title?: string;
-    selection?: string;
-    note?: string;
+    content?: string;
   };
 };
 
@@ -23,10 +20,7 @@ export async function createCaptureAction(
   formData: FormData,
 ): Promise<CaptureActionState> {
   const values = {
-    url: String(formData.get("url") ?? ""),
-    title: String(formData.get("title") ?? ""),
-    selection: String(formData.get("selection") ?? ""),
-    note: String(formData.get("note") ?? ""),
+    content: String(formData.get("content") ?? ""),
   };
   const parsed = captureCreateSchema.safeParse({
     ...values,

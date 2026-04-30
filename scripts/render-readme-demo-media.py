@@ -46,7 +46,7 @@ TEXT = {
         "nav": ["Today", "Capture", "Inbox", "Tasks", "Wiki"],
         "scenes": [
             "Open Capture",
-            "Paste link and selected text",
+            "Paste one link",
             "Save to Inbox",
             "Review raw input",
             "Agent chooses cadence",
@@ -56,19 +56,16 @@ TEXT = {
             "Send reminder payload",
         ],
         "capture": "Capture",
-        "capture_hint": "A passive save: no LLM call happens here.",
-        "url": "URL",
-        "title": "Title",
-        "selection": "Selection",
-        "note": "Note",
-        "save": "Save to Inbox",
+        "capture_hint": "One raw entry. No title, summary, or tags from the user.",
+        "input_label": "Link or raw thought",
+        "drop_hint": "Paste or drop a URL",
+        "save": "Save",
         "saved": "Saved to Inbox",
         "inbox": "Inbox",
         "new": "new",
-        "raw_input": "Web capture: README launch article",
+        "raw_input": "Web capture",
         "source": "https://github.com/lawyer112/personal-os-wiki",
-        "quote": "Saved links should become knowledge only when an agent is asked.",
-        "note_text": "Later: extract a Wiki note, one task, and a reminder payload.",
+        "quote": "Agent will fetch title, platform, summary, Wiki note, task, and reminder later.",
         "policy_title": "Cadence belongs to the agent",
         "policy_body": "Realtime, batched review, daily review, or manual-only are all valid.",
         "agent": "Agent",
@@ -90,7 +87,7 @@ TEXT = {
         "nav": ["今日", "采集", "输入箱", "任务", "知识库"],
         "scenes": [
             "打开采集页",
-            "粘贴链接和选中文本",
+            "粘贴一个链接",
             "保存到输入箱",
             "查看原始输入",
             "由智能体决定节奏",
@@ -100,19 +97,16 @@ TEXT = {
             "发送提醒消息",
         ],
         "capture": "采集",
-        "capture_hint": "这是被动保存：这里不会调用大模型。",
-        "url": "链接",
-        "title": "标题",
-        "selection": "选中文本",
-        "note": "备注",
-        "save": "保存到输入箱",
+        "capture_hint": "一个原始入口。标题、摘要、标签都不用用户填。",
+        "input_label": "链接或原始想法",
+        "drop_hint": "粘贴或拖入 URL",
+        "save": "保存",
         "saved": "已保存到输入箱",
         "inbox": "输入箱",
         "new": "未处理",
-        "raw_input": "网页采集：README 发布文章",
+        "raw_input": "网页采集",
         "source": "https://github.com/lawyer112/personal-os-wiki",
-        "quote": "保存链接不等于立刻消耗模型额度，明确需要时再处理。",
-        "note_text": "稍后提取一篇知识笔记、一个任务和一条提醒。",
+        "quote": "后续由 Agent 抓标题、识别平台、摘要、写知识、拆任务和生成提醒。",
         "policy_title": "处理节奏属于智能体",
         "policy_body": "实时、批量复盘、每天复盘或纯手动，都可以配置。",
         "agent": "智能体",
@@ -271,18 +265,25 @@ def draw_capture(draw: ImageDraw.ImageDraw, locale: str, scene: int, local: floa
         reveal = 0
     focus = scene in (0, 1)
 
-    draw_field(draw, locale, x, 204, t["url"], t["source"], 820, 52, focus=focus, reveal=reveal)
-    draw_field(draw, locale, x, 298, t["title"], t["raw_input"], 820, 52, focus=scene == 1, reveal=reveal)
-    draw_field(draw, locale, x, 392, t["selection"], t["quote"], 820, 88, focus=scene == 1, multiline=True, reveal=reveal)
-    draw_field(draw, locale, x, 520, t["note"], t["note_text"], 820, 74, focus=scene == 1, multiline=True, reveal=reveal)
+    draw_text(draw, (x, 214), t["input_label"], load_font(16, locale, True), COLORS["ink"])
+    border = COLORS["green"] if focus else COLORS["line"]
+    rounded(draw, (x, 246, x + 820, 468), "#FFFFFF", border, 14, 2 if focus else 1)
+    shown = t["source"][: int(len(t["source"]) * max(0.0, min(1.0, reveal)))]
+    if shown:
+        draw_text(draw, (x + 24, 286), shown, load_font(22, "en"), COLORS["ink"], 760, 8)
+    else:
+        draw_text(draw, (x + 24, 286), t["drop_hint"], load_font(22, locale), COLORS["muted"], 760, 8)
+
+    rounded(draw, (x, 506, x + 820, 594), COLORS["soft"], COLORS["line"], 14)
+    draw_text(draw, (x + 24, 530), t["quote"], body_font, COLORS["muted"], 760, 6)
 
     button_fill = COLORS["green"] if scene == 2 and local > 0.42 else COLORS["dark"]
-    rounded(draw, (x, 632, x + 160, 672), button_fill, None, 10)
+    rounded(draw, (x, 632, x + 116, 672), button_fill, None, 10)
     draw_text(draw, (x + 24, 642), t["save"], load_font(15, locale, True), "#FFFFFF")
 
     if scene == 2 and local > 0.58:
-        rounded(draw, (x + 178, 632, x + 470, 672), COLORS["green_soft"], "#86EFAC", 10)
-        draw_text(draw, (x + 196, 642), t["saved"], load_font(15, locale, True), COLORS["green"])
+        rounded(draw, (x + 134, 632, x + 426, 672), COLORS["green_soft"], "#86EFAC", 10)
+        draw_text(draw, (x + 152, 642), t["saved"], load_font(15, locale, True), COLORS["green"])
 
 
 def draw_inbox(draw: ImageDraw.ImageDraw, locale: str, scene: int, local: float) -> None:

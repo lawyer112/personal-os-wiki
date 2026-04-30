@@ -5,7 +5,7 @@ These assets are safe public demo media generated from fake data.
 The current demo flow is:
 
 ```text
-Web capture -> Personal OS Inbox -> agent policy chooses cadence
+Paste one link -> Personal OS Inbox -> agent policy chooses cadence
   -> Personal Wiki note -> reviewable task -> Telegram-ready reminder payload
 ```
 

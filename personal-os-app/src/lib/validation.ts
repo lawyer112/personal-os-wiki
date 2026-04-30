@@ -55,18 +55,15 @@ export const inboxCreateSchema = z.object({
 
 export const captureCreateSchema = z
   .object({
-    url: optionalFormString(2048).pipe(z.url().optional()),
-    title: optionalFormString(300),
-    selection: optionalFormString(6000),
-    note: optionalFormString(6000),
+    content: optionalFormString(12000),
     sourcePlatform: z.string().min(1).default("web"),
     createdBy: z.string().min(1).default("user"),
   })
   .refine(
-    (input) => Boolean(input.url || input.title || input.selection || input.note),
+    (input) => Boolean(input.content),
     {
-      message: "Capture needs at least one URL, title, selection, or note.",
-      path: ["note"],
+      message: "Capture needs a link or text.",
+      path: ["content"],
     },
   );
 

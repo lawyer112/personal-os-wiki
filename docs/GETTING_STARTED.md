@@ -106,8 +106,8 @@ After `npm run prisma:seed`, the app contains fictional demo data:
 Suggested click path:
 
 1. Open `Today` to see what the app treats as current work.
-2. Open `Capture`, save a test URL or note, then open `Inbox` and confirm it is
-   only recorded as a new input.
+2. Open `Capture`, save one test link, then open `Inbox` and confirm it is only
+   recorded as a new input.
 3. Open `Tasks` and click `Review the fictional launch checklist`.
 4. Check the next action, definition of done, Wiki link, contribution, and
    artifact.

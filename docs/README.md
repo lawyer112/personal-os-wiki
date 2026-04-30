@@ -21,6 +21,8 @@ for Personal OS + Personal Wiki.
 - [架构说明](./ARCHITECTURE.zh-CN.md)
 - [Human-Agent Collaboration Roadmap](./HUMAN_AGENT_COLLABORATION_ROADMAP.md)
 - [人机协同路线图](./HUMAN_AGENT_COLLABORATION_ROADMAP.zh-CN.md)
+- [Working Manual](./WORKING_MANUAL.md)
+- [工作手册](./WORKING_MANUAL.zh-CN.md)
 - [Why Not Just Long-Term Memory?](./WHY_NOT_LONG_TERM_MEMORY.md)
 - [为什么不只是长期记忆？](./WHY_NOT_LONG_TERM_MEMORY.zh-CN.md)
 

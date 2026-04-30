@@ -46,19 +46,18 @@ Passive web capture should be especially cheap:
 /capture -> InboxItem(status=new)
 ```
 
-That path records the URL, selection, and user note only. It does not classify,
-write the Wiki, create tasks, or send notifications. A worker can later read the
-Inbox and decide whether to call `/api/intake`.
+That path records one raw link or text blob only. It does not classify, fetch
+metadata, write the Wiki, create tasks, or send notifications. A worker can
+later read the Inbox and decide whether to call `/api/intake`.
 
 Recommended low-cost starting schedule:
 
 ```text
 09:30 planner-notify   Pull planner packet and send the user a short plan.
-12:30 capture-review   Optional: batch new web captures if the user enabled it.
 15:00 reminder-checkin Pull reminder payload and nudge stale work.
-18:30 capture-review   Optional: batch new web captures if the user enabled it.
 21:30 evening-review   Summarize open loops; do not invent new priorities.
 */30 task-poll         Poll claimable tasks only if the user enabled agent work.
+manual/batch capture-review Optional: process new web captures if the user enabled it.
 ```
 
 The planner job should speak to the user. The task worker should work on a

@@ -1,37 +1,37 @@
 import type { CaptureCreateInput, InboxCreateInput } from "@/lib/validation";
 
 export function captureToInboxInput(input: CaptureCreateInput): InboxCreateInput {
-  const parts = [
-    input.title ? `Title: ${input.title}` : null,
-    input.url ? `URL: ${input.url}` : null,
-    input.selection ? `Selection:\n${input.selection}` : null,
-    input.note ? `Note:\n${input.note}` : null,
-  ].filter((part): part is string => Boolean(part));
+  const rawText = input.content ?? "";
+  const sourceUrl = extractFirstUrl(rawText);
 
   return {
-    sourceType: input.url ? "link" : "text",
+    sourceType: sourceUrl ? "link" : "text",
     sourcePlatform: input.sourcePlatform,
-    rawText: parts.join("\n\n"),
-    sourceUrl: input.url,
-    attachments: [captureMetadata(input)],
+    rawText,
+    sourceUrl,
+    attachments: [captureMetadata(rawText, sourceUrl)],
     createdBy: input.createdBy,
   };
 }
 
-function captureMetadata(input: CaptureCreateInput) {
-  const metadata: Record<string, unknown> = {
+function captureMetadata(rawText: string, sourceUrl?: string) {
+  return {
     kind: "web-capture",
+    contentLength: rawText.length,
+    extractedUrl: sourceUrl,
+    pendingEnrichment: true,
   };
+}
 
-  if (input.title) {
-    metadata.title = input.title;
-  }
-  if (input.selection) {
-    metadata.selectionLength = input.selection.length;
-  }
-  if (input.note) {
-    metadata.noteLength = input.note.length;
+function extractFirstUrl(value: string) {
+  const match = value.match(/https?:\/\/[^\s<>"')\]]+/i);
+  if (!match) {
+    return undefined;
   }
 
-  return metadata;
+  try {
+    return new URL(match[0]).toString();
+  } catch {
+    return undefined;
+  }
 }

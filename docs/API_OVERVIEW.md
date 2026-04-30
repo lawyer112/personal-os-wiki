@@ -36,9 +36,9 @@ Record a passive browser capture without spending LLM tokens:
 Open http://localhost:3000/capture
 ```
 
-The capture page writes one `InboxItem(status=new)`. Agent timing is external
-policy: process it immediately, batch it every few hours, once per day, or only
-on explicit request.
+Paste or drop one raw link. The capture page writes one `InboxItem(status=new)`.
+Agent timing is external policy: process it immediately, batch it, run daily, or
+only process on explicit request.
 
 Capture mixed input through an active agent:
 

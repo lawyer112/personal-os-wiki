@@ -101,7 +101,7 @@ http://localhost:3000
 建议点击路径：
 
 1. 打开 `Today`，看系统认为当前最该处理的工作。
-2. 打开 `Capture`，保存一个测试链接或备注，再打开 `Inbox`，确认它只是被记录成一条新输入。
+2. 打开 `Capture`，保存一个测试链接，再打开 `Inbox`，确认它只是被记录成一条新输入。
 3. 打开 `Tasks`，点进 `Review the fictional launch checklist`。
 4. 查看下一步动作、完成定义、Wiki 链接、贡献记录和 artifact。
 5. 打开 `Projects`，查看 `Acorn Launch Lab`。

@@ -3,12 +3,9 @@ import { captureToInboxInput } from "@/lib/capture";
 import { captureCreateSchema } from "@/lib/validation";
 
 describe("web capture", () => {
-  it("normalizes a captured page into a passive inbox item", () => {
+  it("normalizes a pasted link into a passive inbox item", () => {
     const input = captureCreateSchema.parse({
-      url: "https://example.com/research",
-      title: "Research memo",
-      selection: "Important paragraph",
-      note: "Review during the next agent intake pass.",
+      content: "https://example.com/research",
     });
 
     const inbox = captureToInboxInput(input);
@@ -19,25 +16,32 @@ describe("web capture", () => {
       sourceUrl: "https://example.com/research",
       createdBy: "user",
     });
-    expect(inbox.rawText).toContain("Title: Research memo");
-    expect(inbox.rawText).toContain("URL: https://example.com/research");
-    expect(inbox.rawText).toContain("Selection:\nImportant paragraph");
-    expect(inbox.rawText).toContain(
-      "Note:\nReview during the next agent intake pass.",
-    );
+    expect(inbox.rawText).toBe("https://example.com/research");
     expect(inbox.attachments[0]).toMatchObject({
       kind: "web-capture",
-      title: "Research memo",
-      selectionLength: 19,
+      contentLength: 28,
+      extractedUrl: "https://example.com/research",
+      pendingEnrichment: true,
+    });
+  });
+
+  it("keeps raw text when no link is present", () => {
+    const input = captureCreateSchema.parse({
+      content: "remember to review the saved research links later",
+    });
+
+    const inbox = captureToInboxInput(input);
+
+    expect(inbox).toMatchObject({
+      sourceType: "text",
+      rawText: "remember to review the saved research links later",
+      sourceUrl: undefined,
     });
   });
 
   it("rejects an empty capture before any inbox write", () => {
     const result = captureCreateSchema.safeParse({
-      url: " ",
-      title: "",
-      selection: "",
-      note: "",
+      content: " ",
     });
 
     expect(result.success).toBe(false);
