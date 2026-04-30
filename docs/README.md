@@ -19,6 +19,8 @@ for Personal OS + Personal Wiki.
 - [Launch 手册](./LAUNCH_PLAYBOOK.zh-CN.md)
 - [Architecture](./ARCHITECTURE.md)
 - [架构说明](./ARCHITECTURE.zh-CN.md)
+- [Human-Agent Collaboration Roadmap](./HUMAN_AGENT_COLLABORATION_ROADMAP.md)
+- [人机协同路线图](./HUMAN_AGENT_COLLABORATION_ROADMAP.zh-CN.md)
 - [Why Not Just Long-Term Memory?](./WHY_NOT_LONG_TERM_MEMORY.md)
 - [为什么不只是长期记忆？](./WHY_NOT_LONG_TERM_MEMORY.zh-CN.md)
 
@@ -29,6 +31,7 @@ for Personal OS + Personal Wiki.
 - [Agent Prompt](./AGENT_PROMPT.md)
 - [Agent 提示词](./AGENT_PROMPT.zh-CN.md)
 - [Agent Job Orchestration](./AGENT_JOB_ORCHESTRATION.md)
+- [Human-Agent Collaboration Roadmap](./HUMAN_AGENT_COLLABORATION_ROADMAP.md)
 - [Web Capture](./WEB_CAPTURE.md)
 - [网页采集](./WEB_CAPTURE.zh-CN.md)
 - [Mac Agent Adapter](./MAC_AGENT_ADAPTER.md)
@@ -59,9 +62,11 @@ for Personal OS + Personal Wiki.
 
 1. Read the root [`README.md`](../README.md) or [`README.zh-CN.md`](../README.zh-CN.md).
 2. Run `docker compose up -d --build` or skim the Getting Started guide.
-3. Read the macOS guide if the target host is a Mac.
-4. Read the comparison document if you are judging positioning.
-5. Read the architecture document in your preferred language.
-6. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
-7. Read Data Safety before connecting real notes, tasks, reminders, or server data.
-8. Read Open Source Release Process before publishing or making the repository public.
+3. Read the human-agent collaboration roadmap if you are judging product direction.
+4. Read the macOS guide if the target host is a Mac.
+5. Read the comparison document if you are judging positioning.
+6. Read the architecture document in your preferred language.
+7. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
+8. Read Web Capture if you are reviewing passive collection from browser/manual sources.
+9. Read Data Safety before connecting real notes, tasks, reminders, or server data.
+10. Read Open Source Release Process before publishing or making the repository public.

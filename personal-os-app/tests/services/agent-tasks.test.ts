@@ -127,6 +127,26 @@ describe("agent task protocol", () => {
     ).rejects.toThrow("Task lease changed");
   });
 
+  it("rejects direct claims for tasks that still need review", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "task_1",
+          title: "Demo task",
+          status: "review",
+          ownerAgent: null,
+          leaseUntil: null,
+        }),
+        updateMany: vi.fn(),
+      },
+    });
+
+    await expect(
+      claimTask(db, "task_1", { agentId: "agent_1", leaseMinutes: 30 }),
+    ).rejects.toThrow("only todo or expired doing tasks can be claimed");
+    expect(db.task.updateMany).not.toHaveBeenCalled();
+  });
+
   it("heartbeats an owned task", async () => {
     const db = createDb({
       task: {
@@ -151,6 +171,29 @@ describe("agent task protocol", () => {
         data: expect.objectContaining({ ownerAgent: "agent_1" }),
       }),
     );
+  });
+
+  it("rejects heartbeats before a task is claimed", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "task_1",
+          title: "Demo task",
+          status: "todo",
+          ownerAgent: null,
+          leaseUntil: null,
+        }),
+        update: vi.fn(),
+      },
+    });
+
+    await expect(
+      heartbeatTask(db, "task_1", {
+        agentId: "agent_1",
+        leaseMinutes: 30,
+      }),
+    ).rejects.toThrow("Task is not claimed by an agent");
+    expect(db.task.update).not.toHaveBeenCalled();
   });
 
   it("writes a contribution and artifacts for the owning agent", async () => {
@@ -179,6 +222,28 @@ describe("agent task protocol", () => {
         }),
       }),
     );
+  });
+
+  it("rejects contributions before a task is claimed", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "task_1",
+          status: "todo",
+          ownerAgent: null,
+        }),
+      },
+    });
+
+    await expect(
+      addTaskContribution(db, "task_1", {
+        agentId: "agent_1",
+        summary: "Tried to write without a claim.",
+        evidenceLinks: [],
+        artifactUrls: [],
+      }),
+    ).rejects.toThrow("Task is not claimed by an agent");
+    expect(db.taskContribution.create).not.toHaveBeenCalled();
   });
 
   it("submits work for review instead of marking it done", async () => {

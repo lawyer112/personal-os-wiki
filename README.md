@@ -486,6 +486,7 @@ Read the full release checklist:
 | Deploy on macOS | [macOS Deployment Guide](./docs/MACOS_DEPLOYMENT.md) |
 | Install a fixed version | [Releases and packages](./docs/RELEASES.md) |
 | Understand architecture | [Architecture](./docs/ARCHITECTURE.md) |
+| Understand the human-agent collaboration direction | [Human-Agent Collaboration Roadmap](./docs/HUMAN_AGENT_COLLABORATION_ROADMAP.md) |
 | Compare with memory/wiki/task tools | [Comparison](./docs/COMPARISON.md) |
 | Launch or package the repo | [Launch playbook](./docs/LAUNCH_PLAYBOOK.md) |
 | Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [Agent Prompt](./docs/AGENT_PROMPT.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |

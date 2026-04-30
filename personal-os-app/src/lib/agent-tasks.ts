@@ -53,8 +53,20 @@ function assertTaskCanBeWorked(task: TaskRecord) {
   }
 }
 
+function assertTaskCanBeClaimed(task: TaskRecord) {
+  if (!["todo", "doing"].includes(task.status)) {
+    throw new HttpError(
+      409,
+      `Task is ${task.status}; only todo or expired doing tasks can be claimed`,
+    );
+  }
+}
+
 function assertOwnedByAgent(task: TaskRecord, agentId: string) {
-  if (task.ownerAgent && task.ownerAgent !== agentId) {
+  if (!task.ownerAgent) {
+    throw new HttpError(409, "Task is not claimed by an agent");
+  }
+  if (task.ownerAgent !== agentId) {
     throw new HttpError(409, `Task is owned by ${task.ownerAgent}`);
   }
 }
@@ -119,6 +131,7 @@ export async function claimTask<TDb extends AgentTaskDb>(
     throw new HttpError(404, "Task not found");
   }
   assertTaskCanBeWorked(before);
+  assertTaskCanBeClaimed(before);
   if (isActiveLease(before, now) && before.ownerAgent !== input.agentId) {
     throw new HttpError(409, `Task is leased by ${before.ownerAgent}`);
   }
@@ -126,7 +139,7 @@ export async function claimTask<TDb extends AgentTaskDb>(
   const claimed = await taskDelegate.updateMany({
     where: {
       id: taskId,
-      status: { notIn: ["done", "archived"] },
+      status: { in: ["todo", "doing"] },
       OR: [
         { ownerAgent: null },
         { ownerAgent: input.agentId },
