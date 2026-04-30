@@ -102,6 +102,18 @@ read token: demo-wiki-read-token
 
 The demo uses invented data only and binds ports to `127.0.0.1`.
 
+## Product Demo
+
+This demo was generated from a real `/api/intake` run using fake public data:
+a Telegram-style link becomes an Inbox item, a Wiki note, a reviewable task, an
+idea, and a Telegram-ready reminder payload.
+
+<p align="center">
+  <a href="./docs/assets/demo/personal-os-wiki-readme-demo.mp4">
+    <img src="./docs/assets/demo/personal-os-wiki-readme-demo.gif" alt="Demo: Telegram link intake becomes Personal Wiki knowledge, a Personal OS task, and a Telegram-ready reminder." width="100%">
+  </a>
+</p>
+
 ## Related Ecosystem
 
 This project sits near the Karpathy-style LLM Wiki, Markdown-as-memory, personal

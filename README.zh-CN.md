@@ -79,6 +79,18 @@ read token: demo-wiki-read-token
 
 这个 demo 只使用虚构数据，并且端口默认只绑定 `127.0.0.1`。
 
+## 产品演示
+
+这段演示来自一次真实的 `/api/intake` 跑通，但使用的是公开安全的假数据：
+一条 Telegram 风格的链接输入，会进入输入箱，写成 Wiki 笔记，拆成可复核任务，
+保留一个想法，并生成可发送到 Telegram 的提醒 payload。
+
+<p align="center">
+  <a href="./docs/assets/demo/personal-os-wiki-readme-demo.mp4">
+    <img src="./docs/assets/demo/personal-os-wiki-readme-demo.gif" alt="演示：Telegram 链接输入变成 Personal Wiki 知识、Personal OS 任务和 Telegram-ready 提醒。" width="100%">
+  </a>
+</p>
+
 ## 相关生态
 
 这个项目和 Karpathy-style LLM Wiki、Markdown 作为长期记忆、个人知识图谱、
