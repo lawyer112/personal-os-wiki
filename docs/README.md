@@ -9,6 +9,8 @@ for Personal OS + Personal Wiki.
 - [快速上手](./GETTING_STARTED.zh-CN.md)
 - [Deployment Guide](./DEPLOYMENT.md)
 - [部署指南](./DEPLOYMENT.zh-CN.md)
+- [Service Topology](./SERVICE_TOPOLOGY.md)
+- [服务拓扑说明](./SERVICE_TOPOLOGY.zh-CN.md)
 - [macOS Deployment Guide](./MACOS_DEPLOYMENT.md)
 - [macOS 部署指南](./MACOS_DEPLOYMENT.zh-CN.md)
 - [Releases and Packages](./RELEASES.md)
@@ -66,12 +68,14 @@ for Personal OS + Personal Wiki.
 
 1. Read the root [`README.md`](../README.md) or [`README.zh-CN.md`](../README.zh-CN.md).
 2. Run `docker compose up -d --build` or skim the Getting Started guide.
-3. Read the human-agent collaboration roadmap and knowledge-system plan if you
+3. Read Service Topology if you are checking whether OS and Wiki are one
+   product, one service, or two runtime services.
+4. Read the human-agent collaboration roadmap and knowledge-system plan if you
    are judging product direction.
-4. Read the macOS guide if the target host is a Mac.
-5. Read the comparison document if you are judging positioning.
-6. Read the architecture document in your preferred language.
-7. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
-8. Read Web Capture if you are reviewing passive collection from browser/manual sources.
-9. Read Data Safety before connecting real notes, tasks, reminders, or server data.
-10. Read Open Source Release Process before publishing or making the repository public.
+5. Read the macOS guide if the target host is a Mac.
+6. Read the comparison document if you are judging positioning.
+7. Read the architecture document in your preferred language.
+8. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
+9. Read Web Capture if you are reviewing passive collection from browser/manual sources.
+10. Read Data Safety before connecting real notes, tasks, reminders, or server data.
+11. Read Open Source Release Process before publishing or making the repository public.

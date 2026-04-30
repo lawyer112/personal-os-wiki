@@ -23,6 +23,11 @@
 
 Personal Wiki 可以单独运行。Personal OS 需要 Postgres。完整 OS/Wiki 闭环需要两个服务都运行，并且 Wiki 的读写 token 对齐。
 
+如果 OS/Wiki 的关系不清楚，先看[服务拓扑说明](./SERVICE_TOPOLOGY.zh-CN.md)。
+简短结论：这是一个产品和一个 Release 包，但完整运行时是两个 Web 服务加
+Postgres。Personal OS 会跳转和调用 Personal Wiki，但当前不会把 Wiki 页面代理成
+自己的 `/wiki/*` 内部路由。
+
 ## 推荐机器配置
 
 单人私有部署的最低建议：

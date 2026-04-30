@@ -31,6 +31,9 @@ Read token:    demo-wiki-read-token
 ```
 
 This path starts Postgres, Personal Wiki, Personal OS, and fake seed data.
+If you are wondering why there are two browser URLs, read
+[Service Topology](./SERVICE_TOPOLOGY.md). The short answer: this is one product
+stack, but it runs Personal OS and Personal Wiki as separate web services.
 
 ## Prerequisites
 

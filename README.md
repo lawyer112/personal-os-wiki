@@ -102,6 +102,28 @@ read token: demo-wiki-read-token
 
 The demo uses invented data only and binds ports to `127.0.0.1`.
 
+## One Product, Two Web Services
+
+This repository is one product and one release package. At runtime it starts
+separate services: Personal OS for work state, Personal Wiki for Markdown
+knowledge, and Postgres for OS data. The two browser URLs in the demo are
+therefore expected, not two unrelated installs.
+
+```text
+Personal OS   http://localhost:3000   tasks, projects, agent runs, reviews
+Personal Wiki http://localhost:3422   notes, tags, concepts, graph
+Postgres      internal / 54329        Personal OS database
+```
+
+Personal OS links to Personal Wiki through `NEXT_PUBLIC_WIKI_URL` and talks to
+it through `WIKI_READ_TOKEN` / `WIKI_API_TOKEN`. It does not currently proxy
+Wiki pages as an internal `/wiki/*` route. For remote access, put both behind
+authenticated HTTPS, preferably as two hostnames such as `os.example.internal`
+and `wiki.example.internal`.
+
+Read the full topology explanation:
+[`docs/SERVICE_TOPOLOGY.md`](./docs/SERVICE_TOPOLOGY.md).
+
 ## Product Demo
 
 This demo uses fake public data and shows the full product loop: web capture

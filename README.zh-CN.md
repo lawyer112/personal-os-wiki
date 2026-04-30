@@ -79,6 +79,26 @@ read token: demo-wiki-read-token
 
 这个 demo 只使用虚构数据，并且端口默认只绑定 `127.0.0.1`。
 
+## 一个产品，两个 Web 服务
+
+这个仓库是一个产品，也是一个 Release 包。运行时会启动多个组件：
+Personal OS 负责工作状态，Personal Wiki 负责 Markdown 知识库，Postgres
+负责 OS 数据库。所以 demo 里出现两个浏览器地址是正常的，不是让用户安装两个
+互不相关的项目。
+
+```text
+Personal OS   http://localhost:3000   任务、项目、Agent 运行记录、复核
+Personal Wiki http://localhost:3422   笔记、标签、概念、图谱
+Postgres      internal / 54329        Personal OS 数据库
+```
+
+Personal OS 通过 `NEXT_PUBLIC_WIKI_URL` 生成 Wiki 跳转链接，通过
+`WIKI_READ_TOKEN` / `WIKI_API_TOKEN` 调用 Wiki API。当前它不会把 Wiki 页面
+代理成自己的 `/wiki/*` 内部路由。远程访问时，建议把两个服务都放在带鉴权的
+HTTPS 反向代理后面，例如 `os.example.internal` 和 `wiki.example.internal`。
+
+完整说明见：[服务拓扑说明](./docs/SERVICE_TOPOLOGY.zh-CN.md)。
+
 ## 产品演示
 
 这段演示只使用公开安全的假数据，展示完整产品闭环：网页采集先把链接记进输入箱，

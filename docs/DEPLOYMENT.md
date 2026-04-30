@@ -32,6 +32,12 @@ See [Releases and packages](./RELEASES.md).
 Personal Wiki can run by itself. Personal OS needs Postgres. The full
 OS/Wiki loop needs both services plus matching Wiki read/write tokens.
 
+If the OS/Wiki split is confusing, read
+[Service Topology](./SERVICE_TOPOLOGY.md) first. Short version: this is one
+product/release package, but the full stack runs two web services plus
+Postgres. Personal OS links to and calls Personal Wiki; it does not serve Wiki
+pages through an internal `/wiki/*` route.
+
 ## Recommended Host
 
 Minimum for a private single-user install:

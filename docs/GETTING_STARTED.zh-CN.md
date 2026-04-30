@@ -29,6 +29,8 @@ Read token:    demo-wiki-read-token
 ```
 
 这条路径会启动 Postgres、Personal Wiki、Personal OS，并写入虚构 seed 数据。
+如果你疑惑为什么有两个浏览器地址，先看[服务拓扑说明](./SERVICE_TOPOLOGY.zh-CN.md)。
+简短结论：这是一个产品栈，但 Personal OS 和 Personal Wiki 是两个独立 Web 服务。
 
 ## 前置要求
 
