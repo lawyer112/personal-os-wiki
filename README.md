@@ -524,6 +524,7 @@ Read the full release checklist:
 | Understand data safety | [Data safety](./docs/DATA_SAFETY.md) |
 | Publish safely | [Open source release process](./OPEN_SOURCE_RELEASE.md) |
 | Decide monorepo vs split repos | [Repository strategy](./docs/REPOSITORY_STRATEGY.md) |
+| Follow the long-term object-knowledge rebuild | [Object Knowledge Rebuild Manual](./docs/OBJECT_KNOWLEDGE_REBUILD_MANUAL.md) |
 | See what is next | [Roadmap](./docs/ROADMAP.md) |
 
 ## Roadmap
@@ -534,7 +535,8 @@ The short version:
 - Add more agent task-claiming examples and smoke scripts.
 - Improve task extraction from messy input.
 - Add richer project dashboards and priority views.
-- Explore Wiki graph insights and knowledge-gap detection.
+- Rebuild Wiki as typed object knowledge with explainable graph relations,
+  lint issues, and OS-generated maintenance tasks.
 
 Read the full [roadmap](./docs/ROADMAP.md).
 

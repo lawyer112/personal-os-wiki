@@ -25,6 +25,8 @@ for Personal OS + Personal Wiki.
 - [人机协同路线图](./HUMAN_AGENT_COLLABORATION_ROADMAP.zh-CN.md)
 - [Knowledge System Plan](./KNOWLEDGE_SYSTEM_PLAN.md)
 - [知识系统落地方案](./KNOWLEDGE_SYSTEM_PLAN.zh-CN.md)
+- [Object Knowledge Rebuild Manual](./OBJECT_KNOWLEDGE_REBUILD_MANUAL.md)
+- [对象化知识库长期大改手册](./OBJECT_KNOWLEDGE_REBUILD_MANUAL.zh-CN.md)
 - [Working Manual](./WORKING_MANUAL.md)
 - [工作手册](./WORKING_MANUAL.zh-CN.md)
 - [Why Not Just Long-Term Memory?](./WHY_NOT_LONG_TERM_MEMORY.md)
@@ -72,10 +74,12 @@ for Personal OS + Personal Wiki.
    product, one service, or two runtime services.
 4. Read the human-agent collaboration roadmap and knowledge-system plan if you
    are judging product direction.
-5. Read the macOS guide if the target host is a Mac.
-6. Read the comparison document if you are judging positioning.
-7. Read the architecture document in your preferred language.
-8. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
-9. Read Web Capture if you are reviewing passive collection from browser/manual sources.
-10. Read Data Safety before connecting real notes, tasks, reminders, or server data.
-11. Read Open Source Release Process before publishing or making the repository public.
+5. Read Object Knowledge Rebuild Manual if you are working on the long-term
+   Wiki/object/graph rebuild.
+6. Read the macOS guide if the target host is a Mac.
+7. Read the comparison document if you are judging positioning.
+8. Read the architecture document in your preferred language.
+9. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
+10. Read Web Capture if you are reviewing passive collection from browser/manual sources.
+11. Read Data Safety before connecting real notes, tasks, reminders, or server data.
+12. Read Open Source Release Process before publishing or making the repository public.

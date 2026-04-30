@@ -441,6 +441,7 @@ curl -X POST \
 | 使用 Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) 和 [Wiki 使用手册](./personal-wiki/docs/USAGE.md) |
 | 安全发布 | [Open source release process](./OPEN_SOURCE_RELEASE.md) |
 | 判断是否拆仓 | [仓库拆分与开源策略](./docs/REPOSITORY_STRATEGY.zh-CN.md) |
+| 按长期大改方向推进对象化知识库 | [对象化知识库长期大改手册](./docs/OBJECT_KNOWLEDGE_REBUILD_MANUAL.zh-CN.md) |
 
 ## 路线图
 

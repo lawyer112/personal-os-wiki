@@ -15,6 +15,9 @@ safer, and easier to adopt.
 
 ## Next
 
+- Object-knowledge rebuild: make Wiki notes typed, explainable, and usable as
+  agent-maintained project/workflow/evidence objects. See
+  [Object Knowledge Rebuild Manual](./OBJECT_KNOWLEDGE_REBUILD_MANUAL.md).
 - Public screenshots using fake seed data only.
 - A browser walkthrough for Today, Inbox, Tasks, Projects, Ideas, Wiki, and
   Agent Context.
@@ -28,7 +31,8 @@ safer, and easier to adopt.
 
 - Agent self-assignment by capability tags.
 - Richer project dashboards and revenue/work-priority views.
-- Knowledge graph insights and knowledge-gap detection.
+- Knowledge graph insights, local graph views, Wiki lint, and knowledge-gap
+  tasks generated into Personal OS.
 - Safer import/export for existing Markdown vaults.
 - Optional notification adapters beyond Telegram-style payloads.
 - Optional OpenAPI/Bruno/Postman artifacts for API consumers.
