@@ -47,6 +47,18 @@ Verify the checksum, extract the archive, then follow:
 - [Deployment Guide](./DEPLOYMENT.md)
 - [macOS Deployment Guide](./MACOS_DEPLOYMENT.md)
 
+Start the demo from an extracted release:
+
+```bash
+sh ./scripts/demo.sh
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo.ps1
+```
+
 On macOS or Linux:
 
 ```bash

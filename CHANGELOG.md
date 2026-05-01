@@ -5,6 +5,14 @@ All notable changes to Personal OS + Personal Wiki are tracked here.
 This project uses semantic versioning for public release packages. The root
 `VERSION` file is the release version for the whole repository.
 
+## Unreleased
+
+### Added
+
+- macOS/Linux demo helper script: `sh ./scripts/demo.sh`.
+- README, Getting Started, and Releases now document platform-specific demo
+  helpers before the raw Docker Compose command.
+
 ## 0.1.1 - 2026-04-29
 
 Conversion-focused public release.

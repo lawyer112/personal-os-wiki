@@ -82,6 +82,20 @@ messy input -> durable wiki memory -> executable tasks
 
 Run the seeded local demo:
 
+macOS / Linux:
+
+```bash
+sh ./scripts/demo.sh
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo.ps1
+```
+
+Equivalent Docker command:
+
 ```bash
 docker compose up -d --build
 ```

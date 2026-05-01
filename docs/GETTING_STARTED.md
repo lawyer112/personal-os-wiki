@@ -17,6 +17,18 @@ If you only want to see the product loop, run the root demo:
 ```bash
 git clone https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
+sh ./scripts/demo.sh
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\demo.ps1
+```
+
+Both helper scripts run the same underlying Docker Compose stack:
+
+```bash
 docker compose up -d --build
 ```
 
