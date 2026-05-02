@@ -1,6 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { ZodError, type ZodType } from "zod";
-import { configuredReadTokens, requestHasReadAccess } from "@/lib/auth";
+import {
+  bearerToken,
+  configuredReadTokens,
+  requestHasReadAccess,
+  tokenAllowed,
+} from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function readJson<T>(request: Request, schema: ZodType<T>) {
   let body: unknown;
@@ -29,9 +35,10 @@ export class HttpError extends Error {
 
 export function requireWriteAccess(request: Request) {
   const token = process.env.PERSONAL_OS_API_TOKEN;
+  const isProduction = process.env.NODE_ENV === "production";
 
   if (!token || token === "change-me") {
-    if (process.env.NODE_ENV !== "production") {
+    if (!isProduction) {
       return;
     }
     throw new HttpError(
@@ -40,19 +47,22 @@ export function requireWriteAccess(request: Request) {
     );
   }
 
-  if (token.length < 16 && process.env.NODE_ENV === "production") {
+  if (token.length < 16 && isProduction) {
     throw new HttpError(
       503,
       "PERSONAL_OS_API_TOKEN is too short for production writes",
     );
   }
 
-  if (process.env.NODE_ENV !== "production" && token === "change-me") {
-    return;
+  const rateLimit = checkRateLimit(request, { scope: "write" });
+  if (!rateLimit.allowed) {
+    throw new HttpError(
+      429,
+      `Too many write requests; retry after ${rateLimit.retryAfterSeconds} seconds`,
+    );
   }
 
-  const expected = `Bearer ${token}`;
-  if (request.headers.get("authorization") !== expected) {
+  if (!tokenAllowed(bearerToken(request.headers), [token])) {
     throw new HttpError(401, "Missing or invalid API token");
   }
 }

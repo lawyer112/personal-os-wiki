@@ -132,14 +132,14 @@ proxy URL.
 Download and extract a release archive:
 
 ```text
-personal-os-wiki-v0.1.1.zip
-personal-os-wiki-v0.1.1.tar.gz
+personal-os-wiki-v0.2.0.zip
+personal-os-wiki-v0.2.0.tar.gz
 ```
 
 Or clone a fixed tag:
 
 ```bash
-git clone --branch v0.1.1 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.2.0 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 

@@ -11,7 +11,16 @@ type TaskCreateServiceInput = Omit<
 
 type TaskDb = {
   task: unknown;
+  taskClaim?: unknown;
+  taskRun?: unknown;
+  agentActionLog?: unknown;
   activityLog: unknown;
+};
+
+type TaskRecord = {
+  id: string;
+  ownerAgent?: string | null;
+  leaseUntil?: Date | string | null;
 };
 
 const taskInclude = {
@@ -22,6 +31,8 @@ const taskInclude = {
   claims: { orderBy: { claimedAt: "desc" }, take: 3 },
   contributions: { orderBy: { createdAt: "desc" }, take: 5 },
   artifacts: { orderBy: { createdAt: "desc" }, take: 5 },
+  runs: { orderBy: { startedAt: "desc" }, take: 3 },
+  agentActionLogs: { orderBy: { createdAt: "desc" }, take: 8 },
   reviews: { orderBy: { createdAt: "desc" }, take: 3 },
 };
 
@@ -86,17 +97,29 @@ export async function updateTask<TDb extends TaskDb>(
   const { wikiLinks: _wikiLinks, ...taskInput } = input;
   void _wikiLinks;
   const taskDelegate = db.task as {
-    findUnique(args: unknown): Promise<unknown | null>;
+    findUnique(args: unknown): Promise<TaskRecord | null>;
     update(args: unknown): Promise<{ id: string; title: string; status: string }>;
   };
   const before = await taskDelegate.findUnique({ where: { id } });
+  const now = new Date();
+  const shouldRevokeLease =
+    (taskInput.executionMode !== undefined &&
+      taskInput.executionMode !== "agent_allowed") ||
+    taskInput.riskLevel === "high";
   const data = {
     ...taskInput,
     ...(taskInput.status === "done"
-      ? { completedAt: new Date() }
+      ? { completedAt: now }
       : taskInput.status
         ? { completedAt: null }
         : {}),
+    ...(shouldRevokeLease
+      ? {
+          ownerAgent: null,
+          leaseUntil: null,
+          lastHeartbeatAt: null,
+        }
+      : {}),
   };
   const task = await taskDelegate.update({
     where: { id },
@@ -112,6 +135,57 @@ export async function updateTask<TDb extends TaskDb>(
     before: before as Record<string, unknown> | null,
     after: data,
   });
+
+  if (shouldRevokeLease && (before?.ownerAgent || before?.leaseUntil)) {
+    if (before?.ownerAgent) {
+      const claimDelegate = db.taskClaim as
+        | { updateMany(args: unknown): Promise<unknown> }
+        | undefined;
+      const runDelegate = db.taskRun as
+        | { updateMany(args: unknown): Promise<unknown> }
+        | undefined;
+      const actionDelegate = db.agentActionLog as
+        | { create(args: unknown): Promise<unknown> }
+        | undefined;
+      await claimDelegate?.updateMany({
+        where: { taskId: id, agentId: before.ownerAgent, releasedAt: null },
+        data: { releasedAt: now, releaseReason: "policy_change" },
+      });
+      await runDelegate?.updateMany({
+        where: { taskId: id, agentId: before.ownerAgent, status: "running" },
+        data: { status: "policy_revoked", endedAt: now },
+      });
+      await actionDelegate?.create({
+        data: {
+          taskId: id,
+          taskRunId: null,
+          agentId: before.ownerAgent,
+          action: "task.lease.revoked_by_policy_change",
+          summary:
+            "Task execution policy changed; active agent lease was revoked.",
+          metadata: {
+            executionMode: taskInput.executionMode ?? null,
+            riskLevel: taskInput.riskLevel ?? null,
+          },
+        },
+      });
+    }
+    await recordActivity(db, {
+      actorType: "user",
+      action: "task.lease.revoked_by_policy_change",
+      targetType: "task",
+      targetId: id,
+      before: {
+        ownerAgent: before.ownerAgent ?? null,
+        leaseUntil: before.leaseUntil ?? null,
+      },
+      after: {
+        ownerAgent: null,
+        leaseUntil: null,
+        lastHeartbeatAt: null,
+      },
+    });
+  }
 
   return task;
 }

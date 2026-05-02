@@ -1,3 +1,5 @@
+import { createHash, timingSafeEqual } from "node:crypto";
+
 export const PERSONAL_OS_READ_COOKIE = "personal_os_read";
 
 export function configuredReadTokens() {
@@ -26,7 +28,21 @@ export function cookieToken(cookieHeader: string | null, name = PERSONAL_OS_READ
 }
 
 export function tokenAllowed(token: string, allowedTokens: string[]) {
-  return Boolean(token && allowedTokens.some((allowed) => token === allowed));
+  if (!token) {
+    return false;
+  }
+
+  const tokenDigest = digestToken(token);
+  return allowedTokens.some((allowed) => {
+    if (!allowed) {
+      return false;
+    }
+    return timingSafeEqual(tokenDigest, digestToken(allowed));
+  });
+}
+
+function digestToken(token: string) {
+  return createHash("sha256").update(token, "utf8").digest();
 }
 
 export function requestHasReadAccess(headers: Headers, allowedTokens = configuredReadTokens()) {

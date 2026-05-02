@@ -147,14 +147,14 @@ model Project {
 }
 
 model Task {
-  id                String         @id @default(cuid())
+  id                String             @id @default(cuid())
   title             String
   description       String?
-  status            TaskStatus     @default(review)
-  priority          Priority       @default(P2)
-  riskLevel         TaskRiskLevel   @default(low)
-  executionMode     TaskExecutionMode @default(manual)
-  agentTags         String[]        @default([])
+  status            TaskStatus         @default(review)
+  priority          Priority           @default(P2)
+  riskLevel         TaskRiskLevel      @default(low)
+  executionMode     TaskExecutionMode  @default(manual)
+  agentTags         String[]           @default([])
   ownerAgent        String?
   leaseUntil        DateTime?
   lastHeartbeatAt   DateTime?
@@ -163,23 +163,25 @@ model Task {
   definitionOfDone  String
   dueDate           DateTime?
   estimateMinutes   Int?
-  createdBy         String         @default("hermes")
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
+  createdBy         String             @default("hermes")
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   completedAt       DateTime?
   submittedAt       DateTime?
   projectId         String?
-  project           Project?       @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  project           Project?           @relation(fields: [projectId], references: [id], onDelete: SetNull)
   sourceInboxItemId String?
-  sourceInboxItem   InboxItem?     @relation(fields: [sourceInboxItemId], references: [id], onDelete: SetNull)
+  sourceInboxItem   InboxItem?         @relation(fields: [sourceInboxItemId], references: [id], onDelete: SetNull)
   sourceAgentRunId  String?
-  sourceAgentRun    AgentRun?      @relation(fields: [sourceAgentRunId], references: [id], onDelete: SetNull)
+  sourceAgentRun    AgentRun?          @relation(fields: [sourceAgentRunId], references: [id], onDelete: SetNull)
   wikiLinks         TaskWikiLink[]
   claims            TaskClaim[]
+  runs              TaskRun[]
+  agentActionLogs   AgentActionLog[]
   contributions     TaskContribution[]
   artifacts         TaskArtifact[]
   reviews           TaskReview[]
-  promotedIdeas     Idea[]         @relation("IdeaPromotedTask")
+  promotedIdeas     Idea[]             @relation("IdeaPromotedTask")
 
   @@index([status, priority, dueDate])
   @@index([projectId])
@@ -188,18 +190,18 @@ model Task {
 }
 
 model AgentProfile {
-  id                   String         @id
+  id                   String        @id
   displayName          String
-  tags                 String[]       @default([])
-  capabilities         String[]       @default([])
-  allowedRiskLevel     TaskRiskLevel  @default(low)
-  canWriteWiki         Boolean        @default(false)
-  canWriteTasks        Boolean        @default(true)
-  canTouchFiles        Boolean        @default(false)
-  canSendNotifications Boolean        @default(false)
-  enabled              Boolean        @default(true)
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
+  tags                 String[]      @default([])
+  capabilities         String[]      @default([])
+  allowedRiskLevel     TaskRiskLevel @default(low)
+  canWriteWiki         Boolean       @default(false)
+  canWriteTasks        Boolean       @default(true)
+  canTouchFiles        Boolean       @default(false)
+  canSendNotifications Boolean       @default(false)
+  enabled              Boolean       @default(true)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 
   @@index([enabled])
 }
@@ -234,10 +236,32 @@ model TaskClaim {
   @@index([agentId, leaseUntil])
 }
 
+model TaskRun {
+  id              String             @id @default(cuid())
+  taskId          String
+  task            Task               @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  agentId         String
+  status          String             @default("running")
+  policySnapshot  Json
+  resultSummary   String?
+  startedAt       DateTime           @default(now())
+  lastHeartbeatAt DateTime?
+  submittedAt     DateTime?
+  endedAt         DateTime?
+  contributions   TaskContribution[]
+  actionLogs      AgentActionLog[]
+
+  @@index([taskId, startedAt])
+  @@index([agentId, status, startedAt])
+  @@index([status, submittedAt])
+}
+
 model TaskContribution {
   id                 String         @id @default(cuid())
   taskId             String
   task               Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskRunId          String?
+  taskRun            TaskRun?       @relation(fields: [taskRunId], references: [id], onDelete: SetNull)
   agentId            String
   summary            String
   evidenceLinks      String[]       @default([])
@@ -247,6 +271,7 @@ model TaskContribution {
   artifacts          TaskArtifact[]
 
   @@index([taskId, createdAt])
+  @@index([taskRunId, createdAt])
   @@index([agentId, createdAt])
 }
 
@@ -277,6 +302,23 @@ model TaskReview {
 
   @@index([taskId, createdAt])
   @@index([reviewer, createdAt])
+}
+
+model AgentActionLog {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskRunId String?
+  taskRun   TaskRun? @relation(fields: [taskRunId], references: [id], onDelete: SetNull)
+  agentId   String
+  action    String
+  summary   String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([taskId, createdAt])
+  @@index([taskRunId, createdAt])
+  @@index([agentId, createdAt])
 }
 
 model Idea {

@@ -1,15 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { HttpError, requireReadAccess, requireWriteAccess } from "@/lib/http";
+import { tokenAllowed } from "@/lib/auth";
+import { resetRateLimitForTests } from "@/lib/rate-limit";
 
-function request(token?: string) {
+function request(token?: string, headers: Record<string, string> = {}) {
   return new Request("http://localhost/api/test", {
-    headers: token ? { authorization: `Bearer ${token}` } : {},
+    headers: token ? { authorization: `Bearer ${token}`, ...headers } : headers,
   });
 }
 
 describe("API token guards", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
+    resetRateLimitForTests();
   });
 
   it("allows read access with the read token", () => {
@@ -43,5 +46,29 @@ describe("API token guards", () => {
     expect(() => requireWriteAccess(request("read-token-000000"))).toThrow(
       HttpError,
     );
+  });
+
+  it("rate limits repeated production write attempts by client address", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");
+    vi.stubEnv("PERSONAL_OS_WRITE_RATE_LIMIT", "1");
+    vi.stubEnv("PERSONAL_OS_WRITE_RATE_WINDOW_MS", "60000");
+
+    expect(() =>
+      requireWriteAccess(
+        request("wrong-token-000000", { "x-forwarded-for": "203.0.113.10" }),
+      ),
+    ).toThrow("Missing or invalid API token");
+    expect(() =>
+      requireWriteAccess(
+        request("wrong-token-000000", { "x-forwarded-for": "203.0.113.10" }),
+      ),
+    ).toThrow("Too many write requests");
+  });
+
+  it("compares tokens without length-sensitive equality failures", () => {
+    expect(tokenAllowed("read-token-000000", ["read-token-000000"])).toBe(true);
+    expect(tokenAllowed("short", ["read-token-000000"])).toBe(false);
+    expect(tokenAllowed("", ["read-token-000000"])).toBe(false);
   });
 });

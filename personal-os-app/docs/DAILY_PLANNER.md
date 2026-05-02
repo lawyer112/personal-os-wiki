@@ -61,6 +61,10 @@ If `date` is omitted, Personal OS derives it from `timezone`, then
 in Docker or on a remote host should set `PERSONAL_OS_TIMEZONE` or pass
 `timezone` explicitly.
 
+`timezone` must be a valid IANA timezone such as `Asia/Shanghai` or `UTC`.
+Invalid request values are rejected with `400`; an invalid
+`PERSONAL_OS_TIMEZONE` value is ignored and the runtime timezone is used.
+
 ## Hermes Prompt
 
 Use this scheduled job instruction:
