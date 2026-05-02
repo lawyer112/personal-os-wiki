@@ -436,6 +436,7 @@ curl -X POST \
 | 理解原始采集和 Agent 后处理 | [知识系统落地方案](./docs/KNOWLEDGE_SYSTEM_PLAN.zh-CN.md) 和 [网页采集](./docs/WEB_CAPTURE.zh-CN.md) |
 | 对比长期记忆和 Obsidian 插件 | [对比文](./docs/COMPARISON.zh-CN.md) |
 | 发布和运营项目 | [Launch 手册](./docs/LAUNCH_PLAYBOOK.zh-CN.md) |
+| 维护和交接项目工作 | [维护手册](./docs/MAINTENANCE_MANUAL.zh-CN.md) |
 | 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)、[Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
 | 使用 Personal OS | [Personal OS README](./personal-os-app/README.md) |
 | 使用 Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) 和 [Wiki 使用手册](./personal-wiki/docs/USAGE.md) |
@@ -447,16 +448,16 @@ curl -X POST \
 
 短期：
 
-- 补更完整的首轮 demo 截图和浏览器导览。
-- 增加 Agent 认领、提交、复核的更多示例。
-- 增加更多通知适配器。
-- 改进任务抽取和“说人话”的任务文案。
+- 内置 demo agent 或 smoke worker，跑通认领、执行、提交证据、等待复核。
+- 做专门的 Review Dashboard，把证据、产物、验收标准和复核决策展示出来。
+- 增加 `executionMode`，明确哪些任务是人工做、Agent 建议、Agent 可做、必须审批。
+- 增加 Agent 能力注册和更完整的 TaskRun / AgentActionLog 执行账本。
 
 中期：
 
+- MCP server，让外部 Agent 和 IDE 工具通过标准接口读取任务和 Wiki 证据。
 - 更强的项目看板和收入/产出优先级视图。
-- Agent 按能力标签自我认领任务。
-- Wiki 图谱洞察和知识缺口发现。
+- Wiki 图谱洞察、Wiki lint 和知识缺口任务生成。
 - 更安全的个人 vault 导入导出流程。
 
 ## 项目状态

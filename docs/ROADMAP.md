@@ -15,6 +15,18 @@ safer, and easier to adopt.
 
 ## Next
 
+- Built-in demo agent or smoke worker that polls, claims, submits evidence, and
+  waits for review.
+- Review dashboard focused on evidence, artifacts, definition of done, and
+  approve/request-changes decisions.
+- Task execution policy fields such as `executionMode` so agents know whether a
+  task is manual, suggested, directly allowed, or approval-required.
+- Agent capability registry so work can be matched to agents by safe abilities,
+  not tags alone.
+- First-class `TaskRun` and structured action logs for auditable execution
+  attempts.
+- MCP server for tools and external agents that need standard access to tasks,
+  context, and Wiki evidence.
 - Object-knowledge rebuild: make Wiki notes typed, explainable, and usable as
   agent-maintained project/workflow/evidence objects. See
   [Object Knowledge Rebuild Manual](./OBJECT_KNOWLEDGE_REBUILD_MANUAL.md).

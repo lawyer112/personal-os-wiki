@@ -531,6 +531,7 @@ Read the full release checklist:
 | Understand raw capture and agent enrichment | [Knowledge System Plan](./docs/KNOWLEDGE_SYSTEM_PLAN.md) and [Web Capture](./docs/WEB_CAPTURE.md) |
 | Compare with memory/wiki/task tools | [Comparison](./docs/COMPARISON.md) |
 | Launch or package the repo | [Launch playbook](./docs/LAUNCH_PLAYBOOK.md) |
+| Maintain or hand off project work | [Maintenance Manual](./docs/MAINTENANCE_MANUAL.md) |
 | Connect an agent | [Agent Guide](./docs/AGENT_GUIDE.md), [Agent Prompt](./docs/AGENT_PROMPT.md), [API Overview](./docs/API_OVERVIEW.md), and [Hermes API](./personal-os-app/docs/HERMES_API.md) |
 | Schedule worker agents | [Agent Job Orchestration](./docs/AGENT_JOB_ORCHESTRATION.md) |
 | Operate Personal OS | [Personal OS README](./personal-os-app/README.md) |
@@ -545,9 +546,13 @@ Read the full release checklist:
 
 The short version:
 
-- Improve public screenshots and the browser walkthrough.
-- Add more agent task-claiming examples and smoke scripts.
-- Improve task extraction from messy input.
+- Add a built-in demo agent or smoke worker for claim, execution, evidence, and
+  review.
+- Add a review dashboard for artifacts, evidence, definition of done, and
+  approval decisions.
+- Add execution modes, agent capability registry, task runs, and structured
+  action logs.
+- Add MCP access for external agents and IDE tools.
 - Add richer project dashboards and priority views.
 - Rebuild Wiki as typed object knowledge with explainable graph relations,
   lint issues, and OS-generated maintenance tasks.
