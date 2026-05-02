@@ -264,6 +264,7 @@ export const dailyPlanSnapshotSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/)
     .optional(),
+  timezone: z.string().min(1).optional(),
   mode: z.enum(["morning", "checkin", "evening"]).default("morning"),
   appUrl: z.string().optional(),
   mainLine: z.string().min(1),

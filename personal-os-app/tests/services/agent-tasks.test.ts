@@ -166,7 +166,7 @@ describe("agent task protocol", () => {
 
     await expect(
       claimTask(db, "task_1", { agentId: "agent_1", leaseMinutes: 30 }),
-    ).rejects.toThrow("agent claims require agent_allowed");
+    ).rejects.toThrow("agent work requires agent_allowed");
     expect(db.task.updateMany).not.toHaveBeenCalled();
   });
 
@@ -204,6 +204,25 @@ describe("agent task protocol", () => {
         data: expect.objectContaining({ ownerAgent: "agent_1" }),
       }),
     );
+  });
+
+  it("rejects heartbeats if task policy changed after claim", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValue(ownedTask({ executionMode: "approval_required" })),
+        update: vi.fn(),
+      },
+    });
+
+    await expect(
+      heartbeatTask(db, "task_1", {
+        agentId: "agent_1",
+        leaseMinutes: 30,
+      }),
+    ).rejects.toThrow("agent work requires agent_allowed");
+    expect(db.task.update).not.toHaveBeenCalled();
   });
 
   it("rejects heartbeats before a task is claimed", async () => {
@@ -287,6 +306,33 @@ describe("agent task protocol", () => {
     expect(db.taskContribution.create).not.toHaveBeenCalled();
   });
 
+  it("rejects contributions if the agent profile is disabled after claim", async () => {
+    const db = createDb({
+      agentProfile: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "agent_1",
+          tags: ["demo", "review"],
+          allowedRiskLevel: "medium",
+          canWriteTasks: true,
+          enabled: false,
+        }),
+      },
+      task: {
+        findUnique: vi.fn().mockResolvedValue(ownedTask()),
+      },
+    });
+
+    await expect(
+      addTaskContribution(db, "task_1", {
+        agentId: "agent_1",
+        summary: "Tried to write after profile disable.",
+        evidenceLinks: [],
+        artifactUrls: [],
+      }),
+    ).rejects.toThrow("Agent profile is missing or disabled");
+    expect(db.taskContribution.create).not.toHaveBeenCalled();
+  });
+
   it("submits work for review instead of marking it done", async () => {
     const db = createDb({
       task: {
@@ -308,9 +354,31 @@ describe("agent task protocol", () => {
     expect(result.task).toEqual({ id: "task_1", status: "review" });
     expect(db.task.update).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ status: "review", leaseUntil: null }),
+        data: expect.objectContaining({
+          status: "review",
+          ownerAgent: null,
+          leaseUntil: null,
+        }),
       }),
     );
+  });
+
+  it("rejects reviews before a task is submitted", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi.fn().mockResolvedValue(claimableTask({ status: "todo" })),
+        update: vi.fn(),
+      },
+    });
+
+    await expect(
+      reviewTask(db, "task_1", {
+        reviewer: "user",
+        decision: "approve",
+      }),
+    ).rejects.toThrow("Only submitted review tasks can be reviewed");
+    expect(db.taskReview.create).not.toHaveBeenCalled();
+    expect(db.task.update).not.toHaveBeenCalled();
   });
 
   it("approves a reviewed task into done", async () => {
@@ -335,6 +403,36 @@ describe("agent task protocol", () => {
     expect(db.taskReview.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ decision: "approve" }),
+      }),
+    );
+  });
+
+  it("rejects reviewed work back to todo instead of archiving it", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "task_1",
+          status: "review",
+          ownerAgent: "agent_1",
+        }),
+        update: vi.fn().mockResolvedValue({ id: "task_1", status: "todo" }),
+      },
+    });
+
+    const result = await reviewTask(db, "task_1", {
+      reviewer: "user",
+      decision: "reject",
+      comment: "Evidence does not satisfy the definition of done.",
+    });
+
+    expect(result.task).toEqual({ id: "task_1", status: "todo" });
+    expect(db.task.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          status: "todo",
+          submittedAt: null,
+          ownerAgent: null,
+        }),
       }),
     );
   });

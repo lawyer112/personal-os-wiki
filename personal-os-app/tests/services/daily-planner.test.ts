@@ -3,6 +3,7 @@ import {
   buildPlannerWikiQueries,
   getDailyPlannerPack,
   saveDailyPlanSnapshot,
+  todayInTimeZone,
 } from "@/lib/daily-planner";
 import { searchWikiContext } from "@/lib/agent-context";
 
@@ -118,6 +119,7 @@ describe("daily planner pack", () => {
         create: vi.fn().mockResolvedValue({
           id: "plan_1",
           date: "2026-05-02",
+          timezone: "Asia/Shanghai",
           mode: "morning",
           mainLine: "Ship the agent execution guardrail.",
           firstAction: "Verify claim filtering tests.",
@@ -132,6 +134,7 @@ describe("daily planner pack", () => {
       db,
       {
         date: "2026-05-02",
+        timezone: "Asia/Shanghai",
         mode: "morning",
         mainLine: "Ship the agent execution guardrail.",
         firstAction: "Verify claim filtering tests.",
@@ -147,10 +150,18 @@ describe("daily planner pack", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           date: "2026-05-02",
+          timezone: "Asia/Shanghai",
           mode: "morning",
           deliveredTo: ["telegram"],
         }),
       }),
     );
+  });
+
+  it("derives the planner date in the configured timezone", () => {
+    const date = new Date("2026-05-01T16:30:00.000Z");
+
+    expect(todayInTimeZone("UTC", date)).toBe("2026-05-01");
+    expect(todayInTimeZone("Asia/Shanghai", date)).toBe("2026-05-02");
   });
 });

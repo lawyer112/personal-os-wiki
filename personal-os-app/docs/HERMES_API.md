@@ -692,9 +692,13 @@ Allowed decisions:
 approve -> done
 request_changes -> todo
 block -> blocked
-reject -> archived
+reject -> todo
 archive -> archived
 ```
+
+Review is only valid for submitted tasks in `review`. Use `archive` for work
+that should be discarded; use `reject` when the result failed review and should
+return to the work queue.
 
 ### Agent loop
 

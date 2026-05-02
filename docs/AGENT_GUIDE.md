@@ -110,6 +110,14 @@ conditions:
 - the task tags are empty or overlap with the agent profile tags;
 - the task risk is within the agent profile `allowedRiskLevel`.
 
+The same policy is re-checked on heartbeat, contribution, and submit. A task or
+profile policy change after claim stops further mutation even if the old lease
+has not expired.
+
+`AgentProfile.capabilities` is currently descriptive metadata. Do not assume it
+blocks browser, file, or shell access by itself; tool-level permissions still
+belong to the worker runtime.
+
 If any condition fails, the agent should write a clarification or ask for review
 instead of trying to bypass the queue.
 

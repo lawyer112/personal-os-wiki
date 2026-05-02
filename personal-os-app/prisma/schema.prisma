@@ -379,6 +379,7 @@ model Notification {
 model DailyPlan {
   id                  String   @id @default(cuid())
   date                String
+  timezone            String   @default("UTC")
   mode                String
   mainLine            String
   firstAction         String

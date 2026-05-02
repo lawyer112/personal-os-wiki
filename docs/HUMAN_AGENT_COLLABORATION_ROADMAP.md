@@ -28,8 +28,8 @@ Already implemented:
 - Agent profiles can register tags, capabilities, risk limits, task-write
   permission, Wiki-write permission, notification permission, and enabled state.
 - Agents can poll, claim, heartbeat, contribute, submit, and wait for review.
-- Agent polling and claiming now respect task execution mode, risk level,
-  active leases, and profile tags/permissions.
+- Agent polling, claiming, heartbeat, contribution, and submit now respect task
+  execution mode, risk level, active leases, and profile tags/permissions.
 - `/api/agent/context` returns task context, Wiki candidates, related ideas,
   recent tasks, activity, and execution policy.
 - `/api/planner/today` and `/api/reminders/today` provide packets for scheduled
@@ -121,8 +121,9 @@ AgentProfile
 - enabled
 ```
 
-Task polling should match task tags, execution mode, risk level, and agent
-capabilities, not tags alone.
+Task polling currently matches task tags, execution mode, risk level, and core
+profile permissions. `capabilities` is stored as metadata for the next scheduler
+phase and is not yet a hard execution constraint.
 
 ### 4. Task Execution Run
 
@@ -226,7 +227,7 @@ This prevents vague "looks good" reviews and makes autonomous work safer.
 
 1. Done: tighten task claim/heartbeat/contribution ownership rules.
 2. Done: add `executionMode` to tasks and block high-risk auto-claims.
-3. Done: add `AgentProfile` and capability-aware agent inbox filtering.
+3. Done: add `AgentProfile` and profile/tag/risk-aware agent inbox filtering.
 4. Done: add `DailyPlan` snapshots for planner output.
 5. Add `TaskRun` for task execution attempts.
 6. Add structured `AgentActionLog`.

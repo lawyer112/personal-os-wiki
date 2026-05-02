@@ -80,17 +80,17 @@ function assertTaskCanBeClaimed(task: TaskRecord) {
   }
 }
 
-function assertTaskPolicyAllowsClaim(task: TaskRecord) {
+function assertTaskPolicyAllowsAgentWork(task: TaskRecord) {
   if ((task.executionMode ?? "manual") !== "agent_allowed") {
     throw new HttpError(
       409,
-      `Task executionMode is ${task.executionMode ?? "manual"}; agent claims require agent_allowed`,
+      `Task executionMode is ${task.executionMode ?? "manual"}; agent work requires agent_allowed`,
     );
   }
   if (task.riskLevel === "high") {
     throw new HttpError(
       409,
-      "High-risk tasks require explicit approval before an agent can claim them",
+      "High-risk tasks require explicit approval before an agent can work them",
     );
   }
 }
@@ -159,6 +159,18 @@ function assertActiveLeaseForAgent(
       "Task lease expired; claim the task again before continuing work",
     );
   }
+}
+
+async function assertAgentStillAllowedToWork<TDb extends AgentTaskDb>(
+  db: TDb,
+  task: TaskRecord,
+  agentId: string,
+  now: Date,
+) {
+  assertActiveLeaseForAgent(task, agentId, now);
+  assertTaskPolicyAllowsAgentWork(task);
+  const profile = await getAgentProfile(db, agentId);
+  assertAgentCanWorkTask(profile, task);
 }
 
 export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
@@ -234,7 +246,7 @@ export async function claimTask<TDb extends AgentTaskDb>(
   }
   assertTaskCanBeWorked(before);
   assertTaskCanBeClaimed(before);
-  assertTaskPolicyAllowsClaim(before);
+  assertTaskPolicyAllowsAgentWork(before);
   const profile = await getAgentProfile(db, input.agentId);
   assertAgentCanWorkTask(profile, before);
   if (isActiveLease(before, now) && before.ownerAgent !== input.agentId) {
@@ -312,7 +324,7 @@ export async function heartbeatTask<TDb extends AgentTaskDb>(
     throw new HttpError(404, "Task not found");
   }
   assertTaskCanBeWorked(before);
-  assertActiveLeaseForAgent(before, input.agentId, now);
+  await assertAgentStillAllowedToWork(db, before, input.agentId, now);
 
   const task = await taskDelegate.update({
     where: { id: taskId },
@@ -356,7 +368,7 @@ export async function addTaskContribution<TDb extends AgentTaskDb>(
     throw new HttpError(404, "Task not found");
   }
   assertTaskCanBeWorked(task);
-  assertActiveLeaseForAgent(task, input.agentId, new Date());
+  await assertAgentStillAllowedToWork(db, task, input.agentId, new Date());
 
   const contribution = await contributionDelegate.create({
     data: {
@@ -413,6 +425,7 @@ export async function submitTask<TDb extends AgentTaskDb>(
     data: {
       status: "review",
       submittedAt: now,
+      ownerAgent: null,
       leaseUntil: null,
       lastHeartbeatAt: now,
     },
@@ -454,6 +467,9 @@ export async function reviewTask<TDb extends AgentTaskDb>(
   if (!before) {
     throw new HttpError(404, "Task not found");
   }
+  if (before.status !== "review") {
+    throw new HttpError(409, "Only submitted review tasks can be reviewed");
+  }
 
   const review = await reviewDelegate.create({
     data: {
@@ -479,7 +495,14 @@ export async function reviewTask<TDb extends AgentTaskDb>(
             leaseUntil: null,
             submittedAt: null,
           }
-        : input.decision === "block"
+        : input.decision === "reject"
+          ? {
+              status: "todo",
+              ownerAgent: null,
+              leaseUntil: null,
+              submittedAt: null,
+            }
+          : input.decision === "block"
           ? {
               status: "blocked",
               ownerAgent: null,

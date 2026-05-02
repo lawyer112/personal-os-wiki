@@ -138,6 +138,7 @@ curl -X POST http://localhost:3000/api/planner/today \
   -H "Content-Type: application/json" \
   -d '{
     "mode": "morning",
+    "timezone": "Asia/Shanghai",
     "mainLine": "Ship the demo agent review loop.",
     "firstAction": "Run the focused test suite and attach the result.",
     "blocked": [],
@@ -194,7 +195,12 @@ Validation errors include an `issues` array.
 Agents should treat the Personal OS task record as the source of truth:
 
 - Register an `AgentProfile` before polling work.
+- `AgentProfile.capabilities` is metadata for humans and future schedulers; the
+  current hard checks are enabled state, task-write permission, tags, and risk.
 - Only tasks with `executionMode=agent_allowed` and non-high risk can be claimed.
+- Heartbeat, contribution, and submit re-check the same task policy and agent
+  profile. If a human changes the task to `approval_required` or disables the
+  profile, the active lease can no longer mutate the task.
 - Claim before working.
 - Keep the lease alive with heartbeat if work takes time.
 - Do not contribute or submit after the lease expires; claim again first.

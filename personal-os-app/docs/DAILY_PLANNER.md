@@ -37,6 +37,7 @@ Content-Type: application/json
 
 {
   "mode": "morning",
+  "timezone": "Asia/Shanghai",
   "mainLine": "Ship the demo agent review loop.",
   "firstAction": "Run the focused test suite and attach the result.",
   "blocked": [],
@@ -54,6 +55,11 @@ Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 
 The snapshot is the record for "what did the system tell me this morning?" It
 is not a task-completion signal.
+
+If `date` is omitted, Personal OS derives it from `timezone`, then
+`PERSONAL_OS_TIMEZONE`, then the runtime timezone. Operators who run the service
+in Docker or on a remote host should set `PERSONAL_OS_TIMEZONE` or pass
+`timezone` explicitly.
 
 ## Hermes Prompt
 

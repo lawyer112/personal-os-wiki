@@ -46,6 +46,7 @@ export type DailyPlannerPack = {
 export type DailyPlanSnapshot = {
   id: string;
   date: string;
+  timezone: string;
   mode: string;
   mainLine: string;
   firstAction: string;
@@ -105,11 +106,13 @@ export async function saveDailyPlanSnapshot<TDb extends { dailyPlan?: unknown }>
   const dailyPlan = db.dailyPlan as {
     create(args: unknown): Promise<DailyPlanSnapshot>;
   };
-  const date = input.date ?? new Date().toISOString().slice(0, 10);
+  const timezone = input.timezone ?? configuredPlannerTimeZone();
+  const date = input.date ?? todayInTimeZone(timezone);
 
   return dailyPlan.create({
     data: {
       date,
+      timezone,
       mode: input.mode,
       mainLine: input.mainLine,
       firstAction: input.firstAction,
@@ -119,6 +122,25 @@ export async function saveDailyPlanSnapshot<TDb extends { dailyPlan?: unknown }>
       sourcePlannerPacket,
     },
   });
+}
+
+export function configuredPlannerTimeZone() {
+  return (
+    process.env.PERSONAL_OS_TIMEZONE ??
+    Intl.DateTimeFormat().resolvedOptions().timeZone ??
+    "UTC"
+  );
+}
+
+export function todayInTimeZone(timezone: string, date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 export function buildPlannerWikiQueries(
