@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   buildPlannerWikiQueries,
+  configuredPlannerTimeZone,
   getDailyPlannerPack,
   saveDailyPlanSnapshot,
   todayInTimeZone,
@@ -163,5 +164,48 @@ describe("daily planner pack", () => {
 
     expect(todayInTimeZone("UTC", date)).toBe("2026-05-01");
     expect(todayInTimeZone("Asia/Shanghai", date)).toBe("2026-05-02");
+  });
+
+  it("rejects invalid IANA timezones before persisting a snapshot", async () => {
+    const db = {
+      dailyPlan: {
+        create: vi.fn(),
+      },
+    };
+
+    await expect(
+      saveDailyPlanSnapshot(
+        db,
+        {
+          timezone: "Mars/Base",
+          mode: "morning",
+          mainLine: "Ship the agent execution guardrail.",
+          firstAction: "Verify claim filtering tests.",
+          blocked: [],
+          needsDecision: [],
+          deliveredTo: [],
+        },
+        { mode: "morning", generatedAt: "2026-05-02T00:00:00Z" },
+      ),
+    ).rejects.toThrow("Invalid timezone: Mars/Base");
+    expect(db.dailyPlan.create).not.toHaveBeenCalled();
+  });
+
+  it("falls back when PERSONAL_OS_TIMEZONE is invalid", () => {
+    const before = process.env.PERSONAL_OS_TIMEZONE;
+    process.env.PERSONAL_OS_TIMEZONE = "Mars/Base";
+
+    try {
+      expect(configuredPlannerTimeZone()).not.toBe("Mars/Base");
+      expect(() => todayInTimeZone("Mars/Base")).toThrow(
+        "Invalid timezone: Mars/Base",
+      );
+    } finally {
+      if (before === undefined) {
+        delete process.env.PERSONAL_OS_TIMEZONE;
+      } else {
+        process.env.PERSONAL_OS_TIMEZONE = before;
+      }
+    }
   });
 });

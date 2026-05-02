@@ -36,7 +36,7 @@ services:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?set NEXT_PUBLIC_APP_URL}
       NEXT_PUBLIC_WIKI_URL: ${NEXT_PUBLIC_WIKI_URL:?set NEXT_PUBLIC_WIKI_URL}
     ports:
-      - "127.0.0.1:3100:3000"
+      - "${PERSONAL_OS_PORT_BIND:-127.0.0.1:3100}:3000"
     volumes:
       - personal_os_data:/app/data
 

@@ -12,6 +12,8 @@ const taskInclude = {
   claims: { orderBy: { claimedAt: "desc" }, take: 3 },
   contributions: { orderBy: { createdAt: "desc" }, take: 5 },
   artifacts: { orderBy: { createdAt: "desc" }, take: 5 },
+  runs: { orderBy: { startedAt: "desc" }, take: 3 },
+  agentActionLogs: { orderBy: { createdAt: "desc" }, take: 8 },
   reviews: { orderBy: { createdAt: "desc" }, take: 3 },
 };
 
@@ -31,10 +33,29 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
     findMany(args: unknown): Promise<unknown[]>;
   };
 
-  const [nowCount, reviewCount, waitingCount, blockedCount, doneCount, nowTasks, reviewTasks, waitingTasks, blockedTasks, doneTasks, projects, activity] =
+  const intakeReviewWhere = { status: "review", submittedAt: null };
+  const executionReviewWhere = { status: "review", submittedAt: { not: null } };
+
+  const [
+    nowCount,
+    intakeReviewCount,
+    executionReviewCount,
+    waitingCount,
+    blockedCount,
+    doneCount,
+    nowTasks,
+    reviewTasks,
+    executionReviewTasks,
+    waitingTasks,
+    blockedTasks,
+    doneTasks,
+    projects,
+    activity,
+  ] =
     await Promise.all([
       task.count({ where: { status: { in: ["doing", "todo"] } } }),
-      task.count({ where: { status: "review" } }),
+      task.count({ where: intakeReviewWhere }),
+      task.count({ where: executionReviewWhere }),
       task.count({ where: { status: "waiting" } }),
       task.count({ where: { status: "blocked" } }),
       task.count({
@@ -50,9 +71,15 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
         take: 5,
       }),
       task.findMany({
-        where: { status: "review" },
+        where: intakeReviewWhere,
         include: taskInclude,
         orderBy: [{ priority: "asc" }, { createdAt: "desc" }],
+        take: 8,
+      }),
+      task.findMany({
+        where: executionReviewWhere,
+        include: taskInclude,
+        orderBy: [{ priority: "asc" }, { submittedAt: "desc" }],
         take: 8,
       }),
       task.findMany({
@@ -97,13 +124,16 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
   return {
     metrics: {
       now: nowCount,
-      review: reviewCount,
+      review: intakeReviewCount + executionReviewCount,
+      intakeReview: intakeReviewCount,
+      executionReview: executionReviewCount,
       waiting: waitingCount,
       blocked: blockedCount,
       done: doneCount,
     },
     nowTasks,
     reviewTasks,
+    executionReviewTasks,
     waitingTasks,
     blockedTasks,
     doneTasks,

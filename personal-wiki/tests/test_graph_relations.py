@@ -8,7 +8,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "api"))
 
-from server import build_graph_from_records  # noqa: E402
+from server import (  # noqa: E402
+    build_graph_from_records,
+    build_source_hash_index,
+    json_for_script,
+    render_markdown_body,
+)
 
 
 def note(
@@ -105,6 +110,50 @@ class GraphRelationTests(unittest.TestCase):
             counts[link["target"]] = counts.get(link["target"], 0) + 1
 
         self.assertLessEqual(max(counts.values()), 8)
+
+
+class IndexAndRenderSafetyTests(unittest.TestCase):
+    def test_builds_source_hash_reverse_index(self) -> None:
+        index = build_source_hash_index(
+            [
+                {
+                    "source_hash": "abc123",
+                    "path": "vault/20_notes/demo.md",
+                },
+                {
+                    "source_hash": "",
+                    "path": "vault/20_notes/missing.md",
+                },
+            ]
+        )
+
+        self.assertEqual(index["sources"], {"abc123": "vault/20_notes/demo.md"})
+
+    def test_escapes_inline_json_for_script_context(self) -> None:
+        encoded = json_for_script(
+            {
+                "nodes": [
+                    {
+                        "id": "</script><script>alert(1)</script><!--",
+                    }
+                ],
+            }
+        )
+
+        self.assertNotIn("<", encoded)
+        self.assertIn("\\u003c/script", encoded)
+
+    def test_escapes_html_inside_rendered_markdown(self) -> None:
+        html = render_markdown_body(
+            "# <script>alert(1)</script>\n\n"
+            "- [bad](javascript:alert(1))\n"
+            "- <img src=x onerror=alert(1)>"
+        )
+
+        self.assertNotIn("<script>", html)
+        self.assertNotIn("<img", html)
+        self.assertNotIn("javascript:alert", html)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html)
 
 
 if __name__ == "__main__":

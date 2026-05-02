@@ -23,13 +23,26 @@ if [[ ! -f "$APP_DIR/.env" ]]; then
   exit 1
 fi
 
-export WIKI_API_TOKEN="$(sed -n 's/^WIKI_API_TOKEN=//p' "$APP_DIR/.env" | head -1 | tr -d '\r')"
-export WIKI_READ_TOKEN="$(sed -n 's/^WIKI_READ_TOKEN=//p' "$APP_DIR/.env" | head -1 | tr -d '\r')"
+env_value() {
+  sed -n "s/^$1=//p" "$APP_DIR/.env" |
+    head -1 |
+    tr -d '\r' |
+    sed -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//"
+}
+
+export WIKI_API_TOKEN="$(env_value WIKI_API_TOKEN)"
+export WIKI_READ_TOKEN="$(env_value WIKI_READ_TOKEN)"
+export WIKI_REQUIRE_API_READ_AUTH="${WIKI_REQUIRE_API_READ_AUTH:-$(env_value WIKI_REQUIRE_API_READ_AUTH)}"
 export WIKI_REQUIRE_API_READ_AUTH="${WIKI_REQUIRE_API_READ_AUTH:-1}"
+export WIKI_REQUIRE_PAGE_READ_AUTH="${WIKI_REQUIRE_PAGE_READ_AUTH:-$(env_value WIKI_REQUIRE_PAGE_READ_AUTH)}"
 export WIKI_REQUIRE_PAGE_READ_AUTH="${WIKI_REQUIRE_PAGE_READ_AUTH:-1}"
-export WIKI_SITE_TITLE="$(sed -n 's/^WIKI_SITE_TITLE=//p' "$APP_DIR/.env" | head -1 | tr -d '\r')"
+export WIKI_CORS_ALLOW_ORIGIN="${WIKI_CORS_ALLOW_ORIGIN:-$(env_value WIKI_CORS_ALLOW_ORIGIN)}"
+export WIKI_SITE_TITLE="${WIKI_SITE_TITLE:-$(env_value WIKI_SITE_TITLE)}"
+export WIKI_SITE_TITLE="${WIKI_SITE_TITLE:-Personal Wiki}"
 export WIKI_DATA_DIR="$DATA_DIR"
+export WIKI_HOST="${WIKI_HOST:-$(env_value WIKI_HOST)}"
 export WIKI_HOST="${WIKI_HOST:-127.0.0.1}"
+export WIKI_PORT="${WIKI_PORT:-$(env_value WIKI_PORT)}"
 export WIKI_PORT="${WIKI_PORT:-3422}"
 
 if [[ -f "$APP_DIR/scripts/proxy-env.sh" ]]; then

@@ -176,6 +176,8 @@ model Task {
   sourceAgentRun    AgentRun?          @relation(fields: [sourceAgentRunId], references: [id], onDelete: SetNull)
   wikiLinks         TaskWikiLink[]
   claims            TaskClaim[]
+  runs              TaskRun[]
+  agentActionLogs   AgentActionLog[]
   contributions     TaskContribution[]
   artifacts         TaskArtifact[]
   reviews           TaskReview[]
@@ -234,10 +236,32 @@ model TaskClaim {
   @@index([agentId, leaseUntil])
 }
 
+model TaskRun {
+  id              String             @id @default(cuid())
+  taskId          String
+  task            Task               @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  agentId         String
+  status          String             @default("running")
+  policySnapshot  Json
+  resultSummary   String?
+  startedAt       DateTime           @default(now())
+  lastHeartbeatAt DateTime?
+  submittedAt     DateTime?
+  endedAt         DateTime?
+  contributions   TaskContribution[]
+  actionLogs      AgentActionLog[]
+
+  @@index([taskId, startedAt])
+  @@index([agentId, status, startedAt])
+  @@index([status, submittedAt])
+}
+
 model TaskContribution {
   id                 String         @id @default(cuid())
   taskId             String
   task               Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskRunId          String?
+  taskRun            TaskRun?       @relation(fields: [taskRunId], references: [id], onDelete: SetNull)
   agentId            String
   summary            String
   evidenceLinks      String[]       @default([])
@@ -247,6 +271,7 @@ model TaskContribution {
   artifacts          TaskArtifact[]
 
   @@index([taskId, createdAt])
+  @@index([taskRunId, createdAt])
   @@index([agentId, createdAt])
 }
 
@@ -277,6 +302,23 @@ model TaskReview {
 
   @@index([taskId, createdAt])
   @@index([reviewer, createdAt])
+}
+
+model AgentActionLog {
+  id        String   @id @default(cuid())
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskRunId String?
+  taskRun   TaskRun? @relation(fields: [taskRunId], references: [id], onDelete: SetNull)
+  agentId   String
+  action    String
+  summary   String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([taskId, createdAt])
+  @@index([taskRunId, createdAt])
+  @@index([agentId, createdAt])
 }
 
 model Idea {

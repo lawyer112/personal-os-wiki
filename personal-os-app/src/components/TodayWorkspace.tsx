@@ -7,6 +7,7 @@ import type { TodayView } from "@/lib/view-models";
 export function TodayWorkspace({ today }: { today: TodayView }) {
   const selectedTask =
     today.nowTasks[0] ??
+    today.executionReviewTasks[0] ??
     today.reviewTasks[0] ??
     today.waitingTasks[0] ??
     today.blockedTasks[0] ??
@@ -26,10 +27,11 @@ export function TodayWorkspace({ today }: { today: TodayView }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-5 gap-2 rounded-lg border border-zinc-200 bg-white p-2 text-center text-xs">
+        <div className="grid grid-cols-6 gap-2 rounded-lg border border-zinc-200 bg-white p-2 text-center text-xs">
           {[
             ["今日", today.metrics.now],
-            ["待确认", today.metrics.review],
+            ["待复核", today.metrics.executionReview],
+            ["待确认", today.metrics.intakeReview],
             ["等待", today.metrics.waiting],
             ["卡住", today.metrics.blocked],
             ["完成", today.metrics.done],
@@ -44,7 +46,7 @@ export function TodayWorkspace({ today }: { today: TodayView }) {
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="grid gap-4">
-          <div className="grid gap-4 2xl:grid-cols-2">
+          <div className="grid gap-4 2xl:grid-cols-3">
             <TaskColumn
               title="今日要做"
               subtitle="今天真正要推进的事。每张卡都必须有目标、下一步和完成标准。"
@@ -54,12 +56,22 @@ export function TodayWorkspace({ today }: { today: TodayView }) {
               totalCount={today.metrics.now}
             />
             <TaskColumn
+              title="待复核提交"
+              subtitle="Agent 已经提交产物，必须由人或 reviewer agent 判断是否通过。"
+              tasks={today.executionReviewTasks}
+              tone="review"
+              reviewMode="execution"
+              emptyText="没有待复核提交。"
+              totalCount={today.metrics.executionReview}
+            />
+            <TaskColumn
               title="待确认"
               subtitle="Hermes 判断像任务，但还没有进入你的今日安排。"
               tasks={today.reviewTasks}
               tone="review"
+              reviewMode="intake"
               emptyText="没有待确认任务。"
-              totalCount={today.metrics.review}
+              totalCount={today.metrics.intakeReview}
             />
           </div>
 

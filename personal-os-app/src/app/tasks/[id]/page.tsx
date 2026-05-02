@@ -20,6 +20,8 @@ export default async function TaskPage({
       claims: { orderBy: { claimedAt: "desc" }, take: 3 },
       contributions: { orderBy: { createdAt: "desc" }, take: 5 },
       artifacts: { orderBy: { createdAt: "desc" }, take: 5 },
+      runs: { orderBy: { startedAt: "desc" }, take: 3 },
+      agentActionLogs: { orderBy: { createdAt: "desc" }, take: 8 },
       reviews: { orderBy: { createdAt: "desc" }, take: 3 },
     },
   })) as TaskView;

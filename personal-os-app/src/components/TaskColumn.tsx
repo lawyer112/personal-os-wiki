@@ -1,4 +1,5 @@
 import { TaskCard } from "@/components/TaskCard";
+import { ExecutionReviewTaskCard } from "@/components/ExecutionReviewTaskCard";
 import { ReviewTaskCard } from "@/components/ReviewTaskCard";
 import type { TaskView } from "@/lib/view-models";
 
@@ -7,6 +8,7 @@ type TaskColumnProps = {
   subtitle: string;
   tasks: TaskView[];
   tone: "active" | "review" | "waiting" | "blocked" | "done";
+  reviewMode?: "intake" | "execution";
   emptyText: string;
   totalCount?: number;
 };
@@ -16,6 +18,7 @@ export function TaskColumn({
   subtitle,
   tasks,
   tone,
+  reviewMode = "intake",
   emptyText,
   totalCount,
 }: TaskColumnProps) {
@@ -39,7 +42,9 @@ export function TaskColumn({
       {tasks.length > 0 ? (
         <div className="grid gap-3">
           {tasks.map((task) => (
-            tone === "review" ? (
+            tone === "review" && reviewMode === "execution" ? (
+              <ExecutionReviewTaskCard key={task.id} task={task} />
+            ) : tone === "review" ? (
               <ReviewTaskCard key={task.id} task={task} />
             ) : (
               <TaskCard key={task.id} task={task} tone={tone} />
