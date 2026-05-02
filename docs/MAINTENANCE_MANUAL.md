@@ -57,54 +57,22 @@ Use a private Personal Wiki or private repository for:
 The private maintenance note should mirror this structure, but with real
 environment facts. Never copy the private note back into GitHub.
 
-## Current Public State
+## Public Maintenance Scope
 
-Last checked: 2026-05-02.
+This public manual records how to maintain the repository safely. It should not
+publish internal product priorities, private operating plans, customer-specific
+plans, or the private sequence of work.
 
-Shipped and working:
+Public status should be derived from public artifacts:
 
-- Root Docker demo and platform helper scripts.
-- Personal OS Next.js app with Inbox, Ideas, Projects, Tasks, Notes, Today,
-  agent runs, task claims, heartbeats, contributions, artifacts, submissions,
-  reviews, activity logs, and notification payloads.
-- Personal Wiki Python service with Markdown ingest, note pages, search, tags,
-  concepts, graph data, and read/write token boundaries.
-- Agent protocol docs for polling, claiming, loading context, heartbeating,
-  contributing, submitting, and reviewing.
-- Fake seed data showing a task claim, submitted evidence, and approved review.
-- CI for tests, dependency audit, typecheck, lint, app build, Docker builds,
-  Wiki compile, graph tests, release package smoke test, and private-data scan.
-- Versioned package script for `.zip`, `.tar.gz`, and `SHA256SUMS.txt`.
+- shipped features are listed in `CHANGELOG.md`;
+- supported setup paths are listed in `README.md` and `docs/GETTING_STARTED.md`;
+- security and release boundaries are listed in `docs/DATA_SAFETY.md` and
+  `OPEN_SOURCE_RELEASE.md`;
+- current public work, when intentionally disclosed, belongs in GitHub issues.
 
-Partially implemented or still mostly documentation:
-
-- Real external executor adapters for Hermes, OpenClaw, Codex, or Claude Code.
-- A built-in demo worker that runs the full claim -> evidence -> review loop.
-- MCP server integration.
-- Capability-aware agent routing.
-- First-class task execution runs and structured action logs.
-- Review dashboard focused on evidence and definition-of-done checks.
-- Object-style Wiki rebuild, Wiki lint, and knowledge-gap task generation.
-- Native Apple Reminders, Feishu, Telegram, or email delivery workers.
-
-## Strategic Backlog
-
-Work should move in this order unless a security fix is blocking release.
-
-| Priority | Work | Reason |
-| --- | --- | --- |
-| P0 | Built-in demo agent or smoke worker | Proves the product is not only a task board. |
-| P0 | Review dashboard | Makes the strongest differentiator visible. |
-| P1 | `executionMode` on tasks | Separates manual work, suggested agent work, allowed agent work, and approval-required work. |
-| P1 | `AgentProfile` capability registry | Prevents agents from claiming tasks they cannot safely execute. |
-| P1 | `TaskRun` and `AgentActionLog` | Turns task execution into an auditable ledger, not just final summaries. |
-| P1 | MCP server | Lets external agents and IDE tools read tasks and Wiki context through a standard interface. |
-| P2 | LLM Wiki compatibility notes | Borrow the LLM Wiki pattern without competing as a pure Wiki product. |
-| P2 | Object knowledge rebuild | Makes Wiki notes usable as agent-maintained project, workflow, evidence, and decision objects. |
-| P2 | Notification delivery adapters | Keep nudges outside task truth while making daily work visible to the user. |
-| P3 | Mobile capture and browser clipper polish | Useful after the execution loop is proven. |
-
-Do not prioritize generic PKM features over the execution loop.
+Private planning belongs in the private maintenance journal, not in this
+repository.
 
 ## Agent Handoff Loop
 

@@ -14,12 +14,8 @@ This project uses semantic versioning for public release packages. The root
   helpers before the raw Docker Compose command.
 - Demo seed data now includes a fake task claim, submitted evidence, and an
   approved review decision.
-- Public-safe maintenance manuals now define the project handoff process,
-  private/public record boundary, current implementation state, and strategic
-  backlog for future agents.
-- Roadmap now prioritizes the agent execution loop: demo worker, review
-  dashboard, execution modes, capability registry, task runs, action logs, and
-  MCP access.
+- Public-safe maintenance manuals now define the project handoff process and
+  private/public record boundary without publishing private product priorities.
 
 ## 0.1.1 - 2026-04-29
 

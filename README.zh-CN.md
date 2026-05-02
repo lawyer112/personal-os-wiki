@@ -446,19 +446,10 @@ curl -X POST \
 
 ## 路线图
 
-短期：
+公开路线图只保留高层边界，不发布内部推进顺序、私有工作流或具体产品打法。
 
-- 内置 demo agent 或 smoke worker，跑通认领、执行、提交证据、等待复核。
-- 做专门的 Review Dashboard，把证据、产物、验收标准和复核决策展示出来。
-- 增加 `executionMode`，明确哪些任务是人工做、Agent 建议、Agent 可做、必须审批。
-- 增加 Agent 能力注册和更完整的 TaskRun / AgentActionLog 执行账本。
-
-中期：
-
-- MCP server，让外部 Agent 和 IDE 工具通过标准接口读取任务和 Wiki 证据。
-- 更强的项目看板和收入/产出优先级视图。
-- Wiki 图谱洞察、Wiki lint 和知识缺口任务生成。
-- 更安全的个人 vault 导入导出流程。
+有意公开的工作看 [路线图](./docs/ROADMAP.md) 和 GitHub issues。私人规划写进
+私人维护日志，不写进公开仓库。
 
 ## 项目状态
 

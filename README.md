@@ -544,20 +544,11 @@ Read the full release checklist:
 
 ## Roadmap
 
-The short version:
+The public roadmap is intentionally high-level. It documents the product
+boundary and safety rules, not the private sequence of work.
 
-- Add a built-in demo agent or smoke worker for claim, execution, evidence, and
-  review.
-- Add a review dashboard for artifacts, evidence, definition of done, and
-  approval decisions.
-- Add execution modes, agent capability registry, task runs, and structured
-  action logs.
-- Add MCP access for external agents and IDE tools.
-- Add richer project dashboards and priority views.
-- Rebuild Wiki as typed object knowledge with explainable graph relations,
-  lint issues, and OS-generated maintenance tasks.
-
-Read the full [roadmap](./docs/ROADMAP.md).
+Read [Roadmap](./docs/ROADMAP.md) and public GitHub issues for intentionally
+disclosed work.
 
 ## Limitations And Maturity
 

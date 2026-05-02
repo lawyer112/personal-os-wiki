@@ -55,53 +55,19 @@ Personal Wiki = 长期知识、证据、决策、工作流笔记
 私人维护笔记可以使用本手册结构，但写真实环境信息。不要把私人笔记复制回
 GitHub。
 
-## 当前公开状态
+## 公开维护范围
 
-最后检查日期：2026-05-02。
+这份公开手册只记录如何安全维护仓库，不发布内部产品优先级、私人操作计划、
+客户相关计划或真实推进顺序。
 
-已经落地：
+公开状态从公开产物里读取：
 
-- 根目录 Docker demo 和平台辅助脚本。
-- Personal OS Next.js 应用：Inbox、Ideas、Projects、Tasks、Notes、Today、
-  AgentRun、任务认领、心跳、贡献、产物、提交、复核、活动日志和通知 payload。
-- Personal Wiki Python 服务：Markdown ingest、笔记页、搜索、标签、概念、
-  图谱和读写 token 边界。
-- Agent 协议文档：poll、claim、context、heartbeat、contribute、submit、
-  review。
-- 虚构 seed 数据已经能展示任务认领、提交证据和复核通过。
-- CI 覆盖测试、依赖审计、类型检查、lint、应用构建、Docker 构建、Wiki 编译、
-  图谱测试、发布包 smoke test 和私密数据扫描。
-- `.zip`、`.tar.gz`、`SHA256SUMS.txt` 版本包脚本。
+- 已发布能力看 `CHANGELOG.md`；
+- 支持的安装路径看 `README.md` 和 `docs/GETTING_STARTED.zh-CN.md`；
+- 安全与发布边界看 `docs/DATA_SAFETY.zh-CN.md` 和 `OPEN_SOURCE_RELEASE.md`；
+- 需要主动公开的当前工作放在 GitHub issues。
 
-仍然部分实现或主要停留在文档：
-
-- Hermes、OpenClaw、Codex、Claude Code 的真实外部执行器适配。
-- 内置 demo worker，完整跑通 claim -> evidence -> review。
-- MCP server。
-- 基于 Agent 能力的任务路由。
-- 一等公民的 TaskRun 和结构化 AgentActionLog。
-- 专门面向证据和 definition-of-done 的 Review Dashboard。
-- 对象化 Wiki 重建、Wiki lint 和知识缺口任务生成。
-- Apple Reminders、飞书、Telegram、邮件等真实投递 worker。
-
-## 战略 Backlog
-
-除非有安全修复阻塞发布，否则按这个顺序推进。
-
-| 优先级 | 工作 | 原因 |
-| --- | --- | --- |
-| P0 | 内置 demo agent 或 smoke worker | 证明产品不是只有任务板概念。 |
-| P0 | Review Dashboard | 把最强差异点直接展示出来。 |
-| P1 | 给任务增加 `executionMode` | 区分人工任务、Agent 建议、Agent 可直接执行、必须审批。 |
-| P1 | `AgentProfile` 能力注册 | 防止 Agent 认领自己不能安全执行的任务。 |
-| P1 | `TaskRun` 和 `AgentActionLog` | 让执行过程成为可审计账本，而不是最终摘要。 |
-| P1 | MCP server | 让外部 Agent 和 IDE 工具通过标准接口读取任务和 Wiki 上下文。 |
-| P2 | LLM Wiki 兼容说明 | 借鉴 LLM Wiki 模式，但不把自己定位成纯 Wiki。 |
-| P2 | 对象化知识重建 | 让 Wiki 笔记成为 Agent 可维护的项目、工作流、证据和决策对象。 |
-| P2 | 通知投递适配器 | 通知不做任务真相源，但要把每天该做什么推到用户面前。 |
-| P3 | 移动端 capture 和浏览器剪藏优化 | 执行闭环跑顺以后再扩大输入面。 |
-
-不要让通用 PKM 功能抢走执行闭环优先级。
+私人规划应该写进私人维护日志，不写进这个公开仓库。
 
 ## Agent 接手流程
 
