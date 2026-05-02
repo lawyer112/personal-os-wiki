@@ -113,10 +113,10 @@ After `npm run prisma:seed`, the app contains fictional demo data:
 | --- | --- |
 | Projects | `Acorn Launch Lab` |
 | Inbox | `Demo input: collect three customer notes...` |
-| Tasks | `Review the fictional launch checklist` |
+| Tasks | `Review the fictional launch checklist` with a fake claim, artifact, and approved review |
 | Ideas | `Add a demo screenshot after UI polish` |
 | Notes | `Demo launch checklist` |
-| Activity | `demo.seeded` and task contribution events |
+| Activity | `demo.seeded`, `task.claimed`, `task.contribution.created`, `task.submitted`, and `task.reviewed` events |
 
 Suggested click path:
 
@@ -124,8 +124,8 @@ Suggested click path:
 2. Open `Capture`, save one test link, then open `Inbox` and confirm it is only
    recorded as a new input.
 3. Open `Tasks` and click `Review the fictional launch checklist`.
-4. Check the next action, definition of done, Wiki link, contribution, and
-   artifact.
+4. Check the next action, definition of done, Wiki link, fake agent claim,
+   contribution, artifact, and reviewer decision.
 5. Open `Projects` and inspect `Acorn Launch Lab`.
 6. Open `Ideas` and confirm the screenshot idea stayed as an idea instead of
    becoming a fake task.
@@ -248,4 +248,4 @@ npm run prisma:seed
 ```
 
 The seed command resets demo tables and recreates the fictional project,
-task, note, idea, contribution, artifact, and activity records.
+task, note, idea, claim, contribution, artifact, review, and activity records.

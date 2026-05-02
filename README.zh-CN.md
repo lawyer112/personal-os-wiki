@@ -284,7 +284,7 @@ seed 后你会看到一组虚构数据：
 | --- | --- |
 | Projects | `Acorn Launch Lab` |
 | Inbox | `Demo input: collect three customer notes...` |
-| Tasks | `Review the fictional launch checklist` |
+| Tasks | `Review the fictional launch checklist`，带虚构的认领、artifact 和通过复核 |
 | Ideas | `Add a demo screenshot after UI polish` |
 | Notes | `Demo launch checklist` |
 
@@ -292,7 +292,7 @@ seed 后你会看到一组虚构数据：
 
 1. 打开 `Today`，看当前任务队列。
 2. 打开 `Tasks`，进入 `Review the fictional launch checklist`。
-3. 查看下一步动作、完成定义、Wiki 链接、贡献记录和 artifact。
+3. 查看下一步动作、完成定义、Wiki 链接、虚构 Agent 认领、贡献记录、artifact 和 Reviewer 决定。
 4. 打开 `Projects`，查看 `Acorn Launch Lab` 如何串起任务和知识。
 5. 打开 `Ideas`，确认不成熟想法不会被硬转成任务。
 

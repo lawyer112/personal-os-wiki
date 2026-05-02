@@ -17,6 +17,10 @@ export default async function TaskPage({
       sourceInboxItem: true,
       sourceAgentRun: true,
       wikiLinks: true,
+      claims: { orderBy: { claimedAt: "desc" }, take: 3 },
+      contributions: { orderBy: { createdAt: "desc" }, take: 5 },
+      artifacts: { orderBy: { createdAt: "desc" }, take: 5 },
+      reviews: { orderBy: { createdAt: "desc" }, take: 3 },
     },
   })) as TaskView;
 

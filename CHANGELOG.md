@@ -12,6 +12,8 @@ This project uses semantic versioning for public release packages. The root
 - macOS/Linux demo helper script: `sh ./scripts/demo.sh`.
 - README, Getting Started, and Releases now document platform-specific demo
   helpers before the raw Docker Compose command.
+- Demo seed data now includes a fake task claim, submitted evidence, and an
+  approved review decision.
 
 ## 0.1.1 - 2026-04-29
 

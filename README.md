@@ -363,7 +363,7 @@ After seeding, you should see fictional demo data:
 | --- | --- |
 | Projects | `Acorn Launch Lab` |
 | Inbox | `Demo input: collect three customer notes...` |
-| Tasks | `Review the fictional launch checklist` |
+| Tasks | `Review the fictional launch checklist` with a fake claim, artifact, and approved review |
 | Ideas | `Add a demo screenshot after UI polish` |
 | Notes | `Demo launch checklist` |
 
@@ -371,8 +371,8 @@ Suggested path:
 
 1. Open `Today` to see the current work queue.
 2. Open `Tasks` and inspect `Review the fictional launch checklist`.
-3. Check the next action, definition of done, Wiki link, contribution, and
-   artifact.
+3. Check the next action, definition of done, Wiki link, fake agent claim,
+   contribution, artifact, and reviewer decision.
 4. Open `Projects` and inspect `Acorn Launch Lab`.
 5. Open `Ideas` and confirm the screenshot idea stayed as an idea instead of
    being forced into a task.

@@ -95,17 +95,17 @@ http://localhost:3000
 | --- | --- |
 | Projects | `Acorn Launch Lab` |
 | Inbox | `Demo input: collect three customer notes...` |
-| Tasks | `Review the fictional launch checklist` |
+| Tasks | `Review the fictional launch checklist`，带虚构的认领、artifact 和通过复核 |
 | Ideas | `Add a demo screenshot after UI polish` |
 | Notes | `Demo launch checklist` |
-| Activity | `demo.seeded` 和任务贡献记录 |
+| Activity | `demo.seeded`、`task.claimed`、`task.contribution.created`、`task.submitted`、`task.reviewed` |
 
 建议点击路径：
 
 1. 打开 `Today`，看系统认为当前最该处理的工作。
 2. 打开 `Capture`，保存一个测试链接，再打开 `Inbox`，确认它只是被记录成一条新输入。
 3. 打开 `Tasks`，点进 `Review the fictional launch checklist`。
-4. 查看下一步动作、完成定义、Wiki 链接、贡献记录和 artifact。
+4. 查看下一步动作、完成定义、Wiki 链接、虚构 Agent 认领、贡献记录、artifact 和 Reviewer 决定。
 5. 打开 `Projects`，查看 `Acorn Launch Lab`。
 6. 打开 `Ideas`，确认截图想法还停留在想法池，没有被强行变成任务。
 7. 打开 Wiki 服务，单独体验 Markdown 入库和浏览。
@@ -208,4 +208,4 @@ npm run prisma:generate
 npm run prisma:seed
 ```
 
-seed 命令会重置 demo 表，并重新创建虚构项目、任务、笔记、想法、贡献、artifact 和活动记录。
+seed 命令会重置 demo 表，并重新创建虚构项目、任务、笔记、想法、认领、贡献、artifact、复核和活动记录。

@@ -38,6 +38,38 @@ export type TaskView = {
     noteUrl?: string | null;
     sourceType?: string | null;
   }>;
+  claims?: Array<{
+    id: string;
+    agentId: string;
+    claimedAt?: Date | string;
+    leaseUntil?: Date | string;
+    releasedAt?: Date | string | null;
+    releaseReason?: string | null;
+  }>;
+  contributions?: Array<{
+    id: string;
+    agentId: string;
+    summary: string;
+    evidenceLinks?: string[];
+    artifactUrls?: string[];
+    nextRecommendation?: string | null;
+    createdAt?: Date | string;
+  }>;
+  artifacts?: Array<{
+    id: string;
+    type: string;
+    title?: string | null;
+    url: string;
+    verification?: string;
+    createdAt?: Date | string;
+  }>;
+  reviews?: Array<{
+    id: string;
+    reviewer: string;
+    decision: string;
+    comment?: string | null;
+    createdAt?: Date | string;
+  }>;
 };
 
 export type IdeaView = {

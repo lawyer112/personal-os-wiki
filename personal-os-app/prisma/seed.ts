@@ -132,6 +132,21 @@ async function main() {
     },
   });
 
+  const claimedAt = new Date(Date.now() - 45 * 60 * 1000);
+  const submittedAt = new Date(Date.now() - 20 * 60 * 1000);
+  const reviewedAt = new Date(Date.now() - 10 * 60 * 1000);
+
+  const claim = await prisma.taskClaim.create({
+    data: {
+      taskId: task.id,
+      agentId: "demo-agent",
+      claimedAt,
+      leaseUntil: submittedAt,
+      releasedAt: submittedAt,
+      releaseReason: "submitted_for_review",
+    },
+  });
+
   const contribution = await prisma.taskContribution.create({
     data: {
       taskId: task.id,
@@ -140,6 +155,7 @@ async function main() {
       artifactUrls: ["https://example.com/demo-artifact"],
       evidenceLinks: ["wiki://demo/demo-launch-checklist.md"],
       nextRecommendation: "Approve the demo task or replace the fake data.",
+      createdAt: submittedAt,
     },
   });
 
@@ -151,6 +167,30 @@ async function main() {
       title: "Demo artifact",
       url: "https://example.com/demo-artifact",
       verification: "demo-only",
+      createdAt: submittedAt,
+    },
+  });
+
+  const review = await prisma.taskReview.create({
+    data: {
+      taskId: task.id,
+      reviewer: "demo-reviewer",
+      decision: "approve",
+      comment:
+        "Approved because the fake checklist is linked, the artifact is attached, and the task can be closed.",
+      createdAt: reviewedAt,
+    },
+  });
+
+  await prisma.task.update({
+    where: { id: task.id },
+    data: {
+      status: "done",
+      ownerAgent: null,
+      leaseUntil: null,
+      lastHeartbeatAt: submittedAt,
+      submittedAt,
+      completedAt: reviewedAt,
     },
   });
 
@@ -158,7 +198,8 @@ async function main() {
     data: {
       projectId: project.id,
       title: "Demo workflow initialized",
-      body: "Fake seed data created a project, inbox item, note, task, contribution, and artifact.",
+      body:
+        "Fake seed data created a project, inbox item, note, task, claim, contribution, artifact, and approved review.",
       eventType: "demo_seed",
       sourceInboxItemId: inbox.id,
       sourceAgentRunId: run.id,
@@ -176,10 +217,39 @@ async function main() {
       },
       {
         actorType: "system",
+        actorId: "demo-agent",
+        action: "task.claimed",
+        targetType: "task",
+        targetId: task.id,
+        after: { claimId: claim.id, ownerAgent: "demo-agent", status: "doing" },
+        createdAt: claimedAt,
+      },
+      {
+        actorType: "system",
+        actorId: "demo-agent",
         action: "task.contribution.created",
         targetType: "task",
         targetId: task.id,
         after: { contributionId: contribution.id },
+        createdAt: submittedAt,
+      },
+      {
+        actorType: "system",
+        actorId: "demo-agent",
+        action: "task.submitted",
+        targetType: "task",
+        targetId: task.id,
+        after: { status: "review", submittedAt: submittedAt.toISOString() },
+        createdAt: submittedAt,
+      },
+      {
+        actorType: "system",
+        actorId: "demo-reviewer",
+        action: "task.reviewed",
+        targetType: "task",
+        targetId: task.id,
+        after: { reviewId: review.id, decision: "approve", status: "done" },
+        createdAt: reviewedAt,
       },
     ],
   });
