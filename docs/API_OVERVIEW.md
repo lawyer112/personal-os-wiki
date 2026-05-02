@@ -63,11 +63,29 @@ curl -X POST http://localhost:3000/api/intake \
         "status": "todo",
         "priority": "P2",
         "riskLevel": "low",
+        "executionMode": "agent_allowed",
         "agentTags": ["demo", "review"],
         "nextAction": "Write one paragraph with the biggest gap.",
         "definitionOfDone": "A review note is attached to the task."
       }
     ]
+  }'
+```
+
+Register or update an agent profile before letting that agent poll work:
+
+```bash
+curl -X POST http://localhost:3000/api/agent-profiles \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "demo-agent",
+    "displayName": "Demo Agent",
+    "tags": ["demo", "review"],
+    "capabilities": ["read_context", "write_contribution", "submit_review"],
+    "allowedRiskLevel": "low",
+    "canWriteTasks": true,
+    "enabled": true
   }'
 ```
 
@@ -112,16 +130,35 @@ curl -X POST \
   "http://localhost:3000/api/tasks/<task-id>/submit"
 ```
 
+Save the planner output that was actually delivered to the user:
+
+```bash
+curl -X POST http://localhost:3000/api/planner/today \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mode": "morning",
+    "mainLine": "Ship the demo agent review loop.",
+    "firstAction": "Run the focused test suite and attach the result.",
+    "blocked": [],
+    "needsDecision": ["Choose whether this task should be public-facing."],
+    "deliveredTo": ["telegram"]
+  }'
+```
+
 ## Endpoint Matrix
 
 | Purpose | Endpoint | Method | Token |
 | --- | --- | --- | --- |
 | Read Today workspace | `/api/today` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Read planner packet | `/api/planner/today?mode=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
+| Save planner snapshot | `/api/planner/today` | `POST` | `PERSONAL_OS_API_TOKEN` |
+| Read planner snapshots | `/api/planner/snapshots` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Read reminder payload | `/api/reminders/today?mode=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Browser capture form | `/capture` | `GET/POST form action` | private app session / local access |
 | Capture mixed input | `/api/intake` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Create raw Inbox item | `/api/inbox/items` | `POST` | `PERSONAL_OS_API_TOKEN` |
+| Register agent profile | `/api/agent-profiles` | `GET/POST` | read for GET, write for POST |
 | Agent polls work | `/api/agent-inbox` | `GET` | `PERSONAL_OS_API_TOKEN` |
 | Agent loads context | `/api/agent/context?taskId=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Agent claims work | `/api/tasks/:id/claim` | `POST` | `PERSONAL_OS_API_TOKEN` |
@@ -156,8 +193,11 @@ Validation errors include an `issues` array.
 
 Agents should treat the Personal OS task record as the source of truth:
 
+- Register an `AgentProfile` before polling work.
+- Only tasks with `executionMode=agent_allowed` and non-high risk can be claimed.
 - Claim before working.
 - Keep the lease alive with heartbeat if work takes time.
+- Do not contribute or submit after the lease expires; claim again first.
 - Attach evidence and artifact URLs.
 - Submit for review instead of silently marking work done.
 - Let a human or reviewer agent approve, reject, block, or archive.

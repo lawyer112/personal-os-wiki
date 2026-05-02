@@ -5,12 +5,14 @@ import {
   type ReminderMode,
   type TodayReminder,
 } from "@/lib/reminders";
+import type { DailyPlanSnapshotInput } from "@/lib/validation";
 
 type PlannerDb = {
   task: unknown;
   idea: unknown;
   project: unknown;
   activityLog: unknown;
+  dailyPlan?: unknown;
 };
 
 type PlannerProject = {
@@ -39,6 +41,18 @@ export type DailyPlannerPack = {
   recentActivity: PlannerActivity[];
   wiki: WikiContextSearchResult;
   plannerInstruction: string;
+};
+
+export type DailyPlanSnapshot = {
+  id: string;
+  date: string;
+  mode: string;
+  mainLine: string;
+  firstAction: string;
+  blocked: string[];
+  needsDecision: string[];
+  deliveredTo: string[];
+  createdAt?: Date | string;
 };
 
 export function normalizePlannerMode(value: string | null): ReminderMode {
@@ -81,6 +95,30 @@ export async function getDailyPlannerPack<TDb extends PlannerDb>(
     wiki,
     plannerInstruction: buildPlannerInstruction(mode),
   };
+}
+
+export async function saveDailyPlanSnapshot<TDb extends { dailyPlan?: unknown }>(
+  db: TDb,
+  input: DailyPlanSnapshotInput,
+  sourcePlannerPacket: DailyPlannerPack | Record<string, unknown>,
+): Promise<DailyPlanSnapshot> {
+  const dailyPlan = db.dailyPlan as {
+    create(args: unknown): Promise<DailyPlanSnapshot>;
+  };
+  const date = input.date ?? new Date().toISOString().slice(0, 10);
+
+  return dailyPlan.create({
+    data: {
+      date,
+      mode: input.mode,
+      mainLine: input.mainLine,
+      firstAction: input.firstAction,
+      blocked: input.blocked,
+      needsDecision: input.needsDecision,
+      deliveredTo: input.deliveredTo,
+      sourcePlannerPacket,
+    },
+  });
 }
 
 export function buildPlannerWikiQueries(

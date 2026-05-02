@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildPlannerWikiQueries, getDailyPlannerPack } from "@/lib/daily-planner";
+import {
+  buildPlannerWikiQueries,
+  getDailyPlannerPack,
+  saveDailyPlanSnapshot,
+} from "@/lib/daily-planner";
 import { searchWikiContext } from "@/lib/agent-context";
 
 vi.mock("@/lib/agent-context", () => ({
@@ -105,6 +109,48 @@ describe("daily planner pack", () => {
     expect(mockedSearchWikiContext).toHaveBeenCalledWith(
       expect.arrayContaining(["Personal OS", "今日规划能力"]),
       10,
+    );
+  });
+
+  it("persists a daily plan snapshot from the planner result", async () => {
+    const db = {
+      dailyPlan: {
+        create: vi.fn().mockResolvedValue({
+          id: "plan_1",
+          date: "2026-05-02",
+          mode: "morning",
+          mainLine: "Ship the agent execution guardrail.",
+          firstAction: "Verify claim filtering tests.",
+          blocked: [],
+          needsDecision: [],
+          deliveredTo: ["telegram"],
+        }),
+      },
+    };
+
+    const snapshot = await saveDailyPlanSnapshot(
+      db,
+      {
+        date: "2026-05-02",
+        mode: "morning",
+        mainLine: "Ship the agent execution guardrail.",
+        firstAction: "Verify claim filtering tests.",
+        blocked: [],
+        needsDecision: [],
+        deliveredTo: ["telegram"],
+      },
+      { mode: "morning", generatedAt: "2026-05-02T00:00:00Z" },
+    );
+
+    expect(snapshot.id).toBe("plan_1");
+    expect(db.dailyPlan.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          date: "2026-05-02",
+          mode: "morning",
+          deliveredTo: ["telegram"],
+        }),
+      }),
     );
   });
 });

@@ -10,10 +10,17 @@ function request(path: string, token?: string) {
 
 async function loadPlannerRoute() {
   vi.resetModules();
-  vi.doMock("@/lib/db", () => ({ prisma: {} }));
+  vi.doMock("@/lib/db", () => ({
+    prisma: {
+      dailyPlan: {
+        create: vi.fn().mockResolvedValue({ id: "plan_1" }),
+      },
+    },
+  }));
   vi.doMock("@/lib/daily-planner", () => ({
     normalizePlannerMode: (mode: string | null) => mode ?? "morning",
     getDailyPlannerPack: vi.fn().mockResolvedValue({ mode: "morning" }),
+    saveDailyPlanSnapshot: vi.fn().mockResolvedValue({ id: "plan_1" }),
   }));
   return import("@/app/api/planner/today/route");
 }
@@ -68,5 +75,31 @@ describe("planner and reminder read auth", () => {
     const response = await GET(request("/api/planner/today?mode=morning"));
 
     expect(response.status).toBe(401);
+  });
+
+  it("requires the write token to save a planner snapshot", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_READ_TOKEN", "os-read-token-0000");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "os-write-token-0000");
+
+    const { POST } = await loadPlannerRoute();
+    const response = await POST(
+      new Request("http://os.local/api/planner/today", {
+        method: "POST",
+        headers: {
+          authorization: "Bearer os-write-token-0000",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "morning",
+          mainLine: "Ship the guardrail.",
+          firstAction: "Run the focused tests.",
+          deliveredTo: ["telegram"],
+          sourcePlannerPacket: { mode: "morning" },
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(201);
   });
 });

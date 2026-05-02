@@ -27,6 +27,34 @@ The response includes:
 - `planner.wiki`: Personal Wiki candidates recalled from tasks, ideas, and projects.
 - `planner.plannerInstruction`: the exact role instruction Hermes should follow.
 
+After Hermes turns the packet into the actual user-facing plan, save what was
+delivered:
+
+```http
+POST /api/planner/today
+Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Content-Type: application/json
+
+{
+  "mode": "morning",
+  "mainLine": "Ship the demo agent review loop.",
+  "firstAction": "Run the focused test suite and attach the result.",
+  "blocked": [],
+  "needsDecision": ["Choose whether this task should be public-facing."],
+  "deliveredTo": ["telegram"]
+}
+```
+
+Read saved snapshots:
+
+```http
+GET /api/planner/snapshots?date=2026-05-02&mode=morning
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
+```
+
+The snapshot is the record for "what did the system tell me this morning?" It
+is not a task-completion signal.
+
 ## Hermes Prompt
 
 Use this scheduled job instruction:

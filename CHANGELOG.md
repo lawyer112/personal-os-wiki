@@ -16,6 +16,11 @@ This project uses semantic versioning for public release packages. The root
   approved review decision.
 - Public-safe maintenance manuals now define the project handoff process and
   private/public record boundary without publishing private product priorities.
+- Task execution guardrails: `executionMode`, high-risk claim blocking, active
+  lease checks before contribution/submission, and capability-aware
+  `AgentProfile` filtering for agent work queues.
+- Daily planner snapshots can persist the user-facing plan that was actually
+  delivered, with a read endpoint for later inspection.
 
 ## 0.1.1 - 2026-04-29
 

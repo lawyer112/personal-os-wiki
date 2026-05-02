@@ -3,9 +3,9 @@ import type { TaskCreateInput, TaskUpdateInput } from "@/lib/validation";
 
 type TaskCreateServiceInput = Omit<
   TaskCreateInput,
-  "wikiLinks" | "riskLevel" | "agentTags"
+  "wikiLinks" | "riskLevel" | "executionMode" | "agentTags"
 > &
-  Partial<Pick<TaskCreateInput, "riskLevel" | "agentTags">> & {
+  Partial<Pick<TaskCreateInput, "riskLevel" | "executionMode" | "agentTags">> & {
   wikiLinks?: TaskCreateInput["wikiLinks"];
 };
 
@@ -45,6 +45,7 @@ export async function createTask<TDb extends TaskDb>(
     data: {
       ...taskInput,
       riskLevel: taskInput.riskLevel ?? "low",
+      executionMode: taskInput.executionMode ?? "manual",
       agentTags: taskInput.agentTags ?? [],
       wikiLinks: {
         create: wikiLinks.map((link) => ({

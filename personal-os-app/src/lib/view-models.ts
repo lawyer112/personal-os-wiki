@@ -23,6 +23,8 @@ export type TaskView = {
   description?: string | null;
   status: string;
   priority: string;
+  riskLevel?: string;
+  executionMode?: string;
   nextAction: string;
   definitionOfDone: string;
   estimateMinutes?: number | null;

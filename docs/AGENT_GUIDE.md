@@ -70,6 +70,8 @@ Every task should have:
 - `priority`: P0/P1/P2/P3.
 - `agentTags`: which agents should see it.
 - `riskLevel`: `low`, `medium`, or `high`.
+- `executionMode`: `manual`, `agent_suggested`, `agent_allowed`,
+  `approval_required`, or `blocked_until_user`.
 - `requiredOutput`: what artifact must be produced.
 
 Bad:
@@ -96,6 +98,20 @@ Agents should not race each other. Use the lease protocol.
 ```text
 poll -> claim -> context -> execute -> heartbeat -> contribute -> submit -> review
 ```
+
+Before polling, the operator must register an `AgentProfile` with matching tags
+and permissions. The task worker can claim only tasks that satisfy all of these
+conditions:
+
+- task status is `todo`, or an expired `doing` lease is available;
+- task `executionMode` is `agent_allowed`;
+- task `riskLevel` is not `high`;
+- the agent profile is enabled and `canWriteTasks=true`;
+- the task tags are empty or overlap with the agent profile tags;
+- the task risk is within the agent profile `allowedRiskLevel`.
+
+If any condition fails, the agent should write a clarification or ask for review
+instead of trying to bypass the queue.
 
 ### Poll
 

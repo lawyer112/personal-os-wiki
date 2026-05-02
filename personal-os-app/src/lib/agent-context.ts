@@ -19,6 +19,7 @@ type TaskRecord = {
   status: string;
   priority: string;
   riskLevel?: string;
+  executionMode?: string;
   agentTags?: string[];
   ownerAgent?: string | null;
   leaseUntil?: Date | string | null;

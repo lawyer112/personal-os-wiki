@@ -12,6 +12,7 @@ const prisma = new PrismaClient({
 });
 
 async function main() {
+  await prisma.dailyPlan.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.activityLog.deleteMany();
   await prisma.projectEvent.deleteMany();
@@ -27,6 +28,18 @@ async function main() {
   await prisma.agentRun.deleteMany();
   await prisma.inboxItem.deleteMany();
   await prisma.project.deleteMany();
+  await prisma.agentProfile.deleteMany();
+
+  await prisma.agentProfile.create({
+    data: {
+      id: "demo-agent",
+      displayName: "Demo Agent",
+      tags: ["demo", "review"],
+      capabilities: ["read_context", "write_contribution", "submit_review"],
+      allowedRiskLevel: "low",
+      canWriteTasks: true,
+    },
+  });
 
   const project = await prisma.project.create({
     data: {
@@ -95,6 +108,7 @@ async function main() {
       status: "todo",
       priority: "P1",
       riskLevel: "low",
+      executionMode: "agent_allowed",
       agentTags: ["demo", "review"],
       requiredOutput: "A short review comment and one linked artifact.",
       nextAction: "Open the task and confirm the linked demo note is visible.",

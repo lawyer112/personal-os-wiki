@@ -22,13 +22,20 @@ Already implemented:
 - Inbox records original user input.
 - `/api/intake` can create Inbox, AgentRun, Wiki notes, OS notes, tasks, ideas,
   project events, and notification payloads in one call.
-- Tasks have `nextAction`, `definitionOfDone`, priority, risk level, agent
-  tags, owner agent, lease, heartbeat, contributions, artifacts, and reviews.
+- Tasks have `nextAction`, `definitionOfDone`, priority, risk level,
+  `executionMode`, agent tags, owner agent, lease, heartbeat, contributions,
+  artifacts, and reviews.
+- Agent profiles can register tags, capabilities, risk limits, task-write
+  permission, Wiki-write permission, notification permission, and enabled state.
 - Agents can poll, claim, heartbeat, contribute, submit, and wait for review.
+- Agent polling and claiming now respect task execution mode, risk level,
+  active leases, and profile tags/permissions.
 - `/api/agent/context` returns task context, Wiki candidates, related ideas,
   recent tasks, activity, and execution policy.
 - `/api/planner/today` and `/api/reminders/today` provide packets for scheduled
   workers and notification adapters.
+- Daily planner output can be saved as `DailyPlan` snapshots so the delivered
+  plan is inspectable later.
 - Personal Wiki stores durable Markdown knowledge and source evidence.
 
 The missing layer is not another chat memory. The missing layer is decision and
@@ -41,9 +48,9 @@ what evidence proves it moved, and how the result changes the knowledge base.
 | --- | --- |
 | Intake quality is agent-dependent | The server validates fields, but it does not grade whether a task is concrete or whether knowledge should remain knowledge-only. |
 | No first-class workflow/skill object | Reusable work methods live in docs or Wiki prose, not as versioned, callable execution recipes. |
-| No daily plan snapshot | Planner packets are generated on request, but the chosen main line and user-facing plan are not persisted as an object. |
-| No explicit execution mode | `riskLevel` exists, but there is no `manual`, `agent_suggested`, `agent_allowed`, or `approval_required` policy. |
-| No agent capability registry | Tasks use tags, but the system does not know which agent can browse, code, call APIs, write reminders, or touch files. |
+| Daily plan snapshot needs UI surfacing | Planner snapshots are persisted, but they are not yet shown on the Today page. |
+| Execution policy is still coarse | `executionMode` blocks unsafe claims, but there is not yet a full approval workflow for changing modes. |
+| Agent capability registry is minimal | Profiles can filter work, but the UI and richer capability matching are not complete. |
 | Agent execution is not a first-class run | `AgentRun` currently models intake classification more than task execution attempts. |
 | No work queue scheduling policy | Polling exists, but there is no ranking rule for what a worker should claim first beyond query order. |
 | Review is status-level, not criteria-level | A reviewer can approve/reject, but the system does not store checklist items or evidence requirements per task type. |
@@ -217,10 +224,10 @@ This prevents vague "looks good" reviews and makes autonomous work safer.
 
 ## Implementation Order
 
-1. Tighten task claim/heartbeat/contribution ownership rules.
-2. Add `executionMode` to tasks and block high-risk auto-claims.
-3. Add `AgentProfile` and capability-aware agent inbox filtering.
-4. Add `DailyPlan` snapshots for planner output.
+1. Done: tighten task claim/heartbeat/contribution ownership rules.
+2. Done: add `executionMode` to tasks and block high-risk auto-claims.
+3. Done: add `AgentProfile` and capability-aware agent inbox filtering.
+4. Done: add `DailyPlan` snapshots for planner output.
 5. Add `TaskRun` for task execution attempts.
 6. Add structured `AgentActionLog`.
 7. Add intake decision schema and quality scoring.

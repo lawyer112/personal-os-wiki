@@ -8,19 +8,44 @@ import {
   submitTask,
 } from "@/lib/agent-tasks";
 
+function claimableTask(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "task_1",
+    title: "Demo task",
+    status: "todo",
+    riskLevel: "low",
+    executionMode: "agent_allowed",
+    ownerAgent: null,
+    leaseUntil: null,
+    ...overrides,
+  };
+}
+
+function ownedTask(overrides: Record<string, unknown> = {}) {
+  return claimableTask({
+    status: "doing",
+    ownerAgent: "agent_1",
+    leaseUntil: new Date(Date.now() + 60_000),
+    ...overrides,
+  });
+}
+
 function createDb(overrides: Record<string, unknown> = {}) {
   return {
     task: {
       findMany: vi.fn().mockResolvedValue([]),
-      findUnique: vi.fn().mockResolvedValue({
-        id: "task_1",
-        title: "Demo task",
-        status: "todo",
-        ownerAgent: null,
-        leaseUntil: null,
-      }),
+      findUnique: vi.fn().mockResolvedValue(claimableTask()),
       updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       update: vi.fn().mockResolvedValue({ id: "task_1", status: "doing" }),
+    },
+    agentProfile: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: "agent_1",
+        tags: ["demo", "review"],
+        allowedRiskLevel: "medium",
+        canWriteTasks: true,
+        enabled: true,
+      }),
     },
     taskClaim: {
       create: vi.fn().mockResolvedValue({ id: "claim_1", taskId: "task_1" }),
@@ -71,13 +96,7 @@ describe("agent task protocol", () => {
       task: {
         findUnique: vi
           .fn()
-          .mockResolvedValueOnce({
-            id: "task_1",
-            title: "Demo task",
-            status: "todo",
-            ownerAgent: null,
-            leaseUntil: null,
-          })
+          .mockResolvedValueOnce(claimableTask())
           .mockResolvedValueOnce({ id: "task_1", status: "doing" }),
         updateMany: vi.fn().mockResolvedValue({ count: 1 }),
         update: vi.fn(),
@@ -111,13 +130,7 @@ describe("agent task protocol", () => {
   it("rejects a stale concurrent claim when the conditional update loses", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          title: "Demo task",
-          status: "todo",
-          ownerAgent: null,
-          leaseUntil: null,
-        }),
+        findUnique: vi.fn().mockResolvedValue(claimableTask()),
         updateMany: vi.fn().mockResolvedValue({ count: 0 }),
       },
     });
@@ -130,13 +143,7 @@ describe("agent task protocol", () => {
   it("rejects direct claims for tasks that still need review", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          title: "Demo task",
-          status: "review",
-          ownerAgent: null,
-          leaseUntil: null,
-        }),
+        findUnique: vi.fn().mockResolvedValue(claimableTask({ status: "review" })),
         updateMany: vi.fn(),
       },
     });
@@ -147,16 +154,42 @@ describe("agent task protocol", () => {
     expect(db.task.updateMany).not.toHaveBeenCalled();
   });
 
+  it("rejects claims unless the task is explicitly agent_allowed", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValue(claimableTask({ executionMode: "manual" })),
+        updateMany: vi.fn(),
+      },
+    });
+
+    await expect(
+      claimTask(db, "task_1", { agentId: "agent_1", leaseMinutes: 30 }),
+    ).rejects.toThrow("agent claims require agent_allowed");
+    expect(db.task.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects high-risk auto-claims even when agent_allowed", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValue(claimableTask({ riskLevel: "high" })),
+        updateMany: vi.fn(),
+      },
+    });
+
+    await expect(
+      claimTask(db, "task_1", { agentId: "agent_1", leaseMinutes: 30 }),
+    ).rejects.toThrow("High-risk tasks require explicit approval");
+    expect(db.task.updateMany).not.toHaveBeenCalled();
+  });
+
   it("heartbeats an owned task", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          title: "Demo task",
-          status: "doing",
-          ownerAgent: "agent_1",
-          leaseUntil: new Date(Date.now() + 60_000),
-        }),
+        findUnique: vi.fn().mockResolvedValue(ownedTask()),
         update: vi.fn().mockResolvedValue({ id: "task_1" }),
       },
     });
@@ -176,13 +209,7 @@ describe("agent task protocol", () => {
   it("rejects heartbeats before a task is claimed", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          title: "Demo task",
-          status: "todo",
-          ownerAgent: null,
-          leaseUntil: null,
-        }),
+        findUnique: vi.fn().mockResolvedValue(claimableTask()),
         update: vi.fn(),
       },
     });
@@ -199,11 +226,7 @@ describe("agent task protocol", () => {
   it("writes a contribution and artifacts for the owning agent", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          status: "doing",
-          ownerAgent: "agent_1",
-        }),
+        findUnique: vi.fn().mockResolvedValue(ownedTask()),
       },
     });
 
@@ -227,11 +250,7 @@ describe("agent task protocol", () => {
   it("rejects contributions before a task is claimed", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          status: "todo",
-          ownerAgent: null,
-        }),
+        findUnique: vi.fn().mockResolvedValue(claimableTask()),
       },
     });
 
@@ -246,14 +265,32 @@ describe("agent task protocol", () => {
     expect(db.taskContribution.create).not.toHaveBeenCalled();
   });
 
+  it("rejects contributions after the lease expires", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValue(
+            ownedTask({ leaseUntil: new Date(Date.now() - 60_000) }),
+          ),
+      },
+    });
+
+    await expect(
+      addTaskContribution(db, "task_1", {
+        agentId: "agent_1",
+        summary: "Tried to write after the lease expired.",
+        evidenceLinks: [],
+        artifactUrls: [],
+      }),
+    ).rejects.toThrow("Task lease expired");
+    expect(db.taskContribution.create).not.toHaveBeenCalled();
+  });
+
   it("submits work for review instead of marking it done", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue({
-          id: "task_1",
-          status: "doing",
-          ownerAgent: "agent_1",
-        }),
+        findUnique: vi.fn().mockResolvedValue(ownedTask()),
         update: vi.fn().mockResolvedValue({ id: "task_1", status: "review" }),
       },
     });

@@ -26,6 +26,13 @@ export const taskStatuses = [
 
 export const priorities = ["P0", "P1", "P2", "P3"] as const;
 export const taskRiskLevels = ["low", "medium", "high"] as const;
+export const taskExecutionModes = [
+  "manual",
+  "agent_suggested",
+  "agent_allowed",
+  "approval_required",
+  "blocked_until_user",
+] as const;
 export const ideaStatuses = [
   "captured",
   "shaping",
@@ -97,6 +104,7 @@ export const taskCreateSchema = z.object({
   status: z.enum(taskStatuses).default("review"),
   priority: z.enum(priorities).default("P2"),
   riskLevel: z.enum(taskRiskLevels).default("low"),
+  executionMode: z.enum(taskExecutionModes).default("manual"),
   agentTags: z.array(z.string().min(1)).default([]),
   requiredOutput: z.string().optional(),
   nextAction: z.string().min(1),
@@ -148,6 +156,23 @@ export const taskReviewSchema = z.object({
   reviewer: z.string().min(1).default("user"),
   decision: z.enum(["approve", "request_changes", "reject", "block", "archive"]),
   comment: z.string().optional(),
+});
+
+export const agentProfileCreateSchema = z.object({
+  id: z.string().min(1),
+  displayName: z.string().min(1),
+  tags: z.array(z.string().min(1)).default([]),
+  capabilities: z.array(z.string().min(1)).default([]),
+  allowedRiskLevel: z.enum(taskRiskLevels).default("low"),
+  canWriteWiki: z.boolean().default(false),
+  canWriteTasks: z.boolean().default(true),
+  canTouchFiles: z.boolean().default(false),
+  canSendNotifications: z.boolean().default(false),
+  enabled: z.boolean().default(true),
+});
+
+export const agentProfileUpdateSchema = agentProfileCreateSchema.partial().omit({
+  id: true,
 });
 
 export const noteCreateSchema = z.object({
@@ -234,6 +259,21 @@ export const telegramNotificationSchema = z.object({
   relatedObjectId: z.string().optional(),
 });
 
+export const dailyPlanSnapshotSchema = z.object({
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
+  mode: z.enum(["morning", "checkin", "evening"]).default("morning"),
+  appUrl: z.string().optional(),
+  mainLine: z.string().min(1),
+  firstAction: z.string().min(1),
+  blocked: z.array(z.string().min(1)).default([]),
+  needsDecision: z.array(z.string().min(1)).default([]),
+  deliveredTo: z.array(z.string().min(1)).default([]),
+  sourcePlannerPacket: jsonRecord.optional(),
+});
+
 export const wikiIngestSchema = z.object({
   title: z.string().min(1),
   content: z.string().min(1),
@@ -302,6 +342,8 @@ export type TaskHeartbeatInput = z.infer<typeof taskHeartbeatSchema>;
 export type TaskContributionInput = z.infer<typeof taskContributionSchema>;
 export type TaskSubmitInput = z.infer<typeof taskSubmitSchema>;
 export type TaskReviewInput = z.infer<typeof taskReviewSchema>;
+export type AgentProfileCreateInput = z.infer<typeof agentProfileCreateSchema>;
+export type AgentProfileUpdateInput = z.infer<typeof agentProfileUpdateSchema>;
 export type NoteCreateInput = z.infer<typeof noteCreateSchema>;
 export type IdeaCreateInput = z.infer<typeof ideaCreateSchema>;
 export type IdeaUpdateInput = z.infer<typeof ideaUpdateSchema>;
@@ -313,3 +355,4 @@ export type IntakeInput = z.infer<typeof intakeSchema>;
 export type TelegramNotificationInput = z.infer<
   typeof telegramNotificationSchema
 >;
+export type DailyPlanSnapshotInput = z.infer<typeof dailyPlanSnapshotSchema>;

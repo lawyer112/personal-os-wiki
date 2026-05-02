@@ -11,6 +11,7 @@ import type {
 
 type AgentTaskDb = {
   task: unknown;
+  agentProfile?: unknown;
   taskClaim: unknown;
   taskContribution: unknown;
   taskArtifact: unknown;
@@ -22,8 +23,25 @@ type TaskRecord = {
   id: string;
   title: string;
   status: string;
+  riskLevel?: string;
+  executionMode?: string;
+  agentTags?: string[];
   ownerAgent?: string | null;
   leaseUntil?: Date | string | null;
+};
+
+type AgentProfileRecord = {
+  id: string;
+  tags?: string[];
+  allowedRiskLevel?: string;
+  canWriteTasks?: boolean;
+  enabled?: boolean;
+};
+
+const riskRank: Record<string, number> = {
+  low: 1,
+  medium: 2,
+  high: 3,
 };
 
 const agentTaskInclude = {
@@ -62,6 +80,64 @@ function assertTaskCanBeClaimed(task: TaskRecord) {
   }
 }
 
+function assertTaskPolicyAllowsClaim(task: TaskRecord) {
+  if ((task.executionMode ?? "manual") !== "agent_allowed") {
+    throw new HttpError(
+      409,
+      `Task executionMode is ${task.executionMode ?? "manual"}; agent claims require agent_allowed`,
+    );
+  }
+  if (task.riskLevel === "high") {
+    throw new HttpError(
+      409,
+      "High-risk tasks require explicit approval before an agent can claim them",
+    );
+  }
+}
+
+async function getAgentProfile<TDb extends AgentTaskDb>(
+  db: TDb,
+  agentId: string,
+) {
+  const profileDelegate = db.agentProfile as
+    | { findUnique(args: unknown): Promise<AgentProfileRecord | null> }
+    | undefined;
+  if (!profileDelegate) {
+    return null;
+  }
+  return profileDelegate.findUnique({ where: { id: agentId } });
+}
+
+function assertAgentCanWorkTask(
+  profile: AgentProfileRecord | null,
+  task: TaskRecord,
+) {
+  if (!profile || profile.enabled === false) {
+    throw new HttpError(403, "Agent profile is missing or disabled");
+  }
+  if (profile.canWriteTasks === false) {
+    throw new HttpError(403, "Agent profile cannot write tasks");
+  }
+
+  const taskRisk = riskRank[task.riskLevel ?? "low"] ?? riskRank.high;
+  const allowedRisk =
+    riskRank[profile.allowedRiskLevel ?? "low"] ?? riskRank.low;
+  if (taskRisk > allowedRisk) {
+    throw new HttpError(
+      403,
+      `Agent profile allows ${profile.allowedRiskLevel ?? "low"} risk, task is ${task.riskLevel ?? "low"}`,
+    );
+  }
+
+  const taskTags = task.agentTags ?? [];
+  if (
+    taskTags.length > 0 &&
+    !taskTags.some((tag) => (profile.tags ?? []).includes(tag))
+  ) {
+    throw new HttpError(403, "Agent profile does not match task tags");
+  }
+}
+
 function assertOwnedByAgent(task: TaskRecord, agentId: string) {
   if (!task.ownerAgent) {
     throw new HttpError(409, "Task is not claimed by an agent");
@@ -71,21 +147,47 @@ function assertOwnedByAgent(task: TaskRecord, agentId: string) {
   }
 }
 
+function assertActiveLeaseForAgent(
+  task: TaskRecord,
+  agentId: string,
+  now: Date,
+) {
+  assertOwnedByAgent(task, agentId);
+  if (!task.leaseUntil || new Date(task.leaseUntil).getTime() <= now.getTime()) {
+    throw new HttpError(
+      409,
+      "Task lease expired; claim the task again before continuing work",
+    );
+  }
+}
+
 export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
   db: TDb,
   input: AgentInboxQueryInput,
 ) {
   const now = new Date();
   const taskDelegate = db.task as { findMany(args: unknown): Promise<unknown[]> };
+  const profile = await getAgentProfile(db, input.agentId);
+  if (!profile || profile.enabled === false || profile.canWriteTasks === false) {
+    return [];
+  }
+  const effectiveTags = input.tags.length > 0 ? input.tags : (profile.tags ?? []);
+  const claimablePolicyFilter = {
+    executionMode: "agent_allowed",
+    riskLevel:
+      profile.allowedRiskLevel === "medium"
+        ? { in: ["low", "medium"] }
+        : { in: ["low"] },
+  };
   const tagFilter =
-    input.tags.length > 0
+    effectiveTags.length > 0
       ? {
           OR: [
-            { agentTags: { hasSome: input.tags } },
+            { agentTags: { hasSome: effectiveTags } },
             { agentTags: { isEmpty: true } },
           ],
         }
-      : {};
+      : { agentTags: { isEmpty: true } };
 
   return taskDelegate.findMany({
     where: {
@@ -93,9 +195,9 @@ export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
         tagFilter,
         {
           OR: [
-            { status: "todo", ownerAgent: null },
-            { status: "todo", leaseUntil: { lt: now } },
-            { status: "doing", leaseUntil: { lt: now } },
+            { status: "todo", ownerAgent: null, ...claimablePolicyFilter },
+            { status: "todo", leaseUntil: { lt: now }, ...claimablePolicyFilter },
+            { status: "doing", leaseUntil: { lt: now }, ...claimablePolicyFilter },
             {
               ownerAgent: input.agentId,
               status: { in: ["doing", "waiting", "blocked"] },
@@ -132,6 +234,9 @@ export async function claimTask<TDb extends AgentTaskDb>(
   }
   assertTaskCanBeWorked(before);
   assertTaskCanBeClaimed(before);
+  assertTaskPolicyAllowsClaim(before);
+  const profile = await getAgentProfile(db, input.agentId);
+  assertAgentCanWorkTask(profile, before);
   if (isActiveLease(before, now) && before.ownerAgent !== input.agentId) {
     throw new HttpError(409, `Task is leased by ${before.ownerAgent}`);
   }
@@ -140,6 +245,11 @@ export async function claimTask<TDb extends AgentTaskDb>(
     where: {
       id: taskId,
       status: { in: ["todo", "doing"] },
+      executionMode: "agent_allowed",
+      riskLevel:
+        profile?.allowedRiskLevel === "medium"
+          ? { in: ["low", "medium"] }
+          : { in: ["low"] },
       OR: [
         { ownerAgent: null },
         { ownerAgent: input.agentId },
@@ -202,7 +312,7 @@ export async function heartbeatTask<TDb extends AgentTaskDb>(
     throw new HttpError(404, "Task not found");
   }
   assertTaskCanBeWorked(before);
-  assertOwnedByAgent(before, input.agentId);
+  assertActiveLeaseForAgent(before, input.agentId, now);
 
   const task = await taskDelegate.update({
     where: { id: taskId },
@@ -246,7 +356,7 @@ export async function addTaskContribution<TDb extends AgentTaskDb>(
     throw new HttpError(404, "Task not found");
   }
   assertTaskCanBeWorked(task);
-  assertOwnedByAgent(task, input.agentId);
+  assertActiveLeaseForAgent(task, input.agentId, new Date());
 
   const contribution = await contributionDelegate.create({
     data: {
