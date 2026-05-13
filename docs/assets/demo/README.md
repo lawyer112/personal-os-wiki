@@ -19,11 +19,23 @@ Files:
   older README links.
 - `personal-os-wiki-readme-demo.en.poster.png` and
   `personal-os-wiki-readme-demo.zh-CN.poster.png` are generated poster frames.
+- `hyperframes/project-intro/` is the HyperFrames source project for the Chinese
+  product-introduction video.
+- `personal-os-wiki-project-intro.zh-CN.mp4`, when present, is the rendered
+  project intro.
 
 Regenerate the videos with:
 
 ```bash
 python scripts/render-readme-demo-media.py
+```
+
+Render the HyperFrames project intro with:
+
+```bash
+cd docs/assets/demo/hyperframes/project-intro
+npm run check
+npm run render -- --output ../../personal-os-wiki-project-intro.zh-CN.mp4 --quality standard
 ```
 
 Do not replace these with real inbox items, real task history, private Wiki

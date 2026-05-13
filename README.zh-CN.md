@@ -113,6 +113,9 @@ HTTPS 反向代理后面，例如 `os.example.internal` 和 `wiki.example.intern
 [中文 MP4](./docs/assets/demo/personal-os-wiki-readme-demo.zh-CN.mp4) ·
 [English MP4](./docs/assets/demo/personal-os-wiki-readme-demo.en.mp4)
 
+更完整的项目级介绍见：
+[HyperFrames 项目介绍 MP4](./docs/assets/demo/personal-os-wiki-project-intro.zh-CN.mp4)。
+
 ## 相关生态
 
 这个项目和 Karpathy-style LLM Wiki、Markdown 作为长期记忆、个人知识图谱、

@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="zh-CN" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personal OS + Personal Wiki Project Intro</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --canvas: #f7f9fb;
+        --ink: #111827;
+        --muted: #64748b;
+        --rule: #e5e7eb;
+        --os: #2563eb;
+        --wiki: #0f766e;
+        --agent: #7c3aed;
+        --review: #f59e0b;
+        --panel: #ffffff;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        letter-spacing: 0;
+      }
+
+      #project-intro {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--canvas);
+      }
+
+      .grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--rule) 1px, transparent 1px),
+          linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+        background-size: 120px 120px;
+        opacity: 0.48;
+      }
+
+      .rule-top,
+      .rule-bottom {
+        position: absolute;
+        left: 92px;
+        right: 92px;
+        height: 2px;
+        background: var(--ink);
+        opacity: 0.12;
+      }
+
+      .rule-top {
+        top: 72px;
+      }
+
+      .rule-bottom {
+        bottom: 72px;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+      }
+
+      .scene-content {
+        width: 100%;
+        height: 100%;
+        padding: 104px 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+      }
+
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        width: fit-content;
+        min-height: 42px;
+        padding: 8px 16px;
+        border: 2px solid var(--ink);
+        background: var(--panel);
+        color: var(--ink);
+        font-size: 24px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .kicker::before {
+        content: "";
+        width: 13px;
+        height: 13px;
+        background: var(--review);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 1320px;
+        font-size: 112px;
+        line-height: 1.04;
+        font-weight: 900;
+      }
+
+      h2 {
+        max-width: 1180px;
+        font-size: 72px;
+        line-height: 1.1;
+        font-weight: 900;
+      }
+
+      h3 {
+        font-size: 34px;
+        line-height: 1.2;
+        font-weight: 900;
+      }
+
+      .lead {
+        max-width: 1120px;
+        color: var(--muted);
+        font-size: 36px;
+        line-height: 1.35;
+        font-weight: 650;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: 44px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .three-col {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        box-shadow: 14px 14px 0 rgba(17, 24, 39, 0.08);
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 70px;
+        padding: 18px 22px;
+        border-bottom: 2px solid var(--ink);
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .panel-body {
+        padding: 26px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .tag.os {
+        background: var(--os);
+      }
+
+      .tag.wiki {
+        background: var(--wiki);
+      }
+
+      .tag.agent {
+        background: var(--agent);
+      }
+
+      .tag.review {
+        background: var(--review);
+        color: var(--ink);
+      }
+
+      .micro {
+        color: var(--muted);
+        font-size: 22px;
+        line-height: 1.3;
+        font-weight: 700;
+      }
+
+      .flow-line {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0;
+        width: 100%;
+        min-height: 146px;
+        border: 2px solid var(--ink);
+        background: var(--panel);
+      }
+
+      .flow-step {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 22px;
+        border-right: 2px solid var(--ink);
+        text-align: center;
+        font-size: 26px;
+        line-height: 1.22;
+        font-weight: 900;
+      }
+
+      .flow-step:last-child {
+        border-right: 0;
+      }
+
+      .flow-step::after {
+        content: "";
+        position: absolute;
+        right: -11px;
+        top: 50%;
+        z-index: 2;
+        width: 20px;
+        height: 20px;
+        border-top: 2px solid var(--ink);
+        border-right: 2px solid var(--ink);
+        background: var(--panel);
+        transform: translateY(-50%) rotate(45deg);
+      }
+
+      .flow-step:last-child::after {
+        display: none;
+      }
+
+      .source-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+      }
+
+      .source-card {
+        display: grid;
+        grid-template-columns: 78px 1fr;
+        gap: 18px;
+        align-items: center;
+        min-height: 104px;
+        padding: 18px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .source-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 78px;
+        height: 68px;
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      .source-title {
+        font-size: 28px;
+        font-weight: 900;
+        line-height: 1.14;
+      }
+
+      .source-note {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 21px;
+        font-weight: 700;
+      }
+
+      .inbox-panel {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .inbox-row {
+        display: grid;
+        grid-template-columns: 118px 1fr 170px;
+        gap: 16px;
+        align-items: center;
+        min-height: 94px;
+        padding: 18px 22px;
+        border-bottom: 2px solid var(--rule);
+      }
+
+      .inbox-row:last-child {
+        border-bottom: 0;
+      }
+
+      .inbox-kind {
+        font-size: 22px;
+        font-weight: 900;
+      }
+
+      .inbox-text {
+        font-size: 25px;
+        font-weight: 850;
+        line-height: 1.2;
+      }
+
+      .inbox-state {
+        text-align: right;
+        color: var(--muted);
+        font-size: 20px;
+        font-weight: 800;
+      }
+
+      .note-window {
+        display: grid;
+        grid-template-rows: 70px 1fr;
+        min-height: 590px;
+      }
+
+      .markdown {
+        display: grid;
+        gap: 18px;
+        align-content: start;
+        padding: 30px;
+      }
+
+      .md-title {
+        font-size: 44px;
+        font-weight: 900;
+      }
+
+      .md-line {
+        height: 22px;
+        background: var(--rule);
+      }
+
+      .md-line.short {
+        width: 62%;
+      }
+
+      .md-line.mid {
+        width: 78%;
+      }
+
+      .graph {
+        position: relative;
+        min-height: 590px;
+        overflow: hidden;
+      }
+
+      .node {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 160px;
+        height: 160px;
+        border: 3px solid var(--ink);
+        border-radius: 999px;
+        background: var(--panel);
+        text-align: center;
+        font-size: 24px;
+        line-height: 1.16;
+        font-weight: 900;
+      }
+
+      .node.main {
+        left: 232px;
+        top: 214px;
+        width: 214px;
+        height: 214px;
+        color: #ffffff;
+        background: var(--wiki);
+      }
+
+      .node.n1 {
+        left: 52px;
+        top: 82px;
+      }
+
+      .node.n2 {
+        right: 70px;
+        top: 76px;
+      }
+
+      .node.n3 {
+        left: 78px;
+        bottom: 80px;
+      }
+
+      .node.n4 {
+        right: 62px;
+        bottom: 78px;
+      }
+
+      .edge {
+        position: absolute;
+        height: 4px;
+        background: var(--ink);
+        transform-origin: left center;
+        opacity: 0.42;
+        z-index: 0;
+      }
+
+      .edge.e1 {
+        left: 132px;
+        top: 162px;
+        width: 260px;
+        transform: rotate(37deg);
+      }
+
+      .edge.e2 {
+        left: 340px;
+        top: 322px;
+        width: 386px;
+        transform: rotate(-25deg);
+      }
+
+      .edge.e3 {
+        left: 158px;
+        top: 430px;
+        width: 214px;
+        transform: rotate(-31deg);
+      }
+
+      .edge.e4 {
+        left: 340px;
+        top: 322px;
+        width: 376px;
+        transform: rotate(17deg);
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 30px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .today-stack {
+        display: grid;
+        gap: 18px;
+      }
+
+      .task-card {
+        min-height: 126px;
+        padding: 20px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .task-title {
+        font-size: 28px;
+        line-height: 1.18;
+        font-weight: 900;
+      }
+
+      .task-meta {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .review-table {
+        display: grid;
+        gap: 16px;
+      }
+
+      .review-row {
+        display: grid;
+        grid-template-columns: 142px minmax(0, 1fr) 132px;
+        gap: 14px;
+        align-items: center;
+        min-height: 92px;
+        padding: 16px 18px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        background: var(--panel);
+      }
+
+      .review-row strong {
+        font-size: 24px;
+      }
+
+      .review-row .micro {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .agent-lane {
+        display: grid;
+        grid-template-rows: 72px 1fr;
+        min-height: 0;
+      }
+
+      .lane-body {
+        display: grid;
+        align-content: start;
+        gap: 18px;
+        padding: 24px;
+      }
+
+      .api-pill {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 72px;
+        padding: 16px 18px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        background: var(--panel);
+        font-size: 22px;
+        font-weight: 900;
+      }
+
+      .api-pill span {
+        color: var(--muted);
+        font-size: 19px;
+      }
+
+      .final-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 48px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .final-title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 34px;
+      }
+
+      .final-title h2 {
+        max-width: 980px;
+        font-size: 88px;
+      }
+
+      .badges {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 58px;
+        padding: 12px 18px;
+        border: 2px solid var(--ink);
+        border-radius: 999px;
+        background: var(--panel);
+        font-size: 24px;
+        font-weight: 900;
+      }
+
+      .outcome {
+        display: grid;
+        align-content: center;
+        gap: 20px;
+      }
+
+      .outcome-card {
+        min-height: 112px;
+        padding: 22px;
+        border: 2px solid var(--ink);
+        border-radius: 8px;
+        background: var(--panel);
+        font-size: 27px;
+        line-height: 1.25;
+        font-weight: 900;
+      }
+
+      .accent-os {
+        color: var(--os);
+      }
+
+      .accent-wiki {
+        color: var(--wiki);
+      }
+
+      .accent-agent {
+        color: var(--agent);
+      }
+
+      .accent-review {
+        color: var(--review);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="project-intro"
+      data-composition-id="project-intro"
+      data-width="1920"
+      data-height="1080"
+      data-start="0"
+      data-duration="56"
+    >
+      <div class="grid" data-layout-ignore></div>
+      <div class="rule-top" data-layout-ignore></div>
+      <div class="rule-bottom" data-layout-ignore></div>
+
+      <section id="scene-1" class="scene">
+        <div class="scene-content">
+          <div class="kicker">PROJECT INTRO / PUBLIC DEMO</div>
+          <h1>Personal OS + Personal Wiki</h1>
+          <p class="lead">不是第二大脑，是把知识推进成任务、证据和复核的本地优先工作台。</p>
+          <div class="flow-line">
+            <div class="flow-step">碎片输入</div>
+            <div class="flow-step">Wiki 记忆</div>
+            <div class="flow-step">可执行任务</div>
+            <div class="flow-step">Agent 认领</div>
+            <div class="flow-step">证据提交</div>
+            <div class="flow-step">人工复核</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-2" class="scene">
+        <div class="scene-content">
+          <div class="kicker">01 / INPUT</div>
+          <h2>人可以说得很乱，系统先保存原始痕迹。</h2>
+          <div class="two-col">
+            <div class="source-list">
+              <div class="source-card">
+                <div class="source-icon" style="background: var(--os)">URL</div>
+                <div>
+                  <div class="source-title">研究链接</div>
+                  <div class="source-note">先进入 Inbox，不急着消耗模型。</div>
+                </div>
+              </div>
+              <div class="source-card">
+                <div class="source-icon" style="background: var(--wiki)">TXT</div>
+                <div>
+                  <div class="source-title">语音转写 / 碎碎念</div>
+                  <div class="source-note">保留上下文，再抽取稳定结论。</div>
+                </div>
+              </div>
+              <div class="source-card">
+                <div class="source-icon" style="background: var(--agent)">RUN</div>
+                <div>
+                  <div class="source-title">Agent 观察和产物</div>
+                  <div class="source-note">每次判断都能留下可审查记录。</div>
+                </div>
+              </div>
+            </div>
+            <div class="panel inbox-panel">
+              <div class="panel-header">
+                <span>Personal OS / Inbox</span>
+                <span class="tag os">RAW STATE</span>
+              </div>
+              <div class="inbox-row">
+                <div class="inbox-kind">LINK</div>
+                <div class="inbox-text">收集三条客户反馈，整理成下一步。</div>
+                <div class="inbox-state">captured</div>
+              </div>
+              <div class="inbox-row">
+                <div class="inbox-kind">VOICE</div>
+                <div class="inbox-text">这个项目不是收藏夹，要能推动交付。</div>
+                <div class="inbox-state">queued</div>
+              </div>
+              <div class="inbox-row">
+                <div class="inbox-kind">AGENT</div>
+                <div class="inbox-text">建议生成 Wiki 摘要和复核任务。</div>
+                <div class="inbox-state">ready</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-3" class="scene">
+        <div class="scene-content">
+          <div class="kicker">02 / KNOWLEDGE</div>
+          <h2>Personal Wiki 保存能复用的知识和证据。</h2>
+          <div class="two-col">
+            <div class="panel note-window">
+              <div class="panel-header">
+                <span>Markdown Note</span>
+                <span class="tag wiki">DURABLE</span>
+              </div>
+              <div class="markdown">
+                <div class="md-title">Demo launch checklist</div>
+                <div class="md-line"></div>
+                <div class="md-line mid"></div>
+                <div class="md-line short"></div>
+                <div class="md-line"></div>
+                <div class="task-card" style="box-shadow: none">
+                  <div class="task-title">source: Inbox item</div>
+                  <div class="micro">tags: demo / launch / evidence</div>
+                </div>
+                <div class="task-card" style="box-shadow: none">
+                  <div class="task-title">stable conclusion</div>
+                  <div class="micro">可以被下一个 Agent 读取，而不是藏在聊天记录里。</div>
+                </div>
+              </div>
+            </div>
+            <div class="panel graph">
+              <div class="edge e1" data-layout-ignore></div>
+              <div class="edge e2" data-layout-ignore></div>
+              <div class="edge e3" data-layout-ignore></div>
+              <div class="edge e4" data-layout-ignore></div>
+              <div class="node main">Wiki<br />Memory</div>
+              <div class="node n1">来源</div>
+              <div class="node n2">概念</div>
+              <div class="node n3">证据</div>
+              <div class="node n4">任务</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-4" class="scene">
+        <div class="scene-content">
+          <div class="kicker">03 / EXECUTION</div>
+          <h2>Personal OS 负责工作状态：谁认领、做到哪、怎么验收。</h2>
+          <div class="board">
+            <div class="panel">
+              <div class="panel-header">
+                <span>Today</span>
+                <span class="tag os">WORK STATE</span>
+              </div>
+              <div class="panel-body today-stack">
+                <div class="task-card">
+                  <div class="task-title">Review the fictional launch checklist</div>
+                  <div class="task-meta">
+                    <span class="tag os">claimed</span>
+                    <span class="tag agent">demo-agent</span>
+                  </div>
+                </div>
+                <div class="task-card">
+                  <div class="task-title">Extract follow-up from customer notes</div>
+                  <div class="task-meta">
+                    <span class="tag wiki">context ready</span>
+                    <span class="tag review">needs review</span>
+                  </div>
+                </div>
+                <div class="task-card">
+                  <div class="task-title">Prepare reminder payload</div>
+                  <div class="task-meta">
+                    <span class="tag os">planner</span>
+                    <span class="tag wiki">wiki link</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <span>Evidence & Review</span>
+                <span class="tag review">HUMAN GATE</span>
+              </div>
+              <div class="panel-body review-table">
+                <div class="review-row">
+                  <strong>Claim</strong>
+                  <span class="micro">任务先被认领，避免多个 Agent 重复干活。</span>
+                  <span class="tag agent">lease</span>
+                </div>
+                <div class="review-row">
+                  <strong>Heartbeat</strong>
+                  <span class="micro">执行中持续更新状态，不靠一句“我在做”。</span>
+                  <span class="tag os">live</span>
+                </div>
+                <div class="review-row">
+                  <strong>Submit</strong>
+                  <span class="micro">产物、证据链接、完成标准一起提交。</span>
+                  <span class="tag wiki">evidence</span>
+                </div>
+                <div class="review-row">
+                  <strong>Review</strong>
+                  <span class="micro">人或 reviewer agent 决定通过、打回、阻塞。</span>
+                  <span class="tag review">decision</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-5" class="scene">
+        <div class="scene-content">
+          <div class="kicker">04 / AGENTS</div>
+          <h2>Hermes、Codex 或 worker 不猜聊天历史，只按 API 合约工作。</h2>
+          <div class="three-col">
+            <div class="panel agent-lane">
+              <div class="panel-header">
+                <span>Poll</span>
+                <span class="tag agent">agent</span>
+              </div>
+              <div class="lane-body">
+                <div class="api-pill">/api/agent-inbox <span>找可做任务</span></div>
+                <div class="api-pill">/api/tasks/:id/claim <span>认领</span></div>
+                <div class="api-pill">/api/agent/context <span>读取上下文</span></div>
+              </div>
+            </div>
+            <div class="panel agent-lane">
+              <div class="panel-header">
+                <span>Work</span>
+                <span class="tag os">state</span>
+              </div>
+              <div class="lane-body">
+                <div class="api-pill">heartbeat <span>汇报进展</span></div>
+                <div class="api-pill">contribution <span>写入过程</span></div>
+                <div class="api-pill">artifact links <span>提交证据</span></div>
+              </div>
+            </div>
+            <div class="panel agent-lane">
+              <div class="panel-header">
+                <span>Review</span>
+                <span class="tag review">human</span>
+              </div>
+              <div class="lane-body">
+                <div class="api-pill">approve <span>通过</span></div>
+                <div class="api-pill">request changes <span>打回</span></div>
+                <div class="api-pill">block / archive <span>明确边界</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="scene-6" class="scene">
+        <div class="scene-content">
+          <div class="kicker">RESULT</div>
+          <div class="final-grid">
+            <div class="final-title">
+              <h2>知识不是终点，推进才是。</h2>
+              <p class="lead">Personal OS + Personal Wiki 把“我记下来了”变成“有人负责、能提交证据、能被复核”。</p>
+              <div class="badges">
+                <div class="badge">Local-first</div>
+                <div class="badge">Agent-ready</div>
+                <div class="badge">Markdown Wiki</div>
+                <div class="badge">Reviewable Work</div>
+              </div>
+            </div>
+            <div class="outcome">
+              <div class="outcome-card"><span class="accent-wiki">Wiki</span> 保存长期知识和证据。</div>
+              <div class="outcome-card"><span class="accent-os">OS</span> 管任务、项目、Today 和复核。</div>
+              <div class="outcome-card"><span class="accent-agent">Agent</span> 认领任务，不再靠记忆猜。</div>
+              <div class="outcome-card"><span class="accent-review">Human</span> 保留最后验收权。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script>
+        window.__timelines = window.__timelines || {};
+
+        const tl = gsap.timeline({ paused: true });
+        const sceneDurations = [7.5, 9, 9, 11, 9.5, 10];
+        const sceneStarts = [0, 7.5, 16.5, 25.5, 36.5, 46];
+
+        function showScene(scene, start, duration, isFinal) {
+          tl.set(`#scene-${scene}`, { opacity: 0 }, 0);
+          tl.to(`#scene-${scene}`, { opacity: 1, duration: 0.45, ease: "power2.out" }, start);
+          if (!isFinal) {
+            tl.to(`#scene-${scene}`, { opacity: 0, duration: 0.35, ease: "power2.in" }, start + duration - 0.35);
+          }
+        }
+
+        sceneStarts.forEach((start, index) => {
+          showScene(index + 1, start, sceneDurations[index], index === sceneStarts.length - 1);
+        });
+
+        tl.from("#scene-1 .kicker", { y: 26, opacity: 0, duration: 0.55, ease: "power3.out" }, 0.3);
+        tl.from("#scene-1 h1", { y: 38, opacity: 0, duration: 0.7, ease: "power3.out" }, 0.65);
+        tl.from("#scene-1 .lead", { y: 30, opacity: 0, duration: 0.62, ease: "power3.out" }, 1.05);
+        tl.from("#scene-1 .flow-step", { y: 34, opacity: 0, duration: 0.48, stagger: 0.1, ease: "power3.out" }, 1.55);
+
+        tl.from("#scene-2 .kicker, #scene-2 h2", { y: 28, opacity: 0, duration: 0.55, stagger: 0.14, ease: "power3.out" }, 8);
+        tl.from("#scene-2 .source-card", { x: -64, opacity: 0, duration: 0.52, stagger: 0.18, ease: "power3.out" }, 8.8);
+        tl.from("#scene-2 .inbox-panel", { x: 70, opacity: 0, duration: 0.68, ease: "power3.out" }, 8.95);
+        tl.from("#scene-2 .inbox-row", { x: 52, opacity: 0, duration: 0.42, stagger: 0.16, ease: "power2.out" }, 9.75);
+
+        tl.from("#scene-3 .kicker, #scene-3 h2", { y: 28, opacity: 0, duration: 0.55, stagger: 0.14, ease: "power3.out" }, 17);
+        tl.from("#scene-3 .note-window", { x: -72, opacity: 0, duration: 0.62, ease: "power3.out" }, 17.85);
+        tl.from("#scene-3 .md-line, #scene-3 .task-card", { scaleX: 0, opacity: 0, transformOrigin: "left center", duration: 0.42, stagger: 0.1, ease: "power2.out" }, 18.55);
+        tl.from("#scene-3 .edge", { scaleX: 0, opacity: 0, transformOrigin: "left center", duration: 0.36, stagger: 0.08, ease: "power2.out" }, 18.35);
+        tl.from("#scene-3 .node", { scale: 0.82, opacity: 0, duration: 0.4, stagger: 0.09, ease: "back.out(1.2)" }, 18.65);
+
+        tl.from("#scene-4 .kicker, #scene-4 h2", { y: 28, opacity: 0, duration: 0.55, stagger: 0.14, ease: "power3.out" }, 26);
+        tl.from("#scene-4 .panel", { y: 54, opacity: 0, duration: 0.62, stagger: 0.16, ease: "power3.out" }, 26.95);
+        tl.from("#scene-4 .task-card", { x: -42, opacity: 0, duration: 0.42, stagger: 0.12, ease: "power2.out" }, 27.65);
+        tl.from("#scene-4 .review-row", { y: 26, opacity: 0, duration: 0.42, stagger: 0.12, ease: "power2.out" }, 28.05);
+
+        tl.from("#scene-5 .kicker, #scene-5 h2", { y: 28, opacity: 0, duration: 0.55, stagger: 0.14, ease: "power3.out" }, 37);
+        tl.from("#scene-5 .agent-lane", { y: 58, opacity: 0, duration: 0.58, stagger: 0.16, ease: "power3.out" }, 37.9);
+        tl.from("#scene-5 .api-pill", { x: -36, opacity: 0, duration: 0.34, stagger: 0.08, ease: "power2.out" }, 38.75);
+
+        tl.from("#scene-6 .kicker", { y: 28, opacity: 0, duration: 0.55, ease: "power3.out" }, 46.45);
+        tl.from("#scene-6 h2", { y: 46, opacity: 0, duration: 0.72, ease: "power3.out" }, 46.85);
+        tl.from("#scene-6 .lead", { y: 34, opacity: 0, duration: 0.58, ease: "power3.out" }, 47.35);
+        tl.from("#scene-6 .badge", { y: 28, opacity: 0, duration: 0.4, stagger: 0.08, ease: "power2.out" }, 48);
+        tl.from("#scene-6 .outcome-card", { x: 56, opacity: 0, duration: 0.46, stagger: 0.14, ease: "power2.out" }, 48.3);
+
+        window.__timelines["project-intro"] = tl;
+      </script>
+    </div>
+  </body>
+</html>

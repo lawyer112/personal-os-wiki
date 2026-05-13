@@ -154,6 +154,9 @@ payload.
 [English MP4](./docs/assets/demo/personal-os-wiki-readme-demo.en.mp4) ·
 [Chinese MP4](./docs/assets/demo/personal-os-wiki-readme-demo.zh-CN.mp4)
 
+For a broader project-level introduction, see the
+[Chinese HyperFrames project intro MP4](./docs/assets/demo/personal-os-wiki-project-intro.zh-CN.mp4).
+
 ## Related Ecosystem
 
 This project sits near the Karpathy-style LLM Wiki, Markdown-as-memory, personal
