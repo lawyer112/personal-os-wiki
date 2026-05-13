@@ -217,7 +217,7 @@ Read the detailed comparison:
 | Dump "rambling" project thoughts | Preserve the original Inbox item, turn the stable part into knowledge, and turn the actionable part into tasks. |
 | Run several agents against one backlog | Agents poll tasks by tags, claim work, heartbeat while working, submit contributions, and request review. |
 | Keep a private project brain without leaking data | Source code and fake examples go to Git; real vaults, tokens, server inventories, and task history stay local. |
-| Build a revenue/work dashboard | Projects, today view, unfinished tasks, and review queues make "what moves the project" visible. |
+| Build a project momentum dashboard | Projects, today view, unfinished tasks, and review queues make the next useful action visible. |
 | Use the Wiki as agent memory | Agents can read curated Markdown context instead of relying on stale chat history. |
 | Push reminders to real surfaces | Hermes or a scheduled worker can call planner/reminder APIs, then send nudges through Telegram, Feishu, Apple Reminders on a Mac, email, or desktop notifications. |
 
