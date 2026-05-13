@@ -8,7 +8,7 @@
 - 根目录 [`VERSION`](../VERSION) 是整个仓库的发布版本。
 - 公开发布时，`personal-os-app/package.json` 的版本应与根目录版本一致。
 - Personal Wiki 是同一个产品包里的 Python 服务，跟随根目录版本。
-- Git tag 使用 `vX.Y.Z`，例如 `v0.1.1`。
+- Git tag 使用 `vX.Y.Z`，例如 `v0.2.0`。
 - 面向用户的变化记录在 [`CHANGELOG.md`](../CHANGELOG.md)。
 
 ## Release 包里有什么
@@ -32,8 +32,8 @@
 下载：
 
 ```text
-personal-os-wiki-v0.1.1.zip
-personal-os-wiki-v0.1.1.tar.gz
+personal-os-wiki-v0.2.0.zip
+personal-os-wiki-v0.2.0.tar.gz
 SHA256SUMS.txt
 ```
 
@@ -45,7 +45,7 @@ SHA256SUMS.txt
 ### 方式 B：按版本 tag 克隆
 
 ```bash
-git clone --branch v0.1.1 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.2.0 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 
@@ -60,20 +60,20 @@ cd personal-os-wiki
 本地生成发布包：
 
 ```powershell
-pwsh ./scripts/package-release.ps1 -Version 0.1.1
+pwsh ./scripts/package-release.ps1 -Version 0.2.0
 ```
 
 如果 Windows 上没有 PowerShell 7，可以用系统自带 Windows PowerShell：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.1.1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\package-release.ps1 -Version 0.2.0
 ```
 
 产物：
 
 ```text
-dist/personal-os-wiki-v0.1.1.zip
-dist/personal-os-wiki-v0.1.1.tar.gz
+dist/personal-os-wiki-v0.2.0.zip
+dist/personal-os-wiki-v0.2.0.tar.gz
 dist/SHA256SUMS.txt
 ```
 
@@ -85,8 +85,8 @@ SHA256 校验文件。
 发布检查通过后：
 
 ```bash
-git tag v0.1.1
-git push origin v0.1.1
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 `Release` workflow 会验证应用、打包源码压缩包，并创建 GitHub Release。
@@ -94,8 +94,8 @@ git push origin v0.1.1
 手动兜底：
 
 ```bash
-pwsh ./scripts/package-release.ps1 -Version 0.1.1
-gh release create v0.1.1 dist/personal-os-wiki-v0.1.1.zip dist/personal-os-wiki-v0.1.1.tar.gz dist/SHA256SUMS.txt --title v0.1.1 --generate-notes
+pwsh ./scripts/package-release.ps1 -Version 0.2.0
+gh release create v0.2.0 dist/personal-os-wiki-v0.2.0.zip dist/personal-os-wiki-v0.2.0.tar.gz dist/SHA256SUMS.txt --title v0.2.0 --generate-notes
 ```
 
 ## Docker 镜像

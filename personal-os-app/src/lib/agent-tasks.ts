@@ -13,9 +13,11 @@ type AgentTaskDb = {
   task: unknown;
   agentProfile?: unknown;
   taskClaim: unknown;
+  taskRun?: unknown;
   taskContribution: unknown;
   taskArtifact: unknown;
   taskReview: unknown;
+  agentActionLog?: unknown;
   activityLog: unknown;
 };
 
@@ -28,6 +30,7 @@ type TaskRecord = {
   agentTags?: string[];
   ownerAgent?: string | null;
   leaseUntil?: Date | string | null;
+  submittedAt?: Date | string | null;
 };
 
 type AgentProfileRecord = {
@@ -36,6 +39,13 @@ type AgentProfileRecord = {
   allowedRiskLevel?: string;
   canWriteTasks?: boolean;
   enabled?: boolean;
+};
+
+type TaskRunRecord = {
+  id: string;
+  taskId: string;
+  agentId: string;
+  status: string;
 };
 
 const riskRank: Record<string, number> = {
@@ -51,6 +61,8 @@ const agentTaskInclude = {
   wikiLinks: true,
   contributions: { orderBy: { createdAt: "desc" }, take: 5 },
   artifacts: { orderBy: { createdAt: "desc" }, take: 5 },
+  runs: { orderBy: { startedAt: "desc" }, take: 3 },
+  agentActionLogs: { orderBy: { createdAt: "desc" }, take: 8 },
   reviews: { orderBy: { createdAt: "desc" }, take: 3 },
 };
 
@@ -138,6 +150,53 @@ function assertAgentCanWorkTask(
   }
 }
 
+function agentPolicyWhere(profile: AgentProfileRecord | null) {
+  const profileTags = profile?.tags ?? [];
+  const tagFilter =
+    profileTags.length > 0
+      ? {
+          OR: [
+            { agentTags: { hasSome: profileTags } },
+            { agentTags: { isEmpty: true } },
+          ],
+        }
+      : { agentTags: { isEmpty: true } };
+
+  return {
+    executionMode: "agent_allowed",
+    riskLevel:
+      profile?.allowedRiskLevel === "medium"
+        ? { in: ["low", "medium"] }
+        : { in: ["low"] },
+    ...tagFilter,
+  };
+}
+
+function buildPolicySnapshot(
+  task: TaskRecord,
+  profile: AgentProfileRecord | null,
+  extra: Record<string, unknown> = {},
+) {
+  return {
+    task: {
+      status: task.status,
+      riskLevel: task.riskLevel ?? "low",
+      executionMode: task.executionMode ?? "manual",
+      agentTags: task.agentTags ?? [],
+    },
+    profile: profile
+      ? {
+          id: profile.id,
+          tags: profile.tags ?? [],
+          allowedRiskLevel: profile.allowedRiskLevel ?? "low",
+          canWriteTasks: profile.canWriteTasks !== false,
+          enabled: profile.enabled !== false,
+        }
+      : null,
+    ...extra,
+  };
+}
+
 function assertOwnedByAgent(task: TaskRecord, agentId: string) {
   if (!task.ownerAgent) {
     throw new HttpError(409, "Task is not claimed by an agent");
@@ -171,6 +230,261 @@ async function assertAgentStillAllowedToWork<TDb extends AgentTaskDb>(
   assertTaskPolicyAllowsAgentWork(task);
   const profile = await getAgentProfile(db, agentId);
   assertAgentCanWorkTask(profile, task);
+  return profile;
+}
+
+async function withAgentTaskTransaction<T>(
+  db: AgentTaskDb,
+  fn: (tx: AgentTaskDb) => Promise<T>,
+) {
+  const transactionalDb = db as AgentTaskDb & {
+    $transaction?: <TResult>(fn: (tx: unknown) => Promise<TResult>) => Promise<TResult>;
+  };
+  if (typeof transactionalDb.$transaction === "function") {
+    return transactionalDb.$transaction((tx) => fn(tx as AgentTaskDb));
+  }
+  return fn(db);
+}
+
+async function assertAndLockAgentMutation(
+  db: AgentTaskDb,
+  taskId: string,
+  agentId: string,
+  now: Date,
+) {
+  const taskDelegate = db.task as {
+    findUnique(args: unknown): Promise<TaskRecord | null>;
+    updateMany(args: unknown): Promise<{ count: number }>;
+  };
+  const task = await taskDelegate.findUnique({ where: { id: taskId } });
+  if (!task) {
+    throw new HttpError(404, "Task not found");
+  }
+  assertTaskCanBeWorked(task);
+  const profile = await assertAgentStillAllowedToWork(db, task, agentId, now);
+
+  const locked = await taskDelegate.updateMany({
+    where: {
+      id: taskId,
+      ownerAgent: agentId,
+      leaseUntil: { gt: now },
+      status: { notIn: ["done", "archived"] },
+      ...agentPolicyWhere(profile),
+    },
+    data: { lastHeartbeatAt: now },
+  });
+  if (locked.count !== 1) {
+    throw new HttpError(409, "Policy or lease changed before mutation completed");
+  }
+
+  const taskRun = await ensureRunningTaskRun(db, task, profile, agentId, now);
+
+  return { task, taskRun };
+}
+
+async function createContributionWithArtifacts(
+  db: AgentTaskDb,
+  taskId: string,
+  input: TaskContributionInput,
+  taskRun?: TaskRunRecord | null,
+) {
+  const contributionDelegate = db.taskContribution as {
+    create(args: unknown): Promise<{ id: string } & Record<string, unknown>>;
+  };
+  const artifactDelegate = db.taskArtifact as {
+    create(args: unknown): Promise<unknown>;
+  };
+
+  const contribution = await contributionDelegate.create({
+    data: {
+      taskId,
+      taskRunId: taskRun?.id ?? null,
+      agentId: input.agentId,
+      summary: input.summary,
+      evidenceLinks: input.evidenceLinks,
+      artifactUrls: input.artifactUrls,
+      nextRecommendation: input.nextRecommendation,
+    },
+  });
+  const artifacts = await Promise.all(
+    input.artifactUrls.map((url) =>
+      artifactDelegate.create({
+        data: {
+          taskId,
+          contributionId: contribution.id,
+          type: "link",
+          url,
+        },
+      }),
+    ),
+  );
+
+  await logAgentAction(db, {
+    taskId,
+    taskRunId: taskRun?.id ?? null,
+    agentId: input.agentId,
+    action: "task.contribution.created",
+    summary: input.summary,
+    metadata: {
+      contributionId: contribution.id,
+      evidenceLinks: input.evidenceLinks,
+      artifactUrls: input.artifactUrls,
+    },
+  });
+
+  await recordActivity(db, {
+    actorType: "system",
+    actorId: input.agentId,
+    action: "task.contribution.created",
+    targetType: "task",
+    targetId: taskId,
+    after: {
+      contributionId: contribution.id,
+      summary: input.summary,
+      artifactUrls: input.artifactUrls,
+    },
+  });
+
+  return { contribution, artifacts };
+}
+
+async function createTaskRun(
+  db: AgentTaskDb,
+  task: TaskRecord,
+  profile: AgentProfileRecord | null,
+  agentId: string,
+  now: Date,
+  extra: Record<string, unknown> = {},
+) {
+  const taskRunDelegate = db.taskRun as
+    | { create(args: unknown): Promise<TaskRunRecord> }
+    | undefined;
+  if (!taskRunDelegate) {
+    return null;
+  }
+
+  return taskRunDelegate.create({
+    data: {
+      taskId: task.id,
+      agentId,
+      status: "running",
+      policySnapshot: buildPolicySnapshot(task, profile, extra),
+      lastHeartbeatAt: now,
+    },
+  });
+}
+
+async function ensureRunningTaskRun(
+  db: AgentTaskDb,
+  task: TaskRecord,
+  profile: AgentProfileRecord | null,
+  agentId: string,
+  now: Date,
+) {
+  const taskRunDelegate = db.taskRun as
+    | {
+        findFirst(args: unknown): Promise<TaskRunRecord | null>;
+        create(args: unknown): Promise<TaskRunRecord>;
+      }
+    | undefined;
+  if (!taskRunDelegate) {
+    return null;
+  }
+
+  const existing = await taskRunDelegate.findFirst({
+    where: { taskId: task.id, agentId, status: "running" },
+    orderBy: { startedAt: "desc" },
+  });
+  if (existing) {
+    return existing;
+  }
+
+  return createTaskRun(db, task, profile, agentId, now, {
+    adoptedActiveLease: true,
+  });
+}
+
+async function updateTaskRun(
+  db: AgentTaskDb,
+  id: string | undefined,
+  data: Record<string, unknown>,
+) {
+  if (!id) {
+    return;
+  }
+  const taskRunDelegate = db.taskRun as
+    | { update(args: unknown): Promise<unknown> }
+    | undefined;
+  if (!taskRunDelegate) {
+    return;
+  }
+  await taskRunDelegate.update({ where: { id }, data });
+}
+
+async function updateSubmittedTaskRuns(
+  db: AgentTaskDb,
+  taskId: string,
+  data: Record<string, unknown>,
+) {
+  const taskRunDelegate = db.taskRun as
+    | { updateMany(args: unknown): Promise<unknown> }
+    | undefined;
+  if (!taskRunDelegate) {
+    return;
+  }
+  await taskRunDelegate.updateMany({
+    where: { taskId, status: "submitted" },
+    data,
+  });
+}
+
+async function releaseActiveTaskClaims(
+  db: AgentTaskDb,
+  taskId: string,
+  agentId: string,
+  now: Date,
+  releaseReason: string,
+) {
+  const claimDelegate = db.taskClaim as
+    | { updateMany(args: unknown): Promise<unknown> }
+    | undefined;
+  if (!claimDelegate) {
+    return;
+  }
+  await claimDelegate.updateMany({
+    where: { taskId, agentId, releasedAt: null },
+    data: { releasedAt: now, releaseReason },
+  });
+}
+
+async function logAgentAction(
+  db: AgentTaskDb,
+  input: {
+    taskId: string;
+    taskRunId?: string | null;
+    agentId: string;
+    action: string;
+    summary?: string;
+    metadata?: Record<string, unknown>;
+  },
+) {
+  const agentActionLogDelegate = db.agentActionLog as
+    | { create(args: unknown): Promise<unknown> }
+    | undefined;
+  if (!agentActionLogDelegate) {
+    return;
+  }
+
+  await agentActionLogDelegate.create({
+    data: {
+      taskId: input.taskId,
+      taskRunId: input.taskRunId ?? null,
+      agentId: input.agentId,
+      action: input.action,
+      summary: input.summary,
+      metadata: input.metadata,
+    },
+  });
 }
 
 export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
@@ -213,6 +527,7 @@ export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
             {
               ownerAgent: input.agentId,
               status: { in: ["doing", "waiting", "blocked"] },
+              ...claimablePolicyFilter,
             },
           ],
         },
@@ -257,15 +572,15 @@ export async function claimTask<TDb extends AgentTaskDb>(
     where: {
       id: taskId,
       status: { in: ["todo", "doing"] },
-      executionMode: "agent_allowed",
-      riskLevel:
-        profile?.allowedRiskLevel === "medium"
-          ? { in: ["low", "medium"] }
-          : { in: ["low"] },
-      OR: [
-        { ownerAgent: null },
-        { ownerAgent: input.agentId },
-        { leaseUntil: { lt: now } },
+      AND: [
+        agentPolicyWhere(profile),
+        {
+          OR: [
+            { ownerAgent: null },
+            { ownerAgent: input.agentId },
+            { leaseUntil: { lt: now } },
+          ],
+        },
       ],
     },
     data: {
@@ -293,6 +608,17 @@ export async function claimTask<TDb extends AgentTaskDb>(
       leaseUntil,
     },
   });
+  const taskRun = await createTaskRun(db, before, profile, input.agentId, now, {
+    leaseUntil: leaseUntil.toISOString(),
+  });
+  await logAgentAction(db, {
+    taskId,
+    taskRunId: taskRun?.id ?? null,
+    agentId: input.agentId,
+    action: "task.claimed",
+    summary: `Claimed task lease until ${leaseUntil.toISOString()}`,
+    metadata: { leaseUntil: leaseUntil.toISOString() },
+  });
 
   await recordActivity(db, {
     actorType: "system",
@@ -304,7 +630,7 @@ export async function claimTask<TDb extends AgentTaskDb>(
     after: { ownerAgent: input.agentId, leaseUntil, status: "doing" },
   });
 
-  return { task, claim };
+  return { task, claim, taskRun };
 }
 
 export async function heartbeatTask<TDb extends AgentTaskDb>(
@@ -316,7 +642,7 @@ export async function heartbeatTask<TDb extends AgentTaskDb>(
   const leaseUntil = addMinutes(now, input.leaseMinutes);
   const taskDelegate = db.task as {
     findUnique(args: unknown): Promise<TaskRecord | null>;
-    update(args: unknown): Promise<unknown>;
+    updateMany(args: unknown): Promise<{ count: number }>;
   };
 
   const before = await taskDelegate.findUnique({ where: { id: taskId } });
@@ -324,16 +650,53 @@ export async function heartbeatTask<TDb extends AgentTaskDb>(
     throw new HttpError(404, "Task not found");
   }
   assertTaskCanBeWorked(before);
-  await assertAgentStillAllowedToWork(db, before, input.agentId, now);
+  const profile = await assertAgentStillAllowedToWork(
+    db,
+    before,
+    input.agentId,
+    now,
+  );
 
-  const task = await taskDelegate.update({
-    where: { id: taskId },
+  const renewed = await taskDelegate.updateMany({
+    where: {
+      id: taskId,
+      ownerAgent: input.agentId,
+      leaseUntil: { gt: now },
+      status: { notIn: ["done", "archived"] },
+      ...agentPolicyWhere(profile),
+    },
     data: {
       ownerAgent: input.agentId,
       leaseUntil,
       lastHeartbeatAt: now,
     },
+  });
+  if (renewed.count !== 1) {
+    throw new HttpError(409, "Policy or lease changed before heartbeat completed");
+  }
+
+  const task = await taskDelegate.findUnique({
+    where: { id: taskId },
     include: agentTaskInclude,
+  });
+  if (!task) {
+    throw new HttpError(404, "Task not found");
+  }
+  const taskRun = await ensureRunningTaskRun(
+    db,
+    before,
+    profile,
+    input.agentId,
+    now,
+  );
+  await updateTaskRun(db, taskRun?.id, { lastHeartbeatAt: now });
+  await logAgentAction(db, {
+    taskId,
+    taskRunId: taskRun?.id ?? null,
+    agentId: input.agentId,
+    action: "task.heartbeat",
+    summary: `Renewed task lease until ${leaseUntil.toISOString()}`,
+    metadata: { leaseUntil: leaseUntil.toISOString() },
   });
 
   await recordActivity(db, {
@@ -353,60 +716,16 @@ export async function addTaskContribution<TDb extends AgentTaskDb>(
   taskId: string,
   input: TaskContributionInput,
 ) {
-  const taskDelegate = db.task as {
-    findUnique(args: unknown): Promise<TaskRecord | null>;
-  };
-  const contributionDelegate = db.taskContribution as {
-    create(args: unknown): Promise<{ id: string } & Record<string, unknown>>;
-  };
-  const artifactDelegate = db.taskArtifact as {
-    create(args: unknown): Promise<unknown>;
-  };
-
-  const task = await taskDelegate.findUnique({ where: { id: taskId } });
-  if (!task) {
-    throw new HttpError(404, "Task not found");
-  }
-  assertTaskCanBeWorked(task);
-  await assertAgentStillAllowedToWork(db, task, input.agentId, new Date());
-
-  const contribution = await contributionDelegate.create({
-    data: {
+  return withAgentTaskTransaction(db, async (tx) => {
+    const now = new Date();
+    const { taskRun } = await assertAndLockAgentMutation(
+      tx,
       taskId,
-      agentId: input.agentId,
-      summary: input.summary,
-      evidenceLinks: input.evidenceLinks,
-      artifactUrls: input.artifactUrls,
-      nextRecommendation: input.nextRecommendation,
-    },
+      input.agentId,
+      now,
+    );
+    return createContributionWithArtifacts(tx, taskId, input, taskRun);
   });
-  const artifacts = await Promise.all(
-    input.artifactUrls.map((url) =>
-      artifactDelegate.create({
-        data: {
-          taskId,
-          contributionId: contribution.id,
-          type: "link",
-          url,
-        },
-      }),
-    ),
-  );
-
-  await recordActivity(db, {
-    actorType: "system",
-    actorId: input.agentId,
-    action: "task.contribution.created",
-    targetType: "task",
-    targetId: taskId,
-    after: {
-      contributionId: contribution.id,
-      summary: input.summary,
-      artifactUrls: input.artifactUrls,
-    },
-  });
-
-  return { contribution, artifacts };
 }
 
 export async function submitTask<TDb extends AgentTaskDb>(
@@ -414,39 +733,77 @@ export async function submitTask<TDb extends AgentTaskDb>(
   taskId: string,
   input: TaskSubmitInput,
 ) {
-  const contributionResult = await addTaskContribution(db, taskId, input);
-  const now = new Date();
-  const taskDelegate = db.task as {
-    update(args: unknown): Promise<unknown>;
-  };
+  return withAgentTaskTransaction(db, async (tx) => {
+    const now = new Date();
+    const { taskRun } = await assertAndLockAgentMutation(
+      tx,
+      taskId,
+      input.agentId,
+      now,
+    );
+    const taskDelegate = tx.task as {
+      update(args: unknown): Promise<unknown>;
+    };
+    const contributionResult = await createContributionWithArtifacts(
+      tx,
+      taskId,
+      input,
+      taskRun,
+    );
 
-  const task = await taskDelegate.update({
-    where: { id: taskId },
-    data: {
-      status: "review",
+    const task = await taskDelegate.update({
+      where: { id: taskId },
+      data: {
+        status: "review",
+        submittedAt: now,
+        ownerAgent: null,
+        leaseUntil: null,
+        lastHeartbeatAt: now,
+      },
+      include: agentTaskInclude,
+    });
+    await updateTaskRun(tx, taskRun?.id, {
+      status: "submitted",
       submittedAt: now,
-      ownerAgent: null,
-      leaseUntil: null,
-      lastHeartbeatAt: now,
-    },
-    include: agentTaskInclude,
-  });
+      endedAt: now,
+      resultSummary: input.summary,
+    });
+    await releaseActiveTaskClaims(
+      tx,
+      taskId,
+      input.agentId,
+      now,
+      "submitted_for_review",
+    );
+    await logAgentAction(tx, {
+      taskId,
+      taskRunId: taskRun?.id ?? null,
+      agentId: input.agentId,
+      action: "task.submitted",
+      summary: input.summary,
+      metadata: {
+        resultType: input.resultType,
+        definitionOfDoneMet: input.definitionOfDoneMet,
+        needsHumanDecision: input.needsHumanDecision,
+      },
+    });
 
-  await recordActivity(db, {
-    actorType: "system",
-    actorId: input.agentId,
-    action: "task.submitted",
-    targetType: "task",
-    targetId: taskId,
-    after: {
-      resultType: input.resultType,
-      definitionOfDoneMet: input.definitionOfDoneMet,
-      needsHumanDecision: input.needsHumanDecision,
-      submittedAt: now,
-    },
-  });
+    await recordActivity(tx, {
+      actorType: "system",
+      actorId: input.agentId,
+      action: "task.submitted",
+      targetType: "task",
+      targetId: taskId,
+      after: {
+        resultType: input.resultType,
+        definitionOfDoneMet: input.definitionOfDoneMet,
+        needsHumanDecision: input.needsHumanDecision,
+        submittedAt: now,
+      },
+    });
 
-  return { task, ...contributionResult };
+    return { task, ...contributionResult };
+  });
 }
 
 export async function reviewTask<TDb extends AgentTaskDb>(
@@ -467,7 +824,7 @@ export async function reviewTask<TDb extends AgentTaskDb>(
   if (!before) {
     throw new HttpError(404, "Task not found");
   }
-  if (before.status !== "review") {
+  if (before.status !== "review" || !before.submittedAt) {
     throw new HttpError(409, "Only submitted review tasks can be reviewed");
   }
 
@@ -519,6 +876,17 @@ export async function reviewTask<TDb extends AgentTaskDb>(
     data,
     include: agentTaskInclude,
   });
+  const runStatus =
+    input.decision === "approve"
+      ? "approved"
+      : input.decision === "request_changes"
+        ? "changes_requested"
+        : input.decision === "reject"
+          ? "rejected"
+          : input.decision === "block"
+            ? "blocked"
+            : "archived";
+  await updateSubmittedTaskRuns(db, taskId, { status: runStatus });
 
   await recordActivity(db, {
     actorType: input.reviewer === "user" ? "user" : "system",

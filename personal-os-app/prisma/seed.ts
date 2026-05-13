@@ -21,6 +21,8 @@ async function main() {
   await prisma.taskReview.deleteMany();
   await prisma.taskArtifact.deleteMany();
   await prisma.taskContribution.deleteMany();
+  await prisma.agentActionLog.deleteMany();
+  await prisma.taskRun.deleteMany();
   await prisma.taskClaim.deleteMany();
   await prisma.taskWikiLink.deleteMany();
   await prisma.idea.deleteMany();
@@ -161,9 +163,40 @@ async function main() {
     },
   });
 
+  const taskRun = await prisma.taskRun.create({
+    data: {
+      taskId: task.id,
+      agentId: "demo-agent",
+      status: "approved",
+      policySnapshot: {
+        task: {
+          status: "todo",
+          riskLevel: "low",
+          executionMode: "agent_allowed",
+          agentTags: ["demo", "review"],
+        },
+        profile: {
+          id: "demo-agent",
+          tags: ["demo", "review"],
+          allowedRiskLevel: "low",
+          canWriteTasks: true,
+          enabled: true,
+        },
+        seed: true,
+      },
+      resultSummary:
+        "Verified the fictional checklist and attached a placeholder artifact.",
+      startedAt: claimedAt,
+      lastHeartbeatAt: submittedAt,
+      submittedAt,
+      endedAt: reviewedAt,
+    },
+  });
+
   const contribution = await prisma.taskContribution.create({
     data: {
       taskId: task.id,
+      taskRunId: taskRun.id,
       agentId: "demo-agent",
       summary: "Verified the fictional checklist and attached a placeholder artifact.",
       artifactUrls: ["https://example.com/demo-artifact"],
@@ -264,6 +297,38 @@ async function main() {
         targetId: task.id,
         after: { reviewId: review.id, decision: "approve", status: "done" },
         createdAt: reviewedAt,
+      },
+    ],
+  });
+
+  await prisma.agentActionLog.createMany({
+    data: [
+      {
+        taskId: task.id,
+        taskRunId: taskRun.id,
+        agentId: "demo-agent",
+        action: "task.claimed",
+        summary: "Claimed the demo task.",
+        metadata: { claimId: claim.id },
+        createdAt: claimedAt,
+      },
+      {
+        taskId: task.id,
+        taskRunId: taskRun.id,
+        agentId: "demo-agent",
+        action: "task.contribution.created",
+        summary: contribution.summary,
+        metadata: { contributionId: contribution.id },
+        createdAt: submittedAt,
+      },
+      {
+        taskId: task.id,
+        taskRunId: taskRun.id,
+        agentId: "demo-agent",
+        action: "task.submitted",
+        summary: contribution.summary,
+        metadata: { reviewId: review.id },
+        createdAt: submittedAt,
       },
     ],
   });

@@ -89,6 +89,8 @@ export function TaskInspector({
       <AgentContextPanel taskId={task.id} context={agentContext} />
 
       {(task.claims?.length ||
+        task.runs?.length ||
+        task.agentActionLogs?.length ||
         task.contributions?.length ||
         task.artifacts?.length ||
         task.reviews?.length) ? (
@@ -97,6 +99,52 @@ export function TaskInspector({
             Agent execution trail
           </h3>
           <div className="mt-3 grid gap-3 text-sm leading-6 text-zinc-700">
+            {task.runs?.length ? (
+              <section className="rounded-lg bg-white p-3">
+                <div className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+                  Runs
+                </div>
+                <div className="mt-2 grid gap-2">
+                  {task.runs.map((run) => (
+                    <div key={run.id} className="text-zinc-700">
+                      <span className="font-semibold">{run.agentId}</span>
+                      {" / "}
+                      <span>{run.status}</span>
+                      {run.startedAt
+                        ? ` / started ${formatDateTime(run.startedAt)}`
+                        : ""}
+                      {run.submittedAt
+                        ? ` / submitted ${formatDateTime(run.submittedAt)}`
+                        : ""}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {task.agentActionLogs?.length ? (
+              <section className="rounded-lg bg-white p-3">
+                <div className="text-xs font-semibold uppercase tracking-wide text-blue-700">
+                  Agent actions
+                </div>
+                <div className="mt-2 grid gap-2">
+                  {task.agentActionLogs.map((action) => (
+                    <div key={action.id} className="rounded-lg bg-zinc-50 p-2">
+                      <div className="font-semibold text-zinc-900">
+                        {action.action} by {action.agentId}
+                        {action.createdAt
+                          ? ` / ${formatDateTime(action.createdAt)}`
+                          : ""}
+                      </div>
+                      {action.summary ? (
+                        <p className="mt-1 text-zinc-600">{action.summary}</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
             {task.claims?.length ? (
               <section className="rounded-lg bg-white p-3">
                 <div className="text-xs font-semibold uppercase tracking-wide text-blue-700">

@@ -1,4 +1,5 @@
 import { searchWikiContext, type WikiContextSearchResult } from "@/lib/agent-context";
+import { HttpError } from "@/lib/http";
 import {
   getTodayReminder,
   normalizeReminderMode,
@@ -106,7 +107,9 @@ export async function saveDailyPlanSnapshot<TDb extends { dailyPlan?: unknown }>
   const dailyPlan = db.dailyPlan as {
     create(args: unknown): Promise<DailyPlanSnapshot>;
   };
-  const timezone = input.timezone ?? configuredPlannerTimeZone();
+  const timezone = assertValidTimeZone(
+    input.timezone ?? configuredPlannerTimeZone(),
+  );
   const date = input.date ?? todayInTimeZone(timezone);
 
   return dailyPlan.create({
@@ -125,22 +128,46 @@ export async function saveDailyPlanSnapshot<TDb extends { dailyPlan?: unknown }>
 }
 
 export function configuredPlannerTimeZone() {
-  return (
-    process.env.PERSONAL_OS_TIMEZONE ??
-    Intl.DateTimeFormat().resolvedOptions().timeZone ??
-    "UTC"
-  );
+  const configured = process.env.PERSONAL_OS_TIMEZONE?.trim();
+  if (configured && isValidTimeZone(configured)) {
+    return configured;
+  }
+
+  const runtime = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return runtime && isValidTimeZone(runtime) ? runtime : "UTC";
 }
 
 export function todayInTimeZone(timezone: string, date = new Date()) {
+  const validTimezone = assertValidTimeZone(timezone);
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
+    timeZone: validTimezone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   }).formatToParts(date);
   const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   return `${values.year}-${values.month}-${values.day}`;
+}
+
+export function isValidTimeZone(timezone: string) {
+  try {
+    const value = timezone.trim();
+    if (!value) {
+      return false;
+    }
+    new Intl.DateTimeFormat("en-US", { timeZone: value }).format();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function assertValidTimeZone(timezone: string) {
+  const value = timezone.trim();
+  if (!isValidTimeZone(value)) {
+    throw new HttpError(400, `Invalid timezone: ${timezone}`);
+  }
+  return value;
 }
 
 export function buildPlannerWikiQueries(

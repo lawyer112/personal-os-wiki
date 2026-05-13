@@ -8,16 +8,30 @@ export function attachmentDir() {
   return resolveDataPath(process.env.PERSONAL_OS_ATTACHMENT_DIR, "attachments");
 }
 
-function resolveDataPath(configuredPath: string | undefined, fallback: string) {
-  if (!configuredPath) {
-    return path.join(process.cwd(), "data", fallback);
+export function resolveDataPath(
+  configuredPath: string | undefined,
+  fallback: string,
+) {
+  const dataRoot = path.resolve(process.cwd(), "data");
+  const rawPath = configuredPath?.trim() || fallback;
+  const candidate = path.isAbsolute(rawPath)
+    ? path.resolve(rawPath)
+    : path.resolve(dataRoot, stripDataPrefix(rawPath));
+  const relative = path.relative(dataRoot, candidate);
+
+  if (relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative))) {
+    return candidate;
   }
 
-  const normalized = configuredPath
-    .replaceAll("\\", "/")
-    .replace(/^\.?\//, "")
-    .replace(/^data\//, "");
-  return path.join(process.cwd(), "data", normalized);
+  throw new Error("Configured data path must stay inside the data directory");
+}
+
+function stripDataPrefix(value: string) {
+  const normalized = value.replaceAll("\\", "/").replace(/^\.?\//, "");
+  if (normalized === "data") {
+    return "";
+  }
+  return normalized.replace(/^data\//, "");
 }
 
 export function slugifyTitle(title: string) {

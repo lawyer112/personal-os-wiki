@@ -120,6 +120,9 @@ planner instruction for Hermes to turn into a short Telegram plan.
 - `NEXT_PUBLIC_WIKI_URL`: browser-visible Personal Wiki URL.
 - `PERSONAL_OS_VAULT_DIR`: local project-record Markdown path.
 - `PERSONAL_OS_ATTACHMENT_DIR`: future attachment path.
+- `PERSONAL_OS_WRITE_RATE_LIMIT`: write API requests allowed per client/window,
+  default `300`; set `0` to disable.
+- `PERSONAL_OS_WRITE_RATE_WINDOW_MS`: write rate-limit window, default `60000`.
 
 ## Verification
 

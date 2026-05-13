@@ -5,7 +5,7 @@
 </p>
 
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-0.1.1-0369a1)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.2.0-0369a1)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#数据安全)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-协议)
@@ -21,7 +21,7 @@
   <a href="./docs/MAC_AGENT_ADAPTER.zh-CN.md"><img src="https://img.shields.io/badge/Mac%20Adapter-提醒事项-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
   <a href="./docs/AGENT_GUIDE.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20手册-protocol-7c3aed?style=for-the-badge" alt="Agent 手册"></a>
   <a href="./docs/AGENT_PROMPT.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20提示词-copyable-9333ea?style=for-the-badge" alt="Agent 提示词"></a>
-  <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
+  <a href="./docs/API_OVERVIEW.zh-CN.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
   <a href="./docs/DATA_SAFETY.zh-CN.md"><img src="https://img.shields.io/badge/数据安全-local--first-334155?style=for-the-badge" alt="数据安全"></a>
 </p>
 
@@ -222,8 +222,8 @@ Docker 是推荐方案，不是硬性要求。也可以把 Personal Wiki 当 Pyt
 下载 GitHub Release 里的产物：
 
 ```text
-personal-os-wiki-v0.1.1.zip
-personal-os-wiki-v0.1.1.tar.gz
+personal-os-wiki-v0.2.0.zip
+personal-os-wiki-v0.2.0.tar.gz
 SHA256SUMS.txt
 ```
 
@@ -233,7 +233,7 @@ SHA256SUMS.txt
 开发者也可以按 tag 克隆：
 
 ```bash
-git clone --branch v0.1.1 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.2.0 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 
@@ -382,7 +382,7 @@ curl -X POST \
 完整协议见：
 
 - [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)
-- [API 总览](./docs/API_OVERVIEW.md)
+- [API 总览](./docs/API_OVERVIEW.zh-CN.md)
 
 ## 和普通 Wiki 有什么区别
 
@@ -435,9 +435,10 @@ curl -X POST \
 | 理解架构 | [架构说明](./docs/ARCHITECTURE.zh-CN.md) |
 | 理解原始采集和 Agent 后处理 | [知识系统落地方案](./docs/KNOWLEDGE_SYSTEM_PLAN.zh-CN.md) 和 [网页采集](./docs/WEB_CAPTURE.zh-CN.md) |
 | 对比长期记忆和 Obsidian 插件 | [对比文](./docs/COMPARISON.zh-CN.md) |
+| 接入 Obsidian 到 Personal Wiki | [Obsidian 桥接方案](./docs/OBSIDIAN_BRIDGE_PLAN.zh-CN.md) |
 | 发布和运营项目 | [Launch 手册](./docs/LAUNCH_PLAYBOOK.zh-CN.md) |
 | 维护和交接项目工作 | [维护手册](./docs/MAINTENANCE_MANUAL.zh-CN.md) |
-| 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)、[Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.md) |
+| 接入 Agent | [Agent 使用手册](./docs/AGENT_GUIDE.zh-CN.md)、[Agent 提示词](./docs/AGENT_PROMPT.zh-CN.md)、[Agent 作业编排](./docs/AGENT_JOB_ORCHESTRATION.zh-CN.md) 和 [API 总览](./docs/API_OVERVIEW.zh-CN.md) |
 | 使用 Personal OS | [Personal OS README](./personal-os-app/README.md) |
 | 使用 Personal Wiki | [Personal Wiki README](./personal-wiki/README.md) 和 [Wiki 使用手册](./personal-wiki/docs/USAGE.md) |
 | 安全发布 | [Open source release process](./OPEN_SOURCE_RELEASE.md) |
