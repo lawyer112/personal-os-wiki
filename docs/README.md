@@ -17,6 +17,7 @@ for Personal OS + Personal Wiki.
 - [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Comparison](./COMPARISON.md)
 - [对比说明](./COMPARISON.zh-CN.md)
+- [Developer Experience Review Kit](./OPENAI_DEVELOPER_EXPERIENCE_REVIEW.md)
 - [Launch Playbook](./LAUNCH_PLAYBOOK.md)
 - [Launch 手册](./LAUNCH_PLAYBOOK.zh-CN.md)
 - [Maintenance Manual](./MAINTENANCE_MANUAL.md)
@@ -76,14 +77,16 @@ for Personal OS + Personal Wiki.
    product, one service, or two runtime services.
 4. Read the human-agent collaboration roadmap and knowledge-system plan if you
    are judging product direction.
-5. Read the maintenance manual if you are taking over project work, choosing
+5. Read Developer Experience Review Kit if you are evaluating demos, docs,
+   agent workflow design, or Mandarin-speaking developer adoption fit.
+6. Read the maintenance manual if you are taking over project work, choosing
    the next issue, or recording public-safe progress.
-6. Read Object Knowledge Rebuild Manual if you are working on the long-term
+7. Read Object Knowledge Rebuild Manual if you are working on the long-term
    Wiki/object/graph rebuild.
-7. Read the macOS guide if the target host is a Mac.
-8. Read the comparison document if you are judging positioning.
-9. Read the architecture document in your preferred language.
-10. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
-11. Read Web Capture if you are reviewing passive collection from browser/manual sources.
-12. Read Data Safety before connecting real notes, tasks, reminders, or server data.
-13. Read Open Source Release Process before publishing or making the repository public.
+8. Read the macOS guide if the target host is a Mac.
+9. Read the comparison document if you are judging positioning.
+10. Read the architecture document in your preferred language.
+11. Read the Agent guide and Agent Job Orchestration if you are reviewing worker execution.
+12. Read Web Capture if you are reviewing passive collection from browser/manual sources.
+13. Read Data Safety before connecting real notes, tasks, reminders, or server data.
+14. Read Open Source Release Process before publishing or making the repository public.

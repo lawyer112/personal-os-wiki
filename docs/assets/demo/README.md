@@ -11,6 +11,10 @@ Paste one link -> Personal OS Inbox -> agent policy chooses cadence
 
 Files:
 
+- `openai-devex-walkthrough.mp4` is the 3-5 minute English walkthrough for
+  developer-experience reviewers.
+- `openai-devex-walkthrough.poster.png` is the poster frame for that
+  walkthrough.
 - `personal-os-wiki-readme-demo.en.gif` is the English inline README preview.
 - `personal-os-wiki-readme-demo.en.mp4` is the English linked video.
 - `personal-os-wiki-readme-demo.zh-CN.gif` is the Chinese inline README preview.
@@ -24,6 +28,7 @@ Regenerate the videos with:
 
 ```bash
 python scripts/render-readme-demo-media.py
+python scripts/render-openai-devex-walkthrough.py
 ```
 
 Do not replace these with real inbox items, real task history, private Wiki

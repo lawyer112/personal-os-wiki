@@ -16,6 +16,8 @@
   <a href="#10-minute-demo-path"><img src="https://img.shields.io/badge/Run%20the%20demo-10%20minutes-0f766e?style=for-the-badge" alt="Run the demo"></a>
   <a href="./README.zh-CN.md"><img src="https://img.shields.io/badge/中文说明-完整中文版-dc2626?style=for-the-badge" alt="中文说明"></a>
   <a href="./docs/GETTING_STARTED.md"><img src="https://img.shields.io/badge/Getting%20Started-guide-1d4ed8?style=for-the-badge" alt="Getting Started"></a>
+  <a href="./docs/OPENAI_DEVELOPER_EXPERIENCE_REVIEW.md"><img src="https://img.shields.io/badge/DevEx%20Review%20Kit-OpenAI-111827?style=for-the-badge" alt="Developer Experience Review Kit"></a>
+  <a href="./docs/assets/demo/openai-devex-walkthrough.mp4"><img src="https://img.shields.io/badge/Watch%20Walkthrough-3--5%20min-c2410c?style=for-the-badge" alt="Watch walkthrough"></a>
   <a href="./docs/DEPLOYMENT.md"><img src="https://img.shields.io/badge/Deployment-requirements-0f766e?style=for-the-badge" alt="Deployment requirements"></a>
   <a href="./docs/MACOS_DEPLOYMENT.md"><img src="https://img.shields.io/badge/macOS-deploy-111827?style=for-the-badge" alt="macOS deployment"></a>
   <a href="./docs/RELEASES.md"><img src="https://img.shields.io/badge/Releases-versioned%20packages-0369a1?style=for-the-badge" alt="Versioned releases"></a>
@@ -28,6 +30,11 @@
 </p>
 
 [中文说明](./README.zh-CN.md)
+
+For reviewers evaluating developer-experience fit, start with the
+[Developer Experience Review Kit](./docs/OPENAI_DEVELOPER_EXPERIENCE_REVIEW.md)
+and the short
+[OpenAI DevEx walkthrough video](./docs/assets/demo/openai-devex-walkthrough.mp4).
 
 **Category:** local-first agent workbench, LLM Wiki-style Markdown knowledge
 base, knowledge graph, task execution protocol.
