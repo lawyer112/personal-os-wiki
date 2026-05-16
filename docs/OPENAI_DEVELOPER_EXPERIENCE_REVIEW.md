@@ -1,14 +1,19 @@
-# Developer Experience Review Kit
+# Developer Experience Reviewer Guide
 
-This page is a short review path for people evaluating Personal OS + Personal
-Wiki as evidence of developer experience, AI workflow design, and
-Mandarin-speaking developer empathy.
+This page is a short map through Personal OS + Personal Wiki for people
+evaluating it as developer-experience work: product explanation, demo material,
+API shape, agent workflow design, bilingual documentation, and safety
+boundaries.
+
+The repository itself is the main artifact. The walkthrough video is only a
+compact orientation layer, generated from fake public data so reviewers can
+understand the product loop before reading the code and docs.
 
 ## 60-Second Review Path
 
-1. Watch the walkthrough:
+1. Skim the product loop in the root [`README.md`](../README.md).
+2. Watch the optional 3-minute project walkthrough:
    [`docs/assets/demo/openai-devex-walkthrough.mp4`](./assets/demo/openai-devex-walkthrough.mp4)
-2. Skim the product loop in the root [`README.md`](../README.md).
 3. Read the agent protocol in [`AGENT_GUIDE.md`](./AGENT_GUIDE.md).
 4. Read the API surface in [`API_OVERVIEW.md`](./API_OVERVIEW.md).
 5. Check the safety boundary in [`DATA_SAFETY.md`](./DATA_SAFETY.md).
@@ -35,14 +40,14 @@ messy input -> durable wiki memory -> executable task
   -> review -> knowledge updated for the next run
 ```
 
-## Developer Experience Evidence
+## Developer Experience Signals
 
 This repository is meant to be understandable by another developer, not only by
 the original author.
 
-| OpenAI developer-experience need | Evidence in this repository |
+| Developer-experience signal | Where to inspect it |
 | --- | --- |
-| High-quality demos | README demo media, one-command fake-data demo, and the OpenAI DevEx walkthrough video. |
+| Demo quality | README demo media, one-command fake-data demo, and the 3-minute project walkthrough. |
 | Tutorials and guides | Getting Started, Deployment, macOS Deployment, Agent Guide, API Overview, and bilingual README files. |
 | Code samples | Curl-based task claiming flow, agent prompt, Docker Compose setup, and seeded fake-data workflow. |
 | Developer empathy | The project targets real AI workflow friction: context drift, unfinished work, agent trust, reviewability, and cost-aware capture. |
@@ -61,9 +66,9 @@ workflows. This project is built around a practical bridge:
 - safety notes that translate model capability into trusted usage;
 - examples that connect agent behavior, API design, and product outcomes.
 
-## What To Look At In An Interview
+## What To Look At In A Review Or Interview
 
-Useful interview demo path:
+A useful demo path:
 
 1. Open the README and explain the product loop.
 2. Show Personal OS as the work-state surface: Inbox, Tasks, Today, Reviews.
@@ -73,11 +78,20 @@ Useful interview demo path:
 5. Discuss what should stay local, what can be public, and how to avoid turning
    a private life or private infrastructure into an open-source dump.
 6. Discuss how these patterns could become better docs, examples, videos, and
-   feedback loops for Mandarin-speaking developers using OpenAI APIs and agents.
+   feedback loops for Mandarin-speaking developers using LLM APIs and agents.
+
+## Honest Limitations
+
+- This is an early public release, not a hosted SaaS product.
+- The public walkthrough uses generated fake demo surfaces; it is meant to
+  explain the loop, not replace hands-on review of the repository.
+- The public repository intentionally excludes private task history, real Wiki
+  vaults, server inventories, tokens, customer data, and production logs.
+- The most important artifact is the project boundary: task state, Wiki memory,
+  agent protocol, review gates, and safe local-first defaults.
 
 ## Boundary
 
 The public repository contains source code, documentation, generated fake demo
 media, and safe sample data. It should not contain private Wiki vaults, real
 task history, customer data, hostnames, tokens, logs, or production server maps.
-

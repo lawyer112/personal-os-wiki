@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render a public-safe OpenAI DevEx walkthrough video.
+"""Render a public-safe developer-experience walkthrough video.
 
 The output is intentionally presentation-like: fake product surfaces, clear
 captions, and local TTS narration. It avoids private data and does not require a
@@ -300,7 +300,7 @@ def draw_shell(draw: ImageDraw.ImageDraw, scene_no: int, title: str, kicker: str
     draw.rectangle((0, 0, WIDTH, HEIGHT), fill=COLORS["bg"])
     rounded(draw, (56, 54, 1864, 1026), COLORS["paper"], COLORS["line"], 32, 2)
     draw.text((104, 96), "Personal OS + Personal Wiki", font=font(30, True), fill=COLORS["teal"])
-    draw.text((104, 134), "OpenAI Developer Experience walkthrough", font=font(21), fill=COLORS["muted"])
+    draw.text((104, 134), "Developer Experience project walkthrough", font=font(21), fill=COLORS["muted"])
     draw.text((1618, 100), f"{scene_no:02d} / {len(SCENES):02d}", font=font(28, True), fill=COLORS["orange"])
     draw.line((104, 186, 1816, 186), fill=COLORS["line"], width=2)
     draw_text_block(draw, (104, 238), title, font(66, True), COLORS["ink"], 930, 14)

@@ -17,7 +17,7 @@ for Personal OS + Personal Wiki.
 - [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Comparison](./COMPARISON.md)
 - [对比说明](./COMPARISON.zh-CN.md)
-- [Developer Experience Review Kit](./OPENAI_DEVELOPER_EXPERIENCE_REVIEW.md)
+- [Developer Experience Reviewer Guide](./OPENAI_DEVELOPER_EXPERIENCE_REVIEW.md)
 - [Launch Playbook](./LAUNCH_PLAYBOOK.md)
 - [Launch 手册](./LAUNCH_PLAYBOOK.zh-CN.md)
 - [Maintenance Manual](./MAINTENANCE_MANUAL.md)
@@ -77,7 +77,7 @@ for Personal OS + Personal Wiki.
    product, one service, or two runtime services.
 4. Read the human-agent collaboration roadmap and knowledge-system plan if you
    are judging product direction.
-5. Read Developer Experience Review Kit if you are evaluating demos, docs,
+5. Read Developer Experience Reviewer Guide if you are evaluating demos, docs,
    agent workflow design, or Mandarin-speaking developer adoption fit.
 6. Read the maintenance manual if you are taking over project work, choosing
    the next issue, or recording public-safe progress.

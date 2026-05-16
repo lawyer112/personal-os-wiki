@@ -11,8 +11,8 @@ Paste one link -> Personal OS Inbox -> agent policy chooses cadence
 
 Files:
 
-- `openai-devex-walkthrough.mp4` is the 3-5 minute English walkthrough for
-  developer-experience reviewers.
+- `openai-devex-walkthrough.mp4` is the 3-minute English project walkthrough
+  for developer-experience reviewers.
 - `openai-devex-walkthrough.poster.png` is the poster frame for that
   walkthrough.
 - `personal-os-wiki-readme-demo.en.gif` is the English inline README preview.
