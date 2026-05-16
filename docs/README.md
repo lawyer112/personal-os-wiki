@@ -17,7 +17,7 @@ for Personal OS + Personal Wiki.
 - [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Comparison](./COMPARISON.md)
 - [对比说明](./COMPARISON.zh-CN.md)
-- [Developer Experience Reviewer Guide](./OPENAI_DEVELOPER_EXPERIENCE_REVIEW.md)
+- [Developer Experience Reviewer Guide](./DEVELOPER_EXPERIENCE_REVIEWER_GUIDE.md)
 - [Launch Playbook](./LAUNCH_PLAYBOOK.md)
 - [Launch 手册](./LAUNCH_PLAYBOOK.zh-CN.md)
 - [Maintenance Manual](./MAINTENANCE_MANUAL.md)

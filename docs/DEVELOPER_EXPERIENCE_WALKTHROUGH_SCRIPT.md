@@ -1,4 +1,4 @@
-# OpenAI Developer Experience Walkthrough Script
+# Developer Experience Project Walkthrough Script
 
 Target length: 3-5 minutes.
 
@@ -70,4 +70,3 @@ user friction back into product insight.
 That is why I built this project as a product surface, not just a private note
 system. It combines API design, documentation, demos, local deployment, agent
 workflow design, and safety boundaries. Thank you for watching.
-

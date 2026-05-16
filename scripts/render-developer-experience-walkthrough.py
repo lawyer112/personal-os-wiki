@@ -424,7 +424,7 @@ def main() -> None:
     ffprobe = pick_tool(FFPROBE_CANDIDATES, "ffprobe")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    with tempfile.TemporaryDirectory(prefix="openai-devex-video-") as tmp_raw:
+    with tempfile.TemporaryDirectory(prefix="developer-experience-walkthrough-video-") as tmp_raw:
         tmp = Path(tmp_raw)
         segments: list[Path] = []
         for index, scene in enumerate(SCENES):
@@ -470,10 +470,10 @@ def main() -> None:
 
         concat = tmp / "concat.txt"
         concat.write_text("".join(f"file '{segment}'\n" for segment in segments), encoding="utf-8")
-        output = OUT_DIR / "openai-devex-walkthrough.mp4"
+        output = OUT_DIR / "developer-experience-walkthrough.mp4"
         run([ffmpeg, "-y", "-f", "concat", "-safe", "0", "-i", str(concat), "-c", "copy", str(output)])
 
-        poster = OUT_DIR / "openai-devex-walkthrough.poster.png"
+        poster = OUT_DIR / "developer-experience-walkthrough.poster.png"
         shutil.copyfile(tmp / "slide-00.png", poster)
 
     print(f"wrote {output}")
