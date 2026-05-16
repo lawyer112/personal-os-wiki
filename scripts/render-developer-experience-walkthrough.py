@@ -271,9 +271,13 @@ def rounded(draw: ImageDraw.ImageDraw, xy: tuple[int, int, int, int], fill: str,
 
 def draw_text_block(draw: ImageDraw.ImageDraw, xy: tuple[int, int], text: str, fnt: ImageFont.ImageFont, fill: str, max_width: int, gap: int = 10) -> int:
     x, y = xy
-    for line in wrap(draw, text, fnt, max_width):
-        draw.text((x, y), line, font=fnt, fill=fill)
-        y += text_size(draw, line, fnt)[1] + gap
+    for paragraph in text.splitlines():
+        if not paragraph.strip():
+            y += max(14, fnt.size // 2)
+            continue
+        for line in wrap(draw, paragraph, fnt, max_width):
+            draw.text((x, y), line, font=fnt, fill=fill)
+            y += text_size(draw, line, fnt)[1] + gap
     return y
 
 
@@ -303,8 +307,9 @@ def draw_shell(draw: ImageDraw.ImageDraw, scene_no: int, title: str, kicker: str
     draw.text((104, 134), "Developer Experience project walkthrough", font=font(21), fill=COLORS["muted"])
     draw.text((1618, 100), f"{scene_no:02d} / {len(SCENES):02d}", font=font(28, True), fill=COLORS["orange"])
     draw.line((104, 186, 1816, 186), fill=COLORS["line"], width=2)
-    draw_text_block(draw, (104, 238), title, font(66, True), COLORS["ink"], 930, 14)
-    draw_text_block(draw, (108, 338), kicker, font(30), COLORS["muted"], 880, 8)
+    title_end = draw_text_block(draw, (104, 238), title, font(66, True), COLORS["ink"], 930, 14)
+    kicker_y = max(338, title_end + 22)
+    draw_text_block(draw, (108, kicker_y), kicker, font(30), COLORS["muted"], 880, 8)
 
 
 def draw_bullets(draw: ImageDraw.ImageDraw, bullets: list[str]) -> None:
@@ -333,14 +338,16 @@ def draw_visual(draw: ImageDraw.ImageDraw, scene: dict[str, object]) -> None:
         draw_text_block(draw, (1220, 850), "What should happen next?", font(32, True), "#FFFFFF", 410)
     elif kind == "loop":
         items = [("Input", COLORS["teal"]), ("Wiki", COLORS["blue"]), ("Task", COLORS["orange"]), ("Agent", COLORS["violet"]), ("Review", COLORS["slate"])]
-        x = 1010
+        x = 1008
         y = 470
+        box_w = 124
+        gap = 34
         for idx, (label, color) in enumerate(items):
-            rounded(draw, (x, y, x + 150, y + 92), color, None, 22)
-            draw_text_block(draw, (x + 28, y + 30), label, font(27, True), "#FFFFFF", 110)
+            rounded(draw, (x, y, x + box_w, y + 92), color, None, 22)
+            draw_text_block(draw, (x + 22, y + 30), label, font(24, True), "#FFFFFF", box_w - 44)
             if idx < len(items) - 1:
-                arrow(draw, (x + 158, y + 46), (x + 218, y + 46), COLORS["muted"])
-            x += 222
+                arrow(draw, (x + box_w + 8, y + 46), (x + box_w + gap - 8, y + 46), COLORS["muted"])
+            x += box_w + gap
         card(draw, (1120, 650, 1740, 850), "Updated knowledge", "The next run starts from reviewed state, not stale chat history.", COLORS["teal"])
     elif kind == "capture":
         card(draw, (1030, 295, 1770, 835), "Inbox item", "Source: saved link\nRaw text: rough user intent\nStatus: unprocessed\nPolicy: agent decides cadence\nCost: no LLM call yet", COLORS["teal"])
@@ -350,18 +357,34 @@ def draw_visual(draw: ImageDraw.ImageDraw, scene: dict[str, object]) -> None:
         card(draw, (1030, 292, 1770, 892), "Reviewable task", "Title: Attach final demo evidence\nNext action: verify media and docs\nDefinition of done: video, Wiki evidence, and README link are present\nRisk: public-safe only\nReview: required", COLORS["orange"])
     elif kind == "protocol":
         labels = ["poll", "claim", "context", "execute", "heartbeat", "submit", "review"]
-        x = 1015
-        y = 395
-        for idx, label in enumerate(labels):
-            rounded(draw, (x, y, x + 190, y + 86), COLORS["soft"], COLORS["line"], 20)
-            draw_text_block(draw, (x + 34, y + 28), label, font(27, True), COLORS["ink"], 138)
-            if idx < len(labels) - 1:
-                arrow(draw, (x + 198, y + 43), (x + 242, y + 43), COLORS["muted"])
-            x += 242
-            if idx == 2:
-                x = 1135
-                y = 595
-        card(draw, (1080, 760, 1760, 900), "Contract", "Agents work against explicit API state, not hidden chat assumptions.", COLORS["violet"])
+        positions = [
+            (1000, 360),
+            (1190, 360),
+            (1380, 360),
+            (1570, 360),
+            (1095, 560),
+            (1285, 560),
+            (1475, 560),
+        ]
+        box_w = 150
+        box_h = 82
+        for idx, (label, (x, y)) in enumerate(zip(labels, positions), start=1):
+            rounded(draw, (x, y, x + box_w, y + box_h), COLORS["soft"], COLORS["line"], 20)
+            draw_text_block(draw, (x + 18, y + 16), f"{idx}", font(19, True), COLORS["violet"], 24)
+            draw_text_block(draw, (x + 48, y + 25), label, font(23, True), COLORS["ink"], box_w - 62)
+        for left, right in [(0, 1), (1, 2), (2, 3), (4, 5), (5, 6)]:
+            lx, ly = positions[left]
+            rx, ry = positions[right]
+            arrow(draw, (lx + box_w + 8, ly + box_h // 2), (rx - 10, ry + box_h // 2), COLORS["muted"])
+        # Wrap the sequence from execute to heartbeat without drawing a long diagonal line.
+        start_x = positions[3][0] + box_w // 2
+        start_y = positions[3][1] + box_h + 14
+        end_x = positions[4][0] + box_w // 2
+        end_y = positions[4][1] - 14
+        mid_y = 510
+        draw.line([(start_x, start_y), (start_x, mid_y), (end_x, mid_y), (end_x, end_y)], fill=COLORS["muted"], width=5)
+        draw.polygon([(end_x, end_y), (end_x - 10, end_y - 18), (end_x + 10, end_y - 18)], fill=COLORS["muted"])
+        card(draw, (1080, 760, 1760, 930), "Contract", "Agents work against explicit API state, not hidden chat assumptions.", COLORS["violet"])
     elif kind == "review":
         card(draw, (1020, 300, 1330, 822), "Evidence", "Artifact URL\nWiki evidence link\nDefinition-of-done flag\nSummary of changes", COLORS["blue"])
         card(draw, (1410, 300, 1760, 822), "Decision", "Approve\nRequest changes\nBlock\nArchive with reason", COLORS["teal"])
@@ -383,7 +406,7 @@ def draw_visual(draw: ImageDraw.ImageDraw, scene: dict[str, object]) -> None:
             y += 132
     elif kind == "closing":
         card(draw, (1030, 320, 1770, 520), "Repository", "github.com/lawyer112/personal-os-wiki", COLORS["teal"])
-        card(draw, (1030, 570, 1770, 770), "Review kit", "README, API guide, agent guide, safety docs, and demo media.", COLORS["blue"])
+        card(draw, (1030, 570, 1770, 770), "Reviewer guide", "README, API guide, agent guide, safety docs, and demo media.", COLORS["blue"])
         card(draw, (1030, 820, 1770, 940), "Thank you", "Built from high-intensity, hands-on AI workflow practice.", COLORS["orange"])
 
 
