@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import datetime as dt
 import os
 from pathlib import Path
+import re
 import time
 from typing import Any
 import urllib.error
@@ -29,6 +30,9 @@ class MocNote:
     created_by: str
     created_at: str
     task_id: str
+    source_type: str
+    tags: tuple[str, ...]
+    summary: str
 
 
 def rebuild_moc(vault_root: Path) -> str:
@@ -41,12 +45,14 @@ def rebuild_moc(vault_root: Path) -> str:
     target = vault_root / "00_meta" / "index.md"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
+    write_tag_maps(vault_root, main_notes)
     return content
 
 
 def scan_notes(vault_root: Path) -> list[MocNote]:
     roots = [
         vault_root / "20_atoms",
+        vault_root / "20_notes",
         vault_root / "30_projects",
         vault_root / "40_journals",
         vault_root / "50_skills",
@@ -71,6 +77,9 @@ def scan_notes(vault_root: Path) -> list[MocNote]:
                     created_by=str(fm.get("created_by") or "unknown"),
                     created_at=str(fm.get("created_at") or ""),
                     task_id=str(fm.get("task_id") or ""),
+                    source_type=str(fm.get("source_type") or ""),
+                    tags=tuple(normalize_tags(fm.get("tags") or [])),
+                    summary=summary_for(fm, body),
                 )
             )
     return sorted(notes, key=lambda note: sort_key(note), reverse=True)
@@ -154,6 +163,92 @@ def render_orphans(notes: list[MocNote]) -> str:
         lines.append(f"- {wikilink(note)} · task_id={note.task_id} · 已无对应 Personal OS 任务")
     lines.append("")
     return "\n".join(lines)
+
+
+def write_tag_maps(vault_root: Path, notes: list[MocNote]) -> None:
+    target_dir = vault_root / "00_meta" / "tag-maps"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    specs = [
+        (
+            "x-likes",
+            "X Likes 知识地图",
+            ("x-likes",),
+        ),
+        (
+            "content-matrix",
+            "内容矩阵知识地图",
+            ("content-matrix", "wechat-official-account", "multi-platform-publishing", "creator-monetization"),
+        ),
+        (
+            "ai-agent-content-automation",
+            "AI Agent 与内容自动化知识地图",
+            ("agent-workflow", "hermes-agent", "mcp-skill", "automation", "personal-wiki"),
+        ),
+    ]
+    for slug, title, tags in specs:
+        selected = [note for note in notes if set(note.tags) & set(tags)]
+        (target_dir / f"{slug}.md").write_text(render_tag_map(title, tags, selected), encoding="utf-8")
+
+
+def render_tag_map(title: str, tags: tuple[str, ...], notes: list[MocNote]) -> str:
+    generated_at = dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
+    frontmatter = "\n".join(
+        [
+            "---",
+            f"title: {title}",
+            "type: atom",
+            "created_by: user",
+            "source_type: x-likes-knowledge-map",
+            "tags:",
+            *[f"  - {tag}" for tag in sorted(set(tags) | {"knowledge-map"})],
+            f"created_at: {generated_at}",
+            "---",
+            "",
+        ]
+    )
+    lines = [
+        frontmatter,
+        f"# {title}",
+        "",
+        f"生成时间：{generated_at}",
+        "",
+        "## 入口标签",
+        "",
+        *[f"- `{tag}`" for tag in tags],
+        "",
+        "## 代表笔记",
+        "",
+    ]
+    if not notes:
+        lines.append("- 暂无匹配笔记。")
+    for note in notes[:40]:
+        summary = f" - {note.summary}" if note.summary else ""
+        lines.append(f"- {wikilink(note)} - {note.title}{summary}")
+    lines.extend(["", "## 相关标签", ""])
+    related_tags = sorted({tag for note in notes for tag in note.tags if tag not in tags})
+    if not related_tags:
+        lines.append("- 暂无")
+    else:
+        lines.extend(f"- `{tag}`" for tag in related_tags[:40])
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def normalize_tags(value: object) -> list[str]:
+    if isinstance(value, str):
+        value = [part.strip() for part in value.split(",")]
+    if not isinstance(value, list):
+        return []
+    return sorted({str(tag).strip().lstrip("#").lower() for tag in value if str(tag).strip()})
+
+
+def summary_for(fm: dict[str, Any], body: str) -> str:
+    explicit = str(fm.get("summary") or "").strip()
+    if explicit:
+        return explicit[:160]
+    text = re.sub(r"(?m)^#+\s*", "", body)
+    text = re.sub(r"(?m)^[-*]\s*", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text[:160]
 
 
 def wikilink(note: MocNote) -> str:

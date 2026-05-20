@@ -35,12 +35,25 @@ Body:
 | `title` | yes | Non-empty note title. |
 | `type` | yes | One of `atom`, `project`, `journal`, `skill`, `source`. |
 | `created_by` | yes | One of `user`, `hermes:intake`, `hermes:dispatcher`, `hermes:worker`. |
-| `source_type` | yes | One of `user-note`, `article`, `transcript`, `agent-output`. |
+| `source_type` | yes | One of `user-note`, `article`, `transcript`, `agent-output`, `x-like`, `x-likes-theme`, `x-likes-knowledge-map`. |
 | `tags` | yes | Array of strings; may be empty. Tags are lowercased and deduplicated. |
 | `created_at` | yes | ISO-8601 with timezone. If omitted, the server fills current UTC time. |
 | `task_id` | conditional | Required when `created_by` starts with `hermes:`. |
 | `agent_id` | optional | If present, it must not be an empty string. |
 | `project` | conditional | Required when `type=project`. |
+| `source_url` | optional | Original source URL shown in search results and note pages. |
+| `canonical_url` | optional | Canonical URL used for dedupe. |
+| `source_hash` | optional | Stable hash of raw source JSON or source payload. |
+| `text_hash` | optional | Stable hash of normalized source text. |
+| `tweet_id` | optional | X/Twitter tweet id. Used for X Likes dedupe. |
+| `tweet_thread_id` | optional | X/Twitter conversation/thread id for related-note linking. |
+| `author_handle` | optional | Source author handle. Used for related-note linking. |
+| `author_name` | optional | Source author display name. |
+| `source_domain` | optional | External source domain. If missing, it is inferred from source URL during indexing. |
+| `summary` | optional | Short summary shown in search cards. |
+| `risk_level` | optional | Risk label such as `低`, `中`, or `高`. |
+| `external_urls` | optional | Array of URLs extracted from the source. |
+| `media` | optional | Array of media metadata objects. |
 
 ## Success Response
 
@@ -111,6 +124,19 @@ Error codes:
 | 409 | `source-immutable` | A `source` note would overwrite an existing source path. |
 | 413 | `body-too-large` | Body exceeds `WIKI_MAX_BODY_BYTES` (default 2 MB). |
 | 503 | `lock-timeout` | Project, journal, or migration lock wait timed out. |
+
+## X Likes Dedupe
+
+For `source_type=x-like`, `source_type=x-likes-theme`, or notes tagged
+`x-likes`, `/api/ingest` checks existing notes before writing. It returns
+`200 OK` with `status=duplicate` when any of these keys match:
+
+1. `tweet_id`
+2. `canonical_url` / `source_url`
+3. `source_hash`
+4. `text_hash`
+
+Duplicate responses include the existing `path`, `directory`, and `url`.
 
 The validation contract includes these frontmatter error codes:
 `frontmatter-parse-error`, `frontmatter-missing-fields`, `invalid-type`,

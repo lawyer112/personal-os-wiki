@@ -32,6 +32,7 @@ created_at: 2026-05-13T10:00:00+08:00
 
 def test_rebuild_moc_renders_sections_and_preserves_user_block(tmp_path: Path) -> None:
     vault = tmp_path / "vault"
+    note(vault, "20_atoms/x-like.md", "X Like", "atom", extra="tags:\n  - x-likes\n  - content-matrix\nsummary: Useful x like\n")
     note(vault, "20_atoms/atom.md", "东京交通", "atom")
     note(vault, "30_projects/tokyo/README.md", "2026-05 东京行", "project")
     note(vault, "40_journals/2026-05-13.md", "2026-05-13 日志", "journal")
@@ -52,6 +53,9 @@ def test_rebuild_moc_renders_sections_and_preserves_user_block(tmp_path: Path) -
     assert "[[40_journals/2026-05-13]]" in content
     assert "[[50_skills/travel]]" in content
     assert "[[90_archive/needs-review/old]]" in content
+    tag_map = vault / "00_meta" / "tag-maps" / "x-likes.md"
+    assert tag_map.exists()
+    assert "X Likes 知识地图" in tag_map.read_text(encoding="utf-8")
     assert "保留我的手写索引" in content
 
 

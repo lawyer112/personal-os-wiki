@@ -10,7 +10,15 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 ALLOWED_TYPES = {"atom", "project", "journal", "skill", "source"}
 ALLOWED_CREATED_BY = {"user", "hermes:intake", "hermes:dispatcher", "hermes:worker"}
-ALLOWED_SOURCE_TYPES = {"user-note", "article", "transcript", "agent-output"}
+ALLOWED_SOURCE_TYPES = {
+    "user-note",
+    "article",
+    "transcript",
+    "agent-output",
+    "x-like",
+    "x-likes-theme",
+    "x-likes-knowledge-map",
+}
 REQUIRED_FIELDS = ("title", "type", "created_by", "source_type", "tags", "created_at")
 TAG_PATTERN = re.compile(r"^[a-z0-9][a-z0-9\-]{0,40}$")
 
@@ -37,6 +45,20 @@ class Frontmatter(BaseModel):
     project: str | None = None
     last_reviewed: str | None = None
     migration: str | None = None
+    source_url: str | None = None
+    canonical_url: str | None = None
+    source_hash: str | None = None
+    text_hash: str | None = None
+    source_domain: str | None = None
+    tweet_id: str | None = None
+    tweet_thread_id: str | None = None
+    author_handle: str | None = None
+    author_name: str | None = None
+    collected_at: str | None = None
+    summary: str | None = None
+    risk_level: str | None = None
+    external_urls: list[str] | None = None
+    media: list[dict[str, Any]] | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -45,7 +67,22 @@ class Frontmatter(BaseModel):
             return data
 
         normalized = dict(data)
-        for key in ("title", "project"):
+        for key in (
+            "title",
+            "project",
+            "source_url",
+            "canonical_url",
+            "source_hash",
+            "text_hash",
+            "source_domain",
+            "tweet_id",
+            "tweet_thread_id",
+            "author_handle",
+            "author_name",
+            "collected_at",
+            "summary",
+            "risk_level",
+        ):
             value = normalized.get(key)
             if isinstance(value, str):
                 normalized[key] = value.strip()
@@ -167,6 +204,11 @@ def validate(fm: Frontmatter) -> None:
 
     if fm.created_at is not None and not _has_timezone(fm.created_at):
         raise IngestError(400, "invalid-timestamp", {"created_at": fm.created_at})
+
+    for timestamp_field in ("collected_at",):
+        value = getattr(fm, timestamp_field)
+        if value is not None and value.strip() and not _has_timezone(value):
+            raise IngestError(400, "invalid-timestamp", {timestamp_field: value})
 
     bad_tags = [tag for tag in fm.tags or [] if not TAG_PATTERN.match(tag)]
     if bad_tags:

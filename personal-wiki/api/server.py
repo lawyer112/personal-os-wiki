@@ -83,6 +83,26 @@ GENERIC_RELATION_TAGS = {
     "web",
     "web-capture",
 }
+X_LIKES_SOURCE_TYPES = {"x-like", "x-likes-theme", "x-likes-knowledge-map"}
+DEDUP_FRONTMATTER_FIELDS = (
+    "tweet_id",
+    "canonical_url",
+    "source_url",
+    "source_hash",
+    "text_hash",
+)
+PUBLIC_NOTE_EXTRA_FIELDS = (
+    "summary",
+    "canonical_url",
+    "tweet_id",
+    "tweet_thread_id",
+    "author_handle",
+    "author_name",
+    "risk_level",
+    "source_domain",
+    "text_hash",
+    "collected_at",
+)
 INGEST_LOGGER = logging.getLogger("personal_wiki.ingest")
 SOURCE_LOGGER = logging.getLogger("personal_wiki.sources")
 SOURCE_BASELINE: dict[str, str] = {}
@@ -458,7 +478,8 @@ def ingest_http_request(
         task_id = result.get("task_id", task_id)
         path = result.get("path")
         outcome = "accepted"
-        return HTTPStatus.CREATED, result
+        status = HTTPStatus.OK if result.get("status") == "duplicate" else HTTPStatus.CREATED
+        return status, result
     except IngestError as error:
         reason = error.code
         return HTTPStatus(error.status_code), error_response(error)
@@ -503,6 +524,16 @@ def ingest_payload(
 
     validate_frontmatter(fm)
     body = str(payload.get("content") or payload.get("body") or "")
+    duplicate = find_duplicate_ingest(fm, body, vault_root)
+    if duplicate:
+        note_path = duplicate.relative_to(vault_root).as_posix()
+        return {
+            "status": "duplicate",
+            "path": note_path,
+            "directory": duplicate.parent.relative_to(vault_root).as_posix(),
+            "task_id": fm.task_id,
+            "url": f"{base_url.rstrip('/')}/note?path={quote(note_path, safe='')}" if base_url else f"/note?path={quote(note_path, safe='')}",
+        }
     if fm.type == "atom" and len(body) > 5000:
         INGEST_LOGGER.warning(
             json.dumps(
@@ -554,6 +585,118 @@ def _write_lock(fm: Frontmatter, target: Path, vault_root: Path, timeout: float)
     if fm.type == "journal":
         return journal_lock(vault_root, target.stem, timeout=timeout)
     return nullcontext()
+
+
+def find_duplicate_ingest(fm: Frontmatter, body: str, vault_root: Path) -> Path | None:
+    keys = dedupe_keys_from_frontmatter(fm.model_dump(exclude_none=True), body)
+    if not keys:
+        return None
+    for path in iter_vault_markdown_paths(vault_root):
+        try:
+            existing_fm, existing_body = parse_note_document_at(path)
+        except (OSError, UnicodeDecodeError):
+            continue
+        existing_keys = dedupe_keys_from_frontmatter(existing_fm, existing_body)
+        if keys & existing_keys:
+            return path
+    return None
+
+
+def dedupe_keys_from_frontmatter(fm: dict[str, Any], body: str = "") -> set[str]:
+    keys: set[str] = set()
+    tweet_id = str(fm.get("tweet_id") or "").strip()
+    if tweet_id:
+        keys.add(f"tweet_id:{tweet_id}")
+    for field in ("canonical_url", "source_url"):
+        canonical = canonicalize_dedupe_url(str(fm.get(field) or ""))
+        if canonical:
+            keys.add(f"url:{canonical}")
+    for field in ("source_hash", "text_hash"):
+        value = str(fm.get(field) or "").strip().lower()
+        if value:
+            keys.add(f"{field}:{value}")
+    if is_x_likes_frontmatter(fm) and body.strip():
+        keys.add(f"text_hash:{hash_normalized_text(body)}")
+    return keys
+
+
+def is_x_likes_frontmatter(fm: dict[str, Any]) -> bool:
+    source_type = str(fm.get("source_type") or "").strip()
+    if source_type in X_LIKES_SOURCE_TYPES:
+        return True
+    tags = normalize_tags(fm.get("tags", []))
+    return "x-likes" in tags
+
+
+def canonicalize_dedupe_url(value: str) -> str:
+    raw = value.strip()
+    if not raw:
+        return ""
+    parsed = urlparse(raw)
+    if not parsed.scheme and not parsed.netloc:
+        return raw.casefold()
+    scheme = parsed.scheme.lower()
+    netloc = parsed.netloc.lower()
+    path = re.sub(r"/+$", "", parsed.path or "/")
+    query = urlencode(sorted(parse_qs(parsed.query, keep_blank_values=True).items()), doseq=True)
+    return parsed._replace(scheme=scheme, netloc=netloc, path=path, query=query, fragment="").geturl()
+
+
+def source_domain_from_url(value: str) -> str:
+    parsed = urlparse(value.strip())
+    return parsed.netloc.lower()
+
+
+def hash_normalized_text(value: str) -> str:
+    text = WIKILINK_RE.sub(r"\1", value)
+    text = TAG_RE.sub("", text)
+    text = re.sub(r"(?is)```.*?```", "", text)
+    text = re.sub(r"(?m)^#+\s*", "", text)
+    text = re.sub(r"\s+", " ", text).strip().casefold()
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def iter_vault_markdown_paths(vault_root: Path) -> list[Path]:
+    roots = [
+        vault_root / "00_meta",
+        vault_root / "10_sources",
+        vault_root / "20_notes",
+        vault_root / "20_atoms",
+        vault_root / "30_projects",
+        vault_root / "40_journals",
+        vault_root / "50_skills",
+        vault_root / "90_archive",
+        vault_root / "Personal OS Inbox",
+        vault_root / "Personal Wiki Mirror",
+    ]
+    paths: list[Path] = []
+    seen: set[Path] = set()
+    for root in roots:
+        if not root.exists():
+            continue
+        for path in sorted(root.rglob("*.md")):
+            if not path.is_file():
+                continue
+            resolved = path.resolve()
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            paths.append(path)
+    return paths
+
+
+def parse_note_document_at(path: Path) -> tuple[dict[str, Any], str]:
+    text = path.read_text(encoding="utf-8")
+    fm, body = parse_frontmatter(text)
+    if not fm:
+        fm = {
+            "created_by": "unknown",
+            "type": "legacy",
+            "source_type": "user-note",
+            "tags": [],
+            "created_at": dt.datetime.fromtimestamp(path.stat().st_mtime, dt.timezone.utc).isoformat(),
+        }
+    return fm, body
 
 
 def error_response(error: IngestError) -> dict[str, Any]:
@@ -731,6 +874,14 @@ def read_note_records(include_body: bool = False) -> list[dict[str, Any]]:
             "excerpt": plain_excerpt(body),
             "search_text": plain_search_text(body),
         }
+        for field in PUBLIC_NOTE_EXTRA_FIELDS:
+            value = fm.get(field)
+            if value not in (None, ""):
+                record[field] = value
+        if not record.get("source_domain"):
+            record["source_domain"] = source_domain_from_url(
+                str(record.get("canonical_url") or record.get("source_url") or "")
+            )
         if include_body:
             record["body"] = body
         records.append(record)
@@ -967,12 +1118,13 @@ def filtered_notes(
     index = load_note_index()
     notes = list(index.get("notes", []))
     q = query.strip().lower()
-    tag = tag.strip().lstrip("#")
+    tag = tag.strip().lstrip("#").lower()
     concept = concept.strip()
     source_type = source_type.strip()
 
     def matches(note: dict[str, Any]) -> bool:
-        if tag and tag not in [str(item) for item in note.get("tags", [])]:
+        note_tags = [str(item).lower() for item in note.get("tags", [])]
+        if tag and tag not in note_tags:
             return False
         if concept and concept not in [str(item) for item in note.get("concepts", [])]:
             return False
@@ -987,12 +1139,53 @@ def filtered_notes(
                     " ".join(str(item) for item in note.get("tags", [])),
                     " ".join(str(item) for item in note.get("concepts", [])),
                     str(note.get("source_type", "")),
+                    str(note.get("summary", "")),
+                    str(note.get("source_url", "")),
+                    str(note.get("canonical_url", "")),
+                    str(note.get("author_handle", "")),
+                    str(note.get("author_name", "")),
+                    str(note.get("source_domain", "")),
                 ]
             ).lower()
             return q in haystack
         return True
 
-    return [public_note(note) for note in notes if matches(note)]
+    results: list[dict[str, Any]] = []
+    for note in notes:
+        if not matches(note):
+            continue
+        public = public_note(note)
+        if q:
+            public["hit_snippet"] = hit_snippet(note, q)
+        results.append(public)
+    return results
+
+
+def hit_snippet(note: dict[str, Any], query: str, radius: int = 80) -> str:
+    haystack = " ".join(
+        str(note.get(key, ""))
+        for key in (
+            "title",
+            "summary",
+            "excerpt",
+            "search_text",
+            "source_url",
+            "canonical_url",
+            "author_handle",
+            "author_name",
+            "source_domain",
+        )
+        if note.get(key)
+    )
+    folded = haystack.lower()
+    index = folded.find(query)
+    if index == -1:
+        return str(note.get("excerpt", ""))[: radius * 2]
+    start = max(0, index - radius)
+    end = min(len(haystack), index + len(query) + radius)
+    prefix = "..." if start else ""
+    suffix = "..." if end < len(haystack) else ""
+    return prefix + haystack[start:end].strip() + suffix
 
 
 def parse_positive_int(value: str, default: int, maximum: int | None = None) -> int:
@@ -1157,7 +1350,19 @@ def relation_terms(record: dict[str, Any]) -> dict[str, set[str]]:
         for item in record.get("tags", [])
         if normalize_relation_term(item) and normalize_relation_term(item) not in GENERIC_RELATION_TAGS
     }
-    return {"concepts": concepts, "tags": tags}
+    authors = {normalize_relation_term(record.get("author_handle"))} - {""}
+    domains = {normalize_relation_term(record.get("source_domain"))} - {""}
+    source_type = str(record.get("source_type") or "").strip()
+    source_types = {normalize_relation_term(source_type)} if source_type in X_LIKES_SOURCE_TYPES else set()
+    threads = {normalize_relation_term(record.get("tweet_thread_id"))} - {""}
+    return {
+        "concepts": concepts,
+        "tags": tags,
+        "authors": authors,
+        "domains": domains,
+        "source_types": source_types,
+        "threads": threads,
+    }
 
 
 def normalize_relation_term(value: Any) -> str:
@@ -1170,16 +1375,28 @@ def note_relation_score(
 ) -> tuple[float, dict[str, Any]]:
     shared_concepts = sorted((left.get("concepts") or set()) & (right.get("concepts") or set()))
     shared_tags = sorted((left.get("tags") or set()) & (right.get("tags") or set()))
+    shared_authors = sorted((left.get("authors") or set()) & (right.get("authors") or set()))
+    shared_domains = sorted((left.get("domains") or set()) & (right.get("domains") or set()))
+    shared_source_types = sorted((left.get("source_types") or set()) & (right.get("source_types") or set()))
+    shared_threads = sorted((left.get("threads") or set()) & (right.get("threads") or set()))
     score = min(0.72, len(shared_concepts) * 0.28)
     if len(shared_concepts) >= 2:
         score += 0.10
     score += min(0.30, len(shared_tags) * 0.12)
+    score += min(0.16, len(shared_authors) * 0.16)
+    score += min(0.12, len(shared_domains) * 0.08)
+    score += min(0.08, len(shared_source_types) * 0.04)
+    score += min(0.30, len(shared_threads) * 0.30)
     if shared_concepts and shared_tags:
         score += 0.12
     score = min(0.95, score)
     return round(score, 2), {
         "shared_concepts": shared_concepts[:8],
         "shared_tags": shared_tags[:8],
+        "shared_authors": shared_authors[:4],
+        "shared_domains": shared_domains[:4],
+        "shared_source_types": shared_source_types[:4],
+        "shared_threads": shared_threads[:4],
     }
 
 
@@ -1228,10 +1445,13 @@ def safe_data_path(relative: str) -> Path:
 
 def read_vault_dirs() -> tuple[Path, ...]:
     return (
+        VAULT_DIR / "00_meta",
         VAULT_DIR / "10_sources",
         VAULT_DIR / "20_notes",
+        VAULT_DIR / "20_atoms",
         VAULT_DIR / "30_projects",
         VAULT_DIR / "40_journals",
+        VAULT_DIR / "50_skills",
         VAULT_DIR / "90_archive",
         VAULT_DIR / "Personal OS Inbox",
         VAULT_DIR / "Personal Wiki Mirror",
@@ -1267,11 +1487,7 @@ def synthesize_legacy_frontmatter(path: Path) -> dict[str, Any]:
 
 
 def parse_note_document(path: Path) -> tuple[dict[str, Any], str]:
-    text = path.read_text(encoding="utf-8")
-    fm, body = parse_frontmatter(text)
-    if not fm:
-        fm = synthesize_legacy_frontmatter(path)
-    return fm, body
+    return parse_note_document_at(path)
 
 
 def note_created_value(fm: dict[str, Any]) -> Any:
@@ -1378,21 +1594,55 @@ def read_note(relative_path: str) -> dict[str, Any]:
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
     fm, body = parse_note_document(path)
+    rel_path = rel(path)
     return {
-        "path": rel(path),
+        "path": rel_path,
         "frontmatter": fm,
         "title": note_title(path, body, fm),
         "content": notes_section(body),
         "raw_body": body,
+        "related_notes": related_notes_for(rel_path),
     }
+
+
+def related_notes_for(relative_path: str, limit: int = 8) -> list[dict[str, Any]]:
+    index = load_note_index()
+    notes = list(index.get("notes", []))
+    current = next((note for note in notes if str(note.get("path", "")) == relative_path), None)
+    if not current:
+        return []
+    current_terms = relation_terms(current)
+    scored: list[tuple[float, dict[str, Any], dict[str, Any]]] = []
+    for note in notes:
+        if str(note.get("path", "")) == relative_path:
+            continue
+        score, reason = note_relation_score(current_terms, relation_terms(note))
+        if score < 0.25:
+            continue
+        scored.append((score, reason, public_note(note)))
+    related = []
+    for score, reason, note in sorted(scored, key=lambda item: (-item[0], str(item[2].get("title", ""))))[:limit]:
+        related.append(
+            {
+                "title": note.get("title", ""),
+                "path": note.get("path", ""),
+                "url": note_url(str(note.get("path", ""))),
+                "source_type": note.get("source_type", ""),
+                "tags": note.get("tags", []),
+                "excerpt": note.get("excerpt", ""),
+                "score": score,
+                "reason": reason,
+            }
+        )
+    return related
 
 
 def normalize_tags(value: Any) -> list[str]:
     if isinstance(value, str):
-        value = [part.strip().lstrip("#") for part in value.split(",") if part.strip()]
+        value = [part.strip().lstrip("#").lower() for part in value.split(",") if part.strip()]
     if not isinstance(value, list):
         return []
-    return sorted({str(tag).strip().lstrip("#") for tag in value if str(tag).strip()})
+    return sorted({str(tag).strip().lstrip("#").lower() for tag in value if str(tag).strip()})
 
 
 def payload_text(payload: dict[str, Any], keys: tuple[str, ...], default: str) -> str:
@@ -1671,10 +1921,14 @@ def render_note_card(note: dict[str, Any]) -> str:
         if len(concepts) > 4:
             concept_html += f" +{len(concepts) - 4}"
         concept_html += "</div>"
+    source_url = str(note.get("source_url") or note.get("canonical_url") or "").strip()
+    source_html = f'<div class="note-meta">来源：{html.escape(source_url)}</div>' if source_url else ""
+    snippet = str(note.get("hit_snippet") or note.get("summary") or note.get("excerpt", ""))
     return f"""<a class="note" href="{html.escape(note_url(str(note.get("path", ""))))}">
   <div class="note-title">{html.escape(str(note.get("title", "")))}</div>
   <div class="note-meta">{html.escape(meta)}</div>
-  <p class="note-excerpt">{html.escape(str(note.get("excerpt", "")))}</p>
+  <p class="note-excerpt">{html.escape(snippet)}</p>
+  {source_html}
   {concept_html}
   <div>{render_tags(tags)}</div>
 </a>"""
@@ -2530,6 +2784,12 @@ def render_note(relative_path: str) -> bytes:
     source_url = str(fm.get("source_url", "") or "").strip() or "Telegram/Hermes input"
     source_hash = str(fm.get("source_hash", "") or "").strip()
     note_content = TAG_RE.sub("", notes_section(body)).strip()
+    related_items = related_notes_for(relative_path)
+    related_html = ""
+    if related_items:
+        related_html = "<section class=\"panel note-body\"><h2>相关笔记</h2><div class=\"note-list\">" + "\n".join(
+            render_note_card(item) for item in related_items
+        ) + "</div></section>"
     body_html = f"""
 <div class="reading-shell">
 <p><a href="/">&larr; 返回手册</a></p>
@@ -2547,6 +2807,7 @@ def render_note(relative_path: str) -> bytes:
     </details>
   </div>
 </section>
+{related_html}
 </div>
 """
     return html_page(title, body_html)

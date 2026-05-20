@@ -62,6 +62,7 @@ The public release is English-first with a complete Chinese path:
 - [Mac Agent Adapter](./MAC_AGENT_ADAPTER.md)
 - [Mac Agent Adapter 操作手册](./MAC_AGENT_ADAPTER.zh-CN.md)
 - [API Overview](./API_OVERVIEW.md)
+- [X Likes Knowledge Pipeline](./X_LIKES_KNOWLEDGE_PIPELINE.zh-CN.md)
 - [API 总览](./API_OVERVIEW.zh-CN.md)
 
 ## Safety And Release
