@@ -105,6 +105,8 @@ WIKI_API_TOKEN="replace-with-your-personal-wiki-token"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 NEXT_PUBLIC_WIKI_URL="http://localhost:3422"
 PERSONAL_WIKI_INTERNAL_URL="http://localhost:3422"
+PERSONAL_OS_READ_ACCESS_HINT=""
+WIKI_READ_ACCESS_HINT=""
 ```
 
 读 token 和写 token 要分开。不要把 Wiki 写 token 用作浏览器 handoff 或只读 Agent 访问。
@@ -112,6 +114,8 @@ PERSONAL_WIKI_INTERNAL_URL="http://localhost:3422"
 `NEXT_PUBLIC_WIKI_URL` 是浏览器打开 Wiki 时使用的公开地址。Docker 部署时，把
 `PERSONAL_WIKI_INTERNAL_URL` 设成服务网络地址，例如 `http://personal-wiki:3422`，
 这样 Agent context 和 Wiki 写入不会依赖公开主机路由。
+
+生产环境保持 `*_READ_ACCESS_HINT` 为空。只有临时局域网预览才把只读口令显示在访问页。
 
 ## 快速部署路径
 

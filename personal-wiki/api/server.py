@@ -97,12 +97,133 @@ def env_flag(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def normalize_locale(value: str) -> str | None:
+    tag = value.strip().replace("_", "-").lower()
+    if not tag:
+        return None
+    if tag in {"zh", "zh-cn", "zh-hans"}:
+        return "zh-CN"
+    if tag in {"zh-tw", "zh-hk", "zh-hant"}:
+        return "zh-TW"
+    for prefix, locale in (
+        ("ja", "ja"),
+        ("ko", "ko"),
+        ("es", "es"),
+        ("fr", "fr"),
+        ("de", "de"),
+        ("en", "en"),
+    ):
+        if tag.startswith(prefix):
+            return locale
+    return None
+
+
+def preferred_locale(accept_language: str, explicit: str = "") -> str:
+    locale = normalize_locale(explicit)
+    if locale:
+        return locale
+    for part in accept_language.split(","):
+        locale = normalize_locale(part.split(";", 1)[0])
+        if locale:
+            return locale
+    return DEFAULT_LOCALE
+
+
+def login_copy(locale: str) -> dict[str, str]:
+    return LOGIN_COPY.get(locale, LOGIN_COPY[DEFAULT_LOCALE])
+
+
 REQUIRE_API_READ_AUTH = env_flag("WIKI_REQUIRE_API_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
 REQUIRE_PAGE_READ_AUTH = env_flag("WIKI_REQUIRE_PAGE_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
 TRUST_LOCALHOST_READ_AUTH = env_flag("WIKI_TRUST_LOCALHOST_READ_AUTH", False)
 ALLOW_UNAUTHENTICATED_WRITE = env_flag("WIKI_ALLOW_UNAUTHENTICATED_WRITE", False)
 READ_AUTH_COOKIE = "personal_wiki_read"
 WIKI_CORS_ALLOW_ORIGIN = os.environ.get("WIKI_CORS_ALLOW_ORIGIN", "").strip()
+READ_ACCESS_HINT = os.environ.get("WIKI_READ_ACCESS_HINT", "").strip()
+
+DEFAULT_LOCALE = "en"
+LOGIN_COPY = {
+    "en": {
+        "title": "Personal Wiki access",
+        "heading": "Personal Wiki access",
+        "intro": "This is not an account/password login. Paste the read access token for this private preview.",
+        "label": "Access token",
+        "placeholder": "read access token",
+        "button": "Open Wiki",
+        "hint_label": "Preview token",
+        "invalid": "Invalid access token.",
+    },
+    "zh-CN": {
+        "title": "Personal Wiki 访问",
+        "heading": "Personal Wiki 访问",
+        "intro": "这里不是账号密码登录。当前私有预览只需要输入只读访问口令。",
+        "label": "访问口令",
+        "placeholder": "输入只读访问口令",
+        "button": "打开 Wiki",
+        "hint_label": "预览口令",
+        "invalid": "访问口令不正确。",
+    },
+    "zh-TW": {
+        "title": "Personal Wiki 存取",
+        "heading": "Personal Wiki 存取",
+        "intro": "這裡不是帳號密碼登入。當前私有預覽只需要輸入唯讀存取口令。",
+        "label": "存取口令",
+        "placeholder": "輸入唯讀存取口令",
+        "button": "開啟 Wiki",
+        "hint_label": "預覽口令",
+        "invalid": "存取口令不正確。",
+    },
+    "ja": {
+        "title": "Personal Wiki アクセス",
+        "heading": "Personal Wiki アクセス",
+        "intro": "これはアカウント/パスワードのログインではありません。この非公開プレビューの読み取り用アクセス token を入力してください。",
+        "label": "アクセス token",
+        "placeholder": "読み取り用アクセス token",
+        "button": "Wiki を開く",
+        "hint_label": "プレビュー token",
+        "invalid": "アクセス token が正しくありません。",
+    },
+    "ko": {
+        "title": "Personal Wiki 접근",
+        "heading": "Personal Wiki 접근",
+        "intro": "계정/비밀번호 로그인이 아닙니다. 이 비공개 프리뷰의 읽기 접근 토큰을 입력하세요.",
+        "label": "접근 토큰",
+        "placeholder": "읽기 접근 토큰",
+        "button": "Wiki 열기",
+        "hint_label": "프리뷰 토큰",
+        "invalid": "접근 토큰이 올바르지 않습니다.",
+    },
+    "es": {
+        "title": "Acceso a Personal Wiki",
+        "heading": "Acceso a Personal Wiki",
+        "intro": "No es un inicio de sesión con usuario y contraseña. Pega el token de lectura de esta vista previa privada.",
+        "label": "Token de acceso",
+        "placeholder": "token de lectura",
+        "button": "Abrir Wiki",
+        "hint_label": "Token de vista previa",
+        "invalid": "Token de acceso no válido.",
+    },
+    "fr": {
+        "title": "Accès Personal Wiki",
+        "heading": "Accès Personal Wiki",
+        "intro": "Ce n'est pas une connexion par compte et mot de passe. Collez le token de lecture de cet aperçu privé.",
+        "label": "Token d'accès",
+        "placeholder": "token de lecture",
+        "button": "Ouvrir Wiki",
+        "hint_label": "Token de prévisualisation",
+        "invalid": "Token d'accès invalide.",
+    },
+    "de": {
+        "title": "Personal Wiki Zugriff",
+        "heading": "Personal Wiki Zugriff",
+        "intro": "Dies ist kein Konto/Passwort-Login. Füge das Lesezugriffs-Token für diese private Vorschau ein.",
+        "label": "Zugriffs-Token",
+        "placeholder": "Lesezugriffs-Token",
+        "button": "Wiki öffnen",
+        "hint_label": "Vorschau-Token",
+        "invalid": "Ungültiges Zugriffstoken.",
+    },
+}
 
 
 def now_utc() -> dt.datetime:
@@ -1413,9 +1534,9 @@ def archive_note(payload: dict[str, Any], action: str = "archived") -> dict[str,
     }
 
 
-def html_page(title: str, body: str) -> bytes:
+def html_page(title: str, body: str, locale: str = "zh-CN") -> bytes:
     return f"""<!doctype html>
-<html lang="zh-CN">
+<html lang="{html.escape(locale, quote=True)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1515,6 +1636,10 @@ def html_page(title: str, body: str) -> bytes:
     .source-details summary:hover {{ background:#eef4ff; }}
     .reading-shell {{ max-width:760px; margin:0 auto; }}
     .reading-shell .panel {{ padding:26px 28px; }}
+    .reading-shell input {{ width:100%; margin-top:8px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font:14px "Microsoft YaHei","Segoe UI",Arial,sans-serif; }}
+    .reading-shell button {{ border:0; border-radius:8px; background:#1666d8; color:#fff; padding:10px 14px; font-weight:750; cursor:pointer; }}
+    .reading-shell .callout {{ margin-top:14px; padding:10px 12px; border:1px solid #bbf7d0; border-radius:8px; background:#f0fdf4; color:#166534; }}
+    .reading-shell .error {{ margin-top:14px; color:#b91c1c; font-weight:750; }}
     @media (max-width:960px) {{ main {{ padding:22px 14px 42px; }} .topbar {{ display:block; }} .top-actions {{ min-width:0; justify-items:stretch; margin-top:14px; }} .stats {{ justify-content:flex-start; }} .layout, .collection-layout {{ grid-template-columns:1fr; }} .filterbar {{ grid-template-columns:1fr; }} .map-shell {{ height:560px; }} }}
     @media (max-width:720px) {{ h1 {{ font-size:30px; }} .panel {{ padding:14px; }} .map-head {{ display:block; }} .legend {{ margin-top:10px; }} .map-shell {{ height:500px; min-height:460px; }} .map-toolbar {{ left:12px; right:12px; justify-content:flex-start; }} .map-notice {{ max-width:calc(100% - 24px); }} .map-inspector {{ display:none; }} }}
   </style>
@@ -2602,7 +2727,11 @@ class Handler(BaseHTTPRequestHandler):
         if not next_url.startswith("/") or next_url.startswith("//"):
             next_url = "/"
         if not self.token_allowed(token, allowed_tokens):
-            self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
+            self.send_bytes(
+                HTTPStatus.UNAUTHORIZED,
+                "text/html; charset=utf-8",
+                self.render_read_login(parsed, error_key="invalid"),
+            )
             return
         self.send_response(HTTPStatus.FOUND.value)
         self.send_cors_headers()
@@ -2617,25 +2746,34 @@ class Handler(BaseHTTPRequestHandler):
         secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "").lower() == "https" else ""
         return f"{READ_AUTH_COOKIE}={token}; Path=/; HttpOnly; SameSite=Lax{secure}"
 
-    def render_read_login(self, parsed: Any) -> bytes:
+    def render_read_login(self, parsed: Any, error_key: str = "") -> bytes:
         query = parse_qs(parsed.query)
         next_url = query.get("next", ["/"])[0] or "/"
         if not next_url.startswith("/") or next_url.startswith("//"):
             next_url = "/"
+        locale = preferred_locale(
+            self.headers.get("Accept-Language", ""),
+            query.get("lang", [""])[0],
+        )
+        text = login_copy(locale)
+        error = text["invalid"] if error_key == "invalid" else ""
+        hint = READ_ACCESS_HINT
         body = f"""
 <div class="reading-shell">
   <section class="panel">
-    <h1>Read access</h1>
-    <p>Paste your read token. The token is submitted in the request body and is not placed in the URL.</p>
+    <h1>{html.escape(text["heading"])}</h1>
+    <p>{html.escape(text["intro"])}</p>
+    {f'<p class="callout">{html.escape(text["hint_label"])}: <code>{html.escape(hint)}</code></p>' if hint else ''}
+    {f'<p class="error">{html.escape(error)}</p>' if error else ''}
     <form method="post" action="/auth/read">
       <input type="hidden" name="next" value="{html.escape(next_url, quote=True)}" />
-      <label>Read token<br /><input name="token" type="password" autocomplete="current-password" /></label>
-      <p><button type="submit">Open Wiki</button></p>
+      <label>{html.escape(text["label"])}<br /><input name="token" type="password" autocomplete="current-password" placeholder="{html.escape(text["placeholder"], quote=True)}" /></label>
+      <p><button type="submit">{html.escape(text["button"])}</button></p>
     </form>
   </section>
 </div>
 """
-        return html_page("Read access", body)
+        return html_page(text["title"], body, locale)
 
     def read_form(self) -> dict[str, list[str]]:
         length = int(self.headers.get("Content-Length", "0"))

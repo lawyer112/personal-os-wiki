@@ -31,6 +31,7 @@ services:
       WIKI_TRUST_LOCALHOST_READ_AUTH: "0"
       WIKI_ALLOW_UNAUTHENTICATED_WRITE: "0"
       WIKI_SITE_TITLE: ${WIKI_SITE_TITLE:-Personal Wiki Demo}
+      WIKI_READ_ACCESS_HINT: ${WIKI_READ_ACCESS_HINT:-}
       WIKI_DATA_DIR: /data
       WIKI_HOST: 0.0.0.0
       WIKI_PORT: "3422"
@@ -52,6 +53,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public}
       PERSONAL_OS_API_TOKEN: ${PERSONAL_OS_API_TOKEN:-demo-write-token}
       PERSONAL_OS_READ_TOKEN: ${PERSONAL_OS_READ_TOKEN:-demo-read-token}
+      PERSONAL_OS_READ_ACCESS_HINT: ${PERSONAL_OS_READ_ACCESS_HINT:-}
       WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:-demo-wiki-read-token}
       WIKI_API_TOKEN: ${WIKI_API_TOKEN:-demo-wiki-write-token}
       PERSONAL_OS_VAULT_DIR: ./data/vault
@@ -78,6 +80,7 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public}
       PERSONAL_OS_API_TOKEN: ${PERSONAL_OS_API_TOKEN:-demo-write-token}
       PERSONAL_OS_READ_TOKEN: ${PERSONAL_OS_READ_TOKEN:-demo-read-token}
+      PERSONAL_OS_READ_ACCESS_HINT: ${PERSONAL_OS_READ_ACCESS_HINT:-}
       WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:-demo-wiki-read-token}
       WIKI_API_TOKEN: ${WIKI_API_TOKEN:-demo-wiki-write-token}
       PERSONAL_OS_VAULT_DIR: ./data/vault
