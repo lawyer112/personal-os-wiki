@@ -20,6 +20,8 @@ services:
     build:
       context: ./personal-wiki
       dockerfile: api/Dockerfile
+      args:
+        PYTHON_IMAGE: ${PYTHON_IMAGE:-python:3.12-slim}
     restart: unless-stopped
     environment:
       WIKI_API_TOKEN: demo-wiki-write-token
