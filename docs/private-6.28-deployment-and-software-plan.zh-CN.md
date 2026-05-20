@@ -173,3 +173,25 @@ HTTPS / auth reverse proxy
 5. 服务端 curl 验证 `3422` 和 `3100/3000`。
 6. 给出 Windows SSH tunnel 和浏览器入口。
 7. 不迁移真实数据，不删除任何现有部署。
+
+## 当前 `.28` 局域网预览入口
+
+当前预览目标不是公网裸奔，而是让 `192.168.6.x` 局域网里的设备先能看到新版：
+
+```text
+Personal OS:   http://192.168.6.28:3100/auth/read
+Personal Wiki: http://192.168.6.28:3422/auth/read
+```
+
+compose 通过环境变量控制暴露范围：
+
+```bash
+PERSONAL_OS_BIND_HOST=0.0.0.0
+PERSONAL_OS_HOST_PORT=3100
+PERSONAL_WIKI_BIND_HOST=0.0.0.0
+PERSONAL_WIKI_HOST_PORT=3422
+NEXT_PUBLIC_APP_URL=http://192.168.6.28:3100
+NEXT_PUBLIC_WIKI_URL=http://192.168.6.28:3422
+```
+
+Postgres 仍然只绑定 `127.0.0.1:54329`。真实知识库迁入前不要做路由器公网端口映射；如需公网访问，应先加 HTTPS 反向代理、正式 token、备份和访问日志。

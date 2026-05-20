@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: personal_os
-      POSTGRES_PASSWORD: demo-postgres-password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-demo-postgres-password}
       POSTGRES_DB: personal_os
     ports:
       - "127.0.0.1:54329:5432"
@@ -24,18 +24,18 @@ services:
         PYTHON_IMAGE: ${PYTHON_IMAGE:-python:3.12-slim}
     restart: unless-stopped
     environment:
-      WIKI_API_TOKEN: demo-wiki-write-token
-      WIKI_READ_TOKEN: demo-wiki-read-token
+      WIKI_API_TOKEN: ${WIKI_API_TOKEN:-demo-wiki-write-token}
+      WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:-demo-wiki-read-token}
       WIKI_REQUIRE_API_READ_AUTH: "1"
       WIKI_REQUIRE_PAGE_READ_AUTH: "1"
       WIKI_TRUST_LOCALHOST_READ_AUTH: "0"
       WIKI_ALLOW_UNAUTHENTICATED_WRITE: "0"
-      WIKI_SITE_TITLE: Personal Wiki Demo
+      WIKI_SITE_TITLE: ${WIKI_SITE_TITLE:-Personal Wiki Demo}
       WIKI_DATA_DIR: /data
       WIKI_HOST: 0.0.0.0
       WIKI_PORT: "3422"
     ports:
-      - "127.0.0.1:3422:3422"
+      - "${PERSONAL_WIKI_BIND_HOST:-127.0.0.1}:${PERSONAL_WIKI_HOST_PORT:-3422}:3422"
     volumes:
       - personal_wiki_data:/data
 
@@ -49,15 +49,15 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public
-      PERSONAL_OS_API_TOKEN: demo-write-token
-      PERSONAL_OS_READ_TOKEN: demo-read-token
-      WIKI_READ_TOKEN: demo-wiki-read-token
-      WIKI_API_TOKEN: demo-wiki-write-token
+      DATABASE_URL: ${DATABASE_URL:-postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public}
+      PERSONAL_OS_API_TOKEN: ${PERSONAL_OS_API_TOKEN:-demo-write-token}
+      PERSONAL_OS_READ_TOKEN: ${PERSONAL_OS_READ_TOKEN:-demo-read-token}
+      WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:-demo-wiki-read-token}
+      WIKI_API_TOKEN: ${WIKI_API_TOKEN:-demo-wiki-write-token}
       PERSONAL_OS_VAULT_DIR: ./data/vault
       PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
-      NEXT_PUBLIC_WIKI_URL: http://localhost:3422
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_WIKI_URL: ${NEXT_PUBLIC_WIKI_URL:-http://localhost:3422}
     command: sh -c "npm run prisma:deploy && npm run prisma:seed"
     restart: "no"
 
@@ -74,17 +74,17 @@ services:
         condition: service_started
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public
-      PERSONAL_OS_API_TOKEN: demo-write-token
-      PERSONAL_OS_READ_TOKEN: demo-read-token
-      WIKI_READ_TOKEN: demo-wiki-read-token
-      WIKI_API_TOKEN: demo-wiki-write-token
+      DATABASE_URL: ${DATABASE_URL:-postgresql://personal_os:demo-postgres-password@postgres:5432/personal_os?schema=public}
+      PERSONAL_OS_API_TOKEN: ${PERSONAL_OS_API_TOKEN:-demo-write-token}
+      PERSONAL_OS_READ_TOKEN: ${PERSONAL_OS_READ_TOKEN:-demo-read-token}
+      WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:-demo-wiki-read-token}
+      WIKI_API_TOKEN: ${WIKI_API_TOKEN:-demo-wiki-write-token}
       PERSONAL_OS_VAULT_DIR: ./data/vault
       PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
-      NEXT_PUBLIC_WIKI_URL: http://localhost:3422
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      NEXT_PUBLIC_WIKI_URL: ${NEXT_PUBLIC_WIKI_URL:-http://localhost:3422}
     ports:
-      - "127.0.0.1:3000:3000"
+      - "${PERSONAL_OS_BIND_HOST:-127.0.0.1}:${PERSONAL_OS_HOST_PORT:-3000}:3000"
     volumes:
       - personal_os_data:/app/data
 
