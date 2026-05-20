@@ -1,4 +1,4 @@
-import { personalWikiUrl, wikiOpenUrl, wikiUrl } from "@/lib/app-config";
+import { personalWikiUrl, wikiApiUrl, wikiOpenUrl } from "@/lib/app-config";
 
 export type WikiNoteSummary = {
   title: string;
@@ -97,7 +97,7 @@ export async function searchWikiNotes(query: string, pageSize = 8) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(wikiUrl(`/api/notes?${params.toString()}`), {
+  const response = await fetch(wikiApiUrl(`/api/notes?${params.toString()}`), {
     headers,
     cache: "no-store",
   });
@@ -115,7 +115,7 @@ export const ingestWiki = async (
 ): Promise<WikiIngestResponse> => {
   let lastLockTimeout: WikiLockTimeout | undefined;
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const response = await fetch(wikiUrl("/api/ingest"), {
+    const response = await fetch(wikiApiUrl("/api/ingest"), {
       method: "POST",
       headers: wikiWriteHeaders(),
       body: JSON.stringify(payload),

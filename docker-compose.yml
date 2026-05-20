@@ -58,6 +58,7 @@ services:
       PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       NEXT_PUBLIC_WIKI_URL: ${NEXT_PUBLIC_WIKI_URL:-http://localhost:3422}
+      PERSONAL_WIKI_INTERNAL_URL: ${PERSONAL_WIKI_INTERNAL_URL:-http://personal-wiki:3422}
     command: sh -c "npm run prisma:deploy && npm run prisma:seed"
     restart: "no"
 
@@ -83,6 +84,7 @@ services:
       PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
       NEXT_PUBLIC_WIKI_URL: ${NEXT_PUBLIC_WIKI_URL:-http://localhost:3422}
+      PERSONAL_WIKI_INTERNAL_URL: ${PERSONAL_WIKI_INTERNAL_URL:-http://personal-wiki:3422}
     ports:
       - "${PERSONAL_OS_BIND_HOST:-127.0.0.1}:${PERSONAL_OS_HOST_PORT:-3000}:3000"
     volumes:

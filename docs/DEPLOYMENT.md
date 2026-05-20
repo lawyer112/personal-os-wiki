@@ -116,10 +116,16 @@ WIKI_READ_TOKEN="replace-with-your-personal-wiki-read-token"
 WIKI_API_TOKEN="replace-with-your-personal-wiki-token"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 NEXT_PUBLIC_WIKI_URL="http://localhost:3422"
+PERSONAL_WIKI_INTERNAL_URL="http://localhost:3422"
 ```
 
 Use separate read and write tokens. Do not reuse the Wiki write token for browser
 handoff or read-only agent access.
+
+`NEXT_PUBLIC_WIKI_URL` is the browser-facing Wiki URL. In Docker deployments,
+set `PERSONAL_WIKI_INTERNAL_URL` to the service-network URL, for example
+`http://personal-wiki:3422`, so server-side agent context and Wiki writes do not
+depend on a public host route.
 
 For `personal-os-app/docker-compose.prod.yml`, set
 `NEXT_PUBLIC_APP_URL="http://localhost:3100"` unless you are using a reverse

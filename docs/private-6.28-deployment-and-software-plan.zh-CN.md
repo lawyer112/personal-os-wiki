@@ -192,6 +192,7 @@ PERSONAL_WIKI_BIND_HOST=0.0.0.0
 PERSONAL_WIKI_HOST_PORT=3422
 NEXT_PUBLIC_APP_URL=http://192.168.6.28:3100
 NEXT_PUBLIC_WIKI_URL=http://192.168.6.28:3422
+PERSONAL_WIKI_INTERNAL_URL=http://personal-wiki:3422
 ```
 
 Postgres 仍然只绑定 `127.0.0.1:54329`。真实知识库迁入前不要做路由器公网端口映射；如需公网访问，应先加 HTTPS 反向代理、正式 token、备份和访问日志。
