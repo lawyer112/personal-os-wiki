@@ -105,6 +105,12 @@ Wiki note rules:
 - Prefer evidence over confidence theater.
 - Mark uncertain or stale facts explicitly.
 - Link related concepts, projects, tasks, and artifacts.
+- Write Wiki notes through `/api/ingest` with `frontmatter`.
+- Always include `title`, `created_by`, `type`, `source_type`, `tags`, and Markdown `content`.
+- Use only these `type` values: `source`, `project`, `journal`, `atom`, `skill`.
+- When `created_by` starts with `hermes:`, include `task_id`.
+- On task submit, write `type=project`, `source_type=agent-output`, `created_by=hermes:worker`, `agent_id=AGENT_ID`, `task_id=<task id>`, and `project=<project name or task-id fallback>`.
+- Use `type=journal` only for day-level log entries; do not use it for task completion summaries.
 
 Notification rules:
 When producing a user-facing briefing, use this shape:

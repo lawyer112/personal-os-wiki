@@ -109,6 +109,9 @@ migration: string                     # 可选；迁移脚本写入 legacy-<batc
 ### 解析与序列化
 
 - 使用 `python-frontmatter` 库读写 YAML 块。
+  - ADR 2026-05-13：实际任务要求创建模块 `personal-wiki/api/frontmatter.py`，
+    会遮蔽第三方包 `frontmatter` 的导入名。实现改用 `PyYAML` 做 YAML 块
+    解析/序列化，保持对外 `parse()` / `serialize()` 行为不变。
 - `created_at` 缺失 → 服务端补 `datetime.now(timezone.utc).isoformat()`。
 - `created_at` 携带且无时区 → 拒绝，HTTP 400 `code=invalid-timestamp`。
 - `tags`：去掉首字符 `#`，全部 `lower()`，去重保序。

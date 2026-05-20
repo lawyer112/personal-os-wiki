@@ -55,7 +55,7 @@ what evidence proves it moved, and how the result changes the knowledge base.
 | No work queue scheduling policy | Polling exists, but there is no ranking rule for what a worker should claim first beyond query order. |
 | Review is status-level, not criteria-level | A reviewer can approve/reject, but the system does not store checklist items or evidence requirements per task type. |
 | Notification delivery is not closed-loop | Notification payloads exist, but delivery adapters and delivery evidence are still external. |
-| Wiki learning loop is incomplete | Task results can link Wiki evidence, but approved outcomes are not automatically proposed as Wiki updates or workflow improvements. |
+| Wiki learning loop is incomplete | Status 2026-05-13: phase-1 submit-to-Wiki note writing, vault restructure, tag registry, migration, and MOC generation are complete; approved-outcome-to-workflow suggestions remain future work. |
 
 ## Product Model
 
@@ -232,7 +232,7 @@ This prevents vague "looks good" reviews and makes autonomous work safer.
 5. Add `TaskRun` for task execution attempts.
 6. Add structured `AgentActionLog`.
 7. Add intake decision schema and quality scoring.
-8. Add workflow/skill notes and link them into agent context.
+8. Status 2026-05-13: add `50_skills/` Wiki notes and link them into ingest/MOC; richer agent-context loading remains future work.
 9. Add notification delivery records for Mac/Telegram/Feishu adapters.
 10. Add review criteria and reviewer dashboards.
 

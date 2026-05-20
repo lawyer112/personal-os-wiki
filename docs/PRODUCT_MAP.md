@@ -161,6 +161,8 @@ keeps commercial packaging simple.
 
 ### Phase 1: Wire up + Organize Wiki (two stages: MVP + harden)
 
+**Phase 1 status**: completed (2026-05-13).
+
 **Definition**: Turn the dormant protocol into a live loop, and clean up the
 messy Wiki.
 
@@ -572,8 +574,8 @@ Against the endgame map:
 | Clarification object | ❌ missing | **phase 1 core** |
 | Telegram button callbacks | ❌ missing | **phase 1 core** |
 | User answer write-back + wake | ❌ missing | **phase 1 core** |
-| Wiki directory restructure | ❌ missing | **phase 1 core** |
-| Wiki learning loop (submit → note) | ❌ missing | **phase 1 core** |
+| Wiki directory restructure | ✅ completed (2026-05-13) | **phase 1 core** |
+| Wiki learning loop (submit → note) | ✅ completed (2026-05-13) | **phase 1 core** |
 | Workflow / Skill object | ❌ missing | phase 2 |
 | Obsidian plugin | ❌ missing | phase 3 |
 | Commercial packaging | ❌ missing | phase 3 |

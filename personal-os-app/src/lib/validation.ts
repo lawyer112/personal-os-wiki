@@ -275,14 +275,34 @@ export const dailyPlanSnapshotSchema = z.object({
   sourcePlannerPacket: jsonRecord.optional(),
 });
 
-export const wikiIngestSchema = z.object({
+const wikiFrontmatterSchema = z.object({
   title: z.string().min(1),
-  content: z.string().min(1),
-  source_type: z.string().min(1).default("telegram"),
-  source_url: z.string().optional(),
-  tags: z.array(z.string().min(1)).default([]),
-  metadata: jsonRecord.default({}),
+  type: z.string().min(1),
+  created_by: z.string().min(1),
+  source_type: z.string().min(1),
+  tags: z.array(z.string().min(1)),
+  created_at: z.string().min(1).optional(),
+  task_id: z.string().min(1).optional(),
+  agent_id: z.string().min(1).optional(),
+  project: z.string().min(1).optional(),
+  last_reviewed: z.string().min(1).optional(),
+  migration: z.string().min(1).optional(),
 });
+
+export const wikiIngestSchema = z
+  .object({
+    frontmatter: wikiFrontmatterSchema.optional(),
+    title: z.string().min(1).optional(),
+    content: z.string().min(1),
+    source_type: z.string().min(1).optional(),
+    source_url: z.string().optional(),
+    tags: z.array(z.string().min(1)).optional(),
+    metadata: jsonRecord.default({}),
+  })
+  .refine((input) => Boolean(input.frontmatter) || Boolean(input.title), {
+    message: "Wiki ingest needs frontmatter or a legacy title.",
+    path: ["frontmatter"],
+  });
 
 export const intakeSchema = z.object({
   source: inboxCreateSchema,

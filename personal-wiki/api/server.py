@@ -6,17 +6,29 @@ import hashlib
 import hmac
 import html
 import json
+import logging
 import os
 import re
 import shutil
 import subprocess
 import sys
+import threading
+import time
 import traceback
+from contextlib import nullcontext
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, quote, urlencode, urlparse
+
+from frontmatter import Frontmatter, IngestError, validate as validate_frontmatter
+from locks import journal_lock, project_lock
+from moc import rebuild_moc
+from router import resolve_target
+from sources_check import Mutation, build_baseline, diff_against_baseline
+from tag_registry import append_pending, ensure_registry_template, load_registry
+from writer import append_journal, write_note
 
 try:
     import yaml
@@ -35,7 +47,10 @@ APP_DIR = Path(__file__).resolve().parents[1]
 VAULT_DIR = DATA_DIR / "vault"
 SOURCES_DIR = VAULT_DIR / "10_sources"
 NOTES_DIR = VAULT_DIR / "20_notes"
+PROJECTS_DIR = VAULT_DIR / "30_projects"
+JOURNALS_DIR = VAULT_DIR / "40_journals"
 ARCHIVE_DIR = VAULT_DIR / "90_archive"
+PENDING_HARDEN_DIR = ARCHIVE_DIR / "pending-harden"
 PUBLIC_DIR = DATA_DIR / "public"
 MANUAL_PATH = APP_DIR / "docs" / "USAGE.md"
 GRAPH_PATH = PUBLIC_DIR / "graph-data.json"
@@ -68,6 +83,11 @@ GENERIC_RELATION_TAGS = {
     "web",
     "web-capture",
 }
+INGEST_LOGGER = logging.getLogger("personal_wiki.ingest")
+SOURCE_LOGGER = logging.getLogger("personal_wiki.sources")
+SOURCE_BASELINE: dict[str, str] = {}
+SOURCE_CHECK_TIMER: threading.Timer | None = None
+MOC_TIMER: threading.Timer | None = None
 
 
 def env_flag(name: str, default: bool = False) -> bool:
@@ -86,13 +106,31 @@ WIKI_CORS_ALLOW_ORIGIN = os.environ.get("WIKI_CORS_ALLOW_ORIGIN", "").strip()
 
 
 def now_utc() -> dt.datetime:
-    return dt.datetime.now(dt.UTC)
+    return dt.datetime.now(dt.timezone.utc)
 
 
 def ensure_dirs() -> None:
-    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ARCHIVE_DIR, PUBLIC_DIR):
+    for path in (
+        DATA_DIR,
+        VAULT_DIR,
+        PUBLIC_DIR,
+        *read_vault_dirs(),
+        VAULT_DIR / "90_archive" / "pending-harden" / "atom",
+        VAULT_DIR / "90_archive" / "pending-harden" / "skill",
+    ):
         path.mkdir(parents=True, exist_ok=True)
+    ensure_registry_template(VAULT_DIR)
     init_git()
+
+
+def max_body_bytes() -> int:
+    raw = os.environ.get("WIKI_MAX_BODY_BYTES", "").strip()
+    if not raw:
+        return 2 * 1024 * 1024
+    try:
+        return int(raw)
+    except ValueError:
+        return 2 * 1024 * 1024
 
 
 def run(cmd: list[str], cwd: Path = DATA_DIR, check: bool = False) -> subprocess.CompletedProcess[str]:
@@ -255,6 +293,155 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def ingest_http_request(
+    raw_body: bytes,
+    headers: dict[str, str],
+    *,
+    vault_root: Path = VAULT_DIR,
+    api_token: str | None = None,
+    base_url: str = "",
+    content_length: int | None = None,
+    lock_timeout: float = 5,
+) -> tuple[HTTPStatus, dict[str, Any]]:
+    started = time.monotonic()
+    api_token = API_TOKEN if api_token is None else api_token
+    task_id = None
+    created_by = None
+    note_type = None
+    path = None
+    outcome = "rejected"
+    reason = None
+
+    try:
+        if not _authorized_ingest(headers, api_token):
+            raise IngestError(401, "missing-or-invalid-token")
+        if content_length is not None and content_length > max_body_bytes():
+            raise IngestError(413, "body-too-large", {"max_body_bytes": max_body_bytes()})
+        if len(raw_body) > max_body_bytes():
+            raise IngestError(413, "body-too-large", {"max_body_bytes": max_body_bytes()})
+
+        try:
+            payload = json.loads(raw_body.decode("utf-8-sig"))
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            raise IngestError(400, "invalid-json") from error
+        if not isinstance(payload, dict):
+            raise IngestError(400, "invalid-json")
+
+        frontmatter = payload.get("frontmatter")
+        if isinstance(frontmatter, dict):
+            task_id = frontmatter.get("task_id")
+            created_by = frontmatter.get("created_by")
+            note_type = frontmatter.get("type")
+
+        result = ingest_payload(payload, vault_root=vault_root, base_url=base_url, lock_timeout=lock_timeout)
+        task_id = result.get("task_id", task_id)
+        path = result.get("path")
+        outcome = "accepted"
+        return HTTPStatus.CREATED, result
+    except IngestError as error:
+        reason = error.code
+        return HTTPStatus(error.status_code), error_response(error)
+    finally:
+        INGEST_LOGGER.info(
+            json.dumps(
+                {
+                    "ts": now_utc().isoformat(),
+                    "event": "ingest",
+                    "outcome": outcome,
+                    "task_id": task_id,
+                    "created_by": created_by,
+                    "type": note_type,
+                    "path": path,
+                    "duration_ms": int((time.monotonic() - started) * 1000),
+                    **({"reason": reason} if reason else {}),
+                },
+                ensure_ascii=False,
+            )
+        )
+
+
+def ingest_payload(
+    payload: dict[str, Any],
+    *,
+    vault_root: Path = VAULT_DIR,
+    base_url: str = "",
+    lock_timeout: float = 5,
+) -> dict[str, Any]:
+    raw_frontmatter = payload.get("frontmatter")
+    if not isinstance(raw_frontmatter, dict):
+        raise IngestError(400, "frontmatter-parse-error", {"excerpt": "frontmatter must be an object"})
+
+    frontmatter_payload = dict(raw_frontmatter)
+    if not str(frontmatter_payload.get("created_at") or "").strip():
+        frontmatter_payload["created_at"] = now_utc().isoformat()
+
+    try:
+        fm = Frontmatter.model_validate(frontmatter_payload)
+    except Exception as error:
+        raise IngestError(400, "frontmatter-parse-error", {"excerpt": str(error)[:200]}) from error
+
+    validate_frontmatter(fm)
+    body = str(payload.get("content") or payload.get("body") or "")
+    if fm.type == "atom" and len(body) > 5000:
+        INGEST_LOGGER.warning(
+            json.dumps(
+                {
+                    "event": "atom-oversized",
+                    "title": fm.title,
+                    "length": len(body),
+                },
+                ensure_ascii=False,
+            )
+        )
+
+    target = resolve_target(fm, vault_root)
+    if fm.type == "journal":
+        result = append_journal(vault_root, fm, body, lock_timeout=lock_timeout)
+    else:
+        lock_context = _write_lock(fm, target, vault_root, lock_timeout)
+        with lock_context:
+            result = write_note(target, fm, body)
+
+    note_path = result.path.relative_to(vault_root).as_posix()
+    directory = result.directory.relative_to(vault_root).as_posix()
+    trigger_tag_registry_update(vault_root, fm)
+    trigger_moc_rebuild(vault_root)
+    return {
+        "status": result.status,
+        "path": note_path,
+        "directory": directory,
+        "task_id": fm.task_id,
+        "url": f"{base_url.rstrip('/')}/note?path={quote(note_path, safe='')}" if base_url else f"/note?path={quote(note_path, safe='')}",
+        **({"rolled_to": result.rolled_to.relative_to(vault_root).as_posix()} if result.rolled_to else {}),
+    }
+
+
+def _authorized_ingest(headers: dict[str, str], api_token: str | None) -> bool:
+    if not api_token:
+        return False
+    header = ""
+    for key, value in headers.items():
+        if key.lower() == "authorization":
+            header = value
+            break
+    return header.startswith("Bearer ") and hmac.compare_digest(header[7:], api_token)
+
+
+def _write_lock(fm: Frontmatter, target: Path, vault_root: Path, timeout: float):
+    if fm.type == "project":
+        return project_lock(vault_root, target.parent.name, timeout=timeout)
+    if fm.type == "journal":
+        return journal_lock(vault_root, target.stem, timeout=timeout)
+    return nullcontext()
+
+
+def error_response(error: IngestError) -> dict[str, Any]:
+    body: dict[str, Any] = {"error": error.code, "code": error.code}
+    if error.details is not None:
+        body["details"] = error.details
+    return body
+
+
 def find_note_by_source_hash(source_hash: str) -> Path | None:
     relative_path = str(load_source_hash_index().get("sources", {}).get(source_hash, "") or "")
     if not relative_path:
@@ -401,16 +588,19 @@ def extract_concepts(body: str) -> list[str]:
 def read_note_records(include_body: bool = False) -> list[dict[str, Any]]:
     ensure_dirs_no_git()
     records: list[dict[str, Any]] = []
-    for path in sorted(NOTES_DIR.rglob("*.md"), reverse=True):
-        text = path.read_text(encoding="utf-8")
-        fm, body = parse_frontmatter(text)
+    for path in iter_note_paths():
+        fm, body = parse_note_document(path)
         title = note_title(path, body, fm)
         tags = normalize_tags(fm.get("tags", []))
+        created_value = note_created_value(fm)
         record = {
             "title": title,
             "path": rel(path),
-            "created": format_date(fm.get("created", "")),
-            "created_sort": note_sort_value(fm.get("created", "")),
+            "created": format_date(created_value),
+            "created_at": str(fm.get("created_at", "") or ""),
+            "created_sort": note_sort_value(created_value),
+            "created_by": str(fm.get("created_by", "") or ""),
+            "type": str(fm.get("type", "") or ""),
             "source_type": str(fm.get("source_type", "") or ""),
             "source_url": str(fm.get("source_url", "") or ""),
             "source_hash": str(fm.get("source_hash", "") or ""),
@@ -496,17 +686,105 @@ def build_note_lookup(index: dict[str, Any]) -> dict[str, str]:
 
 def vault_signature() -> str:
     digest = hashlib.sha256()
-    if not NOTES_DIR.exists():
+    roots = [root for root in read_vault_dirs() if root.exists()]
+    if not roots:
         return digest.hexdigest()
-    for path in sorted(NOTES_DIR.rglob("*.md")):
-        try:
-            stat = path.stat()
-        except OSError:
-            continue
-        digest.update(rel(path).encode("utf-8", errors="replace"))
-        digest.update(str(stat.st_mtime_ns).encode("ascii"))
-        digest.update(str(stat.st_size).encode("ascii"))
+    for root in roots:
+        for path in sorted(root.rglob("*.md")):
+            if not path.is_file():
+                continue
+            try:
+                stat = path.stat()
+            except OSError:
+                continue
+            digest.update(rel(path).encode("utf-8", errors="replace"))
+            digest.update(str(stat.st_mtime_ns).encode("ascii"))
+            digest.update(str(stat.st_size).encode("ascii"))
     return digest.hexdigest()
+
+
+def update_source_baseline(vault_root: Path = VAULT_DIR) -> dict[str, str]:
+    global SOURCE_BASELINE
+    SOURCE_BASELINE = build_baseline(vault_root)
+    return SOURCE_BASELINE
+
+
+def log_source_mutations(mutations: list[Mutation]) -> None:
+    for mutation in mutations:
+        SOURCE_LOGGER.warning(
+            json.dumps(
+                {
+                    "event": "source-mutation-detected",
+                    "path": mutation.path,
+                    "old_sha": mutation.old_sha,
+                    "new_sha": mutation.new_sha,
+                },
+                ensure_ascii=False,
+            )
+        )
+
+
+def run_source_check(vault_root: Path = VAULT_DIR) -> list[Mutation]:
+    mutations = diff_against_baseline(vault_root, SOURCE_BASELINE)
+    if mutations:
+        log_source_mutations(mutations)
+    return mutations
+
+
+def start_source_monitor(interval_seconds: int = 3600) -> None:
+    global SOURCE_CHECK_TIMER
+    update_source_baseline(VAULT_DIR)
+
+    def tick() -> None:
+        try:
+            run_source_check(VAULT_DIR)
+        finally:
+            start_source_monitor(interval_seconds)
+
+    SOURCE_CHECK_TIMER = threading.Timer(interval_seconds, tick)
+    SOURCE_CHECK_TIMER.daemon = True
+    SOURCE_CHECK_TIMER.start()
+
+
+def trigger_moc_rebuild(vault_root: Path = VAULT_DIR) -> None:
+    thread = threading.Thread(target=rebuild_moc, args=(vault_root,), daemon=True)
+    thread.start()
+
+
+def trigger_tag_registry_update(vault_root: Path, fm: Frontmatter) -> None:
+    update_tag_registry(vault_root, fm)
+
+
+def update_tag_registry(vault_root: Path, fm: Frontmatter) -> None:
+    registry = load_registry(vault_root)
+    known = registry.approved | registry.pending
+    for tag in fm.tags or []:
+        if tag not in known:
+            append_pending(vault_root, tag, fm.created_by or "unknown", fm.task_id, fm.created_at)
+            known.add(tag)
+
+
+def handle_admin_moc_rebuild(vault_root: Path = VAULT_DIR) -> tuple[HTTPStatus, dict[str, Any]]:
+    content = rebuild_moc(vault_root)
+    return HTTPStatus.OK, {
+        "status": "rebuilt",
+        "path": "00_meta/index.md",
+        "bytes": len(content.encode("utf-8")),
+    }
+
+
+def start_moc_monitor(interval_seconds: int = 300) -> None:
+    global MOC_TIMER
+
+    def tick() -> None:
+        try:
+            rebuild_moc(VAULT_DIR)
+        finally:
+            start_moc_monitor(interval_seconds)
+
+    MOC_TIMER = threading.Timer(interval_seconds, tick)
+    MOC_TIMER.daemon = True
+    MOC_TIMER.start()
 
 
 def refresh_public_indexes() -> dict[str, Any]:
@@ -809,7 +1087,7 @@ def add_link(
 
 
 def ensure_dirs_no_git() -> None:
-    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ARCHIVE_DIR, PUBLIC_DIR):
+    for path in (DATA_DIR, VAULT_DIR, PUBLIC_DIR, *read_vault_dirs()):
         path.mkdir(parents=True, exist_ok=True)
 
 
@@ -825,6 +1103,75 @@ def safe_data_path(relative: str) -> Path:
     if DATA_DIR not in candidate.parents and candidate != DATA_DIR:
         raise ValueError("Path is outside data directory")
     return candidate
+
+
+def read_vault_dirs() -> tuple[Path, ...]:
+    return (
+        VAULT_DIR / "10_sources",
+        VAULT_DIR / "20_notes",
+        VAULT_DIR / "30_projects",
+        VAULT_DIR / "40_journals",
+        VAULT_DIR / "90_archive",
+        VAULT_DIR / "Personal OS Inbox",
+        VAULT_DIR / "Personal Wiki Mirror",
+    )
+
+
+def iter_note_paths() -> list[Path]:
+    paths: list[Path] = []
+    seen: set[Path] = set()
+    for root in read_vault_dirs():
+        if not root.exists():
+            continue
+        for path in root.rglob("*.md"):
+            if not path.is_file():
+                continue
+            resolved = path.resolve()
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            paths.append(path)
+    return sorted(paths)
+
+
+def synthesize_legacy_frontmatter(path: Path) -> dict[str, Any]:
+    created_at = dt.datetime.fromtimestamp(path.stat().st_mtime, dt.timezone.utc).isoformat()
+    return {
+        "created_by": "unknown",
+        "type": "legacy",
+        "source_type": "user-note",
+        "tags": [],
+        "created_at": created_at,
+    }
+
+
+def parse_note_document(path: Path) -> tuple[dict[str, Any], str]:
+    text = path.read_text(encoding="utf-8")
+    fm, body = parse_frontmatter(text)
+    if not fm:
+        fm = synthesize_legacy_frontmatter(path)
+    return fm, body
+
+
+def note_created_value(fm: dict[str, Any]) -> Any:
+    return fm.get("created_at") or fm.get("created") or ""
+
+
+def is_source_path(path: Path) -> bool:
+    source_dir = (VAULT_DIR / "10_sources").resolve()
+    resolved = path.resolve()
+    try:
+        resolved.relative_to(source_dir)
+        return True
+    except ValueError:
+        return False
+
+
+def guard_source_write(relative_path: str) -> Path:
+    path = safe_data_path(relative_path)
+    if is_source_path(path):
+        raise IngestError(410, "source-immutable", {"path": rel(path)})
+    return path
 
 
 def write_json(path: Path, data: Any) -> None:
@@ -909,8 +1256,7 @@ def read_note(relative_path: str) -> dict[str, Any]:
     path = safe_data_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
-    text = path.read_text(encoding="utf-8")
-    fm, body = parse_frontmatter(text)
+    fm, body = parse_note_document(path)
     return {
         "path": rel(path),
         "frontmatter": fm,
@@ -938,8 +1284,8 @@ def payload_text(payload: dict[str, Any], keys: tuple[str, ...], default: str) -
 def update_note(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
+    path = guard_source_write(relative_path)
     note = read_note(relative_path)
-    path = safe_data_path(relative_path)
     fm = dict(note["frontmatter"])
     title = str(payload.get("title") or note["title"]).strip() or "Untitled source"
     has_body_update = "content" in payload or "body" in payload
@@ -963,8 +1309,8 @@ def update_note(payload: dict[str, Any]) -> dict[str, Any]:
 def tag_note(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
+    path = guard_source_write(relative_path)
     note = read_note(relative_path)
-    path = safe_data_path(relative_path)
     fm = dict(note["frontmatter"])
     current = set(normalize_tags(fm.get("tags", [])))
     if "tags" in payload or "set" in payload:
@@ -1049,7 +1395,7 @@ def relink_notes(payload: dict[str, Any]) -> dict[str, Any]:
 def archive_note(payload: dict[str, Any], action: str = "archived") -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
-    path = safe_data_path(relative_path)
+    path = guard_source_write(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
     archive_dir = ARCHIVE_DIR / now_utc().strftime("%Y-%m-%d")
@@ -2051,12 +2397,11 @@ def render_note(relative_path: str) -> bytes:
     path = safe_data_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
-    text = path.read_text(encoding="utf-8")
-    fm, body = parse_frontmatter(text)
+    fm, body = parse_note_document(path)
     title = note_title(path, body, fm)
     note_lookup = build_note_lookup(load_note_index())
     tags_html = "".join(f'<span class="tag">#{html.escape(str(tag))}</span>' for tag in normalize_tags(fm.get("tags", [])))
-    meta = " / ".join(part for part in [format_date(fm.get("created", "")), str(fm.get("source_type", "") or "").strip()] if part)
+    meta = " / ".join(part for part in [format_date(note_created_value(fm)), str(fm.get("source_type", "") or "").strip()] if part)
     source_url = str(fm.get("source_url", "") or "").strip() or "Telegram/Hermes input"
     source_hash = str(fm.get("source_hash", "") or "").strip()
     note_content = TAG_RE.sub("", notes_section(body)).strip()
@@ -2151,9 +2496,12 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/auth/read":
                 self.handle_read_login(parsed)
                 return
+            if parsed.path == "/api/ingest":
+                self.handle_ingest()
+                return
             writable_paths = {
-                "/api/ingest",
                 "/api/rebuild",
+                "/api/admin/moc/rebuild",
                 "/api/note/update",
                 "/api/note/tag",
                 "/api/note/archive",
@@ -2168,6 +2516,10 @@ class Handler(BaseHTTPRequestHandler):
                 return
             if parsed.path == "/api/rebuild":
                 self.send_json(HTTPStatus.OK, rebuild())
+                return
+            if parsed.path == "/api/admin/moc/rebuild":
+                status, data = handle_admin_moc_rebuild(VAULT_DIR)
+                self.send_json(status, data)
                 return
             if parsed.path == "/api/note/update":
                 self.send_json(HTTPStatus.OK, update_note(self.read_json()))
@@ -2184,10 +2536,23 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/api/relink":
                 self.send_json(HTTPStatus.OK, relink_notes(self.read_json()))
                 return
-            payload = self.read_json()
-            self.send_json(HTTPStatus.OK, ingest(payload))
         except Exception as exc:
             self.send_error_json(exc)
+
+    def handle_ingest(self) -> None:
+        content_length = int(self.headers.get("Content-Length", "0"))
+        if content_length > max_body_bytes():
+            raw_body = b""
+        else:
+            raw_body = self.rfile.read(content_length)
+        host = self.headers.get("Host") or f"{HOST}:{PORT}"
+        status, data = ingest_http_request(
+            raw_body,
+            {key: value for key, value in self.headers.items()},
+            content_length=content_length,
+            base_url=f"http://{host}",
+        )
+        self.send_json(status, data)
 
     def authorized(self) -> bool:
         if not API_TOKEN:
@@ -2315,6 +2680,9 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Access-Control-Allow-Credentials", "true")
 
     def send_error_json(self, exc: Exception) -> None:
+        if isinstance(exc, IngestError):
+            self.send_json(HTTPStatus(exc.status_code), error_response(exc))
+            return
         if isinstance(exc, FileNotFoundError):
             self.send_json(HTTPStatus.NOT_FOUND, {"error": "not_found", "message": str(exc)})
             return
@@ -2335,6 +2703,8 @@ def main() -> None:
     ensure_dirs()
     if not GRAPH_PATH.exists() or not NOTE_INDEX_PATH.exists():
         refresh_public_indexes()
+    start_source_monitor()
+    start_moc_monitor()
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     print(f"Personal wiki serving on http://{HOST}:{PORT} data={DATA_DIR}", flush=True)
     server.serve_forever()

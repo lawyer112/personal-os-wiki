@@ -101,6 +101,12 @@ Wiki 笔记规则：
 - 多写证据，少写自信话术。
 - 不确定或可能过期的事实要明确标注。
 - 关联概念、项目、任务和产物。
+- 通过 `/api/ingest` 写 Wiki，必须使用 `frontmatter`。
+- 每次写入都包含 `title`、`created_by`、`type`、`source_type`、`tags` 和 Markdown `content`。
+- `type` 只能取：`source`、`project`、`journal`、`atom`、`skill`。
+- 当 `created_by` 以 `hermes:` 开头时，必须带 `task_id`。
+- 提交任务时写 `type=project`、`source_type=agent-output`、`created_by=hermes:worker`、`agent_id=AGENT_ID`、`task_id=<任务 id>`、`project=<项目名或 task-id 兜底>`。
+- `type=journal` 只用于每日流水记录，不用于任务完成总结。
 
 通知规则：
 面向用户汇报时使用这个结构：

@@ -7,6 +7,7 @@ import { createNote } from "@/lib/notes";
 import { createProjectEvent } from "@/lib/projects";
 import { createTask } from "@/lib/tasks";
 import { ingestWikiNote } from "@/lib/wiki-ingest";
+import type { WikiIngestFrontmatter, WikiIngestInput } from "@/lib/wiki-ingest";
 import { intakeSchema } from "@/lib/validation";
 
 export const dynamic = "force-dynamic";
@@ -29,15 +30,13 @@ export async function POST(request: Request) {
 
     const wikiResults = await Promise.all(
       input.wikiNotes.map((note) =>
-        ingestWikiNote({
-          ...note,
-          metadata: {
-            ...note.metadata,
+        ingestWikiNote(
+          withPersonalOsWikiMetadata(note, {
             personal_os_inbox_id: inbox.id,
             personal_os_agent_run_id: run.id,
             personal_os_project_id: project?.id,
-          },
-        }),
+          }),
+        ),
       ),
     );
 
@@ -200,6 +199,44 @@ export async function POST(request: Request) {
     return handleRouteError(error);
   }
 }
+
+type IntakeWikiNote = {
+  frontmatter?: WikiIngestFrontmatter;
+  title?: string;
+  content: string;
+  source_type?: string;
+  source_url?: string;
+  tags?: string[];
+  metadata?: Record<string, unknown>;
+};
+
+const withPersonalOsWikiMetadata = (
+  note: IntakeWikiNote,
+  metadata: Record<string, unknown>,
+): WikiIngestInput => {
+  if (note.frontmatter) {
+    return {
+      frontmatter: note.frontmatter,
+      content: note.content,
+    };
+  }
+
+  if (!note.title) {
+    throw new Error("Wiki ingest needs frontmatter or a legacy title.");
+  }
+
+  return {
+    title: note.title,
+    content: note.content,
+    source_type: note.source_type,
+    source_url: note.source_url,
+    tags: note.tags,
+    metadata: {
+      ...note.metadata,
+      ...metadata,
+    },
+  };
+};
 
 async function resolveProject(project?: {
   id?: string;

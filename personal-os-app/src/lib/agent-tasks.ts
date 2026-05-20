@@ -33,6 +33,12 @@ type TaskRecord = {
   submittedAt?: Date | string | null;
 };
 
+type SubmittedTaskRecord = TaskRecord & {
+  tags?: string[];
+  projectName?: string | null;
+  project?: { name?: string | null } | null;
+};
+
 type AgentProfileRecord = {
   id: string;
   tags?: string[];
@@ -742,7 +748,7 @@ export async function submitTask<TDb extends AgentTaskDb>(
       now,
     );
     const taskDelegate = tx.task as {
-      update(args: unknown): Promise<unknown>;
+      update(args: unknown): Promise<SubmittedTaskRecord>;
     };
     const contributionResult = await createContributionWithArtifacts(
       tx,

@@ -18,7 +18,7 @@
 
 ### Group 1：Frontmatter Validator + Slugifier + Round-trip 测试
 
-#### 1.1 创建 `personal-wiki/api/frontmatter.py`
+#### [x] 1.1 创建 `personal-wiki/api/frontmatter.py`
 - **依赖**：无
 - **产物**：
   - 模块文件 `personal-wiki/api/frontmatter.py`
@@ -34,7 +34,7 @@
 - **关联 AC**：R2 AC1–AC9、R12 AC1–AC2、R12 AC10、R10 AC5。
 - **禁止**：不要在本任务里实现 tag 正则校验（Harden 阶段做）；不要做 round-trip property test（在 1.3 做）；不要写文件落盘。
 
-#### 1.2 创建 `personal-wiki/api/slugifier.py`
+#### [x] 1.2 创建 `personal-wiki/api/slugifier.py`
 - **依赖**：无
 - **产物**：
   - 模块文件 `personal-wiki/api/slugifier.py`
@@ -45,7 +45,7 @@
 - **关联 AC**：R4 AC8、R4 AC9、R5 AC3、R12 AC3。
 - **禁止**：不要拼音转换；不要降为 lowercase（保留大小写）；不要外部依赖（只用标准库 `re/unicodedata/hashlib`）。
 
-#### 1.3 Property test：frontmatter round-trip（P7）
+#### [x] 1.3 Property test：frontmatter round-trip（P7）
 - **依赖**：1.1
 - **产物**：
   - `personal-wiki/tests/property/__init__.py`
@@ -71,7 +71,7 @@
 
 ### Group 2：Auto-Router + Ingest API 重写 + 错误码 + 日志
 
-#### 2.1 创建 `personal-wiki/api/router.py`
+#### [x] 2.1 创建 `personal-wiki/api/router.py`
 - **依赖**：1.1, 1.2
 - **产物**：
   - 函数 `def resolve_target(fm: Frontmatter, vault_root: Path) -> Path`：实现 design 第 5 节决策表。
@@ -86,7 +86,7 @@
 - **关联 AC**：R4 AC1–AC10、R1 AC5、R1 AC1。
 - **禁止**：不要走 Harden 路径（`20_atoms/`、`50_skills/` 在 MVP 不允许直接落）；不要支持调用方自定义路径。
 
-#### 2.2 创建 `personal-wiki/api/locks.py`
+#### [x] 2.2 创建 `personal-wiki/api/locks.py`
 - **依赖**：无
 - **产物**：
   - 引入 `filelock` 包；写入 `personal-wiki/api/requirements.txt`。
@@ -97,7 +97,7 @@
 - **关联 AC**：R5 AC4、R6 AC4、R14 全部。
 - **禁止**：不要做全局锁；不要无限等待。
 
-#### 2.3 重写 Ingest API：`POST /api/ingest`
+#### [x] 2.3 重写 Ingest API：`POST /api/ingest`
 - **依赖**：1.1, 1.2, 2.1, 2.2
 - **产物**：
   - 修改 `personal-wiki/api/server.py`：完全替换 `/api/ingest` 处理器（保留路径与方法名）。
@@ -121,7 +121,7 @@
 - **关联 AC**：R3 AC1–AC7、R2 全部。
 - **禁止**：不要保留旧版本 `/api/ingest` 行为兼容性；旧调用方升级是 Group 5 的事；不要新增除了 design 列出的字段以外的 frontmatter 字段。
 
-#### 2.4 创建 `personal-wiki/api/writer.py`
+#### [x] 2.4 创建 `personal-wiki/api/writer.py`
 - **依赖**：2.3 草稿（接口形状）
 - **产物**：
   - 函数 `def write_note(target: Path, fm: Frontmatter, body: str, *, allow_journal_append=False) -> WriteResult`：
@@ -134,7 +134,7 @@
 - **关联 AC**：R5 AC1, AC2, AC5, AC6、R7 AC1, AC2、R4 AC10。
 - **禁止**：不要在本任务实现 journal append（在 3.2 做）。
 
-#### 2.5 结构化日志
+#### [x] 2.5 结构化日志
 - **依赖**：2.3
 - **产物**：
   - 在 `server.py` 的 `/api/ingest` 末端（成功或失败统一）打 design 第 6 节"日志契约"格式的 JSON 一行。
@@ -151,7 +151,7 @@
 
 ### Group 3：项目 README 桩 + Journal 追加 + 滚动
 
-#### 3.1 实现项目 README 桩
+#### [x] 3.1 实现项目 README 桩
 - **依赖**：2.4
 - **产物**：
   - 在 `writer.py` 中已经有模板调用点；本任务负责把模板渲染细化：
@@ -162,7 +162,7 @@
 - **关联 AC**：R5 AC2。
 - **禁止**：不要让 README 桩本身触发 ingest；它由 writer 直接写盘。
 
-#### 3.2 Journal append 实现
+#### [x] 3.2 Journal append 实现
 - **依赖**：2.4, 2.2
 - **产物**：
   - 在 `writer.py` 增加 `def append_journal(vault_root: Path, fm: Frontmatter, body: str) -> WriteResult`：
@@ -181,7 +181,7 @@
 - **关联 AC**：R6 AC1–AC6。
 - **禁止**：不要修改已写入 section 的内容；不要做"按 created_by 合并 section"。
 
-#### 3.3 修订后缀算法测试加强
+#### [x] 3.3 修订后缀算法测试加强
 - **依赖**：2.4
 - **产物**：
   - 补充 `personal-wiki/tests/test_writer.py`：连续 5 次同 task_id 同目标路径写，结果是 `<base>.md, <base>-r2.md, ..., <base>-r5.md`；返回 `status='revision'`。
@@ -195,7 +195,7 @@
 
 ### Group 4：Source 不可变性 + 向后兼容读层
 
-#### 4.1 Source 启动哈希基线
+#### [x] 4.1 Source 启动哈希基线
 - **依赖**：2.4
 - **产物**：
   - 模块 `personal-wiki/api/sources_check.py`：
@@ -208,7 +208,7 @@
 - **关联 AC**：R7 AC5。
 - **禁止**：本任务不自动修复变动；不删除文件。
 
-#### 4.2 关闭 source 写后接口
+#### [x] 4.2 关闭 source 写后接口
 - **依赖**：2.3
 - **产物**：
   - 检查 `server.py` 是否有任何路径能写到 `10_sources/`；只允许 ingest 的 `type=source` 路径，其他写端点（如有 PATCH/DELETE/PUT 命中此目录）一律 410 Gone。
@@ -219,7 +219,7 @@
 - **关联 AC**：R7 AC1, AC2, AC3。
 - **禁止**：不要新增任何修改 sources 的便利接口。
 
-#### 4.3 向后兼容读层
+#### [x] 4.3 向后兼容读层
 - **依赖**：无
 - **产物**：
   - 在 `server.py` 的列表/搜索/读取端点扫描 `vault/**` 时**包含**：`10_sources/`、`20_notes/`、`30_projects/`、`40_journals/`、`90_archive/`、`Personal OS Inbox/`、`Personal Wiki Mirror/`。
@@ -235,7 +235,7 @@
 
 ### Group 5：Personal OS 侧改造 + 端到端跑通
 
-#### 5.1 升级 `wiki-ingest.ts`
+#### [x] 5.1 升级 `wiki-ingest.ts`
 - **依赖**：Group 2 完成（API 已新格式）
 - **产物**：
   - 修改 `personal-os-app/src/lib/wiki-ingest.ts`：
@@ -248,7 +248,7 @@
 - **关联 AC**：R3 AC1。
 - **禁止**：不要在客户端做 slugify（服务端做）；不要绕过 ingest 直接调底层文件 API。
 
-#### 5.2 升级 `wiki-client.ts` 错误处理
+#### [x] 5.2 升级 `wiki-client.ts` 错误处理
 - **依赖**：5.1
 - **产物**：
   - 修改 `personal-os-app/src/lib/wiki-client.ts`：
@@ -262,7 +262,7 @@
 - **关联 AC**：R3 全部、R14 超时行为。
 - **禁止**：不要无限重试；不要把 token 透传到日志。
 
-#### 5.3 Submit 钩子写 Wiki summary
+#### [x] 5.3 Submit 钩子写 Wiki summary
 - **依赖**：5.1
 - **产物**：
   - 修改 `personal-os-app/src/app/api/tasks/[id]/submit/route.ts`（或 lib 层等价位置，按现有结构）：在 submit 处理器成功更新 task 状态后，调 `wikiIngest()`，payload 按 design 第 15 节"Submit 钩子"模板。
@@ -273,7 +273,7 @@
 - **关联 AC**：R3 AC2、R5 AC1、R6 留痕。
 - **禁止**：不要让 wiki 写失败把任务状态回滚；不要静默吞错。
 
-#### 5.4 端到端跑"东京旅游"夹具
+#### [x] 5.4 端到端跑"东京旅游"夹具
 - **依赖**：5.1, 5.2, 5.3
 - **产物**：
   - 测试 `personal-os-app/tests/e2e/tokyo-trip.test.ts`（用现有测试基础设施，必要时 mock wiki HTTP）：
@@ -291,7 +291,7 @@
 
 ### Group 6：Bug 修复 Buffer
 
-#### 6.1 跑全套测试 + 收集失败
+#### [x] 6.1 跑全套测试 + 收集失败
 - **依赖**：Group 5 完成
 - **产物**：
   - 跑 `pytest personal-wiki/tests/ -q --tb=short`、`npm --prefix personal-os-app test -- --run`。
@@ -299,7 +299,7 @@
 - **验收**：文件存在；失败为 0 时文件写"全绿"。
 - **禁止**：本任务不修 bug，仅汇总。
 
-#### 6.2 修复 bug
+#### [x] 6.2 修复 bug
 - **依赖**：6.1
 - **产物**：按 6.1 清单修复每个 bug。每修一条更新 `group6-bug-list.md` 的状态字段。
 - **验收**：所有测试再次全绿。
@@ -312,7 +312,7 @@
 
 ### Group 7：MVP 文档
 
-#### 7.1 写 `personal-wiki/docs/INGEST_API.md`
+#### [x] 7.1 写 `personal-wiki/docs/INGEST_API.md`
 - **依赖**：Group 5 完成
 - **产物**：
   - Markdown 文件包含：请求 schema（含每个字段说明）、成功响应、所有错误码 + code 列表 + 触发条件、auth 说明、日志字段说明、调用示例（curl 一条 + TypeScript 一条）。
@@ -321,7 +321,7 @@
 - **关联 AC**：R3 AC6。
 - **禁止**：不要在文档里描述 Harden 期才有的字段（tag registry、MOC）。
 
-#### 7.2 写 `00_meta/structure.md`（前置版）
+#### [x] 7.2 写 `00_meta/structure.md`（前置版）
 - **依赖**：无
 - **产物**：
   - 在 vault 创建 `00_meta/structure.md`（注意：`00_meta/` 在 MVP 不强制存在，但本文件作为前置存在以便 Stage 2 直接接手）。
@@ -330,7 +330,7 @@
 - **关联 AC**：R1 AC4 前置。
 - **禁止**：不要写 MOC 实现细节（在 Group 11 写）。
 
-#### 7.3 同步 AGENT_PROMPT
+#### [x] 7.3 同步 AGENT_PROMPT
 - **依赖**：Group 5 完成
 - **产物**：
   - 修改 `docs/AGENT_PROMPT.md` 与 `docs/AGENT_PROMPT.zh-CN.md`：在 "Wiki 写入" 章节加入 frontmatter 必填字段清单、type 取值列表、submit 时该写哪些字段。
@@ -347,7 +347,7 @@
 
 ### Group 8：Migration_Script
 
-#### 8.1 创建 `personal-wiki/scripts/migrate_vault.py`
+#### [x] 8.1 创建 `personal-wiki/scripts/migrate_vault.py`
 - **依赖**：MVP 完成
 - **产物**：
   - CLI 用 `argparse`：`--dry-run`、`--apply`、`--yes`、`--resume`、`--confidence-min`（默认 0.7）、`--vault`（默认 `personal-wiki/data/vault`）。
@@ -364,7 +364,7 @@
 - **关联 AC**：R8 全部。
 - **禁止**：不要碰 `10_sources/`；不要修改原文件 mtime（搬完要保留）。
 
-#### 8.2 Migration idempotency property test（P6）
+#### [x] 8.2 Migration idempotency property test（P6）
 - **依赖**：8.1
 - **产物**：
   - `personal-wiki/tests/property/test_migration_idempotency.py`：
@@ -376,7 +376,7 @@
 
 ### Group 9：MOC Generator
 
-#### 9.1 创建 `personal-wiki/api/moc.py`
+#### [x] 9.1 创建 `personal-wiki/api/moc.py`
 - **依赖**：Group 8 完成
 - **产物**：
   - 函数 `def rebuild_moc(vault_root: Path) -> str`：扫 vault 索引，渲染 design 第 12 节"输出"模板。
@@ -392,7 +392,7 @@
 - **关联 AC**：R9 全部。
 - **禁止**：不要直接覆盖 user-block 之外用户手写内容（Group 7 文档已声明用户手写只能在 user-block 内）。
 
-#### 9.2 触发 MOC 重建
+#### [x] 9.2 触发 MOC 重建
 - **依赖**：9.1
 - **产物**：
   - 在 `server.py` ingest 成功路径末端，**异步**调用 `rebuild_moc()`（用 `asyncio.create_task` 或 background thread；不要让 ingest 等它）。
@@ -403,7 +403,7 @@
 - **关联 AC**：R9 AC2。
 - **禁止**：不要让 MOC 重建阻塞 ingest 响应。
 
-#### 9.3 task_id traceability property test（P4）
+#### [x] 9.3 task_id traceability property test（P4）
 - **依赖**：9.1
 - **产物**：
   - `personal-wiki/tests/property/test_task_id_traceability.py`：
@@ -414,7 +414,7 @@
 
 ### Group 10：Tag Registry
 
-#### 10.1 实现 tag registry
+#### [x] 10.1 实现 tag registry
 - **依赖**：Group 9 完成
 - **产物**：
   - 模块 `personal-wiki/api/tag_registry.py`：
@@ -432,7 +432,7 @@
 - **关联 AC**：R10 全部。
 - **禁止**：不要因为 tag 未批准而拒绝写入；不要在客户端做 registry 校验。
 
-#### 10.2 Tag closure property test（P5）
+#### [x] 10.2 Tag closure property test（P5）
 - **依赖**：10.1
 - **产物**：
   - `personal-wiki/tests/property/test_tag_closure.py`：
@@ -443,7 +443,7 @@
 
 ### Group 11：atom / skill 回流
 
-#### 11.1 启用 `20_atoms/` 与 `50_skills/` 主路径
+#### [x] 11.1 启用 `20_atoms/` 与 `50_skills/` 主路径
 - **依赖**：Group 10 完成
 - **产物**：
   - 修改 `router.py`：`type=atom` → `20_atoms/<slug>.md`，`type=skill` → `50_skills/<slug>.md`。
@@ -452,7 +452,7 @@
   - 单元测试更新：`type=atom` 落 `20_atoms/`；flag 关闭时落 quarantine。
 - **关联 AC**：R1 AC3、R4 AC5–AC6。
 
-#### 11.2 quarantine 回流脚本
+#### [x] 11.2 quarantine 回流脚本
 - **依赖**：11.1
 - **产物**：
   - `personal-wiki/scripts/migrate_pending_harden.py`：把 `90_archive/pending-harden/atom/*` → `20_atoms/`，skill 同理。带 `--dry-run`/`--apply --yes`。
@@ -462,7 +462,7 @@
 - **关联 AC**：R4 AC10 收尾。
 - **禁止**：不要修改 frontmatter 内容；不要重命名文件。
 
-#### 11.3 Folder/type consistency property test（P2）扩展
+#### [x] 11.3 Folder/type consistency property test（P2）扩展
 - **依赖**：11.1
 - **产物**：
   - 升级 Group 2 期就该有的 P2 测试 `personal-wiki/tests/property/test_folder_type_consistency.py`：
@@ -475,7 +475,7 @@
 
 ### Group 12：收尾
 
-#### 12.1 文档更新
+#### [x] 12.1 文档更新
 - **依赖**：Group 11 完成
 - **产物**：
   - `personal-wiki/docs/INGEST_API.md`：补充 atom/skill 路径、tag registry 说明。
@@ -486,7 +486,7 @@
 - **关联 AC**：维护性。
 - **禁止**：不要在 PRODUCT_MAP 里加新计划；只更新状态与日期。
 
-#### 12.2 全套测试 + 全套 property test 跑一遍
+#### [x] 12.2 全套测试 + 全套 property test 跑一遍
 - **依赖**：12.1
 - **产物**：执行
   - `pytest personal-wiki/tests/ -q --tb=short`
@@ -499,7 +499,7 @@
 - **关联 AC**：所有 R13。
 - **禁止**：不要为了通过 build 临时禁用 lint 规则；不要 skip 测试。
 
-#### 12.3 Harden 期 bug list（如有）
+#### [x] 12.3 Harden 期 bug list（如有）
 - **依赖**：12.2
 - **产物**：12.2 任何失败 → 同 Group 6 流程，建 `final-bug-list.md`，修完为止。
 - **验收**：所有测试全绿。
