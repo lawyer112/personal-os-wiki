@@ -28,7 +28,7 @@ export async function POST(request: Request) {
     return html(loginPage(next, locale, copy(locale).invalidToken), 401, locale);
   }
 
-  const response = NextResponse.redirect(new URL(next, request.url));
+  const response = NextResponse.redirect(readRedirectUrl(next, request));
   response.cookies.set(PERSONAL_OS_READ_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
@@ -50,6 +50,31 @@ function normalizeNext(value: string | null) {
 function isHttps(request: Request) {
   return new URL(request.url).protocol === "https:" ||
     request.headers.get("x-forwarded-proto")?.toLowerCase() === "https";
+}
+
+function readRedirectUrl(next: string, request: Request) {
+  return new URL(next, publicRequestBaseUrl(request));
+}
+
+function publicRequestBaseUrl(request: Request) {
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (configured) {
+    return configured;
+  }
+
+  const forwardedHost = request.headers.get("x-forwarded-host")?.trim();
+  if (forwardedHost) {
+    const proto = request.headers.get("x-forwarded-proto")?.trim() || "http";
+    return `${proto}://${forwardedHost}`;
+  }
+
+  const host = request.headers.get("host")?.trim();
+  if (host) {
+    const proto = isHttps(request) ? "https" : "http";
+    return `${proto}://${host}`;
+  }
+
+  return request.url;
 }
 
 function html(body: string, status: number, locale: Locale) {

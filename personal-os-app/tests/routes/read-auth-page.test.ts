@@ -27,4 +27,20 @@ describe("read auth page", () => {
     expect(body).toContain("预览口令");
     expect(body).toContain("demo-read-token");
   });
+
+  it("redirects successful login to the configured public app URL", async () => {
+    vi.stubEnv("PERSONAL_OS_READ_TOKEN", "demo-read-token");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://192.168.6.28:3100");
+
+    const { POST } = await loadRoute();
+    const response = await POST(
+      new Request("http://localhost:3000/auth/read", {
+        method: "POST",
+        body: new URLSearchParams({ token: "demo-read-token", next: "/" }),
+      }),
+    );
+
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe("http://192.168.6.28:3100/");
+  });
 });
