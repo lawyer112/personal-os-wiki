@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { personalOsUrl, personalWikiUrl, wikiOpenUrl, wikiUrl } from "@/lib/app-config";
+import { personalOsUrl, personalWikiUrl, wikiOpenUrl } from "@/lib/app-config";
+import { wikiClient } from "@/lib/wiki-client";
 
 type WikiHealth = {
   status?: string;
@@ -178,11 +179,11 @@ export default async function WikiPage() {
 
 async function getWikiHealth(): Promise<WikiHealth> {
   try {
-    const response = await fetch(wikiUrl("/api/health"), { cache: "no-store" });
-    if (!response.ok) {
+    const result = await wikiClient.read<WikiHealth>("/api/health");
+    if (!result.ok) {
       return {};
     }
-    return (await response.json()) as WikiHealth;
+    return result.body ?? {};
   } catch {
     return {};
   }
@@ -190,20 +191,13 @@ async function getWikiHealth(): Promise<WikiHealth> {
 
 async function getRecentNotes(): Promise<WikiNote[]> {
   try {
-    const token = process.env.WIKI_READ_TOKEN;
-    const headers: Record<string, string> = {};
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-    const response = await fetch(wikiUrl("/api/notes?page_size=5"), {
-      headers,
-      cache: "no-store",
-    });
-    if (!response.ok) {
+    const result = await wikiClient.read<{ notes?: WikiNote[] }>(
+      "/api/notes?page_size=5",
+    );
+    if (!result.ok) {
       return [];
     }
-    const body = (await response.json()) as { notes?: WikiNote[] };
-    return body.notes ?? [];
+    return result.body?.notes ?? [];
   } catch {
     return [];
   }

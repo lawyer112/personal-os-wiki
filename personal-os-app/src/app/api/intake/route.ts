@@ -116,6 +116,23 @@ export async function POST(request: Request) {
     }
 
     const wikiErrors = wikiResults.filter((result) => !result.ok);
+    const wikiWriteStatus = {
+      status:
+        input.wikiNotes.length === 0
+          ? "skipped"
+          : wikiErrors.length === 0
+            ? "ok"
+            : wikiResults.some((result) => result.ok)
+              ? "partial"
+              : "failed",
+      requested: input.wikiNotes.length,
+      succeeded: wikiResults.length - wikiErrors.length,
+      failed: wikiErrors.length,
+      errors: wikiErrors.map((result) => ({
+        title: result.title,
+        error: result.error ?? "Personal Wiki write failed",
+      })),
+    };
     const outputSummary =
       input.agent.outputSummary ??
       ([
@@ -132,7 +149,10 @@ export async function POST(request: Request) {
           .join("，") || "已记录输入。");
 
     await completeAgentRun(prisma, run.id, {
-      classification: input.agent.classification,
+      classification: {
+        ...(input.agent.classification ?? {}),
+        wiki_write_status: wikiWriteStatus,
+      },
       reasoningSummary: input.agent.reasoningSummary,
       outputSummary,
       error:
@@ -192,6 +212,7 @@ export async function POST(request: Request) {
         notes,
         projectEvents,
         wiki: wikiResults,
+        wiki_write_status: wikiWriteStatus,
         notification,
       },
       { status: 201 },

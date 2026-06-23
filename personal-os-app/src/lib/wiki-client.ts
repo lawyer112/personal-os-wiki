@@ -27,6 +27,161 @@ type WikiNotesResponse = {
   notes?: WikiNoteSummary[];
 };
 
+export type WikiClientResult<TBody = unknown> = {
+  ok: boolean;
+  status: number;
+  body: TBody | null;
+  url: string;
+};
+
+type WikiClientBaseOptions = Omit<RequestInit, "body" | "headers" | "method"> & {
+  headers?: Record<string, string>;
+};
+
+type WikiReadOptions = WikiClientBaseOptions & {
+  method?: "GET" | "HEAD";
+};
+
+type WikiWriteOptions = WikiClientBaseOptions & {
+  method?: "POST" | "PUT" | "PATCH" | "DELETE";
+  body?: unknown;
+};
+
+type WikiRequestOptions = WikiClientBaseOptions & {
+  method: string;
+  body?: unknown;
+};
+
+const READ_METHODS = new Set(["GET", "HEAD"]);
+const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+function authHeaders(token?: string): Record<string, string> {
+  if (!token) {
+    return {};
+  }
+
+  const scheme = "Bearer";
+  return { Authorization: scheme + " " + token };
+}
+
+function normalizeMethod(method: string) {
+  return method.toUpperCase();
+}
+
+function assertAllowedWikiMethod(
+  method: string,
+  allowed: Set<string>,
+  clientKind: "read" | "write",
+) {
+  if (!allowed.has(method)) {
+    throw new Error(`Personal Wiki ${clientKind} client cannot use ${method}`);
+  }
+}
+
+function assertReadHasNoBody(options: WikiReadOptions) {
+  const unsafeBody = (options as WikiReadOptions & { body?: unknown }).body;
+  if (unsafeBody !== undefined) {
+    throw new Error("Personal Wiki read client cannot send a request body");
+  }
+}
+
+function encodeBody(body: unknown) {
+  if (body === undefined) {
+    return undefined;
+  }
+  if (
+    typeof body === "string" ||
+    body instanceof Blob ||
+    body instanceof FormData ||
+    body instanceof URLSearchParams ||
+    body instanceof ArrayBuffer
+  ) {
+    return body;
+  }
+
+  return JSON.stringify(body);
+}
+
+function jsonHeaders(body: unknown, headers: Record<string, string>) {
+  if (
+    body === undefined ||
+    Object.keys(headers).some((key) => key.toLowerCase() === "content-type")
+  ) {
+    return headers;
+  }
+
+  return { ...headers, "Content-Type": "application/json" };
+}
+
+async function parseBody(response: Response) {
+  const text = await response.text();
+  if (!text) {
+    return null;
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("application/json")) {
+    try {
+      return JSON.parse(text) as unknown;
+    } catch {
+      return text;
+    }
+  }
+
+  return text;
+}
+
+async function requestWiki<TBody>(
+  path: string,
+  token: string | undefined,
+  options: WikiRequestOptions,
+): Promise<WikiClientResult<TBody>> {
+  const { body, headers = {}, method, ...init } = options;
+  const requestHeaders = jsonHeaders(body, {
+    ...authHeaders(token),
+    ...headers,
+  });
+  const url = wikiUrl(path);
+
+  const response = await fetch(url, {
+    cache: init.cache ?? "no-store",
+    ...init,
+    method,
+    headers: requestHeaders,
+    body: encodeBody(body),
+  });
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    body: (await parseBody(response)) as TBody | null,
+    url,
+  };
+}
+
+export const wikiClient = {
+  read<TBody = unknown>(path: string, options: WikiReadOptions = {}) {
+    const method = normalizeMethod(options.method ?? "GET");
+    assertAllowedWikiMethod(method, READ_METHODS, "read");
+    assertReadHasNoBody(options);
+
+    return requestWiki<TBody>(path, process.env.WIKI_READ_TOKEN, {
+      ...options,
+      method,
+      body: undefined,
+    });
+  },
+  write<TBody = unknown>(path: string, options: WikiWriteOptions = {}) {
+    const method = normalizeMethod(options.method ?? "POST");
+    assertAllowedWikiMethod(method, WRITE_METHODS, "write");
+
+    return requestWiki<TBody>(path, process.env.WIKI_API_TOKEN, {
+      ...options,
+      method,
+    });
+  },
+};
+
 export function wikiNoteUrl(path: string) {
   return wikiOpenUrl(`/note?path=${encodeURIComponent(path)}`);
 }
@@ -37,21 +192,14 @@ export async function searchWikiNotes(query: string, pageSize = 8) {
     page: "1",
     page_size: String(pageSize),
   });
-  const token = process.env.WIKI_READ_TOKEN;
-  const headers: Record<string, string> = {};
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+
+  const result = await wikiClient.read<WikiNotesResponse>(
+    `/api/notes?${params.toString()}`,
+  );
+
+  if (!result.ok) {
+    throw new Error(`Personal Wiki search failed: ${result.status}`);
   }
 
-  const response = await fetch(wikiUrl(`/api/notes?${params.toString()}`), {
-    headers,
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Personal Wiki search failed: ${response.status}`);
-  }
-
-  const body = (await response.json()) as WikiNotesResponse;
-  return body.notes ?? [];
+  return result.body?.notes ?? [];
 }

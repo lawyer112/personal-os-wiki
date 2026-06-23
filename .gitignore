@@ -19,3 +19,4 @@ metrics/
 __pycache__/
 tsconfig.tsbuildinfo
 artifacts-*.png
+.agent-runs/

@@ -1,4 +1,5 @@
-import { wikiOpenUrl, wikiUrl } from "@/lib/app-config";
+import { wikiOpenUrl } from "@/lib/app-config";
+import { wikiClient } from "@/lib/wiki-client";
 import type { WikiIngestInput } from "@/lib/validation";
 
 export type WikiIngestResult = {
@@ -10,37 +11,28 @@ export type WikiIngestResult = {
   error?: string;
 };
 
+type WikiIngestResponse = {
+  status?: string;
+  note_path?: string;
+  url?: string;
+  error?: string;
+  message?: string;
+};
+
 export async function ingestWikiNote(
   input: WikiIngestInput,
 ): Promise<WikiIngestResult> {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-  const token = process.env.WIKI_API_TOKEN;
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
   try {
-    const response = await fetch(wikiUrl("/api/ingest"), {
-      method: "POST",
-      headers,
-      body: JSON.stringify(input),
+    const result = await wikiClient.write<WikiIngestResponse>("/api/ingest", {
+      body: input,
     });
+    const body = result.body ?? {};
 
-    const body = (await response.json().catch(() => ({}))) as {
-      status?: string;
-      note_path?: string;
-      url?: string;
-      error?: string;
-      message?: string;
-    };
-
-    if (!response.ok) {
+    if (!result.ok) {
       return {
         ok: false,
         title: input.title,
-        error: body.error ?? body.message ?? `Personal Wiki returned ${response.status}`,
+        error: body.error ?? body.message ?? `Personal Wiki returned ${result.status}`,
       };
     }
 
