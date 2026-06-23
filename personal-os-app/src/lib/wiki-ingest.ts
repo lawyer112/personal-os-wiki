@@ -1,6 +1,5 @@
 import { wikiOpenUrl } from "@/lib/app-config";
 import { wikiClient } from "@/lib/wiki-client";
-import type { WikiIngestInput } from "@/lib/validation";
 
 export type WikiIngestResult = {
   ok: boolean;
@@ -19,26 +18,57 @@ type WikiIngestResponse = {
   message?: string;
 };
 
+type WikiIngestNoteInput = {
+  frontmatter?: {
+    title: string;
+    type: string;
+    created_by: string;
+    source_type: string;
+    tags: string[];
+    created_at?: string;
+    task_id?: string;
+    agent_id?: string;
+    project?: string;
+    last_reviewed?: string;
+    migration?: string;
+  };
+  title?: string;
+  content: string;
+  source_type?: string;
+  source_url?: string;
+  tags?: string[];
+  metadata?: Record<string, unknown>;
+};
+
+const wikiIngestTitle = (input: WikiIngestNoteInput) =>
+  input.frontmatter?.title ?? input.title ?? "untitled-wiki-note";
+
 export async function ingestWikiNote(
-  input: WikiIngestInput,
+  input: WikiIngestNoteInput,
 ): Promise<WikiIngestResult> {
+  const title = wikiIngestTitle(input);
+  const payload = {
+    ...input,
+    metadata: input.metadata ?? {},
+  };
+
   try {
     const result = await wikiClient.write<WikiIngestResponse>("/api/ingest", {
-      body: input,
+      body: payload,
     });
     const body = result.body ?? {};
 
     if (!result.ok) {
       return {
         ok: false,
-        title: input.title,
+        title,
         error: body.error ?? body.message ?? `Personal Wiki returned ${result.status}`,
       };
     }
 
     return {
       ok: true,
-      title: input.title,
+      title,
       status: body.status,
       note_path: body.note_path,
       url: body.url ? wikiOpenUrl(body.url) : undefined,
@@ -46,7 +76,7 @@ export async function ingestWikiNote(
   } catch (error) {
     return {
       ok: false,
-      title: input.title,
+      title,
       error: error instanceof Error ? error.message : "Personal Wiki ingest failed",
     };
   }
