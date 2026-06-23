@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     }
 
     if (query) {
-      const context = await getQueryAgentContext(query);
+      const context = await getQueryAgentContext(query, prisma);
       return json({
         ok: true,
         context,

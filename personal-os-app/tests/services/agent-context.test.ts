@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   buildContextSearchQueries,
+  getAgentContext,
   getQueryAgentContext,
   searchWikiContext,
 } from "@/lib/agent-context";
@@ -101,7 +102,117 @@ describe("agent context harness", () => {
     expect(context.recentTasks).toEqual([]);
     expect(context.relatedIdeas).toEqual([]);
     expect(context.activity).toEqual([]);
+    expect(context.tiers.hot).toEqual([]);
+    expect(context.tiers.warm).toEqual([]);
+    expect(context.tiers.cold[0]).toMatchObject({ type: "policy" });
     expect(context.policy.canReadWiki).toBe(true);
     expect(context.wiki.status).toBe("empty");
+  });
+
+  it("adds P0/P1 agent executable tasks to hot tier for keyword lookups", async () => {
+    mockedSearchWikiNotes.mockResolvedValue([
+      {
+        title: "Personal OS context memory tiering",
+        path: "projects/personal-os/context-tiering.md",
+        tags: ["personal-os", "context"],
+        concepts: ["hot warm cold"],
+        excerpt: "Historical Wiki evidence for hot/warm/cold context packs.",
+      },
+    ]);
+    const taskFindMany = vi.fn().mockResolvedValue([
+      {
+        id: "task_hot",
+        title: "把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0",
+        status: "todo",
+        priority: "P0",
+        riskLevel: "low",
+        executionMode: "agent_allowed",
+        ownerAgent: null,
+        leaseUntil: null,
+        nextAction: "Add tiers to the context response.",
+        definitionOfDone: "Query context returns tiers.hot/warm/cold.",
+        project: { id: "project_1", name: "Personal OS" },
+      },
+    ]);
+
+    const context = await getQueryAgentContext("personal os wiki", {
+      task: { findMany: taskFindMany },
+    });
+
+    expect(taskFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        take: 5,
+        include: { project: true },
+      }),
+    );
+    expect(context.tiers.hot[0]).toMatchObject({
+      type: "task",
+      id: "task_hot",
+      priority: "P0",
+      status: "todo",
+    });
+    expect(context.tiers.warm[0]).toMatchObject({
+      type: "wiki",
+      path: "projects/personal-os/context-tiering.md",
+    });
+  });
+
+  it("puts the current task in hot tier and historical wiki hits in warm tier", async () => {
+    mockedSearchWikiNotes.mockResolvedValue([
+      {
+        title: "Agent context tiering decision record",
+        path: "projects/personal-os/context-tiering-decision.md",
+        tags: ["personal-os", "wiki"],
+        concepts: ["Agent Context"],
+        excerpt: "Decision record for current task plus historical Wiki hit.",
+      },
+    ]);
+
+    const task = {
+      id: "task_current",
+      title: "把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0",
+      description: "Add context tiers.",
+      status: "doing",
+      priority: "P0",
+      riskLevel: "low",
+      executionMode: "agent_allowed",
+      agentTags: ["personal-os", "context"],
+      ownerAgent: "hermes",
+      leaseUntil: new Date(Date.now() + 60_000).toISOString(),
+      nextAction: "Implement tiers.",
+      definitionOfDone: "Context response keeps old fields and adds tiers.",
+      projectId: "project_1",
+      sourceInboxItemId: null,
+      sourceAgentRunId: null,
+      project: { id: "project_1", name: "Personal OS" },
+      sourceInboxItem: null,
+      sourceAgentRun: null,
+      wikiLinks: [],
+      contributions: [],
+      artifacts: [],
+      reviews: [],
+    };
+
+    const context = await getAgentContext(
+      {
+        task: {
+          findUnique: vi.fn().mockResolvedValue(task),
+          findMany: vi.fn().mockResolvedValue([]),
+        },
+        idea: { findMany: vi.fn().mockResolvedValue([]) },
+        activityLog: { findMany: vi.fn().mockResolvedValue([]) },
+      },
+      "task_current",
+    );
+
+    expect(context.tiers.hot[0]).toMatchObject({
+      type: "task",
+      id: "task_current",
+      reason: "current task being executed",
+    });
+    expect(context.tiers.warm[0]).toMatchObject({
+      type: "wiki",
+      path: "projects/personal-os/context-tiering-decision.md",
+    });
   });
 });

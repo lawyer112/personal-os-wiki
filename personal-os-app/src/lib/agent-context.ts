@@ -118,6 +118,33 @@ export type AgentContextPolicy = {
   note: string;
 };
 
+export type AgentContextTierItem = {
+  type: "task" | "wiki" | "idea" | "activity" | "policy";
+  reason: string;
+  id?: string;
+  title?: string;
+  status?: string;
+  priority?: string;
+  path?: string;
+  url?: string;
+  score?: number;
+  matchedQueries?: string[];
+  action?: string;
+  targetType?: string;
+  targetId?: string;
+  projectName?: string;
+  ownerAgent?: string | null;
+  leaseUntil?: Date | string | null;
+  nextAction?: string | null;
+  definitionOfDone?: string | null;
+};
+
+export type AgentContextTiers = {
+  hot: AgentContextTierItem[];
+  warm: AgentContextTierItem[];
+  cold: AgentContextTierItem[];
+};
+
 export type AgentContextPack = {
   generatedAt: string;
   task: TaskRecord | null;
@@ -126,6 +153,7 @@ export type AgentContextPack = {
   recentTasks: unknown[];
   relatedIdeas: IdeaContextRecord[];
   activity: ActivityRecord[];
+  tiers: AgentContextTiers;
   policy: AgentContextPolicy;
 };
 
@@ -302,6 +330,249 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "Unknown wiki search error";
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function asString(value: unknown) {
+  return typeof value === "string" ? value : undefined;
+}
+
+function asTaskLike(value: unknown): Partial<TaskRecord> | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const id = asString(value.id);
+  const title = asString(value.title);
+  const status = asString(value.status);
+  const priority = asString(value.priority);
+
+  if (!id || !title || !status || !priority) {
+    return null;
+  }
+
+  const project = isRecord(value.project)
+    ? {
+        id: asString(value.project.id) ?? "",
+        name: asString(value.project.name) ?? "",
+      }
+    : null;
+
+  return {
+    id,
+    title,
+    status,
+    priority,
+    riskLevel: asString(value.riskLevel),
+    executionMode: asString(value.executionMode),
+    ownerAgent: asString(value.ownerAgent) ?? null,
+    leaseUntil: asString(value.leaseUntil),
+    nextAction: asString(value.nextAction) ?? "",
+    definitionOfDone: asString(value.definitionOfDone) ?? "",
+    project,
+  };
+}
+
+function isAgentExecutableHotTask(task: Partial<TaskRecord>) {
+  return (
+    task.executionMode === "agent_allowed" &&
+    ["P0", "P1"].includes(task.priority ?? "") &&
+    ["todo", "doing", "review"].includes(task.status ?? "")
+  );
+}
+
+function isRecentBlocker(task: Partial<TaskRecord>) {
+  return ["blocked", "waiting"].includes(task.status ?? "");
+}
+
+function taskTierItem(
+  task: Partial<TaskRecord>,
+  reason: string,
+): AgentContextTierItem {
+  return {
+    type: "task",
+    reason,
+    id: task.id,
+    title: task.title,
+    status: task.status,
+    priority: task.priority,
+    projectName: task.project?.name,
+    ownerAgent: task.ownerAgent,
+    leaseUntil: task.leaseUntil,
+    nextAction: task.nextAction,
+    definitionOfDone: task.definitionOfDone,
+  };
+}
+
+function wikiTierItem(
+  candidate: WikiContextCandidate,
+  reason: string,
+): AgentContextTierItem {
+  return {
+    type: "wiki",
+    reason,
+    title: candidate.title,
+    path: candidate.path,
+    url: candidate.url,
+    score: candidate.score,
+    matchedQueries: candidate.matchedQueries,
+  };
+}
+
+function ideaTierItem(
+  idea: IdeaContextRecord,
+  reason: string,
+): AgentContextTierItem {
+  return {
+    type: "idea",
+    reason,
+    id: idea.id,
+    title: idea.title,
+    status: idea.status,
+    priority: idea.priority,
+    projectName: idea.project?.name,
+    nextAction: idea.nextAction,
+  };
+}
+
+function activityTierItem(
+  activity: ActivityRecord,
+  reason: string,
+): AgentContextTierItem {
+  return {
+    type: "activity",
+    reason,
+    id: activity.id,
+    action: activity.action,
+    targetType: activity.targetType,
+    targetId: activity.targetId,
+  };
+}
+
+function tierKey(item: AgentContextTierItem) {
+  return [item.type, item.id, item.path, item.action, item.targetId]
+    .filter(Boolean)
+    .join(":");
+}
+
+function pushUnique(
+  tier: AgentContextTierItem[],
+  seen: Set<string>,
+  item: AgentContextTierItem,
+) {
+  const key = tierKey(item);
+  if (!key || seen.has(key)) {
+    return;
+  }
+  seen.add(key);
+  tier.push(item);
+}
+
+function buildContextTiers(input: {
+  task: TaskRecord | null;
+  wiki: WikiContextSearchResult;
+  recentTasks: unknown[];
+  relatedIdeas: IdeaContextRecord[];
+  activity: ActivityRecord[];
+  queryTasks?: unknown[];
+}): AgentContextTiers {
+  const hot: AgentContextTierItem[] = [];
+  const warm: AgentContextTierItem[] = [];
+  const cold: AgentContextTierItem[] = [];
+  const seen = new Set<string>();
+
+  if (input.task) {
+    pushUnique(hot, seen, taskTierItem(input.task, "current task being executed"));
+  }
+
+  for (const rawTask of input.queryTasks ?? []) {
+    const task = asTaskLike(rawTask);
+    if (!task) {
+      continue;
+    }
+    if (isAgentExecutableHotTask(task)) {
+      pushUnique(hot, seen, taskTierItem(task, "P0/P1 agent_allowed task ready for execution"));
+    } else if (isRecentBlocker(task)) {
+      pushUnique(hot, seen, taskTierItem(task, "recent blocked or waiting task"));
+    } else {
+      pushUnique(warm, seen, taskTierItem(task, "related task context"));
+    }
+  }
+
+  for (const rawTask of input.recentTasks) {
+    const task = asTaskLike(rawTask);
+    if (!task) {
+      continue;
+    }
+    const item = taskTierItem(
+      task,
+      isRecentBlocker(task) ? "recent related blocker" : "recent related task",
+    );
+    pushUnique(isRecentBlocker(task) ? hot : warm, seen, item);
+  }
+
+  input.wiki.candidates.forEach((candidate, index) => {
+    const item = wikiTierItem(candidate, "matched Personal Wiki evidence");
+    const targetTier = index < 3 || (candidate.score ?? 0) >= 30 ? warm : cold;
+    pushUnique(targetTier, seen, item);
+  });
+
+  for (const idea of input.relatedIdeas) {
+    const targetTier = ["P0", "P1"].includes(idea.priority) ? warm : cold;
+    pushUnique(targetTier, seen, ideaTierItem(idea, "related idea or future task seed"));
+  }
+
+  input.activity.forEach((activity, index) => {
+    const targetTier = index < 3 ? warm : cold;
+    pushUnique(targetTier, seen, activityTierItem(activity, "recent task activity evidence"));
+  });
+
+  pushUnique(cold, seen, {
+    type: "policy",
+    reason: "standing Personal OS / Wiki agent policy",
+    title: "Agent context policy",
+  });
+
+  return {
+    hot: hot.slice(0, 8),
+    warm: warm.slice(0, 12),
+    cold: cold.slice(0, 12),
+  };
+}
+
+type QueryContextDb = {
+  task?: unknown;
+};
+
+async function getQueryHotTasks(db?: QueryContextDb) {
+  const taskDelegate = db?.task as
+    | { findMany(args: unknown): Promise<unknown[]> }
+    | undefined;
+  if (!taskDelegate) {
+    return [];
+  }
+
+  return taskDelegate.findMany({
+    where: {
+      OR: [
+        {
+          executionMode: "agent_allowed",
+          priority: { in: ["P0", "P1"] },
+          status: { in: ["todo", "doing", "review"] },
+        },
+        {
+          priority: { in: ["P0", "P1"] },
+          status: { in: ["blocked", "waiting"] },
+        },
+      ],
+    },
+    include: { project: true },
+    orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
+    take: 5,
+  });
+}
+
 export async function searchWikiContext(
   queries: string[],
   limit = 8,
@@ -374,21 +645,32 @@ export async function searchWikiContextCandidates(queries: string[], limit = 8) 
   return result.candidates;
 }
 
-export async function getQueryAgentContext(query: string) {
+export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const searchQueries = [query.trim()].filter(Boolean);
-  const wiki = await searchWikiContext(
-    searchQueries,
-    AGENT_CONTEXT_POLICY.maxWikiCandidates,
-  );
+  const [wiki, queryTasks] = await Promise.all([
+    searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
+    getQueryHotTasks(db),
+  ]);
+  const recentTasks: unknown[] = [];
+  const relatedIdeas: IdeaContextRecord[] = [];
+  const activity: ActivityRecord[] = [];
 
   return {
     generatedAt: new Date().toISOString(),
     task: null,
     searchQueries,
     wiki,
-    recentTasks: [],
-    relatedIdeas: [],
-    activity: [],
+    recentTasks,
+    relatedIdeas,
+    activity,
+    tiers: buildContextTiers({
+      task: null,
+      wiki,
+      recentTasks,
+      relatedIdeas,
+      activity,
+      queryTasks,
+    }),
     policy: AGENT_CONTEXT_POLICY,
   } satisfies AgentContextPack;
 }
@@ -471,6 +753,13 @@ export async function getAgentContext<TDb extends ContextDb>(
     recentTasks,
     relatedIdeas,
     activity,
+    tiers: buildContextTiers({
+      task,
+      wiki,
+      recentTasks,
+      relatedIdeas,
+      activity,
+    }),
     policy: AGENT_CONTEXT_POLICY,
   };
 }
