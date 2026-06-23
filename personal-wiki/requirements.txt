@@ -1,0 +1,5 @@
+# personal-wiki requirements
+# This file is intentionally minimal: personal-wiki/api/server.py uses only the
+# Python standard library. PyYAML is optional and gracefully skipped if absent.
+# Dependabot scans this file to surface any future pip dependencies.
+# No external packages are required at this time.
