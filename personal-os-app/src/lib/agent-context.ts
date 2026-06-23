@@ -145,6 +145,20 @@ export type AgentContextTiers = {
   cold: AgentContextTierItem[];
 };
 
+export type ContextEpisode = {
+  type: "agent_run" | "task" | "wiki" | "activity";
+  id: string;
+  title: string;
+  summary: string;
+  relevanceScore: number;
+  sourceUrl?: string;
+  createdAt?: string;
+};
+
+export type AgentContextEvidence = {
+  episodes: ContextEpisode[];
+};
+
 export type AgentContextPack = {
   generatedAt: string;
   task: TaskRecord | null;
@@ -153,6 +167,7 @@ export type AgentContextPack = {
   recentTasks: unknown[];
   relatedIdeas: IdeaContextRecord[];
   activity: ActivityRecord[];
+  evidence: AgentContextEvidence;
   tiers: AgentContextTiers;
   policy: AgentContextPolicy;
 };
@@ -543,6 +558,7 @@ function buildContextTiers(input: {
 
 type QueryContextDb = {
   task?: unknown;
+  activityLog?: unknown;
 };
 
 async function getQueryHotTasks(db?: QueryContextDb) {
@@ -571,6 +587,105 @@ async function getQueryHotTasks(db?: QueryContextDb) {
     orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
     take: 5,
   });
+}
+
+async function getQueryActivity(db?: QueryContextDb, limit = 15) {
+  const activityLog = db?.activityLog as
+    | { findMany(args: unknown): Promise<ActivityRecord[]> }
+    | undefined;
+  if (!activityLog) {
+    return [];
+  }
+  return activityLog.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+}
+
+function episodeMatches(text: string, keywords: string[]): boolean {
+  const lower = text.toLowerCase();
+  return keywords.some((k) => {
+    const kLower = k.toLowerCase();
+    if (lower.includes(kLower)) return true;
+    const words = kLower.split(/\s+/).filter((w) => w.length >= 3);
+    return words.some((w) => lower.includes(w));
+  });
+}
+
+function findEpisodes(
+  query: string,
+  searchQueries: string[],
+  wiki: WikiContextSearchResult,
+  activity: ActivityRecord[],
+  task: TaskRecord | null,
+): ContextEpisode[] {
+  const keywords = [...searchQueries, query].filter(Boolean);
+  const episodes: ContextEpisode[] = [];
+
+  for (const candidate of wiki.candidates) {
+    episodes.push({
+      type: "wiki",
+      id: candidate.path,
+      title: candidate.title,
+      summary: candidate.excerpt ?? "",
+      relevanceScore: candidate.score ?? 0,
+      sourceUrl: candidate.url,
+      createdAt: candidate.created,
+    });
+  }
+
+  for (const act of activity) {
+    const text = `${act.action} ${act.targetType} ${act.targetId}`;
+    if (episodeMatches(text, keywords)) {
+      episodes.push({
+        type: "activity",
+        id: act.id,
+        title: `${act.action} on ${act.targetType}`,
+        summary: `${act.action} ${act.targetType} ${act.targetId}`,
+        relevanceScore: 12,
+        createdAt:
+          typeof act.createdAt === "string"
+            ? act.createdAt
+            : act.createdAt?.toISOString(),
+      });
+    }
+  }
+
+  if (task?.sourceAgentRun) {
+    const run = task.sourceAgentRun;
+    const text = `${run.model} ${run.reasoningSummary} ${run.outputSummary}`;
+    if (episodeMatches(text, keywords) || task.sourceAgentRunId) {
+      episodes.push({
+        type: "agent_run",
+        id: task.sourceAgentRunId ?? "unknown",
+        title: run.model ?? "Agent Run",
+        summary: run.outputSummary ?? run.reasoningSummary ?? "",
+        relevanceScore: 18,
+      });
+    }
+  }
+
+  if (task?.contributions) {
+    for (const contrib of task.contributions) {
+      if (episodeMatches(contrib.summary, keywords)) {
+        episodes.push({
+          type: "task",
+          id: task.id,
+          title: task.title,
+          summary: contrib.summary,
+          relevanceScore: 22,
+          createdAt:
+            typeof contrib.createdAt === "string"
+              ? contrib.createdAt
+              : contrib.createdAt?.toISOString(),
+        });
+      }
+    }
+  }
+
+  return episodes
+    .sort((a, b) => b.relevanceScore - a.relevanceScore)
+    .slice(0, 8);
 }
 
 export async function searchWikiContext(
@@ -647,13 +762,17 @@ export async function searchWikiContextCandidates(queries: string[], limit = 8) 
 
 export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const searchQueries = [query.trim()].filter(Boolean);
-  const [wiki, queryTasks] = await Promise.all([
+  const [wiki, queryTasks, globalActivity] = await Promise.all([
     searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
     getQueryHotTasks(db),
+    getQueryActivity(db),
   ]);
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
+  const evidence = {
+    episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null),
+  };
 
   return {
     generatedAt: new Date().toISOString(),
@@ -663,6 +782,7 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
     recentTasks,
     relatedIdeas,
     activity,
+    evidence,
     tiers: buildContextTiers({
       task: null,
       wiki,
@@ -745,6 +865,10 @@ export async function getAgentContext<TDb extends ContextDb>(
     }),
   ]);
 
+  const evidence = {
+    episodes: findEpisodes("", searchQueries, wiki, activity, task),
+  };
+
   return {
     generatedAt: new Date().toISOString(),
     task,
@@ -753,6 +877,7 @@ export async function getAgentContext<TDb extends ContextDb>(
     recentTasks,
     relatedIdeas,
     activity,
+    evidence,
     tiers: buildContextTiers({
       task,
       wiki,

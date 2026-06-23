@@ -102,6 +102,7 @@ describe("agent context harness", () => {
     expect(context.recentTasks).toEqual([]);
     expect(context.relatedIdeas).toEqual([]);
     expect(context.activity).toEqual([]);
+    expect(context.evidence.episodes).toEqual([]);
     expect(context.tiers.hot).toEqual([]);
     expect(context.tiers.warm).toEqual([]);
     expect(context.tiers.cold[0]).toMatchObject({ type: "policy" });
@@ -134,9 +135,11 @@ describe("agent context harness", () => {
         project: { id: "project_1", name: "Personal OS" },
       },
     ]);
+    const activityLogFindMany = vi.fn().mockResolvedValue([]);
 
     const context = await getQueryAgentContext("personal os wiki", {
       task: { findMany: taskFindMany },
+      activityLog: { findMany: activityLogFindMany },
     });
 
     expect(taskFindMany).toHaveBeenCalledWith(
@@ -154,6 +157,10 @@ describe("agent context harness", () => {
     expect(context.tiers.warm[0]).toMatchObject({
       type: "wiki",
       path: "projects/personal-os/context-tiering.md",
+    });
+    expect(context.evidence.episodes[0]).toMatchObject({
+      type: "wiki",
+      id: "projects/personal-os/context-tiering.md",
     });
   });
 
@@ -214,5 +221,108 @@ describe("agent context harness", () => {
       type: "wiki",
       path: "projects/personal-os/context-tiering-decision.md",
     });
+    expect(context.evidence.episodes[0]).toMatchObject({
+      type: "wiki",
+      id: "projects/personal-os/context-tiering-decision.md",
+    });
+  });
+
+  it("recalls related activity episodes for query keywords", async () => {
+    mockedSearchWikiNotes.mockResolvedValue([]);
+    const activityLogFindMany = vi.fn().mockResolvedValue([
+      {
+        id: "act_1",
+        actorType: "system",
+        action: "wiki.ingest.failed",
+        targetType: "wiki",
+        targetId: "wiki_1",
+        createdAt: "2026-06-23T12:00:00.000Z",
+      },
+      {
+        id: "act_2",
+        actorType: "system",
+        action: "task.submitted",
+        targetType: "task",
+        targetId: "task_1",
+        createdAt: "2026-06-23T11:00:00.000Z",
+      },
+    ]);
+
+    const context = await getQueryAgentContext("wiki write failed", {
+      activityLog: { findMany: activityLogFindMany },
+    });
+
+    expect(context.evidence.episodes).toHaveLength(1);
+    expect(context.evidence.episodes[0]).toMatchObject({
+      type: "activity",
+      id: "act_1",
+      title: "wiki.ingest.failed on wiki",
+      relevanceScore: 12,
+    });
+  });
+
+  it("recalls task contribution episodes when task has matching history", async () => {
+    mockedSearchWikiNotes.mockResolvedValue([
+      {
+        title: "Wiki write failure runbook",
+        path: "runbooks/wiki-write-failure.md",
+        tags: ["runbook"],
+        concepts: ["wiki"],
+        excerpt: "Steps to recover from wiki write failures.",
+      },
+    ]);
+
+    const task = {
+      id: "task_current",
+      title: "Fix wiki write pipeline",
+      description: "Debug and fix wiki write failures.",
+      status: "doing",
+      priority: "P0",
+      riskLevel: "low",
+      executionMode: "agent_allowed",
+      agentTags: ["personal-os", "wiki"],
+      ownerAgent: "hermes",
+      leaseUntil: new Date(Date.now() + 60_000).toISOString(),
+      nextAction: "Apply the fix from previous runbook.",
+      definitionOfDone: "Wiki writes succeed.",
+      projectId: "project_1",
+      sourceInboxItemId: null,
+      sourceAgentRunId: null,
+      project: { id: "project_1", name: "Personal OS" },
+      sourceInboxItem: null,
+      sourceAgentRun: {
+        model: "hermes-agent",
+        reasoningSummary: "Wiki write failed due to timeout.",
+        outputSummary: "Applied retry logic and succeeded.",
+      },
+      wikiLinks: [],
+      contributions: [
+        {
+          agentId: "obsidianmanager1",
+          summary: "Fixed wiki write timeout by adding retry logic.",
+          createdAt: "2026-06-23T10:00:00.000Z",
+        },
+      ],
+      artifacts: [],
+      reviews: [],
+    };
+
+    const context = await getAgentContext(
+      {
+        task: {
+          findUnique: vi.fn().mockResolvedValue(task),
+          findMany: vi.fn().mockResolvedValue([]),
+        },
+        idea: { findMany: vi.fn().mockResolvedValue([]) },
+        activityLog: { findMany: vi.fn().mockResolvedValue([]) },
+      },
+      "task_current",
+    );
+
+    const episodes = context.evidence.episodes;
+    expect(episodes.length).toBeGreaterThanOrEqual(3);
+    expect(episodes.some((e) => e.type === "wiki")).toBe(true);
+    expect(episodes.some((e) => e.type === "agent_run")).toBe(true);
+    expect(episodes.some((e) => e.type === "task" && e.summary.includes("retry logic"))).toBe(true);
   });
 });
