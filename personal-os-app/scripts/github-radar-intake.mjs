@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -65,18 +65,22 @@ function parseArgs(argv) {
     includeTasks: true,
     taskId: process.env.GITHUB_RADAR_TASK_ID || `github-radar-${stampDate()}`,
     out: process.env.GITHUB_RADAR_OUT || path.join(".agent-runs", `github-radar-${stampDate()}`),
+    registry: process.env.GITHUB_RADAR_REGISTRY || path.join(".agent-runs", "github-radar-source-registry.json"),
+    skipSeen: false,
   };
 
   for (const arg of argv) {
     if (arg === "--intake") args.intake = true;
     else if (arg === "--no-intake" || arg === "--dry-run") args.intake = false;
     else if (arg === "--no-tasks") args.includeTasks = false;
+    else if (arg === "--skip-seen") args.skipSeen = true;
     else if (arg.startsWith("--limit=")) args.limit = Number(arg.split("=", 2)[1]);
     else if (arg.startsWith("--per-query=")) args.perQuery = Number(arg.split("=", 2)[1]);
     else if (arg.startsWith("--task-id=")) args.taskId = arg.split("=", 2)[1];
     else if (arg.startsWith("--out=")) args.out = arg.split("=", 2)[1];
+    else if (arg.startsWith("--registry=")) args.registry = arg.split("=", 2)[1];
     else if (arg === "--help") {
-      console.log(`Usage: node scripts/github-radar-intake.mjs [--intake] [--no-tasks] [--limit=8] [--task-id=<id>] [--out=<dir>]`);
+      console.log(`Usage: node scripts/github-radar-intake.mjs [--intake] [--no-tasks] [--skip-seen] [--limit=8] [--task-id=<id>] [--out=<dir>] [--registry=<file>]`);
       process.exit(0);
     }
   }
@@ -171,13 +175,82 @@ function excerpt(text) {
   return text.replace(/\s+/g, " ").trim().slice(0, 420);
 }
 
-function buildMarkdown(repos, tasks) {
+async function loadRegistry(registryPath) {
+  try {
+    const content = await readFile(registryPath, "utf8");
+    return JSON.parse(content);
+  } catch {
+    return { created_at: isoNow(), updated_at: isoNow(), entries: [] };
+  }
+}
+
+async function saveRegistry(registryPath, registry) {
+  registry.updated_at = isoNow();
+  await writeFile(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+}
+
+function mergeRegistry(registry, repos) {
+  const entryMap = new Map(registry.entries.map((e) => [e.full_name, e]));
+  for (const repo of repos) {
+    const existing = entryMap.get(repo.full_name);
+    if (existing) {
+      existing.times_seen = (existing.times_seen || 1) + 1;
+      existing.last_seen = isoNow();
+      existing.last_score = repo.score;
+      existing.signals = [...new Set([...existing.signals, ...repo.signals])];
+    } else {
+      entryMap.set(repo.full_name, {
+        full_name: repo.full_name,
+        url: repo.url,
+        description: repo.description,
+        stars: repo.stars,
+        first_seen: isoNow(),
+        last_seen: isoNow(),
+        times_seen: 1,
+        first_score: repo.score,
+        last_score: repo.score,
+        signals: repo.signals,
+        status: "new",
+      });
+    }
+  }
+  registry.entries = [...entryMap.values()];
+  return registry;
+}
+
+function filterSeenRepos(repos, registry, skipSeen) {
+  if (!skipSeen) return repos;
+  const seen = new Set(registry.entries.filter((e) => e.times_seen > 1).map((e) => e.full_name));
+  return repos.filter((repo) => !seen.has(repo.full_name));
+}
+
+async function fetchExistingTasks(baseUrl, token) {
+  try {
+    const response = await fetch(`${baseUrl}/api/tasks?owner=agent&status=todo,doing,review&limit=50`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data.tasks || [];
+  } catch {
+    return [];
+  }
+}
+
+function deduplicateTasks(tasks, existingTasks) {
+  const existingTitles = new Set(existingTasks.map((t) => t.title));
+  return tasks.filter((task) => !existingTitles.has(task.title));
+}
+
+function buildMarkdown(repos, tasks, registryStats) {
   const lines = [
     `# GitHub 知识雷达 ${new Date().toISOString().slice(0, 10)}`,
     "",
     "## 结论",
     "",
     "本轮输出不是链接列表，而是可执行吸收判断。优先吸收 Source Registry、Context Pack、Hot/Warm/Cold Context、Graph Recall、Agent Hooks。",
+    "",
+    `Source Registry 累计 ${registryStats.total} 个 repo，本轮新增 ${registryStats.new} 个。`,
     "",
     "## 已筛选项目",
     "",
@@ -327,7 +400,7 @@ async function postIntake(payload) {
   const response = await fetch(`${baseUrl.replace(/\/$/, "")}/api/intake`, {
     method: "POST",
     headers: {
-      Authorization: ["Bearer", token].join(" "),
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
@@ -343,6 +416,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   await mkdir(args.out, { recursive: true });
 
+  const registry = await loadRegistry(args.registry);
   const candidates = await searchRepos(args.perQuery);
   const analyzed = [];
   for (const repo of candidates) {
@@ -354,14 +428,38 @@ async function main() {
     .filter((repo) => repo.signals.length > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, args.limit);
-  const tasks = buildTasks(selected);
-  const markdown = buildMarkdown(selected, tasks);
-  const payload = buildIntakePayload({ markdown, tasks, repos: selected, includeTasks: args.includeTasks, taskId: args.taskId });
 
-  await writeFile(path.join(args.out, "repos.json"), `${JSON.stringify({ generated_at: isoNow(), repos: selected }, null, 2)}\n`);
+  const mergedRegistry = mergeRegistry(registry, selected);
+  const registryStats = {
+    total: mergedRegistry.entries.length,
+    new: selected.filter((repo) => {
+      const entry = mergedRegistry.entries.find((e) => e.full_name === repo.full_name);
+      return entry && entry.times_seen === 1;
+    }).length,
+  };
+
+  const filteredRepos = filterSeenRepos(selected, mergedRegistry, args.skipSeen);
+  let tasks = buildTasks(filteredRepos);
+
+  if (args.intake) {
+    const baseUrl = process.env.PERSONAL_OS_BASE_URL || "http://192.168.6.37:3100";
+    const token = process.env.PERSONAL_OS_API_TOKEN;
+    if (token) {
+      const existingTasks = await fetchExistingTasks(baseUrl, token);
+      const deduped = deduplicateTasks(tasks, existingTasks);
+      console.log(`[dedup] ${tasks.length} tasks -> ${deduped.length} after dedup`);
+      tasks = deduped;
+    }
+  }
+
+  const markdown = buildMarkdown(filteredRepos, tasks, registryStats);
+  const payload = buildIntakePayload({ markdown, tasks, repos: filteredRepos, includeTasks: args.includeTasks, taskId: args.taskId });
+
+  await writeFile(path.join(args.out, "repos.json"), `${JSON.stringify({ generated_at: isoNow(), repos: filteredRepos }, null, 2)}\n`);
   await writeFile(path.join(args.out, "evidence.md"), markdown);
   await writeFile(path.join(args.out, "adoption-tasks.json"), `${JSON.stringify(tasks, null, 2)}\n`);
   await writeFile(path.join(args.out, "intake-payload.json"), `${JSON.stringify(payload, null, 2)}\n`);
+  await saveRegistry(args.registry, mergedRegistry);
 
   let intake = null;
   if (args.intake) {
@@ -369,7 +467,7 @@ async function main() {
     await writeFile(path.join(args.out, "intake-result.json"), `${JSON.stringify(intake, null, 2)}\n`);
   }
 
-  console.log(JSON.stringify({ out: args.out, repos: selected.length, tasks: tasks.length, intake: intake ? { ok: intake.ok, agentRunId: intake.agentRunId, wiki_write_status: intake.wiki_write_status } : null }, null, 2));
+  console.log(JSON.stringify({ out: args.out, repos: filteredRepos.length, tasks: tasks.length, registry: registryStats, intake: intake ? { ok: intake.ok, agentRunId: intake.agentRunId, wiki_write_status: intake.wiki_write_status } : null }, null, 2));
 }
 
 main().catch((error) => {
