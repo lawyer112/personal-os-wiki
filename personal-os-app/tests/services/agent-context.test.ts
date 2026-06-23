@@ -108,6 +108,7 @@ describe("agent context harness", () => {
     expect(context.tiers.cold[0]).toMatchObject({ type: "policy" });
     expect(context.policy.canReadWiki).toBe(true);
     expect(context.wiki.status).toBe("empty");
+    expect(context.nextAction).toBe("无高优先级可执行任务；运行 GitHub 雷达获取新任务");
   });
 
   it("adds P0/P1 agent executable tasks to hot tier for keyword lookups", async () => {
@@ -162,6 +163,7 @@ describe("agent context harness", () => {
       type: "wiki",
       id: "projects/personal-os/context-tiering.md",
     });
+    expect(context.nextAction).toBe("执行 P0 Agent 任务：把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0");
   });
 
   it("puts the current task in hot tier and historical wiki hits in warm tier", async () => {
@@ -225,6 +227,7 @@ describe("agent context harness", () => {
       type: "wiki",
       id: "projects/personal-os/context-tiering-decision.md",
     });
+    expect(context.nextAction).toBe("继续执行当前任务：把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0");
   });
 
   it("recalls related activity episodes for query keywords", async () => {
@@ -259,6 +262,36 @@ describe("agent context harness", () => {
       title: "wiki.ingest.failed on wiki",
       relevanceScore: 12,
     });
+  });
+
+  it("recommends investigating failed agent runs when recent failures exist", async () => {
+    mockedSearchWikiNotes.mockResolvedValue([]);
+    const taskFindMany = vi.fn().mockResolvedValue([]);
+    const activityLogFindMany = vi.fn().mockResolvedValue([
+      {
+        id: "act_fail_1",
+        actorType: "hermes",
+        action: "agentRun.failed",
+        targetType: "agentRun",
+        targetId: "run_1",
+        createdAt: "2026-06-23T22:08:27.000Z",
+      },
+      {
+        id: "act_fail_2",
+        actorType: "hermes",
+        action: "agentRun.failed",
+        targetType: "agentRun",
+        targetId: "run_2",
+        createdAt: "2026-06-23T22:08:02.000Z",
+      },
+    ]);
+
+    const context = await getQueryAgentContext("agent executable tasks", {
+      task: { findMany: taskFindMany },
+      activityLog: { findMany: activityLogFindMany },
+    });
+
+    expect(context.nextAction).toBe("调查最近 2 个失败的 AgentRun");
   });
 
   it("recalls task contribution episodes when task has matching history", async () => {

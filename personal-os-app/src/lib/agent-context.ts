@@ -170,6 +170,7 @@ export type AgentContextPack = {
   evidence: AgentContextEvidence;
   tiers: AgentContextTiers;
   policy: AgentContextPolicy;
+  nextAction: string;
 };
 
 export const AGENT_CONTEXT_POLICY: AgentContextPolicy = {
@@ -556,6 +557,49 @@ function buildContextTiers(input: {
   };
 }
 
+function computeNextAction(input: {
+  task?: TaskRecord | null;
+  queryTasks?: unknown[];
+  globalActivity?: ActivityRecord[];
+}): string {
+  const { task, queryTasks = [], globalActivity = [] } = input;
+
+  if (task) {
+    if (task.status === "doing") {
+      return `继续执行当前任务：${task.title}`;
+    }
+    if (task.status === "review") {
+      return `当前任务 ${task.title} 待 review，等待 Classic 确认`;
+    }
+    if (["blocked", "waiting"].includes(task.status)) {
+      return `当前任务 ${task.title} 被阻塞，需要调查原因`;
+    }
+  }
+
+  for (const rawTask of queryTasks) {
+    const t = asTaskLike(rawTask);
+    if (t && isAgentExecutableHotTask(t)) {
+      return `执行 ${t.priority} Agent 任务：${t.title}`;
+    }
+  }
+
+  for (const rawTask of queryTasks) {
+    const t = asTaskLike(rawTask);
+    if (t && isRecentBlocker(t)) {
+      return `调查阻塞任务：${t.title}`;
+    }
+  }
+
+  const failedRuns = (globalActivity ?? []).filter(
+    (act) => act.action === "agentRun.failed",
+  );
+  if (failedRuns.length > 0) {
+    return `调查最近 ${failedRuns.length} 个失败的 AgentRun`;
+  }
+
+  return "无高优先级可执行任务；运行 GitHub 雷达获取新任务";
+}
+
 type QueryContextDb = {
   task?: unknown;
   activityLog?: unknown;
@@ -774,6 +818,12 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
     episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null),
   };
 
+  const nextAction = computeNextAction({
+    task: null,
+    queryTasks,
+    globalActivity,
+  });
+
   return {
     generatedAt: new Date().toISOString(),
     task: null,
@@ -783,6 +833,7 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
     relatedIdeas,
     activity,
     evidence,
+    nextAction,
     tiers: buildContextTiers({
       task: null,
       wiki,
@@ -869,6 +920,12 @@ export async function getAgentContext<TDb extends ContextDb>(
     episodes: findEpisodes("", searchQueries, wiki, activity, task),
   };
 
+  const nextAction = computeNextAction({
+    task,
+    queryTasks: [],
+    globalActivity: activity,
+  });
+
   return {
     generatedAt: new Date().toISOString(),
     task,
@@ -878,6 +935,7 @@ export async function getAgentContext<TDb extends ContextDb>(
     relatedIdeas,
     activity,
     evidence,
+    nextAction,
     tiers: buildContextTiers({
       task,
       wiki,
