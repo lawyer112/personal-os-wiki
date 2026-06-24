@@ -282,6 +282,19 @@ export const wikiIngestSchema = z.object({
   source_url: z.string().optional(),
   tags: z.array(z.string().min(1)).default([]),
   metadata: jsonRecord.default({}),
+  frontmatter: z.object({
+    title: z.string().min(1),
+    type: z.string().min(1),
+    created_by: z.string().min(1),
+    source_type: z.string().min(1),
+    tags: z.array(z.string().min(1)).default([]),
+    created_at: z.string().optional(),
+    task_id: z.string().optional(),
+    agent_id: z.string().optional(),
+    project: z.string().optional(),
+    last_reviewed: z.string().optional(),
+    migration: z.string().optional(),
+  }).optional(),
 });
 
 export const intakeSchema = z.object({
