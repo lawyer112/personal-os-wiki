@@ -365,6 +365,7 @@ function buildIntakePayload({ markdown, tasks, repos, includeTasks, taskId }) {
     },
     wikiNotes: [
       {
+        title: `GitHub 知识雷达 ${now.slice(0, 10)} Personal OS Wiki 自驱候选`,
         frontmatter: {
           title: `GitHub 知识雷达 ${now.slice(0, 10)} Personal OS Wiki 自驱候选`,
           type: "project",
