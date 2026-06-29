@@ -24,6 +24,7 @@
   <a href="./docs/WHY_NOT_LONG_TERM_MEMORY.md"><img src="https://img.shields.io/badge/Not%20Just-Memory-f59e0b?style=for-the-badge" alt="Not just long-term memory"></a>
   <a href="./docs/MAC_AGENT_ADAPTER.md"><img src="https://img.shields.io/badge/Mac%20Adapter-reminders-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
   <a href="./docs/AGENT_GUIDE.md"><img src="https://img.shields.io/badge/Agent%20Guide-protocol-7c3aed?style=for-the-badge" alt="Agent Guide"></a>
+  <a href="./docs/AGENT_AUTODRIVE.md"><img src="https://img.shields.io/badge/Agent%20Autodrive-claim%20%2B%20writeback-9333ea?style=for-the-badge" alt="Agent Autodrive"></a>
   <a href="./docs/AGENT_PROMPT.md"><img src="https://img.shields.io/badge/Agent%20Prompt-copyable-9333ea?style=for-the-badge" alt="Agent Prompt"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-overview-f97316?style=for-the-badge" alt="API Overview"></a>
   <a href="./docs/DATA_SAFETY.md"><img src="https://img.shields.io/badge/Data%20Safety-local--first-334155?style=for-the-badge" alt="Data Safety"></a>
