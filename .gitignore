@@ -20,3 +20,29 @@ __pycache__/
 tsconfig.tsbuildinfo
 artifacts-*.png
 .agent-runs/
+# Local/private operator content. The public repository is the reusable engine;
+# real Personal OS/Wiki data and private UI working files stay outside Git.
+private/
+personal/
+vault/
+vaults/
+wiki-vault/
+obsidian-vault/
+exports/
+backups/
+*.bak
+*.dump
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+*.local
+*.local.*
+.local/
+.local-ui/
+ui-private/
+private-assets/
+uploads/
+attachments/
+screenshots/

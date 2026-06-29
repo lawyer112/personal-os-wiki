@@ -5,7 +5,7 @@
 </p>
 
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-0.1.1-0369a1)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.1.2-0369a1)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#data-safety)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-protocol)
@@ -303,8 +303,8 @@ Normal users should deploy from a tagged release instead of tracking `main`.
 Download a GitHub Release asset:
 
 ```text
-personal-os-wiki-v0.1.1.zip
-personal-os-wiki-v0.1.1.tar.gz
+personal-os-wiki-v0.1.2.zip
+personal-os-wiki-v0.1.2.tar.gz
 SHA256SUMS.txt
 ```
 
@@ -315,7 +315,7 @@ guide.
 Developers can also clone a fixed version:
 
 ```bash
-git clone --branch v0.1.1 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.1.2 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 

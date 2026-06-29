@@ -6,8 +6,8 @@ import path from "node:path";
 import process from "node:process";
 import { pathToFileURL } from "node:url";
 
-const DEFAULT_BASE_URL = "http://192.168.6.37:3100";
-const DEFAULT_PROJECT = "Personal OS / Wiki 知识库升级";
+const DEFAULT_BASE_URL = "http://localhost:3000";
+const DEFAULT_PROJECT = "Personal OS / Wiki Upgrade";
 const DEFAULT_AGENT_ID = "obsidianmanager1";
 const MAX_TEXT_EXCERPT = 8000;
 const REDACTED = "[REDACTED]";

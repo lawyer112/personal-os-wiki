@@ -26,7 +26,7 @@ function runLint(files: string[]) {
   });
 }
 
-describe("Classic Knowledge Object Manifest v0", () => {
+describe("Knowledge Object Manifest v0", () => {
   it("declares the required provenance, freshness, and sensitivity fields", () => {
     const schema = readJson(schemaPath);
 

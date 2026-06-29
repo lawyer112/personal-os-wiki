@@ -273,7 +273,7 @@ function buildMarkdown(repos, tasks, registryStats) {
     lines.push(`- ${task.title} — ${task.definitionOfDone}`);
   }
   lines.push("");
-  lines.push("## Classic 需要做");
+  lines.push("## 用户需要做");
   lines.push("");
   lines.push("无。Agent 负责继续执行、验证、写回。");
   return lines.join("\n");
@@ -358,7 +358,7 @@ function buildIntakePayload({ markdown, tasks, repos, includeTasks, taskId }) {
       outputSummary: `已筛选 ${repos.length} 个 repo，写入 Wiki，并生成 ${tasks.length} 个任务候选。`,
     },
     project: {
-      name: "Personal OS / Wiki 知识库升级",
+      name: "Personal OS / Wiki Upgrade",
       status: "active",
       priority: "P0",
       currentFocus: "GitHub 外部方案转成 Agent 自驱执行闭环",
@@ -375,7 +375,7 @@ function buildIntakePayload({ markdown, tasks, repos, includeTasks, taskId }) {
           created_at: now,
           task_id: taskId,
           agent_id: "hermes:github-radar",
-          project: "Personal OS / Wiki 知识库升级",
+          project: "Personal OS / Wiki Upgrade",
           last_reviewed: now.slice(0, 10),
         },
         content: markdown,
@@ -384,7 +384,7 @@ function buildIntakePayload({ markdown, tasks, repos, includeTasks, taskId }) {
     tasks: includeTasks ? tasks : [],
     projectEvents: [
       {
-        projectName: "Personal OS / Wiki 知识库升级",
+        projectName: "Personal OS / Wiki Upgrade",
         title: "GitHub 雷达已生成可执行吸收候选",
         body: `筛选 ${repos.length} 个 repo；主要信号：${[...new Set(repos.flatMap((repo) => repo.signals))].join(", ")}`,
         eventType: "github-radar",
@@ -394,7 +394,7 @@ function buildIntakePayload({ markdown, tasks, repos, includeTasks, taskId }) {
 }
 
 async function postIntake(payload) {
-  const baseUrl = process.env.PERSONAL_OS_BASE_URL || "http://192.168.6.37:3100";
+  const baseUrl = process.env.PERSONAL_OS_BASE_URL || "http://localhost:3000";
   const token = process.env.PERSONAL_OS_API_TOKEN;
   if (!token) throw new Error("PERSONAL_OS_API_TOKEN is required for --intake");
 
@@ -443,7 +443,7 @@ async function main() {
   let tasks = buildTasks(filteredRepos);
 
   if (args.intake) {
-    const baseUrl = process.env.PERSONAL_OS_BASE_URL || "http://192.168.6.37:3100";
+    const baseUrl = process.env.PERSONAL_OS_BASE_URL || "http://localhost:3000";
     const token = process.env.PERSONAL_OS_API_TOKEN;
     if (token) {
       const existingTasks = await fetchExistingTasks(baseUrl, token);

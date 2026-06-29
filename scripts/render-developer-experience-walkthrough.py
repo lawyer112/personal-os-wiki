@@ -27,12 +27,12 @@ PYTHON_AUDIO_GAP_SECONDS = 0.85
 FFMPEG_CANDIDATES = [
     os.environ.get("FFMPEG"),
     shutil.which("ffmpeg"),
-    "/Users/eathonmarsk/Documents/Codex/2026-05-12/infuse-emby/downloads/emby-unpacked/osx-arm64/EmbyServer.app/Contents/MacOS/ffmpeg",
+    "/usr/local/bin/ffmpeg",
 ]
 FFPROBE_CANDIDATES = [
     os.environ.get("FFPROBE"),
     shutil.which("ffprobe"),
-    "/Users/eathonmarsk/Documents/Codex/2026-05-12/infuse-emby/downloads/emby-unpacked/osx-arm64/EmbyServer.app/Contents/MacOS/ffprobe",
+    "/usr/local/bin/ffprobe",
 ]
 
 COLORS = {

@@ -9,7 +9,7 @@
   "source_type": "agent-output",
   "hash": {
     "algorithm": "sha256",
-    "value": "f36131f5b3214688b6756603d5190b3d64cbb6e76b9a6615a7b9f921816dc6c3"
+    "value": "c01132b80cef749632ae8b4fd9ff50bc064a5fa3bb4b30844596709b27eccc69"
   },
   "freshness": {
     "status": "fresh",
@@ -22,7 +22,11 @@
   "sensitivity": {
     "level": "private",
     "contains_secrets": false,
-    "allowed_uses": ["agent_context", "wiki_index", "task_execution"],
+    "allowed_uses": [
+      "agent_context",
+      "wiki_index",
+      "task_execution"
+    ],
     "handling_notes": "Local operational SOP; do not treat generated Wiki pages as primary evidence."
   },
   "owner": {
@@ -39,12 +43,21 @@
     "reviewed_by": null
   },
   "relationships": {
-    "project_ids": ["cmqq290nm00040jmj9jwa98ya"],
-    "task_ids": ["cmqq4eqa800340jmjz1go2euo"],
-    "source_run_ids": ["personal-os-evolution-council-20260623"],
+    "project_ids": [
+      "cmqq290nm00040jmj9jwa98ya"
+    ],
+    "task_ids": [
+      "cmqq4eqa800340jmjz1go2euo"
+    ],
+    "source_run_ids": [
+      "personal-os-evolution-council-20260623"
+    ],
     "supersedes": [],
     "superseded_by": [],
-    "related_ids": ["task:cmqq4eqa800340jmjz1go2euo", "decision:personal-os-wiki-no-tool-migration-20260623"]
+    "related_ids": [
+      "task:cmqq4eqa800340jmjz1go2euo",
+      "decision:personal-os-wiki-no-tool-migration-20260623"
+    ]
   },
   "embedding": {
     "version": "not-indexed-v0",
