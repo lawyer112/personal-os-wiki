@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://classic.local/schemas/classic-knowledge-object-manifest.schema.json",
-  "title": "Classic Knowledge Object Manifest v0",
-  "description": "A provenance-first manifest for Classic knowledge objects. Every task, project, evidence, decision, SOP, status record, context pack, and project hub must carry source_path, hash, freshness, and sensitivity metadata; objects without a source must be explicitly marked speculative.",
+  "title": "Knowledge Object Manifest v0",
+  "description": "A provenance-first manifest for operator knowledge objects. Every task, project, evidence, decision, SOP, status record, context pack, and project hub must carry source_path, hash, freshness, and sensitivity metadata; objects without a source must be explicitly marked speculative.",
   "type": "object",
   "additionalProperties": false,
   "required": [

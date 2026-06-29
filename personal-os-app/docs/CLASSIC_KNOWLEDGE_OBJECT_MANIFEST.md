@@ -1,8 +1,8 @@
-# Classic Knowledge Object Manifest v0
+# Knowledge Object Manifest v0
 
-This manifest is the first guardrail for turning Classic's Personal OS / Wiki records into reusable knowledge objects without losing evidence.
+This manifest is the first guardrail for turning the operator's Personal OS / Wiki records into reusable knowledge objects without losing evidence.
 
-Source: `docs/sources/personal-os-evolution-council-report-v1-excerpt.md`, excerpted from `/Users/xingqiwu/.agent-runs/personal-os-evolution-council-20260623/council-report-v1.md` lines 6-14, 31-38 and 121-126.
+Source: `docs/sources/personal-os-evolution-council-report-v1-excerpt.md`, excerpted from `private-source/personal-os-evolution-council-report-v1.md` lines 6-14, 31-38 and 121-126.
 
 ## Scope
 
@@ -30,7 +30,7 @@ Every object must carry:
 - `hash`: `sha256` or `sha1` content hash of `source_path`; must be `null` for speculative objects without a source.
 - `freshness`: captured time, TTL, `valid_until`, and last check state.
 - `sensitivity`: public/internal/private/secret boundary plus allowed uses.
-- `owner`: Classic / agent / system / external owner.
+- `owner`: user / agent / system / external owner.
 - `confidence`: `verified`, `inferred`, or `speculative`.
 - `relationships`: project/task/run links plus supersession links.
 

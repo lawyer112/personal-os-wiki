@@ -53,7 +53,22 @@ $BlockedDirectoryNames = @(
   "dist",
   "logs",
   "node_modules",
-  "run"
+  "run",
+  "private",
+  "personal",
+  "vault",
+  "vaults",
+  "wiki-vault",
+  "obsidian-vault",
+  "exports",
+  "backups",
+  ".local",
+  ".local-ui",
+  "ui-private",
+  "private-assets",
+  "uploads",
+  "attachments",
+  "screenshots"
 )
 
 function Test-BlockedPackagePath {
@@ -77,7 +92,15 @@ function Test-BlockedPackagePath {
       $Name -like "*.pid" -or
       $Name -like "*.zip" -or
       $Name -like "*.tgz" -or
-      $Name -like "*.tar.gz"
+      $Name -like "*.tar.gz" -or
+      $Name -like "*.bak" -or
+      $Name -like "*.dump" -or
+      $Name -like "*.sqlite" -or
+      $Name -like "*.sqlite3" -or
+      $Name -like "*.db" -or
+      $Name -like "*.db-shm" -or
+      $Name -like "*.db-wal" -or
+      $Name -like "*.local"
     )
   }
 

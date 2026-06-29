@@ -5,7 +5,7 @@
 </p>
 
 [![CI](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml/badge.svg)](https://github.com/lawyer112/personal-os-wiki/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-0.1.1-0369a1)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.1.2-0369a1)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Local First](https://img.shields.io/badge/local--first-yes-2ea44f)](#数据安全)
 [![Agent Ready](https://img.shields.io/badge/agent--ready-task%20claiming-blue)](#agent-协议)
@@ -222,8 +222,8 @@ Docker 是推荐方案，不是硬性要求。也可以把 Personal Wiki 当 Pyt
 下载 GitHub Release 里的产物：
 
 ```text
-personal-os-wiki-v0.1.1.zip
-personal-os-wiki-v0.1.1.tar.gz
+personal-os-wiki-v0.1.2.zip
+personal-os-wiki-v0.1.2.tar.gz
 SHA256SUMS.txt
 ```
 
@@ -233,7 +233,7 @@ SHA256SUMS.txt
 开发者也可以按 tag 克隆：
 
 ```bash
-git clone --branch v0.1.1 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.1.2 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 

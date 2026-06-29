@@ -18,7 +18,7 @@ describe("AgentRun context pack archiver", () => {
             id: "task_done_1",
             title: "Ship context tiers",
             status: "done",
-            project: { name: "Personal OS / Wiki 知识库升级" },
+            project: { name: "Personal OS / Wiki Upgrade" },
             wikiLinks: [
               { noteTitle: "Prior note", notePath: "vault/prior.md" },
             ],
@@ -81,7 +81,7 @@ describe("AgentRun context pack archiver", () => {
       targetTaskId: "task_done_1",
       archiveTaskId: "task_archive_1",
       agentId: "obsidianmanager1",
-      projectName: "Personal OS / Wiki 知识库升级",
+      projectName: "Personal OS / Wiki Upgrade",
       generatedAt: "2026-06-23T00:00:00.000Z",
     });
 
@@ -94,7 +94,7 @@ describe("AgentRun context pack archiver", () => {
       created_at: "2026-06-23T00:00:00.000Z",
       task_id: "task_done_1",
       agent_id: "obsidianmanager1",
-      project: "Personal OS / Wiki 知识库升级",
+      project: "Personal OS / Wiki Upgrade",
       last_reviewed: "2026-06-23",
     });
     expect(payload.wikiNotes[0].metadata.archive_task_id).toBe("task_archive_1");

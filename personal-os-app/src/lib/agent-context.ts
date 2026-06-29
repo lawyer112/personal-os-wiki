@@ -569,7 +569,7 @@ function computeNextAction(input: {
       return `继续执行当前任务：${task.title}`;
     }
     if (task.status === "review") {
-      return `当前任务 ${task.title} 待 review，等待 Classic 确认`;
+      return `当前任务 ${task.title} 待 review，等待用户确认`;
     }
     if (["blocked", "waiting"].includes(task.status)) {
       return `当前任务 ${task.title} 被阻塞，需要调查原因`;
