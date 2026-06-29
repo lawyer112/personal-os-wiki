@@ -20,6 +20,7 @@
   <a href="./docs/WHY_NOT_LONG_TERM_MEMORY.zh-CN.md"><img src="https://img.shields.io/badge/不只是-长期记忆-f59e0b?style=for-the-badge" alt="不只是长期记忆"></a>
   <a href="./docs/MAC_AGENT_ADAPTER.zh-CN.md"><img src="https://img.shields.io/badge/Mac%20Adapter-提醒事项-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
   <a href="./docs/AGENT_GUIDE.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20手册-protocol-7c3aed?style=for-the-badge" alt="Agent 手册"></a>
+  <a href="./docs/AGENT_AUTODRIVE.md"><img src="https://img.shields.io/badge/Agent%20Autodrive-claim%20%2B%20writeback-9333ea?style=for-the-badge" alt="Agent Autodrive"></a>
   <a href="./docs/AGENT_PROMPT.zh-CN.md"><img src="https://img.shields.io/badge/Agent%20提示词-copyable-9333ea?style=for-the-badge" alt="Agent 提示词"></a>
   <a href="./docs/API_OVERVIEW.md"><img src="https://img.shields.io/badge/API-总览-f97316?style=for-the-badge" alt="API 总览"></a>
   <a href="./docs/DATA_SAFETY.zh-CN.md"><img src="https://img.shields.io/badge/数据安全-local--first-334155?style=for-the-badge" alt="数据安全"></a>

@@ -14,7 +14,10 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "agent:run-next": "node scripts/agent-run-next.mjs",
+    "agent:writeback": "node scripts/agent-writeback.mjs",
+    "agent:mark-task": "node scripts/agent-mark-task.mjs"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.7.0",
