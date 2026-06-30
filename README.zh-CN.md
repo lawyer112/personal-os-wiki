@@ -216,6 +216,24 @@ Docker 是推荐方案，不是硬性要求。也可以把 Personal Wiki 当 Pyt
 
 完整部署说明见：[部署指南](./docs/DEPLOYMENT.zh-CN.md)。
 
+macOS 工作站部署见：[macOS 部署指南](./docs/MACOS_DEPLOYMENT.zh-CN.md)。
+
+Windows 工作站推荐 WSL2 + Docker Desktop，见：[Windows Deployment Guide](./docs/WINDOWS_DEPLOYMENT.md)。
+
+## 向量记忆不是当前硬依赖
+
+本项目的核心闭环不依赖托管 embedding：关键词搜索、标签、任务 ID、Wiki 链接、任务认领、复核和证据记录才是默认真相源。
+
+向量检索应该作为大知识库的可选 hybrid retrieval 增强，而不是付费前提。只有当召回对比证明它明显优于关键词检索时，才应该把托管向量模型变成固定依赖。
+
+决策说明见：[Vector Memory And Plan Decision](./docs/VECTOR_MEMORY_DECISION.md)。
+
+## 生态定位
+
+本项目接近 LLM Wiki、Obsidian RAG、Agent memory 和任务队列工具，但切口不是“再做一个记忆桶”，而是把知识变成可认领、可提交证据、可复核的 Agent 工作。
+
+生态对比见：[Ecosystem Review](./docs/ECOSYSTEM_REVIEW.md)。
+
 ## 按版本安装
 
 普通用户应该优先使用固定 Release 版本，而不是直接跟踪 `main`。

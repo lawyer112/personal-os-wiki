@@ -20,6 +20,9 @@
   <a href="./docs/assets/demo/developer-experience-walkthrough.mp4"><img src="https://img.shields.io/badge/Project%20Walkthrough-3%20min-c2410c?style=for-the-badge" alt="Project walkthrough"></a>
   <a href="./docs/DEPLOYMENT.md"><img src="https://img.shields.io/badge/Deployment-requirements-0f766e?style=for-the-badge" alt="Deployment requirements"></a>
   <a href="./docs/MACOS_DEPLOYMENT.md"><img src="https://img.shields.io/badge/macOS-deploy-111827?style=for-the-badge" alt="macOS deployment"></a>
+  <a href="./docs/WINDOWS_DEPLOYMENT.md"><img src="https://img.shields.io/badge/Windows-WSL2%20deploy-2563eb?style=for-the-badge" alt="Windows deployment"></a>
+  <a href="./docs/VECTOR_MEMORY_DECISION.md"><img src="https://img.shields.io/badge/Vector%20Memory-optional-7c3aed?style=for-the-badge" alt="Vector memory decision"></a>
+  <a href="./docs/ECOSYSTEM_REVIEW.md"><img src="https://img.shields.io/badge/Ecosystem-review-0f766e?style=for-the-badge" alt="Ecosystem review"></a>
   <a href="./docs/RELEASES.md"><img src="https://img.shields.io/badge/Releases-versioned%20packages-0369a1?style=for-the-badge" alt="Versioned releases"></a>
   <a href="./docs/WHY_NOT_LONG_TERM_MEMORY.md"><img src="https://img.shields.io/badge/Not%20Just-Memory-f59e0b?style=for-the-badge" alt="Not just long-term memory"></a>
   <a href="./docs/MAC_AGENT_ADAPTER.md"><img src="https://img.shields.io/badge/Mac%20Adapter-reminders-0ea5e9?style=for-the-badge" alt="Mac Agent Adapter"></a>
@@ -296,6 +299,29 @@ Read the full deployment guide:
 
 For macOS-specific setup, read
 [`docs/MACOS_DEPLOYMENT.md`](./docs/MACOS_DEPLOYMENT.md).
+
+For Windows workstation setup, use WSL2 + Docker Desktop and read
+[`docs/WINDOWS_DEPLOYMENT.md`](./docs/WINDOWS_DEPLOYMENT.md).
+
+## Vector Memory Is Optional
+
+The project does not require hosted embeddings to run the core OS/Wiki loop.
+Keyword search, tags, task IDs, Wiki links, task claims, reviews, and evidence
+records are the default source of truth.
+
+Vector search is treated as an optional hybrid-retrieval upgrade for larger
+knowledge bases. It should prove better recall through a benchmark before it
+becomes a paid dependency. Read the decision note:
+[`docs/VECTOR_MEMORY_DECISION.md`](./docs/VECTOR_MEMORY_DECISION.md).
+
+## Ecosystem Position
+
+This repository sits near LLM Wiki, Obsidian RAG, agent memory, and task-queue
+projects. The narrow wedge is not "another memory bucket"; it is turning saved
+knowledge into claimable, evidenced, reviewable agent work.
+
+Read the ecosystem review:
+[`docs/ECOSYSTEM_REVIEW.md`](./docs/ECOSYSTEM_REVIEW.md).
 
 ## Install A Versioned Release
 
