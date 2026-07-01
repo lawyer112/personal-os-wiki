@@ -1,6 +1,7 @@
 import { recordActivity } from "@/lib/activity";
 import { HttpError } from "@/lib/http";
 import type {
+  AgentInboxClaimNextInput,
   AgentInboxQueryInput,
   TaskClaimInput,
   TaskContributionInput,
@@ -223,6 +224,35 @@ export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
     take: input.limit,
   });
 }
+
+export const claimNextTask = async <TDb extends AgentTaskDb>(
+  db: TDb,
+  input: AgentInboxClaimNextInput,
+) => {
+  const candidates = await listAgentInboxTasks(db, input);
+
+  for (const candidate of candidates) {
+    const taskId = (candidate as { id?: unknown }).id;
+    if (typeof taskId !== "string" || taskId.length === 0) {
+      continue;
+    }
+
+    try {
+      const result = await claimTask(db, taskId, {
+        agentId: input.agentId,
+        leaseMinutes: input.leaseMinutes,
+      });
+      return { claimed: true, ...result };
+    } catch (error) {
+      if (error instanceof HttpError && error.status === 409) {
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  return { claimed: false, task: null, claim: null };
+};
 
 export async function claimTask<TDb extends AgentTaskDb>(
   db: TDb,

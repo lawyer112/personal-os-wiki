@@ -14,11 +14,41 @@ function intakeRequest(body: unknown) {
 async function loadIntakeRoute() {
   vi.resetModules();
 
+  const transactionDb = {
+    project: {
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
+    },
+  };
   const mocks = {
+    transactionDb,
+    $transaction: vi.fn().mockImplementation(async (callback) => callback(transactionDb)),
     createInboxItem: vi.fn().mockResolvedValue({ id: "inbox_1" }),
     startAgentRun: vi.fn().mockResolvedValue({ id: "run_1" }),
     completeAgentRun: vi.fn().mockResolvedValue({ id: "run_1" }),
     createNote: vi.fn(),
+    queueWikiWriteJobs: vi.fn().mockResolvedValue([
+      {
+        id: "wiki_job_1",
+        title: "Wiki fallback demo",
+        status: "queued",
+      },
+    ]),
+    buildWikiWriteStatus: vi.fn().mockReturnValue({
+      status: "queued",
+      requested: 1,
+      queued: 1,
+      succeeded: 0,
+      failed: 0,
+      errors: [],
+      job_ids: ["wiki_job_1"],
+    }),
+    wikiWriteJobResponse: vi.fn().mockReturnValue({
+      ok: true,
+      title: "Wiki fallback demo",
+      status: "queued",
+      job_id: "wiki_job_1",
+    }),
     ingestWikiNote: vi.fn().mockResolvedValue({
       ok: false,
       title: "Wiki fallback demo",
@@ -36,10 +66,8 @@ async function loadIntakeRoute() {
 
   vi.doMock("@/lib/db", () => ({
     prisma: {
-      project: {
-        findUnique: vi.fn(),
-        upsert: vi.fn(),
-      },
+      ...transactionDb,
+      $transaction: mocks.$transaction,
     },
   }));
   vi.doMock("@/lib/inbox", () => ({
@@ -49,6 +77,11 @@ async function loadIntakeRoute() {
   }));
   vi.doMock("@/lib/wiki-ingest", () => ({
     ingestWikiNote: mocks.ingestWikiNote,
+  }));
+  vi.doMock("@/lib/wiki-write-jobs", () => ({
+    queueWikiWriteJobs: mocks.queueWikiWriteJobs,
+    buildWikiWriteStatus: mocks.buildWikiWriteStatus,
+    wikiWriteJobResponse: mocks.wikiWriteJobResponse,
   }));
   vi.doMock("@/lib/notes", () => ({
     createNote: mocks.createNote,
@@ -70,13 +103,13 @@ async function loadIntakeRoute() {
   return { ...route, mocks };
 }
 
-describe("POST /api/intake Wiki fallback", () => {
+describe("POST /api/intake Wiki write queue", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.resetModules();
   });
 
-  it("keeps OS task writes successful when Wiki note ingest returns 500", async () => {
+  it("queues Wiki notes instead of synchronously ingesting them", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("PERSONAL_OS_API_TOKEN", "os-write-token-0000");
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://os.local");
@@ -131,23 +164,33 @@ describe("POST /api/intake Wiki fallback", () => {
     ]);
     expect(body.wiki).toEqual([
       {
-        ok: false,
+        ok: true,
         title: "Wiki fallback demo",
-        error: "Personal Wiki returned 500",
+        status: "queued",
+        job_id: "wiki_job_1",
       },
     ]);
     expect(body.wiki_write_status).toEqual({
-      status: "failed",
+      status: "queued",
       requested: 1,
+      queued: 1,
       succeeded: 0,
-      failed: 1,
-      errors: [
-        {
-          title: "Wiki fallback demo",
-          error: "Personal Wiki returned 500",
-        },
-      ],
+      failed: 0,
+      errors: [],
+      job_ids: ["wiki_job_1"],
     });
+    expect(mocks.ingestWikiNote).not.toHaveBeenCalled();
+    expect(mocks.queueWikiWriteJobs).toHaveBeenCalledWith(
+      expect.anything(),
+      [expect.objectContaining({ title: "Wiki fallback demo" })],
+      {
+        inboxId: "inbox_1",
+        agentRunId: "run_1",
+        projectId: undefined,
+      },
+    );
+    expect(mocks.$transaction).toHaveBeenCalledTimes(1);
+    expect(mocks.queueWikiWriteJobs.mock.calls[0][0]).toBe(mocks.transactionDb);
     expect(mocks.createTask).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
@@ -165,14 +208,14 @@ describe("POST /api/intake Wiki fallback", () => {
         classification: expect.objectContaining({
           kind: "verification",
           wiki_write_status: expect.objectContaining({
-            status: "failed",
+            status: "queued",
             requested: 1,
             succeeded: 0,
-            failed: 1,
+            failed: 0,
+            queued: 1,
           }),
         }),
         outputSummary: expect.stringContaining("创建 1 个任务"),
-        error: undefined,
       }),
     );
   });

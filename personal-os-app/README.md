@@ -87,6 +87,47 @@ GET /api/agent/context?taskId=<task_id>
 That returns task fields, related project state, related ideas, explicit Wiki
 links, candidate Wiki notes, recent task history, activity, and execution policy.
 
+## Multi-Agent Task Bench
+
+Personal OS is the shared source of truth for work state. Any authorized agent
+runtime can poll the same backlog from a laptop, server, or scheduled worker.
+The coordination rule is the task lease:
+
+- tasks must be `executionMode=agent_allowed`;
+- the agent profile must be enabled and match the task tags and risk level;
+- a claim writes `status=doing`, `ownerAgent`, `leaseUntil`, and
+  `lastHeartbeatAt`;
+- heartbeats extend the lease while work continues;
+- contributions and submissions are rejected if the agent no longer owns an
+  active lease;
+- when a lease expires, another matching agent may claim the task.
+
+For cron-style workers that wake up every 30 minutes, prefer the auto-claim
+entrypoint:
+
+```http
+POST /api/agent-inbox/claim-next
+Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+Content-Type: application/json
+
+{
+  "agentId": "knowledge-curator",
+  "tags": ["wiki", "curation"],
+  "limit": 10,
+  "leaseMinutes": 90
+}
+```
+
+If a task is claimed, the response includes `claimed: true`, the claimed task,
+and the claim record. If no eligible task is available, the response is
+`claimed: false` with `task: null`.
+
+Use `agentTags` to route work to a class of agents, and use the `AgentProfile`
+record to bind a concrete machine or runtime to the tags, risk level, and write
+permissions it is allowed to use. Machine placement is therefore a deployment
+choice: run a worker with a specific `agentId` and profile tags on the machine
+that should pick up those tasks.
+
 For proactive Telegram reminders, schedule Hermes or OpenClaw to call:
 
 ```http

@@ -1,7 +1,9 @@
 import { HttpError } from "@/lib/http";
 import {
-  searchWikiNotes,
+  searchWikiChunks,
   wikiNoteUrl,
+  type WikiChunkSearchHit,
+  type WikiChunkSearchResponse,
   type WikiContextCandidate,
   type WikiNoteSummary,
 } from "@/lib/wiki-client";
@@ -151,6 +153,19 @@ export type ContextEpisode = {
   title: string;
   summary: string;
   relevanceScore: number;
+  source?: {
+    type: "agent_run" | "task" | "wiki" | "activity";
+    id: string;
+    path?: string;
+    url?: string;
+  };
+  provenance?: {
+    sourceType: "agent_run" | "task" | "wiki" | "activity";
+    sourceId: string;
+    sourcePath?: string;
+    sourceUrl?: string;
+    createdAt?: string;
+  };
   sourceUrl?: string;
   createdAt?: string;
 };
@@ -180,6 +195,105 @@ export const AGENT_CONTEXT_POLICY: AgentContextPolicy = {
   mustConfirmDelete: true,
   maxWikiCandidates: 8,
   note: "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。",
+};
+
+const DEFAULT_WIKI_QUERY_TIMEOUT_MS = 5_000;
+const MAX_WIKI_QUERY_TIMEOUT_MS = 30_000;
+const MAX_FAST_WIKI_QUERY_LENGTH = 500;
+
+const getWikiQueryTimeoutMs = () => {
+  const configured = process.env.AGENT_CONTEXT_WIKI_QUERY_TIMEOUT_MS;
+  if (configured === undefined || configured.trim() === "") {
+    return DEFAULT_WIKI_QUERY_TIMEOUT_MS;
+  }
+
+  const value = Number(configured);
+  if (!Number.isFinite(value) || value <= 0) {
+    return DEFAULT_WIKI_QUERY_TIMEOUT_MS;
+  }
+
+  return Math.min(Math.trunc(value), MAX_WIKI_QUERY_TIMEOUT_MS);
+};
+
+const searchWikiChunksWithTimeout = async (
+  query: string,
+  limit: number,
+  timeoutMs: number,
+): Promise<WikiChunkSearchResponse> => {
+  const controller = new AbortController();
+  let didTimeout = false;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeout = setTimeout(() => {
+        didTimeout = true;
+        controller.abort();
+        reject(new Error(`Personal Wiki search timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+    });
+
+    return await Promise.race([
+      searchWikiChunks(query, limit, { signal: controller.signal }),
+      timeoutPromise,
+    ]);
+  } catch (error) {
+    if (didTimeout) {
+      throw new Error(`Personal Wiki search timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    if (timeout !== undefined) {
+      clearTimeout(timeout);
+    }
+  }
+};
+
+const buildFastWikiQuery = (queries: string[]) =>
+  queries.join(" ").replace(/\s+/g, " ").slice(0, MAX_FAST_WIKI_QUERY_LENGTH);
+
+const chunkHitToNote = (hit: WikiChunkSearchHit): WikiNoteSummary => {
+  const metadata: Record<string, unknown> = {
+    retrieval: "wiki-chunks-fts",
+  };
+
+  if (hit.chunk_id !== undefined) {
+    metadata.chunk_id = hit.chunk_id;
+  }
+
+  if (hit.score !== undefined) {
+    metadata.score = hit.score;
+  }
+
+  return {
+    title: hit.title,
+    path: hit.path,
+    excerpt: hit.snippet,
+    metadata,
+  };
+};
+
+const bestRetrievedQueryForNote = (
+  note: WikiNoteSummary,
+  searchedQueries: string[],
+) => {
+  const searchableText = [
+    note.title,
+    note.excerpt,
+    note.source_type,
+    note.source_url,
+    ...(note.tags ?? []),
+    ...(note.concepts ?? []),
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .toLowerCase();
+
+  return (
+    searchedQueries.find((query) =>
+      searchableText.includes(query.toLowerCase()),
+    ) ?? searchedQueries[0] ?? ""
+  );
 };
 
 const knownContextTerms = [
@@ -667,6 +781,7 @@ function findEpisodes(
   const episodes: ContextEpisode[] = [];
 
   for (const candidate of wiki.candidates) {
+    const createdAt = candidate.created;
     episodes.push({
       type: "wiki",
       id: candidate.path,
@@ -674,23 +789,46 @@ function findEpisodes(
       summary: candidate.excerpt ?? "",
       relevanceScore: candidate.score ?? 0,
       sourceUrl: candidate.url,
-      createdAt: candidate.created,
+      createdAt,
+      source: {
+        type: "wiki",
+        id: candidate.path,
+        path: candidate.path,
+        url: candidate.url,
+      },
+      provenance: {
+        sourceType: "wiki",
+        sourceId: candidate.path,
+        sourcePath: candidate.path,
+        sourceUrl: candidate.url,
+        createdAt,
+      },
     });
   }
 
   for (const act of activity) {
     const text = `${act.action} ${act.targetType} ${act.targetId}`;
     if (episodeMatches(text, keywords)) {
+      const createdAt =
+        typeof act.createdAt === "string"
+          ? act.createdAt
+          : act.createdAt?.toISOString();
       episodes.push({
         type: "activity",
         id: act.id,
         title: `${act.action} on ${act.targetType}`,
         summary: `${act.action} ${act.targetType} ${act.targetId}`,
         relevanceScore: 12,
-        createdAt:
-          typeof act.createdAt === "string"
-            ? act.createdAt
-            : act.createdAt?.toISOString(),
+        createdAt,
+        source: {
+          type: "activity",
+          id: act.id,
+        },
+        provenance: {
+          sourceType: "activity",
+          sourceId: act.id,
+          createdAt,
+        },
       });
     }
   }
@@ -699,12 +837,21 @@ function findEpisodes(
     const run = task.sourceAgentRun;
     const text = `${run.model} ${run.reasoningSummary} ${run.outputSummary}`;
     if (episodeMatches(text, keywords) || task.sourceAgentRunId) {
+      const sourceId = task.sourceAgentRunId ?? "unknown";
       episodes.push({
         type: "agent_run",
-        id: task.sourceAgentRunId ?? "unknown",
+        id: sourceId,
         title: run.model ?? "Agent Run",
         summary: run.outputSummary ?? run.reasoningSummary ?? "",
         relevanceScore: 18,
+        source: {
+          type: "agent_run",
+          id: sourceId,
+        },
+        provenance: {
+          sourceType: "agent_run",
+          sourceId,
+        },
       });
     }
   }
@@ -712,16 +859,26 @@ function findEpisodes(
   if (task?.contributions) {
     for (const contrib of task.contributions) {
       if (episodeMatches(contrib.summary, keywords)) {
+        const createdAt =
+          typeof contrib.createdAt === "string"
+            ? contrib.createdAt
+            : contrib.createdAt?.toISOString();
         episodes.push({
           type: "task",
           id: task.id,
           title: task.title,
           summary: contrib.summary,
           relevanceScore: 22,
-          createdAt:
-            typeof contrib.createdAt === "string"
-              ? contrib.createdAt
-              : contrib.createdAt?.toISOString(),
+          createdAt,
+          source: {
+            type: "task",
+            id: task.id,
+          },
+          provenance: {
+            sourceType: "task",
+            sourceId: task.id,
+            createdAt,
+          },
         });
       }
     }
@@ -742,42 +899,40 @@ export async function searchWikiContext(
   const noteMap = new Map<string, WikiContextCandidate>();
   const failedQueries: WikiContextSearchResult["failedQueries"] = [];
   let successfulQueries = 0;
+  const wikiQueryTimeoutMs = getWikiQueryTimeoutMs();
+  const fastQuery = buildFastWikiQuery(searchedQueries);
 
-  const results = await Promise.all(
-    searchedQueries.map(async (query) => {
-      try {
-        const notes = await searchWikiNotes(query, 6);
-        return { query, notes };
-      } catch (error) {
-        return { query, error };
+  if (fastQuery) {
+    try {
+      const response = await searchWikiChunksWithTimeout(
+        fastQuery,
+        Math.max(limit * 4, 12),
+        wikiQueryTimeoutMs,
+      );
+
+      successfulQueries = 1;
+
+      for (const hit of response.results ?? []) {
+        const note = chunkHitToNote(hit);
+        const existing = noteMap.get(note.path);
+        const retrievedByQuery = bestRetrievedQueryForNote(note, searchedQueries);
+        const scored = scoreNote(note, searchedQueries, retrievedByQuery);
+        const candidate: WikiContextCandidate = {
+          ...note,
+          url: wikiNoteUrl(note.path),
+          matchedQueries: Array.from(scored.matchedQueries),
+          score: scored.score,
+        };
+
+        if (!existing || candidate.score > existing.score) {
+          noteMap.set(note.path, candidate);
+        }
       }
-    }),
-  );
-
-  for (const result of results) {
-    if ("error" in result) {
+    } catch (error) {
       failedQueries.push({
-        query: result.query,
-        message: errorMessage(result.error),
+        query: fastQuery,
+        message: errorMessage(error),
       });
-      continue;
-    }
-
-    successfulQueries += 1;
-
-    for (const note of result.notes) {
-      const existing = noteMap.get(note.path);
-      const scored = scoreNote(note, searchedQueries, result.query);
-      const candidate: WikiContextCandidate = {
-        ...note,
-        url: wikiNoteUrl(note.path),
-        matchedQueries: Array.from(scored.matchedQueries),
-        score: scored.score,
-      };
-
-      if (!existing || candidate.score > existing.score) {
-        noteMap.set(note.path, candidate);
-      }
     }
   }
 

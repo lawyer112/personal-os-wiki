@@ -5,18 +5,21 @@ import {
   getQueryAgentContext,
   searchWikiContext,
 } from "@/lib/agent-context";
-import { searchWikiNotes } from "@/lib/wiki-client";
+import { searchWikiChunks, searchWikiNotes } from "@/lib/wiki-client";
 
 vi.mock("@/lib/wiki-client", () => ({
+  searchWikiChunks: vi.fn(),
   searchWikiNotes: vi.fn(),
   wikiNoteUrl: (path: string) =>
     `http://wiki.local/note?path=${encodeURIComponent(path)}`,
 }));
 
+const mockedSearchWikiChunks = vi.mocked(searchWikiChunks);
 const mockedSearchWikiNotes = vi.mocked(searchWikiNotes);
 
 describe("agent context harness", () => {
   beforeEach(() => {
+    mockedSearchWikiChunks.mockReset();
     mockedSearchWikiNotes.mockReset();
   });
 
@@ -41,7 +44,7 @@ describe("agent context harness", () => {
   });
 
   it("marks a reachable wiki with no candidates as empty instead of unavailable", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([]);
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
 
     const result = await searchWikiContext(["没有命中的关键词"], 8);
 
@@ -51,8 +54,43 @@ describe("agent context harness", () => {
     expect(result.candidates).toEqual([]);
   });
 
+  it("uses a single fast chunk search for wiki context and never falls back to notes scanning", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({
+      status: "ok",
+      results: [
+        {
+          title: "DeepTalk 输入链路",
+          path: "voice/deeptalk.md",
+          chunk_id: "voice/deeptalk.md#0001",
+          snippet: "DeepTalk 转写先走导出文件或 Telegram 转发。",
+        },
+      ],
+    });
+
+    const result = await searchWikiContext(["DeepTalk", "Telegram"], 8);
+
+    expect(mockedSearchWikiChunks).toHaveBeenCalledTimes(1);
+    expect(mockedSearchWikiChunks.mock.calls[0][0]).toContain("DeepTalk");
+    expect(mockedSearchWikiChunks.mock.calls[0][0]).toContain("Telegram");
+    expect(mockedSearchWikiNotes).not.toHaveBeenCalled();
+    expect(result.status).toBe("ok");
+    expect(result.successfulQueries).toBe(1);
+    expect(result.failedQueries).toEqual([]);
+    expect(result.candidates[0]).toMatchObject({
+      title: "DeepTalk 输入链路",
+      path: "voice/deeptalk.md",
+      excerpt: "DeepTalk 转写先走导出文件或 Telegram 转发。",
+      metadata: {
+        chunk_id: "voice/deeptalk.md#0001",
+        retrieval: "wiki-chunks-fts",
+      },
+      url: "http://wiki.local/note?path=voice%2Fdeeptalk.md",
+      matchedQueries: expect.arrayContaining(["DeepTalk", "Telegram"]),
+    });
+  });
+
   it("marks complete wiki failure as unavailable and preserves failure evidence", async () => {
-    mockedSearchWikiNotes.mockRejectedValue(new Error("connect ECONNREFUSED"));
+    mockedSearchWikiChunks.mockRejectedValue(new Error("connect ECONNREFUSED"));
 
     const result = await searchWikiContext(["DeepTalk"], 8);
 
@@ -63,37 +101,61 @@ describe("agent context harness", () => {
     ]);
   });
 
-  it("marks mixed search results as partial and still returns usable candidates", async () => {
-    mockedSearchWikiNotes.mockImplementation(async (query) => {
-      if (query === "DeepTalk") {
-        return [
-          {
-            title: "DeepTalk 输入链路",
-            path: "voice/deeptalk.md",
-            tags: ["deeptalk", "input"],
-            concepts: ["语音转文字"],
-            excerpt: "DeepTalk 转写先走导出文件或 Telegram 转发。",
-          },
-        ];
-      }
-
-      throw new Error("Personal Wiki search failed: 502");
-    });
+  it("keeps the fast path unavailable when the chunk index fails instead of using slow notes fallback", async () => {
+    mockedSearchWikiChunks.mockRejectedValue(new Error("Personal Wiki fast search failed: 502"));
+    mockedSearchWikiNotes.mockResolvedValue([
+      {
+        title: "DeepTalk 输入链路",
+        path: "voice/deeptalk.md",
+        tags: ["deeptalk", "input"],
+        concepts: ["语音转文字"],
+        excerpt: "DeepTalk 转写先走导出文件或 Telegram 转发。",
+      },
+    ]);
 
     const result = await searchWikiContext(["DeepTalk", "钉钉"], 8);
 
-    expect(result.status).toBe("partial");
-    expect(result.successfulQueries).toBe(1);
+    expect(result.status).toBe("unavailable");
+    expect(result.successfulQueries).toBe(0);
     expect(result.failedQueries).toHaveLength(1);
-    expect(result.candidates[0]).toMatchObject({
-      title: "DeepTalk 输入链路",
-      url: "http://wiki.local/note?path=voice%2Fdeeptalk.md",
-      matchedQueries: ["DeepTalk"],
-    });
+    expect(mockedSearchWikiNotes).not.toHaveBeenCalled();
+    expect(result.candidates).toEqual([]);
+  });
+
+  it("marks a hung wiki search query as failed instead of blocking context", async () => {
+    const previousTimeout = process.env.AGENT_CONTEXT_WIKI_QUERY_TIMEOUT_MS;
+    process.env.AGENT_CONTEXT_WIKI_QUERY_TIMEOUT_MS = "10";
+    mockedSearchWikiChunks.mockImplementation(async () => new Promise(() => undefined));
+
+    try {
+      const result = await Promise.race([
+        searchWikiContext(["hung", "DeepTalk"], 8),
+        new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error("context timed out")), 50);
+        }),
+      ]);
+
+      expect(result.status).toBe("unavailable");
+      expect(result.successfulQueries).toBe(0);
+      expect(result.failedQueries).toEqual([
+        {
+          query: "hung DeepTalk",
+          message: "Personal Wiki search timed out after 10ms",
+        },
+      ]);
+      expect(mockedSearchWikiNotes).not.toHaveBeenCalled();
+      expect(result.candidates).toEqual([]);
+    } finally {
+      if (previousTimeout === undefined) {
+        delete process.env.AGENT_CONTEXT_WIKI_QUERY_TIMEOUT_MS;
+      } else {
+        process.env.AGENT_CONTEXT_WIKI_QUERY_TIMEOUT_MS = previousTimeout;
+      }
+    }
   });
 
   it("returns the same context envelope for keyword-only lookups", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([]);
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
 
     const context = await getQueryAgentContext("DeepTalk");
 
@@ -112,15 +174,16 @@ describe("agent context harness", () => {
   });
 
   it("adds P0/P1 agent executable tasks to hot tier for keyword lookups", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([
-      {
-        title: "Personal OS context memory tiering",
-        path: "projects/personal-os/context-tiering.md",
-        tags: ["personal-os", "context"],
-        concepts: ["hot warm cold"],
-        excerpt: "Historical Wiki evidence for hot/warm/cold context packs.",
-      },
-    ]);
+    mockedSearchWikiChunks.mockResolvedValue({
+      status: "ok",
+      results: [
+        {
+          title: "Personal OS context memory tiering",
+          path: "projects/personal-os/context-tiering.md",
+          snippet: "Historical Wiki evidence for hot/warm/cold context packs.",
+        },
+      ],
+    });
     const taskFindMany = vi.fn().mockResolvedValue([
       {
         id: "task_hot",
@@ -167,15 +230,16 @@ describe("agent context harness", () => {
   });
 
   it("puts the current task in hot tier and historical wiki hits in warm tier", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([
-      {
-        title: "Agent context tiering decision record",
-        path: "projects/personal-os/context-tiering-decision.md",
-        tags: ["personal-os", "wiki"],
-        concepts: ["Agent Context"],
-        excerpt: "Decision record for current task plus historical Wiki hit.",
-      },
-    ]);
+    mockedSearchWikiChunks.mockResolvedValue({
+      status: "ok",
+      results: [
+        {
+          title: "Agent context tiering decision record",
+          path: "projects/personal-os/context-tiering-decision.md",
+          snippet: "Decision record for current task plus historical Wiki hit.",
+        },
+      ],
+    });
 
     const task = {
       id: "task_current",
@@ -231,7 +295,7 @@ describe("agent context harness", () => {
   });
 
   it("recalls related activity episodes for query keywords", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([]);
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
     const activityLogFindMany = vi.fn().mockResolvedValue([
       {
         id: "act_1",
@@ -261,11 +325,114 @@ describe("agent context harness", () => {
       id: "act_1",
       title: "wiki.ingest.failed on wiki",
       relevanceScore: 12,
+      source: {
+        type: "activity",
+        id: "act_1",
+      },
+      provenance: {
+        sourceType: "activity",
+        sourceId: "act_1",
+        createdAt: "2026-06-23T12:00:00.000Z",
+      },
     });
   });
 
+  it("adds provenance to wiki, agent run, and task contribution episodes", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({
+      status: "ok",
+      results: [
+        {
+          title: "Wiki write failure runbook",
+          path: "runbooks/wiki-write-failure.md",
+          snippet: "Steps to recover from wiki write failures.",
+        },
+      ],
+    });
+
+    const task = {
+      id: "task_current",
+      title: "Fix wiki write pipeline",
+      description: "Debug and fix wiki write failures.",
+      status: "doing",
+      priority: "P0",
+      riskLevel: "low",
+      executionMode: "agent_allowed",
+      agentTags: ["personal-os", "wiki"],
+      ownerAgent: "hermes",
+      leaseUntil: new Date(Date.now() + 60_000).toISOString(),
+      nextAction: "Apply the fix from previous runbook.",
+      definitionOfDone: "Wiki writes succeed.",
+      projectId: "project_1",
+      sourceInboxItemId: null,
+      sourceAgentRunId: "run_1",
+      project: { id: "project_1", name: "Personal OS" },
+      sourceInboxItem: null,
+      sourceAgentRun: {
+        model: "hermes-agent",
+        reasoningSummary: "Wiki write failed due to timeout.",
+        outputSummary: "Applied retry logic and succeeded.",
+      },
+      wikiLinks: [],
+      contributions: [
+        {
+          agentId: "obsidianmanager1",
+          summary: "Fixed wiki write timeout by adding retry logic.",
+          createdAt: "2026-06-23T10:00:00.000Z",
+        },
+      ],
+      artifacts: [],
+      reviews: [],
+    };
+
+    const context = await getAgentContext(
+      {
+        task: {
+          findUnique: vi.fn().mockResolvedValue(task),
+          findMany: vi.fn().mockResolvedValue([]),
+        },
+        idea: { findMany: vi.fn().mockResolvedValue([]) },
+        activityLog: { findMany: vi.fn().mockResolvedValue([]) },
+      },
+      "task_current",
+    );
+
+    expect(context.evidence.episodes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "wiki",
+          id: "runbooks/wiki-write-failure.md",
+          source: expect.objectContaining({
+            type: "wiki",
+            id: "runbooks/wiki-write-failure.md",
+            path: "runbooks/wiki-write-failure.md",
+          }),
+          provenance: expect.objectContaining({
+            sourceType: "wiki",
+            sourceId: "runbooks/wiki-write-failure.md",
+            sourcePath: "runbooks/wiki-write-failure.md",
+          }),
+        }),
+        expect.objectContaining({
+          type: "agent_run",
+          id: "run_1",
+          source: { type: "agent_run", id: "run_1" },
+          provenance: { sourceType: "agent_run", sourceId: "run_1" },
+        }),
+        expect.objectContaining({
+          type: "task",
+          id: "task_current",
+          source: { type: "task", id: "task_current" },
+          provenance: expect.objectContaining({
+            sourceType: "task",
+            sourceId: "task_current",
+          }),
+        }),
+      ]),
+    );
+  });
+
   it("recommends investigating failed agent runs when recent failures exist", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([]);
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
     const taskFindMany = vi.fn().mockResolvedValue([]);
     const activityLogFindMany = vi.fn().mockResolvedValue([
       {
@@ -295,15 +462,16 @@ describe("agent context harness", () => {
   });
 
   it("recalls task contribution episodes when task has matching history", async () => {
-    mockedSearchWikiNotes.mockResolvedValue([
-      {
-        title: "Wiki write failure runbook",
-        path: "runbooks/wiki-write-failure.md",
-        tags: ["runbook"],
-        concepts: ["wiki"],
-        excerpt: "Steps to recover from wiki write failures.",
-      },
-    ]);
+    mockedSearchWikiChunks.mockResolvedValue({
+      status: "ok",
+      results: [
+        {
+          title: "Wiki write failure runbook",
+          path: "runbooks/wiki-write-failure.md",
+          snippet: "Steps to recover from wiki write failures.",
+        },
+      ],
+    });
 
     const task = {
       id: "task_current",

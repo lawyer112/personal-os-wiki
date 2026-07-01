@@ -86,6 +86,15 @@ enum IdeaStatus {
   archived
 }
 
+enum WikiWriteJobStatus {
+  queued
+  processing
+  done
+  retry
+  failed
+  cancelled
+}
+
 model InboxItem {
   id              String         @id @default(cuid())
   sourceType      String
@@ -103,6 +112,7 @@ model InboxItem {
   notes           Note[]
   projectEvents   ProjectEvent[]
   ideas           Idea[]
+  wikiWriteJobs   WikiWriteJob[]
 
   @@index([status, receivedAt])
   @@index([sourcePlatform, sourceMessageId])
@@ -124,6 +134,7 @@ model AgentRun {
   notes            Note[]
   projectEvents    ProjectEvent[]
   ideas            Idea[]
+  wikiWriteJobs    WikiWriteJob[]
 
   @@index([inboxItemId])
   @@index([status, startedAt])
@@ -142,6 +153,7 @@ model Project {
   notes        ProjectNote[]
   events       ProjectEvent[]
   ideas        Idea[]
+  wikiWriteJobs WikiWriteJob[]
 
   @@index([status, priority])
 }
@@ -218,6 +230,36 @@ model TaskWikiLink {
 
   @@index([taskId])
   @@index([notePath])
+}
+
+model WikiWriteJob {
+  id                String             @id @default(cuid())
+  idempotencyKey    String             @unique
+  title             String
+  payload           Json
+  status            WikiWriteJobStatus @default(queued)
+  attempts          Int                @default(0)
+  maxAttempts       Int                @default(5)
+  lastError         String?
+  nextRunAt         DateTime           @default(now())
+  lockedBy          String?
+  lockedAt          DateTime?
+  completedAt       DateTime?
+  notePath          String?
+  noteUrl           String?
+  sourceInboxItemId String?
+  sourceInboxItem   InboxItem?         @relation(fields: [sourceInboxItemId], references: [id], onDelete: SetNull)
+  sourceAgentRunId  String?
+  sourceAgentRun    AgentRun?          @relation(fields: [sourceAgentRunId], references: [id], onDelete: SetNull)
+  projectId         String?
+  project           Project?           @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([status, nextRunAt, createdAt])
+  @@index([sourceInboxItemId])
+  @@index([sourceAgentRunId])
+  @@index([projectId])
 }
 
 model TaskClaim {

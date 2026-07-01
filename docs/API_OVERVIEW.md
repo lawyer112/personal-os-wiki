@@ -96,6 +96,21 @@ curl -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
   "http://localhost:3000/api/agent-inbox?agentId=demo-agent&tags=demo,review"
 ```
 
+For scheduled workers, let Personal OS select and claim the next eligible task
+in one request:
+
+```bash
+curl -X POST http://localhost:3000/api/agent-inbox/claim-next \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agentId": "demo-agent",
+    "tags": ["demo", "review"],
+    "limit": 10,
+    "leaseMinutes": 30
+  }'
+```
+
 Claim a task:
 
 ```bash
@@ -161,6 +176,7 @@ curl -X POST http://localhost:3000/api/planner/today \
 | Create raw Inbox item | `/api/inbox/items` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Register agent profile | `/api/agent-profiles` | `GET/POST` | read for GET, write for POST |
 | Agent polls work | `/api/agent-inbox` | `GET` | `PERSONAL_OS_API_TOKEN` |
+| Agent claims next eligible work | `/api/agent-inbox/claim-next` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Agent loads context | `/api/agent/context?taskId=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
 | Agent claims work | `/api/tasks/:id/claim` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Agent heartbeats | `/api/tasks/:id/heartbeat` | `POST` | `PERSONAL_OS_API_TOKEN` |
@@ -202,6 +218,10 @@ Agents should treat the Personal OS task record as the source of truth:
   profile. If a human changes the task to `approval_required` or disables the
   profile, the active lease can no longer mutate the task.
 - Claim before working.
+- Use `/api/agent-inbox/claim-next` for cron-style workers that should pick one
+  task and immediately lease it. Use `/api/agent-inbox` plus
+  `/api/tasks/:id/claim` when the worker needs to inspect or rank candidates
+  itself.
 - Keep the lease alive with heartbeat if work takes time.
 - Do not contribute or submit after the lease expires; claim again first.
 - Attach evidence and artifact URLs.

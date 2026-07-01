@@ -56,4 +56,29 @@ describe("ingestWikiNote", () => {
       error: "connect ECONNREFUSED",
     });
   });
+
+  it("can request light ingest so Wiki writes defer index rebuild work", async () => {
+    const write = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      body: {
+        status: "created",
+        note_path: "vault/20_notes/2026-07-01/wiki-fallback-demo.md",
+        url: "/note?path=vault/20_notes/2026-07-01/wiki-fallback-demo.md",
+      },
+      url: "http://wiki.local/api/ingest?mode=light",
+    });
+    const { ingestWikiNote } = await loadWikiIngest(write);
+
+    await expect(ingestWikiNote(wikiInput, { light: true })).resolves.toEqual({
+      ok: true,
+      title: "Wiki fallback demo",
+      status: "created",
+      note_path: "vault/20_notes/2026-07-01/wiki-fallback-demo.md",
+      url: "http://wiki.local/note?path=vault/20_notes/2026-07-01/wiki-fallback-demo.md",
+    });
+    expect(write).toHaveBeenCalledWith("/api/ingest?mode=light", {
+      body: wikiInput,
+    });
+  });
 });

@@ -604,6 +604,29 @@ The response returns executable tasks and a `contextUrl` for each task:
 }
 ```
 
+### Auto-claim next task
+
+Scheduled workers can let Personal OS choose and claim the next eligible task in
+one request. This is the recommended entrypoint for multi-machine workers that
+wake up on a timer.
+
+```http
+POST /api/agent-inbox/claim-next
+Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+
+{
+  "agentId": "knowledge-curator",
+  "tags": ["wiki", "curation"],
+  "limit": 10,
+  "leaseMinutes": 90
+}
+```
+
+The response returns `claimed: true` with the task and claim record, or
+`claimed: false` when no matching work is available. If two agents wake up at
+the same time, Personal OS skips candidates whose lease changed before the claim
+completed and tries the next task.
+
 ### Claim and keep the lease alive
 
 ```http

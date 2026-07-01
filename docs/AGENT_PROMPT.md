@@ -63,20 +63,22 @@ Security rules:
 - If a task requires destructive actions, credentials, production deployment changes, or irreversible file operations, submit for review instead of executing silently.
 
 Default operating loop:
-1. Poll work from:
+1. For scheduled workers, ask Personal OS to claim the next eligible task:
+   POST {PERSONAL_OS_BASE_URL}/api/agent-inbox/claim-next
+2. If you must inspect or rank candidates yourself, poll work from:
    GET {PERSONAL_OS_BASE_URL}/api/agent-inbox?agentId={AGENT_ID}&tags={AGENT_TAGS}
-2. Claim exactly one task before working:
+3. Claim exactly one task before working if you used the poll route:
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/claim
-3. Load task context:
+4. Load task context:
    GET {PERSONAL_OS_BASE_URL}/api/agent/context?taskId={taskId}
-4. Execute only the claimed task.
-5. Heartbeat if the work takes time:
+5. Execute only the claimed task.
+6. Heartbeat if the work takes time:
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/heartbeat
-6. Record progress as a contribution:
+7. Record progress as a contribution:
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/contributions
-7. Submit evidence when ready:
+8. Submit evidence when ready:
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/submit
-8. Wait for human or reviewer-agent approval. Do not approve your own work unless policy explicitly allows it.
+9. Wait for human or reviewer-agent approval. Do not approve your own work unless policy explicitly allows it.
 
 Task quality rules:
 Every task you create or update must include:

@@ -27,6 +27,27 @@ type WikiNotesResponse = {
   notes?: WikiNoteSummary[];
 };
 
+type WikiSearchOptions = {
+  signal?: AbortSignal;
+};
+
+export type WikiChunkSearchHit = {
+  title: string;
+  path: string;
+  chunk_id?: string | number;
+  snippet?: string;
+  score?: number;
+};
+
+export type WikiChunkSearchResponse = {
+  query?: string;
+  fts_query?: string;
+  status?: "ok" | "empty-query" | "missing-index" | "query-error" | string;
+  error?: string;
+  count?: number;
+  results?: WikiChunkSearchHit[];
+};
+
 export type WikiClientResult<TBody = unknown> = {
   ok: boolean;
   status: number;
@@ -186,7 +207,11 @@ export function wikiNoteUrl(path: string) {
   return wikiOpenUrl(`/note?path=${encodeURIComponent(path)}`);
 }
 
-export async function searchWikiNotes(query: string, pageSize = 8) {
+export async function searchWikiNotes(
+  query: string,
+  pageSize = 8,
+  options: WikiSearchOptions = {},
+) {
   const params = new URLSearchParams({
     q: query,
     page: "1",
@@ -195,6 +220,7 @@ export async function searchWikiNotes(query: string, pageSize = 8) {
 
   const result = await wikiClient.read<WikiNotesResponse>(
     `/api/notes?${params.toString()}`,
+    { signal: options.signal },
   );
 
   if (!result.ok) {
@@ -203,3 +229,31 @@ export async function searchWikiNotes(query: string, pageSize = 8) {
 
   return result.body?.notes ?? [];
 }
+
+export const searchWikiChunks = async (
+  query: string,
+  limit = 8,
+  options: WikiSearchOptions = {},
+): Promise<WikiChunkSearchResponse> => {
+  const params = new URLSearchParams({
+    q: query,
+    limit: String(limit),
+  });
+
+  const result = await wikiClient.read<WikiChunkSearchResponse>(
+    `/api/search/chunks?${params.toString()}`,
+    { signal: options.signal },
+  );
+
+  if (!result.ok) {
+    throw new Error(`Personal Wiki fast search failed: ${result.status}`);
+  }
+
+  const body = result.body ?? {};
+  if (body.status !== undefined && !["ok", "empty-query"].includes(body.status)) {
+    const suffix = body.error ? ` (${body.error})` : "";
+    throw new Error(`Personal Wiki fast search unavailable: ${body.status}${suffix}`);
+  }
+
+  return body;
+};
