@@ -90,12 +90,13 @@ INGESTION_DIR = Path(os.environ.get("WIKI_INGESTION_DIR", str(PUBLIC_DIR / "inge
 INGESTION_MANIFEST_PATH = Path(os.environ.get("WIKI_INGEST_MANIFEST_PATH", str(INGESTION_DIR / "wiki_ingest_manifest.jsonl"))).resolve()
 INGESTION_AUDIT_PATH = Path(os.environ.get("WIKI_INGEST_AUDIT_PATH", str(INGESTION_DIR / "knowledge_contract_audit_latest.json"))).resolve()
 INGESTION_SYNC_PATH = Path(os.environ.get("WIKI_INGEST_SYNC_PATH", str(INGESTION_DIR / "sync-meta.json"))).resolve()
+DIRTY_NOTES_PATH = Path(os.environ.get("WIKI_DIRTY_NOTES_PATH", str(INGESTION_DIR / "dirty-notes.json"))).resolve()
 VECTOR_DOCTOR_PATH = Path(os.environ.get("WIKI_VECTOR_DOCTOR_PATH", str(INGESTION_DIR / "wiki_vector_doctor_latest.json"))).resolve()
 SEARCH_DB_PATH = Path(os.environ.get("WIKI_SEARCH_DB_PATH", str(PUBLIC_DIR / "search" / "wiki_fts.sqlite"))).resolve()
 
 
 def now_utc() -> dt.datetime:
-    return dt.datetime.now(dt.UTC)
+    return dt.datetime.now(dt.timezone.utc)
 
 
 def ensure_dirs() -> None:
@@ -194,7 +195,7 @@ def first_heading(content: str) -> str:
     return ""
 
 
-def ingest(payload: dict[str, Any]) -> dict[str, Any]:
+def ingest(payload: dict[str, Any], light: bool = False) -> dict[str, Any]:
     ensure_dirs()
     item = normalize_payload(payload)
     created = now_utc()
@@ -247,6 +248,20 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
     note = render_markdown(item, source_hash, created)
     note_path.write_text(note, encoding="utf-8")
 
+    if light:
+        mark_dirty_note(rel(note_path), created)
+        return {
+            "status": status,
+            "id": note_id,
+            "title": item["title"],
+            "source_hash": source_hash,
+            "source_path": rel(source_path),
+            "note_path": rel(note_path),
+            "url": f"/note?path={quote(rel(note_path), safe='/')}",
+            "indexing": "deferred",
+            "git": "deferred",
+        }
+
     public = refresh_public_indexes()
     commit_status = git_commit(f"ingest: {item['title'][:60]}")
 
@@ -262,6 +277,36 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
         "graph_links": len(public["graph"]["links"]),
         "git": commit_status,
     }
+
+
+def mark_dirty_note(note_path: str, created: dt.datetime) -> None:
+    DIRTY_NOTES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    dirty: dict[str, Any] = {"paths": []}
+    if DIRTY_NOTES_PATH.exists():
+        try:
+            loaded = json.loads(DIRTY_NOTES_PATH.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict):
+                dirty = loaded
+        except (OSError, json.JSONDecodeError):
+            dirty = {"paths": []}
+
+    paths = dirty.get("paths")
+    if not isinstance(paths, list):
+        paths = []
+    clean_paths = sorted({str(path) for path in paths if str(path).strip()} | {note_path})
+    dirty["paths"] = clean_paths
+    dirty["updated_at"] = created.isoformat()
+    write_json(DIRTY_NOTES_PATH, dirty)
+
+
+def light_ingest_requested(payload: dict[str, Any], query: dict[str, list[str]]) -> bool:
+    mode = str(payload.get("mode") or first_query(query, "mode")).strip().lower()
+    if mode == "light":
+        return True
+    raw_light = payload.get("light")
+    if raw_light is None:
+        raw_light = first_query(query, "light")
+    return str(raw_light).strip().lower() in {"1", "true", "yes", "on"}
 
 
 def find_note_by_source_hash(source_hash: str) -> Path | None:
@@ -2698,7 +2743,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(HTTPStatus.OK, relink_notes(self.read_json()))
                 return
             payload = self.read_json()
-            self.send_json(HTTPStatus.OK, ingest(payload))
+            query = parse_qs(parsed.query)
+            self.send_json(HTTPStatus.OK, ingest(payload, light=light_ingest_requested(payload, query)))
         except Exception as exc:
             self.send_error_json(exc)
 

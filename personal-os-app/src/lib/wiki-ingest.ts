@@ -40,20 +40,26 @@ type WikiIngestNoteInput = {
   metadata?: Record<string, unknown>;
 };
 
+type WikiIngestOptions = {
+  light?: boolean;
+};
+
 const wikiIngestTitle = (input: WikiIngestNoteInput) =>
   input.frontmatter?.title ?? input.title ?? "untitled-wiki-note";
 
 export async function ingestWikiNote(
   input: WikiIngestNoteInput,
+  options: WikiIngestOptions = {},
 ): Promise<WikiIngestResult> {
   const title = wikiIngestTitle(input);
   const payload = {
     ...input,
     metadata: input.metadata ?? {},
   };
+  const endpoint = options.light ? "/api/ingest?mode=light" : "/api/ingest";
 
   try {
-    const result = await wikiClient.write<WikiIngestResponse>("/api/ingest", {
+    const result = await wikiClient.write<WikiIngestResponse>(endpoint, {
       body: payload,
     });
     const body = result.body ?? {};
