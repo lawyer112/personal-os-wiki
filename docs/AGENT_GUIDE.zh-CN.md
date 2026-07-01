@@ -93,12 +93,52 @@ Agent 不应该抢同一个任务。必须使用租约协议。
 poll -> claim -> context -> execute -> heartbeat -> contribute -> submit -> review
 ```
 
+多台机器可以跑同一个 worker 循环。`agentId` 是 worker 身份，`AgentProfile`
+和任务上的 `agentTags` 是分流策略。例如 Mac mini 可以运行 `mac-curator`，
+标签是 `["wiki", "mac"]`；Linux 服务器可以运行 `research-worker`，标签是
+`["wiki", "research"]`。它们可以扫描同一个 Personal OS。谁先认领成功，
+任务就会写入 `ownerAgent`、`leaseUntil`、`lastHeartbeatAt`，并变成
+`status=doing`；其他 Agent 不会继续处理，除非租约过期。
+
+认领前必须先注册匹配的 `AgentProfile`。一个 worker 只能认领满足这些条件的
+任务：
+
+- 任务状态是 `todo`，或者 `doing` 任务的租约已经过期；
+- 任务 `executionMode` 是 `agent_allowed`；
+- 任务 `riskLevel` 不是 `high`；
+- Agent profile 启用，并且 `canWriteTasks=true`；
+- 任务标签为空，或者和 Agent profile 的标签有交集；
+- 任务风险等级不超过 Agent profile 的 `allowedRiskLevel`。
+
+同样的策略会在心跳、写贡献、提交时再次检查。如果任务或 profile 在认领后被
+改成需要审批、禁用或风险不匹配，旧租约也不能继续写任务。
+
 ### 拉任务
 
 ```http
 GET /api/agent-inbox?agent_id=knowledge-curator&tags=wiki,curation&limit=10
 Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 ```
+
+当 worker 需要先检查或自行排序候选任务时，用这个接口。
+
+### 自动认领下一个任务
+
+```http
+POST /api/agent-inbox/claim-next
+Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+
+{
+  "agentId": "knowledge-curator",
+  "tags": ["wiki", "curation"],
+  "limit": 10,
+  "leaseMinutes": 90
+}
+```
+
+这个接口适合每 30 分钟唤醒一次的定时 worker。Personal OS 会先按该 Agent 的
+profile 和 tags 找候选任务，再尝试认领第一个；如果刚好被另一台机器抢先认领，
+就继续尝试下一个候选。没有可用任务时，返回 `claimed: false`。
 
 ### 认领任务
 

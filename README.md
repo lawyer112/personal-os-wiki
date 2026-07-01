@@ -425,6 +425,7 @@ Personal OS /api/intake
 
 Worker agents
   |-- poll /api/agent-inbox
+  |-- or auto-claim /api/agent-inbox/claim-next
   |-- claim /api/tasks/:id/claim
   |-- read /api/agent/context
   |-- heartbeat while working
@@ -453,14 +454,27 @@ Read more:
 An agent should not scrape the whole vault or guess from chat history. It should
 follow the contract.
 
+Personal OS can act as a shared multi-agent task bench. A laptop, server, or
+another agent runtime can poll the same backlog every few minutes. The task
+lease is the coordination primitive: once one agent claims a task, the task is
+marked `doing` with `ownerAgent` and `leaseUntil`, so another agent will not
+work it unless the lease expires or review sends the task back.
+
 Example task claiming flow:
 
 ```bash
-# 1. Poll work
+# 1. Poll work, then pick a task yourself
 curl -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
   "http://localhost:3000/api/agent-inbox?agentId=research-agent&tags=wiki,research"
 
-# 2. Claim one task
+# Or let Personal OS pick and claim the next eligible task atomically
+curl -X POST \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"agentId":"research-agent","tags":["wiki","research"],"limit":10,"leaseMinutes":30}' \
+  "http://localhost:3000/api/agent-inbox/claim-next"
+
+# 2. Claim one known task
 curl -X POST \
   -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
   -H "Content-Type: application/json" \

@@ -326,6 +326,7 @@ Personal OS /api/intake
 
 Worker Agent
   |-- poll /api/agent-inbox
+  |-- 或自动认领 /api/agent-inbox/claim-next
   |-- claim /api/tasks/:id/claim
   |-- read /api/agent/context
   |-- heartbeat while working
@@ -353,14 +354,26 @@ Agent Guide   = 可移植操作规则
 
 Agent 不应该扫描整个 vault，也不应该靠聊天记录猜。它应该遵守协议。
 
+Personal OS 可以作为共享的多 Agent 任务台。笔记本、服务器或其他 Agent runtime
+都可以按固定周期扫描同一个 backlog。任务租约是协调原语：一个 Agent 认领后，
+任务会被标记为 `doing`，并写入 `ownerAgent` 和 `leaseUntil`；其他 Agent 不会
+继续处理它，除非租约过期，或者复核流程把任务打回。
+
 最小任务认领流程：
 
 ```bash
-# 1. 拉取任务
+# 1. 拉取任务，然后由 worker 自己挑选
 curl -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
   "http://localhost:3000/api/agent-inbox?agentId=research-agent&tags=wiki,research"
 
-# 2. 认领任务
+# 或者让 Personal OS 挑选并立刻认领下一个符合条件的任务
+curl -X POST \
+  -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"agentId":"research-agent","tags":["wiki","research"],"limit":10,"leaseMinutes":30}' \
+  "http://localhost:3000/api/agent-inbox/claim-next"
+
+# 2. 认领一个已知任务
 curl -X POST \
   -H "Authorization: Bearer $PERSONAL_OS_API_TOKEN" \
   -H "Content-Type: application/json" \

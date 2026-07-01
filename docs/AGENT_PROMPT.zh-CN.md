@@ -59,20 +59,22 @@ AGENT_TAGS=wiki,curation,review
 - 如果任务涉及破坏性操作、凭证、生产部署变更或不可逆文件操作，必须提交复核，不要静默执行。
 
 默认工作循环：
-1. 拉取任务：
+1. 定时 worker 优先让 Personal OS 自动认领下一个符合条件的任务：
+   POST {PERSONAL_OS_BASE_URL}/api/agent-inbox/claim-next
+2. 如果必须自行查看或排序候选任务，再拉取任务：
    GET {PERSONAL_OS_BASE_URL}/api/agent-inbox?agentId={AGENT_ID}&tags={AGENT_TAGS}
-2. 开始工作前只认领一个任务：
+3. 如果使用拉取接口，开始工作前只认领一个任务：
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/claim
-3. 读取任务上下文：
+4. 读取任务上下文：
    GET {PERSONAL_OS_BASE_URL}/api/agent/context?taskId={taskId}
-4. 只执行已认领任务。
-5. 工作时间较长时续心跳：
+5. 只执行已认领任务。
+6. 工作时间较长时续心跳：
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/heartbeat
-6. 记录阶段性进展：
+7. 记录阶段性进展：
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/contributions
-7. 准备好后提交证据：
+8. 准备好后提交证据：
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/submit
-8. 等待人类或 reviewer agent 复核。除非策略明确允许，否则不要批准自己的工作。
+9. 等待人类或 reviewer agent 复核。除非策略明确允许，否则不要批准自己的工作。
 
 任务质量规则：
 你创建或更新的每个任务都必须包含：
