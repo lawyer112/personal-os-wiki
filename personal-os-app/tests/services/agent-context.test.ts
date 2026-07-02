@@ -5,7 +5,12 @@ import {
   getQueryAgentContext,
   searchWikiContext,
 } from "@/lib/agent-context";
+import { searchAgentMemoryEpisodes } from "@/lib/agentmemory-client";
 import { searchWikiChunks, searchWikiNotes } from "@/lib/wiki-client";
+
+vi.mock("@/lib/agentmemory-client", () => ({
+  searchAgentMemoryEpisodes: vi.fn(),
+}));
 
 vi.mock("@/lib/wiki-client", () => ({
   searchWikiChunks: vi.fn(),
@@ -14,11 +19,14 @@ vi.mock("@/lib/wiki-client", () => ({
     `http://wiki.local/note?path=${encodeURIComponent(path)}`,
 }));
 
+const mockedSearchAgentMemoryEpisodes = vi.mocked(searchAgentMemoryEpisodes);
 const mockedSearchWikiChunks = vi.mocked(searchWikiChunks);
 const mockedSearchWikiNotes = vi.mocked(searchWikiNotes);
 
 describe("agent context harness", () => {
   beforeEach(() => {
+    mockedSearchAgentMemoryEpisodes.mockReset();
+    mockedSearchAgentMemoryEpisodes.mockResolvedValue([]);
     mockedSearchWikiChunks.mockReset();
     mockedSearchWikiNotes.mockReset();
   });
@@ -171,6 +179,41 @@ describe("agent context harness", () => {
     expect(context.policy.canReadWiki).toBe(true);
     expect(context.wiki.status).toBe("empty");
     expect(context.nextAction).toBe("无高优先级可执行任务；运行 GitHub 雷达获取新任务");
+  });
+
+  it("adds agentmemory hits to query evidence without changing wiki tiers", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
+    mockedSearchAgentMemoryEpisodes.mockResolvedValue([
+      {
+        id: "mem_vector",
+        title: "Code X vector memory integration validation",
+        summary: "agentmemory:decision session:memory",
+        relevanceScore: 42,
+        createdAt: "2026-07-01T15:51:11.945Z",
+        sessionId: "memory",
+        memoryType: "decision",
+      },
+    ]);
+
+    const context = await getQueryAgentContext("Code X vector memory");
+
+    expect(mockedSearchAgentMemoryEpisodes).toHaveBeenCalledWith(
+      "Code X vector memory",
+    );
+    expect(context.evidence.episodes[0]).toMatchObject({
+      type: "agentmemory",
+      id: "mem_vector",
+      title: "Code X vector memory integration validation",
+      relevanceScore: 42,
+      source: { type: "agentmemory", id: "mem_vector" },
+      provenance: {
+        sourceType: "agentmemory",
+        sourceId: "mem_vector",
+        createdAt: "2026-07-01T15:51:11.945Z",
+      },
+    });
+    expect(context.tiers.hot).toEqual([]);
+    expect(context.tiers.warm).toEqual([]);
   });
 
   it("adds P0/P1 agent executable tasks to hot tier for keyword lookups", async () => {

@@ -44,15 +44,27 @@ Authorization: Bearer <WIKI_API_TOKEN>
 Content-Type: application/json
 ```
 
+Hermes 日常输入、任务结果和项目进度默认先写 Personal OS `/api/intake`，
+由 OS 创建 Inbox/AgentRun 并排队 WikiWriteJob。下面的 Personal Wiki 直写
+接口只用于 Wiki-only、维护、修复或 API 验证。
+
 请求体：
 
 ```json
 {
   "title": "笔记标题",
   "content": "整理后的正文，使用 Markdown。可以使用 [[概念名]] 建立概念链接。",
-  "source_type": "telegram",
+  "source_type": "agent-output",
   "source_url": "telegram://message/example",
   "tags": ["inbox", "hermes"],
+  "frontmatter": {
+    "title": "笔记标题",
+    "type": "note",
+    "created_by": "user",
+    "source_type": "agent-output",
+    "tags": ["inbox", "hermes"],
+    "created_at": "2026-07-01T00:00:00.000Z"
+  },
   "metadata": {
     "from": "Hermes Agent",
     "raw_type": "text"
@@ -64,7 +76,8 @@ Content-Type: application/json
 
 - `title`：给人看的标题，不要太长。
 - `content`：正文。这里应该是整理后的知识内容，不是流水账。
-- `source_type`：来源类型，例如 `telegram`、`link`、`file`、`voice-transcript`、`manual`。
+- `source_type`：兼容字段；Hermes 直写时以 `frontmatter.source_type` 为准，取值使用 `user-note`、`article`、`transcript`、`agent-output`。
+- `frontmatter`：Hermes 直写必填，至少包含 `title/type/created_by/source_type/tags/created_at`。
 - `source_url`：原始来源地址；没有就留空。
 - `tags`：少量稳定标签。不要给每篇文章塞一堆临时标签。
 - `metadata`：机器信息，方便以后追踪来源。
@@ -262,12 +275,12 @@ POST /api/rebuild
 你是我的 Personal Wiki 管理员。用户发来的想法、链接、文件摘要、语音转文字都要整理成可读 Markdown，然后写入 Personal Wiki。
 
 入库规则：
-1. 不要问用户是否入库，默认入库。
+1. 日常输入先写 Personal OS `/api/intake`；只有 Wiki-only、维护、修复或 API 验证才直写 Personal Wiki。
 2. 标题要短，能让用户一眼知道这条笔记是什么。
 3. 正文用 Markdown，优先写结论、要点、我的用法、相关概念。
 4. 使用 [[概念名]] 建立知识图谱连接。
 5. tags 控制在 2 到 6 个，使用稳定标签，不要制造大量一次性标签。
-6. source_type 要反映来源，例如 telegram、link、file、voice-transcript、manual。
+6. 直写 Personal Wiki 时必须带 frontmatter；source_type 只用 user-note、article、transcript、agent-output。
 7. 原始链接放 source_url；没有链接就留空。
 8. 如果用户后来纠错，调用 update/tag/relink/archive，而不是重复新增一篇。
 9. 如果发现同一来源返回 duplicate，读取原 note_path 后按需要 update。
@@ -280,7 +293,7 @@ POST /api/rebuild
 
 1. 能导出文本时，把转写文本发给 Hermes。
 2. 能导出文件时，把文件发给 Hermes。
-3. Hermes 使用 `source_type: "voice-transcript"` 入库。
+3. Hermes 日常入口使用 Personal OS `/api/intake` 的 `wikiNotes[]`；直写 Wiki 时使用 `frontmatter.source_type: "transcript"`。
 4. `metadata` 里记录设备、会议时间、说话人等信息。
 
 示例：
@@ -288,10 +301,18 @@ POST /api/rebuild
 ```json
 {
   "title": "DeepTalk 语音记录：个人知识库想法",
-  "content": "# DeepTalk 语音记录：个人知识库想法\n\n## 结论\n\n这段语音主要是在讨论 [[个人知识库]] 的输入层和 Hermes 自动入库流程。\n\n## 要点\n\n- Telegram 是当前主入口。\n- DeepTalk 转写可以作为 voice-transcript 来源。\n- Hermes 负责整理，不需要人工确认。\n\n## 相关概念\n\n- [[Hermes Agent]]\n- [[个人知识库]]",
-  "source_type": "voice-transcript",
+  "content": "# DeepTalk 语音记录：个人知识库想法\n\n## 结论\n\n这段语音主要是在讨论 [[个人知识库]] 的输入层和 Hermes 自动入库流程。\n\n## 要点\n\n- Telegram 是当前主入口。\n- DeepTalk 转写可以作为 transcript 来源。\n- Hermes 负责整理，不需要人工确认。\n\n## 相关概念\n\n- [[Hermes Agent]]\n- [[个人知识库]]",
+  "source_type": "transcript",
   "source_url": "",
   "tags": ["voice", "deeptalk", "wiki"],
+  "frontmatter": {
+    "title": "DeepTalk 语音记录：个人知识库想法",
+    "type": "note",
+    "created_by": "user",
+    "source_type": "transcript",
+    "tags": ["voice", "deeptalk", "wiki"],
+    "created_at": "2026-07-01T00:00:00.000Z"
+  },
   "metadata": {
     "device": "DeepTalk",
     "export_method": "manual"

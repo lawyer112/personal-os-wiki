@@ -85,6 +85,7 @@ describe("AgentRun context pack archiver", () => {
       generatedAt: "2026-06-23T00:00:00.000Z",
     });
 
+    expect(payload.wikiNotes[0].title).toBe("AgentRun context pack task_done_1 2026-06-23");
     expect(payload.wikiNotes[0].frontmatter).toEqual({
       title: "AgentRun context pack task_done_1 2026-06-23",
       type: "project",

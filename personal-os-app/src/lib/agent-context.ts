@@ -1,5 +1,9 @@
 import { HttpError } from "@/lib/http";
 import {
+  searchAgentMemoryEpisodes,
+  type AgentMemoryContextHit,
+} from "@/lib/agentmemory-client";
+import {
   searchWikiChunks,
   wikiNoteUrl,
   type WikiChunkSearchHit,
@@ -148,19 +152,19 @@ export type AgentContextTiers = {
 };
 
 export type ContextEpisode = {
-  type: "agent_run" | "task" | "wiki" | "activity";
+  type: "agent_run" | "task" | "wiki" | "activity" | "agentmemory";
   id: string;
   title: string;
   summary: string;
   relevanceScore: number;
   source?: {
-    type: "agent_run" | "task" | "wiki" | "activity";
+    type: "agent_run" | "task" | "wiki" | "activity" | "agentmemory";
     id: string;
     path?: string;
     url?: string;
   };
   provenance?: {
-    sourceType: "agent_run" | "task" | "wiki" | "activity";
+    sourceType: "agent_run" | "task" | "wiki" | "activity" | "agentmemory";
     sourceId: string;
     sourcePath?: string;
     sourceUrl?: string;
@@ -889,6 +893,44 @@ function findEpisodes(
     .slice(0, 8);
 }
 
+function agentMemoryHitToEpisode(hit: AgentMemoryContextHit): ContextEpisode {
+  return {
+    type: "agentmemory",
+    id: hit.id,
+    title: hit.title,
+    summary: hit.summary,
+    relevanceScore: hit.relevanceScore,
+    createdAt: hit.createdAt,
+    source: {
+      type: "agentmemory",
+      id: hit.id,
+    },
+    provenance: {
+      sourceType: "agentmemory",
+      sourceId: hit.id,
+      createdAt: hit.createdAt,
+    },
+  };
+}
+
+function combineEpisodes(...episodeGroups: ContextEpisode[][]) {
+  const episodesByKey = new Map<string, ContextEpisode>();
+
+  for (const group of episodeGroups) {
+    for (const episode of group) {
+      const key = `${episode.type}:${episode.id}`;
+      const existing = episodesByKey.get(key);
+      if (!existing || episode.relevanceScore > existing.relevanceScore) {
+        episodesByKey.set(key, episode);
+      }
+    }
+  }
+
+  return Array.from(episodesByKey.values())
+    .sort((a, b) => b.relevanceScore - a.relevanceScore)
+    .slice(0, 8);
+}
+
 export async function searchWikiContext(
   queries: string[],
   limit = 8,
@@ -961,16 +1003,20 @@ export async function searchWikiContextCandidates(queries: string[], limit = 8) 
 
 export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const searchQueries = [query.trim()].filter(Boolean);
-  const [wiki, queryTasks, globalActivity] = await Promise.all([
+  const [wiki, queryTasks, globalActivity, agentMemoryHits] = await Promise.all([
     searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
     getQueryHotTasks(db),
     getQueryActivity(db),
+    searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)),
   ]);
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
   const evidence = {
-    episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null),
+    episodes: combineEpisodes(
+      findEpisodes(query, searchQueries, wiki, globalActivity, null),
+      agentMemoryHits.map(agentMemoryHitToEpisode),
+    ),
   };
 
   const nextAction = computeNextAction({
@@ -1041,38 +1087,43 @@ export async function getAgentContext<TDb extends ContextDb>(
   if (task.sourceInboxItemId) {
     ideaFilters.push({ sourceInboxItemId: task.sourceInboxItemId });
   }
-  const [wiki, recentTasks, relatedIdeas, activity] = await Promise.all([
-    searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
-    taskDelegate.findMany({
-      where: {
-        id: { not: task.id },
-        status: { not: "archived" },
-        ...(task.projectId ? { projectId: task.projectId } : {}),
-      },
-      include: { project: true },
-      orderBy: [{ updatedAt: "desc" }],
-      take: 5,
-    }),
-    ideaDelegate && ideaFilters.length > 0
-      ? ideaDelegate.findMany({
-          where: {
-            status: { notIn: ["archived", "promoted"] },
-            OR: ideaFilters,
-          },
-          include: { project: true, sourceInboxItem: true },
-          orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
-          take: 5,
-        })
-      : Promise.resolve([]),
-    activityLog.findMany({
-      where: { targetType: "task", targetId: task.id },
-      orderBy: { createdAt: "desc" },
-      take: 8,
-    }),
-  ]);
+  const [wiki, recentTasks, relatedIdeas, activity, agentMemoryHits] =
+    await Promise.all([
+      searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
+      taskDelegate.findMany({
+        where: {
+          id: { not: task.id },
+          status: { not: "archived" },
+          ...(task.projectId ? { projectId: task.projectId } : {}),
+        },
+        include: { project: true },
+        orderBy: [{ updatedAt: "desc" }],
+        take: 5,
+      }),
+      ideaDelegate && ideaFilters.length > 0
+        ? ideaDelegate.findMany({
+            where: {
+              status: { notIn: ["archived", "promoted"] },
+              OR: ideaFilters,
+            },
+            include: { project: true, sourceInboxItem: true },
+            orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
+            take: 5,
+          })
+        : Promise.resolve([]),
+      activityLog.findMany({
+        where: { targetType: "task", targetId: task.id },
+        orderBy: { createdAt: "desc" },
+        take: 8,
+      }),
+      searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)),
+    ]);
 
   const evidence = {
-    episodes: findEpisodes("", searchQueries, wiki, activity, task),
+    episodes: combineEpisodes(
+      findEpisodes("", searchQueries, wiki, activity, task),
+      agentMemoryHits.map(agentMemoryHitToEpisode),
+    ),
   };
 
   const nextAction = computeNextAction({
