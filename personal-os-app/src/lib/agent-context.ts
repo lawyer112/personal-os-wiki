@@ -4,6 +4,10 @@ import {
   type AgentMemoryContextHit,
 } from "@/lib/agentmemory-client";
 import {
+  searchSwarmVaultContext,
+  type SwarmVaultContextHit,
+} from "@/lib/swarmvault-mcp-client";
+import {
   searchWikiChunks,
   wikiNoteUrl,
   type WikiChunkSearchHit,
@@ -178,6 +182,11 @@ export type AgentContextEvidence = {
   episodes: ContextEpisode[];
 };
 
+export type SwarmVaultContextResult = {
+  status: "ok" | "empty" | "disabled" | "error";
+  candidates: SwarmVaultContextHit[];
+};
+
 export type AgentContextPack = {
   generatedAt: string;
   task: TaskRecord | null;
@@ -187,6 +196,7 @@ export type AgentContextPack = {
   relatedIdeas: IdeaContextRecord[];
   activity: ActivityRecord[];
   evidence: AgentContextEvidence;
+  swarmvault: SwarmVaultContextResult;
   tiers: AgentContextTiers;
   policy: AgentContextPolicy;
   nextAction: string;
@@ -1003,12 +1013,15 @@ export async function searchWikiContextCandidates(queries: string[], limit = 8) 
 
 export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const searchQueries = [query.trim()].filter(Boolean);
-  const [wiki, queryTasks, globalActivity, agentMemoryHits] = await Promise.all([
-    searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
-    getQueryHotTasks(db),
-    getQueryActivity(db),
-    searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)),
-  ]);
+  const fastQuery = buildFastWikiQuery(searchQueries);
+  const [wiki, queryTasks, globalActivity, agentMemoryHits, swarmvaultHits] =
+    await Promise.all([
+      searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
+      getQueryHotTasks(db),
+      getQueryActivity(db),
+      searchAgentMemoryEpisodes(fastQuery),
+      searchSwarmVaultContext(fastQuery ?? query.trim()),
+    ]);
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
@@ -1017,6 +1030,16 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
       findEpisodes(query, searchQueries, wiki, globalActivity, null),
       agentMemoryHits.map(agentMemoryHitToEpisode),
     ),
+  };
+
+  const swarmvault: SwarmVaultContextResult = {
+    status:
+      swarmvaultHits.length > 0
+        ? "ok"
+        : process.env.AGENT_CONTEXT_SWARMVAULT_ENABLED === "true"
+          ? "empty"
+          : "disabled",
+    candidates: swarmvaultHits,
   };
 
   const nextAction = computeNextAction({
@@ -1034,6 +1057,7 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
     relatedIdeas,
     activity,
     evidence,
+    swarmvault,
     nextAction,
     tiers: buildContextTiers({
       task: null,
@@ -1087,7 +1111,7 @@ export async function getAgentContext<TDb extends ContextDb>(
   if (task.sourceInboxItemId) {
     ideaFilters.push({ sourceInboxItemId: task.sourceInboxItemId });
   }
-  const [wiki, recentTasks, relatedIdeas, activity, agentMemoryHits] =
+  const [wiki, recentTasks, relatedIdeas, activity, agentMemoryHits, swarmvaultHits] =
     await Promise.all([
       searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
       taskDelegate.findMany({
@@ -1117,6 +1141,7 @@ export async function getAgentContext<TDb extends ContextDb>(
         take: 8,
       }),
       searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)),
+      searchSwarmVaultContext(buildFastWikiQuery(searchQueries) ?? task.title),
     ]);
 
   const evidence = {
@@ -1124,6 +1149,16 @@ export async function getAgentContext<TDb extends ContextDb>(
       findEpisodes("", searchQueries, wiki, activity, task),
       agentMemoryHits.map(agentMemoryHitToEpisode),
     ),
+  };
+
+  const swarmvault: SwarmVaultContextResult = {
+    status:
+      swarmvaultHits.length > 0
+        ? "ok"
+        : process.env.AGENT_CONTEXT_SWARMVAULT_ENABLED === "true"
+          ? "empty"
+          : "disabled",
+    candidates: swarmvaultHits,
   };
 
   const nextAction = computeNextAction({
@@ -1141,6 +1176,7 @@ export async function getAgentContext<TDb extends ContextDb>(
     relatedIdeas,
     activity,
     evidence,
+    swarmvault,
     nextAction,
     tiers: buildContextTiers({
       task,
