@@ -1,4 +1,5 @@
 import { recordActivity } from "@/lib/activity";
+import { ingestAgentRun } from "@/lib/memory-ingestion";
 import type {
   AgentRunCompleteInput,
   AgentRunCreateInput,
@@ -124,6 +125,17 @@ export async function completeAgentRun<TDb extends InboxDb>(
     targetId: id,
     after: input,
   });
+
+  // Fire-and-forget: ingest completed run into vector memory for hybrid recall.
+  // Only runs when embedding is configured; errors are swallowed inside.
+  if (status === "completed") {
+    ingestAgentRun({
+      id,
+      model: null,
+      reasoningSummary: input.reasoningSummary ?? null,
+      outputSummary: input.outputSummary ?? null,
+    });
+  }
 
   return run;
 }
