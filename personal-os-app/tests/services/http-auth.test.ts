@@ -35,6 +35,14 @@ describe("API token guards", () => {
     expect(() => requireReadAccess(request())).toThrow(HttpError);
   });
 
+  it("allows unauthenticated production reads when auth is disabled", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_AUTH_DISABLED", "true");
+    vi.stubEnv("PERSONAL_OS_READ_TOKEN", "read-token-000000");
+
+    expect(() => requireReadAccess(request())).not.toThrow();
+  });
+
   it("rejects write access with the read token", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("PERSONAL_OS_READ_TOKEN", "read-token-000000");
@@ -43,5 +51,13 @@ describe("API token guards", () => {
     expect(() => requireWriteAccess(request("read-token-000000"))).toThrow(
       HttpError,
     );
+  });
+
+  it("allows unauthenticated production writes when auth is disabled", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_AUTH_DISABLED", "true");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");
+
+    expect(() => requireWriteAccess(request())).not.toThrow();
   });
 });

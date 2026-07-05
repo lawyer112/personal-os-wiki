@@ -16,6 +16,7 @@ for Personal OS + Personal Wiki.
 - [Windows Deployment Guide](./WINDOWS_DEPLOYMENT.md)
 - [Vector Memory And Plan Decision](./VECTOR_MEMORY_DECISION.md)
 - [Ecosystem Review](./ECOSYSTEM_REVIEW.md)
+- [Task / Wiki / Agent Loop Audit](./TASK_WIKI_AGENT_LOOP_AUDIT.zh-CN.md)
 - [Releases and Packages](./RELEASES.md)
 - [版本发布与安装包](./RELEASES.zh-CN.md)
 - [Comparison](./COMPARISON.md)

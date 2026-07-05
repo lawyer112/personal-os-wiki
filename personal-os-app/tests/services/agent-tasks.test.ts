@@ -436,4 +436,45 @@ describe("agent task protocol", () => {
       }),
     );
   });
+
+  it.each([
+    ["request_changes", "todo", { submittedAt: null, ownerAgent: null }],
+    ["block", "blocked", { ownerAgent: null, leaseUntil: null }],
+    ["archive", "archived", { ownerAgent: null, leaseUntil: null }],
+  ] as const)(
+    "maps review decision %s to task status %s",
+    async (decision, status, expectedData) => {
+      const db = createDb({
+        task: {
+          findUnique: vi.fn().mockResolvedValue({
+            id: "task_1",
+            status: "review",
+            ownerAgent: "agent_1",
+          }),
+          update: vi.fn().mockResolvedValue({ id: "task_1", status }),
+        },
+      });
+
+      const result = await reviewTask(db, "task_1", {
+        reviewer: "verifier",
+        decision,
+        comment: `Decision ${decision}`,
+      });
+
+      expect(result.task).toEqual({ id: "task_1", status });
+      expect(db.taskReview.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ decision }),
+        }),
+      );
+      expect(db.task.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            status,
+            ...expectedData,
+          }),
+        }),
+      );
+    },
+  );
 });

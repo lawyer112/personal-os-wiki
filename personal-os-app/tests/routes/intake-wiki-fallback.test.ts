@@ -70,6 +70,38 @@ async function loadIntakeRoute() {
   return { ...route, mocks };
 }
 
+function intakeBody(overrides: Record<string, unknown> = {}) {
+  return {
+    source: {
+      sourceType: "cron",
+      sourcePlatform: "hermes",
+      rawText: "check wiki fallback",
+      attachments: [],
+      createdBy: "hermes",
+    },
+    agent: {
+      model: "hermes-cron",
+      classification: { kind: "verification" },
+      reasoningSummary: "Verify Wiki and task linkage.",
+    },
+    tasks: [
+      {
+        title: "OS fallback task",
+        description: "This task proves /api/intake continued after Wiki failed.",
+        status: "todo",
+        priority: "P0",
+        riskLevel: "low",
+        executionMode: "agent_allowed",
+        agentTags: ["personal-os", "wiki"],
+        nextAction: "Run the focused intake fallback test.",
+        definitionOfDone: "The intake response is 201 and includes the task plus the Wiki result.",
+        wikiLinks: [],
+      },
+    ],
+    ...overrides,
+  };
+}
+
 describe("POST /api/intake Wiki fallback", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
@@ -83,19 +115,7 @@ describe("POST /api/intake Wiki fallback", () => {
 
     const { POST, mocks } = await loadIntakeRoute();
     const response = await POST(
-      intakeRequest({
-        source: {
-          sourceType: "cron",
-          sourcePlatform: "hermes",
-          rawText: "check wiki fallback",
-          attachments: [],
-          createdBy: "hermes",
-        },
-        agent: {
-          model: "hermes-cron",
-          classification: { kind: "verification" },
-          reasoningSummary: "Verify Wiki failure does not block OS writes.",
-        },
+      intakeRequest(intakeBody({
         wikiNotes: [
           {
             title: "Wiki fallback demo",
@@ -119,7 +139,7 @@ describe("POST /api/intake Wiki fallback", () => {
             wikiLinks: [],
           },
         ],
-      }),
+      })),
     );
 
     const body = await response.json();
@@ -173,6 +193,79 @@ describe("POST /api/intake Wiki fallback", () => {
         }),
         outputSummary: expect.stringContaining("创建 1 个任务"),
         error: undefined,
+      }),
+    );
+  });
+
+  it("links successful Wiki writes to every task created by the same intake", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "os-write-token-0000");
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://os.local");
+
+    const { POST, mocks } = await loadIntakeRoute();
+    mocks.ingestWikiNote.mockResolvedValue({
+      ok: true,
+      title: "Protocol runbook",
+      note_path: "vault/protocol-runbook.md",
+      url: "http://wiki.local/note?path=vault%2Fprotocol-runbook.md",
+    });
+    const response = await POST(
+      intakeRequest(
+        intakeBody({
+          wikiNotes: [
+            {
+              title: "Protocol runbook",
+              content: "Body",
+              source_type: "agent-output",
+              tags: ["personal-os"],
+              metadata: {},
+            },
+          ],
+          tasks: [
+            {
+              title: "Use protocol runbook",
+              status: "todo",
+              priority: "P1",
+              riskLevel: "low",
+              executionMode: "agent_allowed",
+              agentTags: ["personal-os"],
+              nextAction: "Follow the runbook.",
+              definitionOfDone: "The task has a Wiki link and explicit evidence.",
+              wikiLinks: [
+                {
+                  noteTitle: "Explicit evidence",
+                  notePath: "vault/explicit.md",
+                  sourceType: "manual",
+                },
+              ],
+            },
+          ],
+        }),
+      ),
+    );
+
+    expect(response.status).toBe(201);
+    expect(mocks.createTask).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        title: "Use protocol runbook",
+        sourceInboxItemId: "inbox_1",
+        sourceAgentRunId: "run_1",
+        wikiLinks: [
+          expect.objectContaining({
+            noteTitle: "Protocol runbook",
+            notePath: "vault/protocol-runbook.md",
+            noteUrl: "http://wiki.local/note?path=vault%2Fprotocol-runbook.md",
+            sourceType: "personal-wiki",
+            sourceInboxItemId: "inbox_1",
+            sourceAgentRunId: "run_1",
+          }),
+          expect.objectContaining({
+            noteTitle: "Explicit evidence",
+            notePath: "vault/explicit.md",
+            sourceType: "manual",
+          }),
+        ],
       }),
     );
   });

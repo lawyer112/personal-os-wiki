@@ -628,6 +628,12 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 }
 ```
 
+Script helper:
+
+```bash
+npm run agent:heartbeat -- --task-id task_1 --agent-id knowledge-curator --lease-minutes 90
+```
+
 ### Load context
 
 ```http
@@ -708,6 +714,19 @@ poll -> claim -> context -> execute -> heartbeat -> contribution -> submit -> re
 
 This loop is the minimum viable "task claiming" mechanism. The agent can be
 Hermes, Codex, OpenClaw, or any other worker as long as it follows the same API.
+
+Reusable local helpers:
+
+```bash
+npm run agent:run-next -- --claim --agent-id knowledge-curator --tags wiki,curation
+npm run agent:heartbeat -- --task-id task_1 --agent-id knowledge-curator
+npm run agent:writeback -- --task-id task_1 --summary "Done" --dod-met --no-human
+npm run agent:smoke -- --base-url http://192.168.6.37:3100 --agent-id codex-e2e-verifier --json
+```
+
+`agent:smoke` creates and archives a synthetic low-risk task. Use it after
+deployments to verify profile, intake, inbox, claim, heartbeat, contribution,
+submit, review, and final task readback in one run.
 
 Personal Wiki read pages:
 

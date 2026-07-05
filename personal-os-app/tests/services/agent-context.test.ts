@@ -111,6 +111,96 @@ describe("agent context harness", () => {
     expect(context.nextAction).toBe("无高优先级可执行任务；运行 GitHub 雷达获取新任务");
   });
 
+  it("plans long keyword lookups into shorter wiki queries and exposes retrieval debug", async () => {
+    mockedSearchWikiNotes.mockImplementation(async (query) => {
+      if (query === "记忆产品改造") {
+        return [
+          {
+            title: "Personal OS 记忆产品改造：外部项目吸收方案与提示词影响",
+            path: "vault/20_notes/2026-07-03/personal-os-memory-product-plan.md",
+            tags: ["personal-os", "agent-memory"],
+            concepts: ["context-retrieval"],
+            excerpt: "短关键词能召回，长 query 需要 query planner + hybrid recall。",
+          },
+        ];
+      }
+
+      return [];
+    });
+
+    const context = await getQueryAgentContext(
+      "Personal OS context 召回 改造 SwarmVault OpenViking 火山方舟 向量 提示词",
+    );
+
+    expect(context.searchQueries).toContain("记忆产品改造");
+    expect(mockedSearchWikiNotes).toHaveBeenCalledWith("记忆产品改造", 6);
+    expect(context.wiki.status).toBe("ok");
+    expect(context.wiki.candidates[0]).toMatchObject({
+      title: "Personal OS 记忆产品改造：外部项目吸收方案与提示词影响",
+    });
+    expect(context.wiki.candidates[0].matchedQueries).toContain("记忆产品改造");
+    expect(context.evidence.episodes[0]).toMatchObject({
+      type: "wiki",
+      id: "vault/20_notes/2026-07-03/personal-os-memory-product-plan.md",
+    });
+    expect(context.debug.retrieval).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "wiki",
+          query: "记忆产品改造",
+          status: "ok",
+          candidateCount: 1,
+        }),
+      ]),
+    );
+  });
+
+  it("recalls matching agent run episodes for keyword lookups when wiki is empty", async () => {
+    mockedSearchWikiNotes.mockResolvedValue([]);
+    const agentRunFindMany = vi.fn().mockResolvedValue([
+      {
+        id: "run_xinyao",
+        model: "codex-gpt-5",
+        status: "completed",
+        reasoningSummary: "用户提醒星耀星图馆源代码在 6.28 服务器。",
+        outputSummary: "通过 SSH config 找到 qihuo-628 / 192.168.6.28，并定位网站运营与收录排查入口。",
+        startedAt: "2026-07-03T12:00:00.000Z",
+        inboxItem: {
+          rawText: "评估星耀星图馆博客访问、Google 收录和广告方案。",
+          sourceUrl: null,
+        },
+      },
+    ]);
+
+    const context = await getQueryAgentContext("星耀星图馆 6.28 qihuo-628 Google 收录", {
+      agentRun: { findMany: agentRunFindMany },
+    });
+
+    expect(agentRunFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        include: { inboxItem: true },
+        take: 40,
+      }),
+    );
+    expect(context.wiki.status).toBe("empty");
+    expect(context.evidence.episodes[0]).toMatchObject({
+      type: "agent_run",
+      id: "run_xinyao",
+      title: "codex-gpt-5",
+      summary: expect.stringContaining("qihuo-628"),
+      relevanceScore: 20,
+    });
+    expect(context.debug.retrieval).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          source: "agent_run",
+          status: "ok",
+          candidateCount: 1,
+        }),
+      ]),
+    );
+  });
+
   it("adds P0/P1 agent executable tasks to hot tier for keyword lookups", async () => {
     mockedSearchWikiNotes.mockResolvedValue([
       {

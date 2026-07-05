@@ -1,5 +1,10 @@
 export const PERSONAL_OS_READ_COOKIE = "personal_os_read";
 
+export function isPersonalOsAuthDisabled() {
+  const value = process.env.PERSONAL_OS_AUTH_DISABLED?.trim().toLowerCase();
+  return value === "true";
+}
+
 export function configuredReadTokens() {
   return [
     process.env.PERSONAL_OS_READ_TOKEN,

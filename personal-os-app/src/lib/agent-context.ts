@@ -86,6 +86,30 @@ type ActivityRecord = {
   createdAt?: Date | string;
 };
 
+type QueryAgentRunRecord = {
+  id: string;
+  model?: string | null;
+  status?: string | null;
+  reasoningSummary?: string | null;
+  outputSummary?: string | null;
+  error?: string | null;
+  startedAt?: Date | string;
+  completedAt?: Date | string | null;
+  inboxItem?: {
+    rawText?: string | null;
+    sourceUrl?: string | null;
+  } | null;
+};
+
+type QueryInboxRecord = {
+  id: string;
+  rawText?: string | null;
+  sourceType?: string | null;
+  sourcePlatform?: string | null;
+  sourceUrl?: string | null;
+  receivedAt?: Date | string;
+};
+
 type IdeaContextRecord = {
   id: string;
   title: string;
@@ -146,7 +170,7 @@ export type AgentContextTiers = {
 };
 
 export type ContextEpisode = {
-  type: "agent_run" | "task" | "wiki" | "activity";
+  type: "agent_run" | "task" | "wiki" | "activity" | "inbox";
   id: string;
   title: string;
   summary: string;
@@ -159,6 +183,19 @@ export type AgentContextEvidence = {
   episodes: ContextEpisode[];
 };
 
+export type ContextRetrievalDebug = {
+  source: "wiki" | "activity" | "agent_run" | "inbox";
+  query?: string;
+  status: "ok" | "empty" | "unavailable";
+  candidateCount: number;
+  searchedCount?: number;
+  failedQueries?: WikiContextSearchResult["failedQueries"];
+};
+
+export type AgentContextDebug = {
+  retrieval: ContextRetrievalDebug[];
+};
+
 export type AgentContextPack = {
   generatedAt: string;
   task: TaskRecord | null;
@@ -168,6 +205,7 @@ export type AgentContextPack = {
   relatedIdeas: IdeaContextRecord[];
   activity: ActivityRecord[];
   evidence: AgentContextEvidence;
+  debug: AgentContextDebug;
   tiers: AgentContextTiers;
   policy: AgentContextPolicy;
   nextAction: string;
@@ -190,10 +228,20 @@ const knownContextTerms = [
   "Telegram",
   "Obsidian",
   "OpenCode",
+  "SwarmVault",
+  "OpenViking",
+  "Graphiti",
+  "Cognee",
+  "VolcengineRetriever",
   "钉钉",
   "知识库",
   "入库",
   "语音转文字",
+  "火山方舟",
+  "向量",
+  "提示词",
+  "星耀星图馆",
+  "qihuo-628",
 ];
 
 const stopWords = new Set([
@@ -216,6 +264,25 @@ const stopWords = new Set([
   "wiki",
   "with",
 ]);
+
+const queryExpansionRules = [
+  {
+    when: ["personal os", "context"],
+    add: ["记忆产品改造", "context 召回", "提示词影响"],
+  },
+  {
+    when: ["召回", "改造"],
+    add: ["记忆产品改造", "context 召回"],
+  },
+  {
+    when: ["火山方舟", "向量"],
+    add: ["火山方舟 向量", "VolcengineRetriever"],
+  },
+  {
+    when: ["星耀星图馆"],
+    add: ["星耀星图馆", "qihuo-628", "192.168.6.28"],
+  },
+];
 
 export function buildContextSearchQueries(task: TaskRecord, limit = 8) {
   const text = [
@@ -249,6 +316,42 @@ export function buildContextSearchQueries(task: TaskRecord, limit = 8) {
   }
 
   for (const match of text.matchAll(/[A-Za-z][A-Za-z0-9_.-]{2,}/g)) {
+    const token = match[0];
+    if (!stopWords.has(token.toLowerCase())) {
+      addQuery(queries, token);
+    }
+  }
+
+  return Array.from(queries).slice(0, limit);
+}
+
+export function buildQuerySearchQueries(query: string, limit = 12) {
+  const queries = new Set<string>();
+  const normalized = query.trim().replace(/\s+/g, " ");
+  addQuery(queries, normalized);
+
+  const lower = normalized.toLowerCase();
+  for (const term of knownContextTerms) {
+    if (lower.includes(term.toLowerCase())) {
+      addQuery(queries, term);
+    }
+  }
+
+  for (const rule of queryExpansionRules) {
+    if (rule.when.every((term) => lower.includes(term.toLowerCase()))) {
+      for (const expandedQuery of rule.add) {
+        addQuery(queries, expandedQuery);
+      }
+    }
+  }
+
+  for (const token of normalized.split(/\s+/)) {
+    if (!stopWords.has(token.toLowerCase())) {
+      addQuery(queries, token);
+    }
+  }
+
+  for (const match of normalized.matchAll(/[A-Za-z][A-Za-z0-9_.-]{2,}/g)) {
     const token = match[0];
     if (!stopWords.has(token.toLowerCase())) {
       addQuery(queries, token);
@@ -603,6 +706,8 @@ function computeNextAction(input: {
 type QueryContextDb = {
   task?: unknown;
   activityLog?: unknown;
+  agentRun?: unknown;
+  inboxItem?: unknown;
 };
 
 async function getQueryHotTasks(db?: QueryContextDb) {
@@ -646,6 +751,78 @@ async function getQueryActivity(db?: QueryContextDb, limit = 15) {
   });
 }
 
+async function getQueryAgentRuns(
+  db: QueryContextDb | undefined,
+  keywords: string[],
+  limit = 8,
+) {
+  const agentRun = db?.agentRun as
+    | { findMany(args: unknown): Promise<QueryAgentRunRecord[]> }
+    | undefined;
+  if (!agentRun) {
+    return [];
+  }
+
+  const runs = await agentRun.findMany({
+    include: { inboxItem: true },
+    orderBy: { startedAt: "desc" },
+    take: 40,
+  });
+
+  return runs
+    .filter((run) =>
+      episodeMatches(
+        [
+          run.model,
+          run.status,
+          run.reasoningSummary,
+          run.outputSummary,
+          run.error,
+          run.inboxItem?.rawText,
+          run.inboxItem?.sourceUrl,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        keywords,
+      ),
+    )
+    .slice(0, limit);
+}
+
+async function getQueryInboxItems(
+  db: QueryContextDb | undefined,
+  keywords: string[],
+  limit = 8,
+) {
+  const inboxItem = db?.inboxItem as
+    | { findMany(args: unknown): Promise<QueryInboxRecord[]> }
+    | undefined;
+  if (!inboxItem) {
+    return [];
+  }
+
+  const items = await inboxItem.findMany({
+    orderBy: { receivedAt: "desc" },
+    take: 40,
+  });
+
+  return items
+    .filter((item) =>
+      episodeMatches(
+        [
+          item.rawText,
+          item.sourceType,
+          item.sourcePlatform,
+          item.sourceUrl,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        keywords,
+      ),
+    )
+    .slice(0, limit);
+}
+
 function episodeMatches(text: string, keywords: string[]): boolean {
   const lower = text.toLowerCase();
   return keywords.some((k) => {
@@ -662,6 +839,8 @@ function findEpisodes(
   wiki: WikiContextSearchResult,
   activity: ActivityRecord[],
   task: TaskRecord | null,
+  agentRuns: QueryAgentRunRecord[] = [],
+  inboxItems: QueryInboxRecord[] = [],
 ): ContextEpisode[] {
   const keywords = [...searchQueries, query].filter(Boolean);
   const episodes: ContextEpisode[] = [];
@@ -693,6 +872,42 @@ function findEpisodes(
             : act.createdAt?.toISOString(),
       });
     }
+  }
+
+  for (const run of agentRuns) {
+    const summary =
+      run.outputSummary ??
+      run.reasoningSummary ??
+      run.error ??
+      run.inboxItem?.rawText ??
+      "";
+    episodes.push({
+      type: "agent_run",
+      id: run.id,
+      title: run.model ?? "Agent Run",
+      summary,
+      relevanceScore: 20,
+      sourceUrl: run.inboxItem?.sourceUrl ?? undefined,
+      createdAt:
+        typeof run.startedAt === "string"
+          ? run.startedAt
+          : run.startedAt?.toISOString(),
+    });
+  }
+
+  for (const item of inboxItems) {
+    episodes.push({
+      type: "inbox",
+      id: item.id,
+      title: item.sourceType ?? "Inbox Item",
+      summary: item.rawText ?? "",
+      relevanceScore: 16,
+      sourceUrl: item.sourceUrl ?? undefined,
+      createdAt:
+        typeof item.receivedAt === "string"
+          ? item.receivedAt
+          : item.receivedAt?.toISOString(),
+    });
   }
 
   if (task?.sourceAgentRun) {
@@ -799,24 +1014,88 @@ export async function searchWikiContext(
   };
 }
 
+function buildRetrievalDebug(input: {
+  wiki: WikiContextSearchResult;
+  activity: ActivityRecord[];
+  agentRuns?: QueryAgentRunRecord[];
+  inboxItems?: QueryInboxRecord[];
+}): AgentContextDebug {
+  const failedQueryMap = new Map(
+    input.wiki.failedQueries.map((failed) => [failed.query, failed]),
+  );
+  const wikiRows: ContextRetrievalDebug[] = input.wiki.searchedQueries.map(
+    (query) => {
+      const failed = failedQueryMap.get(query);
+      const candidateCount = input.wiki.candidates.filter((candidate) =>
+        candidate.matchedQueries?.includes(query),
+      ).length;
+
+      return {
+        source: "wiki",
+        query,
+        status: failed ? "unavailable" : candidateCount > 0 ? "ok" : "empty",
+        candidateCount,
+        failedQueries: failed ? [failed] : [],
+      };
+    },
+  );
+
+  return {
+    retrieval: [
+      ...wikiRows,
+      {
+        source: "agent_run",
+        status: (input.agentRuns?.length ?? 0) > 0 ? "ok" : "empty",
+        candidateCount: input.agentRuns?.length ?? 0,
+      },
+      {
+        source: "inbox",
+        status: (input.inboxItems?.length ?? 0) > 0 ? "ok" : "empty",
+        candidateCount: input.inboxItems?.length ?? 0,
+      },
+      {
+        source: "activity",
+        status: input.activity.length > 0 ? "ok" : "empty",
+        candidateCount: input.activity.length,
+      },
+    ],
+  };
+}
+
 export async function searchWikiContextCandidates(queries: string[], limit = 8) {
   const result = await searchWikiContext(queries, limit);
   return result.candidates;
 }
 
 export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
-  const searchQueries = [query.trim()].filter(Boolean);
-  const [wiki, queryTasks, globalActivity] = await Promise.all([
+  const searchQueries = buildQuerySearchQueries(query);
+  const [wiki, queryTasks, globalActivity, agentRuns, inboxItems] = await Promise.all([
     searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
     getQueryHotTasks(db),
     getQueryActivity(db),
+    getQueryAgentRuns(db, searchQueries),
+    getQueryInboxItems(db, searchQueries),
   ]);
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
   const evidence = {
-    episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null),
+    episodes: findEpisodes(
+      query,
+      searchQueries,
+      wiki,
+      globalActivity,
+      null,
+      agentRuns,
+      inboxItems,
+    ),
   };
+  const debug = buildRetrievalDebug({
+    wiki,
+    activity: globalActivity,
+    agentRuns,
+    inboxItems,
+  });
 
   const nextAction = computeNextAction({
     task: null,
@@ -833,6 +1112,7 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
     relatedIdeas,
     activity,
     evidence,
+    debug,
     nextAction,
     tiers: buildContextTiers({
       task: null,
@@ -919,6 +1199,7 @@ export async function getAgentContext<TDb extends ContextDb>(
   const evidence = {
     episodes: findEpisodes("", searchQueries, wiki, activity, task),
   };
+  const debug = buildRetrievalDebug({ wiki, activity });
 
   const nextAction = computeNextAction({
     task,
@@ -935,6 +1216,7 @@ export async function getAgentContext<TDb extends ContextDb>(
     relatedIdeas,
     activity,
     evidence,
+    debug,
     nextAction,
     tiers: buildContextTiers({
       task,
