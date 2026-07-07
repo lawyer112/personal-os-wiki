@@ -85,8 +85,11 @@ Personal Wiki 3422
 
 `POST /api/notes` in Personal OS is only for project-local notes and processing
 summaries. Durable knowledge, link summaries, file summaries, DeepTalk
-transcripts, and handbook-style material should go to Personal Wiki
-`POST /api/ingest`.
+transcripts, and handbook-style material should normally be submitted through
+Personal OS `POST /api/intake` as `wikiNotes[]`. Personal OS queues
+WikiWriteJob records and the wiki worker writes them to Personal Wiki. Direct
+Personal Wiki `POST /api/ingest` is reserved for Wiki-only work, maintenance,
+repair, or API validation.
 
 ## Routing Rule
 
@@ -95,9 +98,9 @@ Hermes must route each input by intent:
 | Input kind | Write target | Rule |
 | --- | --- | --- |
 | Raw idea or brainstorm | Personal OS `3100/api/intake` `ideas[]` | Capture it for quick triage: promote to task, keep shaping, someday, or archive. |
-| Link, file, transcript, DeepTalk export, durable reference | Personal Wiki `3422/api/ingest` | Create a human-readable Markdown note with tags and concepts. |
-| Action, task, waiting item, blocked item, project progress | Personal OS `3100/api/inbox/items` then `3100/api/tasks` or project event | Keep source trace in Inbox, then create execution objects. |
-| Mixed input with knowledge and action | Both systems | Knowledge goes to Wiki; execution goes to Personal OS; Telegram summary mentions both. |
+| Link, file, transcript, DeepTalk export, durable reference | Personal OS `3100/api/intake` `wikiNotes[]` | Create a human-readable Markdown note request; Personal OS queues a WikiWriteJob for the worker. |
+| Action, task, waiting item, blocked item, project progress | Personal OS `3100/api/intake` `tasks[]` or `projectEvents[]` | Keep source trace in Inbox, then create execution objects. |
+| Mixed input with knowledge and action | Personal OS `3100/api/intake` once | Send `wikiNotes[]` plus execution objects in one request; Telegram summary mentions queued Wiki jobs and tasks. |
 | Unclear action | Personal OS task with `status: "review"` | Let the user accept, rewrite, wait, or ignore from Today. |
 
 ## Default Flow
@@ -141,8 +144,16 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
     {
       "title": "DeepTalk 输入链路",
       "content": "# DeepTalk 输入链路\n\n结论：先走导出文件或 Telegram 转发。",
-      "source_type": "voice-transcript",
+      "source_type": "transcript",
       "tags": ["deeptalk", "input"],
+      "frontmatter": {
+        "title": "DeepTalk 输入链路",
+        "type": "note",
+        "created_by": "user",
+        "source_type": "transcript",
+        "tags": ["deeptalk", "input"],
+        "created_at": "2026-07-01T00:00:00.000Z"
+      },
       "metadata": { "source": "telegram" }
     }
   ],
@@ -170,8 +181,11 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 }
 ```
 
-The response includes the created Inbox item, Agent run id, ideas, tasks, Wiki write
-results, project events, and optional Telegram payload with direct object links.
+The response includes the created Inbox item, Agent run id, ideas, tasks, Wiki
+write job summaries, `wiki_write_status`, project events, and optional Telegram
+payload with direct object links. Do not expect final `note_path`/`url` from
+`/api/intake` immediately; use `/api/wiki-write-jobs` or Personal Wiki search
+after the worker has processed queued jobs.
 
 The lower-level endpoints below are still available for maintenance, testing, or
 manual recovery.
@@ -319,7 +333,7 @@ Content-Type: application/json
 }
 ```
 
-For real knowledge-base ingestion, use Personal Wiki:
+For direct Personal Wiki maintenance or API validation, use Personal Wiki:
 
 ```http
 POST http://<server-host>:3422/api/ingest
@@ -331,9 +345,17 @@ Content-Type: application/json
 {
   "title": "DeepTalk 输入链路",
   "content": "# DeepTalk 输入链路\n\n结论：如果钉钉没有开放 API，先走导出文件或转发文本进入 Telegram。\n\n相关概念：[[语音转文字]] [[Agent 入库]]\n",
-  "source_type": "voice-transcript",
+  "source_type": "transcript",
   "source_url": "",
   "tags": ["deeptalk", "input", "personal-wiki"],
+  "frontmatter": {
+    "title": "DeepTalk 输入链路",
+    "type": "note",
+    "created_by": "user",
+    "source_type": "transcript",
+    "tags": ["deeptalk", "input", "personal-wiki"],
+    "created_at": "2026-07-01T00:00:00.000Z"
+  },
   "metadata": {
     "intake": "telegram",
     "personal_os_inbox_id": "<inbox_id>",
@@ -603,6 +625,29 @@ The response returns executable tasks and a `contextUrl` for each task:
   ]
 }
 ```
+
+### Auto-claim next task
+
+Scheduled workers can let Personal OS choose and claim the next eligible task in
+one request. This is the recommended entrypoint for multi-machine workers that
+wake up on a timer.
+
+```http
+POST /api/agent-inbox/claim-next
+Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+
+{
+  "agentId": "knowledge-curator",
+  "tags": ["wiki", "curation"],
+  "limit": 10,
+  "leaseMinutes": 90
+}
+```
+
+The response returns `claimed: true` with the task and claim record, or
+`claimed: false` when no matching work is available. If two agents wake up at
+the same time, Personal OS skips candidates whose lease changed before the claim
+completed and tries the next task.
 
 ### Claim and keep the lease alive
 

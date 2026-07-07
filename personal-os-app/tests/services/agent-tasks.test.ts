@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   addTaskContribution,
+  claimNextTask,
   claimTask,
   heartbeatTask,
   listAgentInboxTasks,
@@ -67,6 +68,84 @@ function createDb(overrides: Record<string, unknown> = {}) {
 }
 
 describe("agent task protocol", () => {
+  it("returns an empty claim when no inbox task is available", async () => {
+    const db = createDb();
+
+    const result = await claimNextTask(db, {
+      agentId: "agent_1",
+      tags: ["demo"],
+      limit: 5,
+      leaseMinutes: 30,
+    });
+
+    expect(result).toEqual({ claimed: false, task: null, claim: null });
+    expect(db.task.updateMany).not.toHaveBeenCalled();
+  });
+
+  it("claims the first available inbox task", async () => {
+    const db = createDb({
+      task: {
+        findMany: vi.fn().mockResolvedValue([{ id: "task_1" }]),
+        findUnique: vi
+          .fn()
+          .mockResolvedValueOnce(claimableTask())
+          .mockResolvedValueOnce({ id: "task_1", status: "doing" }),
+        updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+        update: vi.fn(),
+      },
+    });
+
+    const result = await claimNextTask(db, {
+      agentId: "agent_1",
+      tags: ["demo"],
+      limit: 5,
+      leaseMinutes: 45,
+    });
+
+    expect(result.claimed).toBe(true);
+    expect(result.task).toEqual({ id: "task_1", status: "doing" });
+    expect(db.task.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ id: "task_1" }),
+        data: expect.objectContaining({
+          ownerAgent: "agent_1",
+          status: "doing",
+        }),
+      }),
+    );
+  });
+
+  it("skips a task that another agent claimed first and tries the next one", async () => {
+    const db = createDb({
+      task: {
+        findMany: vi
+          .fn()
+          .mockResolvedValue([{ id: "task_1" }, { id: "task_2" }]),
+        findUnique: vi
+          .fn()
+          .mockResolvedValueOnce(claimableTask({ id: "task_1" }))
+          .mockResolvedValueOnce(claimableTask({ id: "task_2" }))
+          .mockResolvedValueOnce({ id: "task_2", status: "doing" }),
+        updateMany: vi
+          .fn()
+          .mockResolvedValueOnce({ count: 0 })
+          .mockResolvedValueOnce({ count: 1 }),
+        update: vi.fn(),
+      },
+    });
+
+    const result = await claimNextTask(db, {
+      agentId: "agent_1",
+      tags: ["demo"],
+      limit: 5,
+      leaseMinutes: 30,
+    });
+
+    expect(result.claimed).toBe(true);
+    expect(result.task).toEqual({ id: "task_2", status: "doing" });
+    expect(db.task.updateMany).toHaveBeenCalledTimes(2);
+  });
+
   it("lists inbox tasks with agent tag filters and context routes", async () => {
     const db = createDb({
       task: {

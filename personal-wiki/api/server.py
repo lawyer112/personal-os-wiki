@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import sqlite3
 import subprocess
 import sys
 import traceback
@@ -35,6 +36,8 @@ APP_DIR = Path(__file__).resolve().parents[1]
 VAULT_DIR = DATA_DIR / "vault"
 SOURCES_DIR = VAULT_DIR / "10_sources"
 NOTES_DIR = VAULT_DIR / "20_notes"
+ATOMS_DIR = VAULT_DIR / "20_atoms"
+NOTE_CONTENT_DIRS = (NOTES_DIR, ATOMS_DIR)
 ARCHIVE_DIR = VAULT_DIR / "90_archive"
 PUBLIC_DIR = DATA_DIR / "public"
 MANUAL_PATH = APP_DIR / "docs" / "USAGE.md"
@@ -80,15 +83,24 @@ REQUIRE_API_READ_AUTH = env_flag("WIKI_REQUIRE_API_READ_AUTH", bool(API_TOKEN or
 REQUIRE_PAGE_READ_AUTH = env_flag("WIKI_REQUIRE_PAGE_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
 TRUST_LOCALHOST_READ_AUTH = env_flag("WIKI_TRUST_LOCALHOST_READ_AUTH", False)
 ALLOW_UNAUTHENTICATED_WRITE = env_flag("WIKI_ALLOW_UNAUTHENTICATED_WRITE", False)
+PUBLIC_PAGE_READ = env_flag("WIKI_PUBLIC_PAGE_READ", False)
 READ_AUTH_COOKIE = "personal_wiki_read"
+DISPLAY_TZ = dt.timezone(dt.timedelta(hours=8), "Asia/Shanghai")
+INGESTION_DIR = Path(os.environ.get("WIKI_INGESTION_DIR", str(PUBLIC_DIR / "ingestion"))).resolve()
+INGESTION_MANIFEST_PATH = Path(os.environ.get("WIKI_INGEST_MANIFEST_PATH", str(INGESTION_DIR / "wiki_ingest_manifest.jsonl"))).resolve()
+INGESTION_AUDIT_PATH = Path(os.environ.get("WIKI_INGEST_AUDIT_PATH", str(INGESTION_DIR / "knowledge_contract_audit_latest.json"))).resolve()
+INGESTION_SYNC_PATH = Path(os.environ.get("WIKI_INGEST_SYNC_PATH", str(INGESTION_DIR / "sync-meta.json"))).resolve()
+DIRTY_NOTES_PATH = Path(os.environ.get("WIKI_DIRTY_NOTES_PATH", str(INGESTION_DIR / "dirty-notes.json"))).resolve()
+VECTOR_DOCTOR_PATH = Path(os.environ.get("WIKI_VECTOR_DOCTOR_PATH", str(INGESTION_DIR / "wiki_vector_doctor_latest.json"))).resolve()
+SEARCH_DB_PATH = Path(os.environ.get("WIKI_SEARCH_DB_PATH", str(PUBLIC_DIR / "search" / "wiki_fts.sqlite"))).resolve()
 
 
 def now_utc() -> dt.datetime:
-    return dt.datetime.now(dt.UTC)
+    return dt.datetime.now(dt.timezone.utc)
 
 
 def ensure_dirs() -> None:
-    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ARCHIVE_DIR, PUBLIC_DIR):
+    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ATOMS_DIR, ARCHIVE_DIR, PUBLIC_DIR):
         path.mkdir(parents=True, exist_ok=True)
     init_git()
 
@@ -183,7 +195,7 @@ def first_heading(content: str) -> str:
     return ""
 
 
-def ingest(payload: dict[str, Any]) -> dict[str, Any]:
+def ingest(payload: dict[str, Any], light: bool = False) -> dict[str, Any]:
     ensure_dirs()
     item = normalize_payload(payload)
     created = now_utc()
@@ -236,6 +248,20 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
     note = render_markdown(item, source_hash, created)
     note_path.write_text(note, encoding="utf-8")
 
+    if light:
+        mark_dirty_note(rel(note_path), created)
+        return {
+            "status": status,
+            "id": note_id,
+            "title": item["title"],
+            "source_hash": source_hash,
+            "source_path": rel(source_path),
+            "note_path": rel(note_path),
+            "url": f"/note?path={quote(rel(note_path), safe='/')}",
+            "indexing": "deferred",
+            "git": "deferred",
+        }
+
     public = refresh_public_indexes()
     commit_status = git_commit(f"ingest: {item['title'][:60]}")
 
@@ -253,9 +279,39 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def mark_dirty_note(note_path: str, created: dt.datetime) -> None:
+    DIRTY_NOTES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    dirty: dict[str, Any] = {"paths": []}
+    if DIRTY_NOTES_PATH.exists():
+        try:
+            loaded = json.loads(DIRTY_NOTES_PATH.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict):
+                dirty = loaded
+        except (OSError, json.JSONDecodeError):
+            dirty = {"paths": []}
+
+    paths = dirty.get("paths")
+    if not isinstance(paths, list):
+        paths = []
+    clean_paths = sorted({str(path) for path in paths if str(path).strip()} | {note_path})
+    dirty["paths"] = clean_paths
+    dirty["updated_at"] = created.isoformat()
+    write_json(DIRTY_NOTES_PATH, dirty)
+
+
+def light_ingest_requested(payload: dict[str, Any], query: dict[str, list[str]]) -> bool:
+    mode = str(payload.get("mode") or first_query(query, "mode")).strip().lower()
+    if mode == "light":
+        return True
+    raw_light = payload.get("light")
+    if raw_light is None:
+        raw_light = first_query(query, "light")
+    return str(raw_light).strip().lower() in {"1", "true", "yes", "on"}
+
+
 def find_note_by_source_hash(source_hash: str) -> Path | None:
     marker = f"source_hash: {source_hash}"
-    for path in NOTES_DIR.rglob("*.md"):
+    for path in iter_note_paths():
         try:
             if marker in path.read_text(encoding="utf-8"):
                 return path
@@ -399,25 +455,82 @@ def extract_concepts(body: str) -> list[str]:
     return sorted({concept.strip() for concept in WIKILINK_RE.findall(body) if concept.strip()})
 
 
+def normalize_concepts(value: Any) -> list[str]:
+    if isinstance(value, str):
+        value = [part.strip() for part in re.split(r"[,，]", value) if part.strip()]
+    if not isinstance(value, list):
+        return []
+    return sorted({str(item).strip() for item in value if str(item).strip()})
+
+
+def normalize_concept_scores(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in value:
+        if isinstance(item, dict):
+            label = str(item.get("label") or item.get("name") or item.get("concept") or "").strip()
+            raw_score = item.get("score", item.get("relevance", 0))
+            concept_id = str(item.get("id") or "").strip()
+        else:
+            label = str(item).strip()
+            raw_score = 0
+            concept_id = ""
+        if not label or label in seen:
+            continue
+        try:
+            score = float(raw_score)
+        except (TypeError, ValueError):
+            score = 0.0
+        score = max(0.0, min(1.0, score))
+        row: dict[str, Any] = {"label": label, "score": round(score, 3)}
+        if concept_id:
+            row["id"] = concept_id
+        rows.append(row)
+        seen.add(label)
+    return rows
+
+
+def concept_score_lookup(rows: list[dict[str, Any]]) -> dict[str, float]:
+    return {str(row.get("label") or "").strip(): float(row.get("score") or 0) for row in rows if str(row.get("label") or "").strip()}
+
+
 def read_note_records(include_body: bool = False) -> list[dict[str, Any]]:
     ensure_dirs_no_git()
     records: list[dict[str, Any]] = []
-    for path in sorted(NOTES_DIR.rglob("*.md"), reverse=True):
+    for path in iter_note_paths():
         text = path.read_text(encoding="utf-8")
         fm, body = parse_frontmatter(text)
         title = note_title(path, body, fm)
         tags = normalize_tags(fm.get("tags", []))
+        created_value = note_created_value(fm)
+        body_concepts = extract_concepts(body)
+        fm_concepts = normalize_concepts(fm.get("concepts", []))
+        concept_scores = normalize_concept_scores(fm.get("concept_scores", []))
+        score_labels = {str(row.get("label") or "").strip() for row in concept_scores if str(row.get("label") or "").strip()}
+        if concept_scores:
+            # v3 controlled taxonomy: public concept facets and AI retrieval use scored
+            # controlled concepts only. Body wikilinks still become graph wikilink
+            # edges, but they must not pollute /api/concepts counts.
+            concepts = sorted(score_labels)
+        else:
+            concepts = sorted(set(body_concepts) | set(fm_concepts))
         record = {
             "title": title,
             "path": rel(path),
-            "created": format_date(fm.get("created", "")),
-            "created_sort": note_sort_value(fm.get("created", "")),
+            "created": format_date(created_value),
+            "created_sort": note_sort_value(created_value),
+            "quality_status": str(fm.get("quality_status", "") or fm.get("status", "") or ""),
+            "agent_id": str(fm.get("agent_id", "") or ""),
+            "task_id": str(fm.get("task_id", "") or ""),
             "source_type": str(fm.get("source_type", "") or ""),
             "source_url": str(fm.get("source_url", "") or ""),
             "source_hash": str(fm.get("source_hash", "") or ""),
             "status": str(fm.get("status", "") or ""),
             "tags": tags,
-            "concepts": extract_concepts(body),
+            "concepts": concepts,
+            "concept_scores": concept_scores,
             "excerpt": plain_excerpt(body),
             "search_text": plain_search_text(body),
         }
@@ -483,9 +596,9 @@ def build_note_lookup(index: dict[str, Any]) -> dict[str, str]:
 
 def vault_signature() -> str:
     digest = hashlib.sha256()
-    if not NOTES_DIR.exists():
+    if not any(root.exists() for root in NOTE_CONTENT_DIRS):
         return digest.hexdigest()
-    for path in sorted(NOTES_DIR.rglob("*.md")):
+    for path in sorted(iter_note_paths()):
         try:
             stat = path.stat()
         except OSError:
@@ -633,27 +746,37 @@ def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
         remember_title(title, node_id)
         remember_title(Path(node_id).stem, node_id)
 
+    def ensure_concept_node(concept: str) -> str:
+        target_id = title_to_id.get(concept)
+        if not target_id:
+            target_id = f"concept:{concept}"
+        if target_id not in nodes:
+            nodes[target_id] = {
+                "id": target_id,
+                "label": concept,
+                "title": concept,
+                "path": "",
+                "url": f"/notes?concept={quote(concept)}",
+                "tags": ["concept"],
+                "source_type": "concept",
+                "kind": "concept",
+                "weight": 3,
+            }
+        return target_id
+
     for record in records:
         body = str(record.get("body", ""))
         source_id = str(record.get("path", ""))
-        for target_title in WIKILINK_RE.findall(body):
-            concept = target_title.strip()
-            target_id = title_to_id.get(concept)
-            if not target_id:
-                target_id = f"concept:{concept}"
-            if target_id not in nodes:
-                nodes[target_id] = {
-                    "id": target_id,
-                    "label": concept,
-                    "title": concept,
-                    "path": "",
-                    "url": f"/notes?concept={quote(concept)}",
-                    "tags": ["concept"],
-                    "source_type": "concept",
-                    "kind": "concept",
-                    "weight": 3,
-                }
+        body_wikilinks = {target_title.strip() for target_title in WIKILINK_RE.findall(body) if target_title.strip()}
+        for concept in sorted(body_wikilinks):
+            target_id = ensure_concept_node(concept)
             add_link(links, link_keys, source_id, target_id, "wikilink", 2, score=0.9)
+        score_map = concept_score_lookup(record.get("concept_scores", []) if isinstance(record.get("concept_scores"), list) else [])
+        record_concepts = {str(item).strip() for item in record.get("concepts", []) if str(item).strip()}
+        for concept in sorted(record_concepts):
+            target_id = ensure_concept_node(concept)
+            score = score_map.get(concept, 0.9 if concept in body_wikilinks else 0.6)
+            add_link(links, link_keys, source_id, target_id, "concept", max(1, round(score * 4)), score=score)
         fm_tags = record.get("tags") if isinstance(record.get("tags"), list) else []
         body_tags = TAG_RE.findall(body)
         for tag in sorted({str(tag).strip().lstrip("#") for tag in list(fm_tags) + body_tags if str(tag).strip()}):
@@ -781,8 +904,16 @@ def add_link(
 
 
 def ensure_dirs_no_git() -> None:
-    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ARCHIVE_DIR, PUBLIC_DIR):
+    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ATOMS_DIR, ARCHIVE_DIR, PUBLIC_DIR):
         path.mkdir(parents=True, exist_ok=True)
+
+
+def iter_note_paths() -> list[Path]:
+    paths: list[Path] = []
+    for root in NOTE_CONTENT_DIRS:
+        if root.exists():
+            paths.extend(p for p in root.rglob("*.md") if p.is_file())
+    return sorted(paths, reverse=True)
 
 
 def rel(path: Path) -> str:
@@ -812,15 +943,29 @@ def list_notes() -> list[dict[str, Any]]:
     return [public_note(note) for note in load_note_index().get("notes", [])]
 
 
-def format_date(value: Any) -> str:
+def parse_datetime_value(value: Any) -> dt.datetime | None:
     raw = str(value or "").strip()
     if not raw:
-        return ""
+        return None
     try:
         parsed = dt.datetime.fromisoformat(raw.replace("Z", "+00:00"))
-        return parsed.strftime("%Y-%m-%d %H:%M")
     except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=dt.UTC)
+    return parsed
+
+
+def format_date(value: Any) -> str:
+    parsed = parse_datetime_value(value)
+    if parsed is None:
+        raw = str(value or "").strip()
         return raw[:16]
+    return parsed.astimezone(DISPLAY_TZ).strftime("%Y-%m-%d %H:%M CST")
+
+
+def note_created_value(fm: dict[str, Any]) -> Any:
+    return fm.get("created_at") or fm.get("created") or fm.get("updated") or ""
 
 
 def notes_section(body: str) -> str:
@@ -866,8 +1011,20 @@ def rebuild() -> dict[str, Any]:
     }
 
 
+def resolve_note_path(relative_path: str) -> Path:
+    raw = str(relative_path or "").strip().lstrip("/")
+    candidates = [raw]
+    if raw and not raw.startswith("vault/"):
+        candidates.append("vault/" + raw)
+    for candidate in candidates:
+        path = safe_data_path(candidate)
+        if path.exists() and path.suffix == ".md":
+            return path
+    return safe_data_path(raw)
+
+
 def read_note(relative_path: str) -> dict[str, Any]:
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
     text = path.read_text(encoding="utf-8")
@@ -900,7 +1057,7 @@ def update_note(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
     note = read_note(relative_path)
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     fm = dict(note["frontmatter"])
     title = str(payload.get("title") or note["title"]).strip() or "Untitled source"
     has_body_update = "content" in payload or "body" in payload
@@ -925,7 +1082,7 @@ def tag_note(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
     note = read_note(relative_path)
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     fm = dict(note["frontmatter"])
     current = set(normalize_tags(fm.get("tags", [])))
     if "tags" in payload or "set" in payload:
@@ -1010,7 +1167,7 @@ def relink_notes(payload: dict[str, Any]) -> dict[str, Any]:
 def archive_note(payload: dict[str, Any], action: str = "archived") -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
     archive_dir = ARCHIVE_DIR / now_utc().strftime("%Y-%m-%d")
@@ -1047,6 +1204,7 @@ def html_page(title: str, body: str) -> bytes:
     p {{ margin:0; }}
     .topbar {{ display:flex; justify-content:space-between; gap:18px; align-items:flex-end; margin-bottom:22px; }}
     .top-actions {{ min-width:344px; display:grid; gap:10px; justify-items:end; }}
+    .nav-links {{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }}
     .search {{ width:100%; padding:4px; border:1px solid var(--line); border-radius:8px; background:#fff; }}
     .search input {{ width:100%; height:38px; border:1px solid var(--line); border-radius:8px; padding:0 12px; background:#fff; color:var(--text); font:14px "Microsoft YaHei","Segoe UI",Arial,sans-serif; }}
     .search input:focus {{ outline:2px solid #b8d4ff; border-color:#8fb9ef; }}
@@ -1128,6 +1286,21 @@ def html_page(title: str, body: str) -> bytes:
     .source-details {{ margin-top:8px; }}
     .source-details summary {{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:#1457a8; padding:4px 8px; border-radius:6px; }}
     .source-details summary:hover {{ background:#eef4ff; }}
+    .dashboard-grid {{ display:grid; grid-template-columns:repeat(4,minmax(150px,1fr)); gap:12px; margin:14px 0 18px; }}
+    .metric {{ border:1px solid var(--line); border-radius:8px; background:#fff; padding:14px; }}
+    .metric strong {{ display:block; font-size:26px; line-height:1.1; color:#101828; }}
+    .metric span {{ color:var(--muted); font-size:13px; }}
+    .table-wrap {{ overflow:auto; border:1px solid var(--line); border-radius:8px; background:#fff; }}
+    table.data-table {{ width:100%; border-collapse:collapse; min-width:920px; }}
+    .data-table th, .data-table td {{ border-bottom:1px solid #e8edf4; padding:10px 11px; text-align:left; vertical-align:top; font-size:13px; }}
+    .data-table th {{ background:#f6f8fb; color:#344054; font-weight:800; position:sticky; top:0; z-index:1; }}
+    .data-table code {{ background:#eef2f7; padding:2px 4px; border-radius:4px; font-size:12px; overflow-wrap:anywhere; }}
+    .pill {{ display:inline-flex; align-items:center; min-height:24px; padding:2px 7px; border-radius:999px; font-size:12px; font-weight:800; border:1px solid #dbe4f0; background:#f8fafc; color:#344054; }}
+    .pill-pass, .pill-true {{ border-color:#b8e3cc; background:#ecfdf3; color:#087443; }}
+    .pill-review {{ border-color:#fedf89; background:#fffaeb; color:#93370d; }}
+    .pill-fail, .pill-false {{ border-color:#fecaca; background:#fff1f2; color:#b42318; }}
+    .warning-list {{ display:grid; gap:8px; margin-top:12px; }}
+    .warning-item {{ border:1px solid #fedf89; background:#fffcf5; border-radius:8px; padding:10px 12px; }}
     .reading-shell {{ max-width:760px; margin:0 auto; }}
     .reading-shell .panel {{ padding:26px 28px; }}
     @media (max-width:960px) {{ main {{ padding:22px 14px 42px; }} .topbar {{ display:block; }} .top-actions {{ min-width:0; justify-items:stretch; margin-top:14px; }} .stats {{ justify-content:flex-start; }} .layout, .collection-layout {{ grid-template-columns:1fr; }} .filterbar {{ grid-template-columns:1fr; }} .map-shell {{ height:560px; }} }}
@@ -1202,8 +1375,8 @@ def render_home() -> bytes:
     note_items = "\n".join(note_blocks) or '<div class="empty">还没有笔记。Hermes 调用 <code>/api/ingest</code> 后会自动出现在这里。</div>'
     if 0 < len(notes) < 3:
         note_items += '<div class="note-hint">继续把链接、文件或语音文字发给 Hermes。这里会补齐最近入库，不再像测试样例列表。</div>'
-    top_tags = render_facet_links("常用标签", index.get("tags", []), "tag", 10)
-    top_concepts = render_facet_links("概念入口", index.get("concepts", []), "concept", 10)
+    top_tags = render_facet_links("常用标签", index.get("tags", []), "tag", 10) + '<p class="muted"><a href="/tags">查看全部标签</a></p>'
+    top_concepts = render_facet_links("概念入口", index.get("concepts", []), "concept", 10) + '<p class="muted"><a href="/concepts">查看全部概念</a></p>'
 
     body = f"""
 <div class="topbar">
@@ -1214,6 +1387,7 @@ def render_home() -> bytes:
   </div>
   <div class="top-actions">
     <form class="search" action="/notes" method="get"><input name="q" type="search" placeholder="搜索全部笔记、标签、概念" aria-label="搜索全部笔记、标签、概念"></form>
+    <div class="nav-links"><a class="button-link" href="/ingestion">入库面板</a><a class="button-link" href="/notes">全部笔记</a><a class="button-link" href="/tags">全部标签</a><a class="button-link" href="/concepts">全部概念</a></div>
     <div class="stats">
       <div class="stat"><strong>{note_count}</strong><span>笔记</span></div>
       <div class="stat"><strong>{concept_count}</strong><span>概念</span></div>
@@ -1852,6 +2026,415 @@ const GRAPH = {graph_json};
     return html_page(SITE_TITLE, body)
 
 
+def safe_public_path(path: Path) -> Path:
+    candidate = path.resolve()
+    allowed_roots = [PUBLIC_DIR.resolve(), INGESTION_DIR.resolve()]
+    for root in allowed_roots:
+        if candidate == root or root in candidate.parents:
+            return candidate
+    raise ValueError("ingestion path is outside public directory")
+
+
+def read_json_file(path: Path) -> Any:
+    try:
+        safe = safe_public_path(path)
+        if not safe.exists():
+            return None
+        return json.loads(safe.read_text(encoding="utf-8-sig"))
+    except Exception:
+        return None
+
+
+def parse_jsonl_lines(lines: list[str]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for line in lines:
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
+
+
+def read_jsonl_tail(path: Path, limit: int = 200) -> list[dict[str, Any]]:
+    try:
+        safe = safe_public_path(path)
+        if not safe.exists():
+            return []
+        lines = safe.read_text(encoding="utf-8-sig", errors="ignore").splitlines()[-limit:]
+    except Exception:
+        return []
+    return parse_jsonl_lines(lines)
+
+
+def read_jsonl_stats(path: Path) -> dict[str, Any]:
+    try:
+        safe = safe_public_path(path)
+        if not safe.exists():
+            return {"count": 0, "ok_count": 0, "fail_count": 0, "latest_ts": ""}
+        rows = parse_jsonl_lines(safe.read_text(encoding="utf-8-sig", errors="ignore").splitlines())
+    except Exception:
+        return {"count": 0, "ok_count": 0, "fail_count": 0, "latest_ts": ""}
+    return {
+        "count": len(rows),
+        "ok_count": sum(1 for item in rows if item.get("ok") is True),
+        "fail_count": sum(1 for item in rows if item.get("ok") is False),
+        "latest_ts": max((str(item.get("ts") or "") for item in rows), default=""),
+    }
+
+
+def load_ingestion_dashboard() -> dict[str, Any]:
+    # Load only recent rows for table rendering, but compute headline metrics from
+    # the full manifest so the dashboard does not under-report once records exceed 300.
+    manifest_items = read_jsonl_tail(INGESTION_MANIFEST_PATH, 300)
+    manifest_stats = read_jsonl_stats(INGESTION_MANIFEST_PATH)
+    audit = read_json_file(INGESTION_AUDIT_PATH) or {}
+    sync_meta = read_json_file(INGESTION_SYNC_PATH) or {}
+    vector_doctor = read_json_file(VECTOR_DOCTOR_PATH) or {}
+    notes = list_notes()
+    by_quality: dict[str, int] = {}
+    by_agent: dict[str, int] = {}
+    by_source: dict[str, int] = {}
+    for note in notes:
+        quality = str(note.get("quality_status") or "unknown")
+        by_quality[quality] = by_quality.get(quality, 0) + 1
+        agent = str(note.get("agent_id") or "unknown")
+        by_agent[agent] = by_agent.get(agent, 0) + 1
+        source = str(note.get("source_type") or "unknown")
+        by_source[source] = by_source.get(source, 0) + 1
+    ok_count = sum(1 for item in manifest_items if item.get("ok") is True)
+    fail_count = sum(1 for item in manifest_items if item.get("ok") is False)
+    latest_ts = max((str(item.get("ts") or "") for item in manifest_items), default="")
+    return {
+        "manifest_items": manifest_items,
+        "audit": audit,
+        "sync_meta": sync_meta,
+        "vector_doctor": vector_doctor,
+        "note_count": len(notes),
+        "manifest_count": manifest_stats.get("count", len(manifest_items)),
+        "manifest_loaded_count": len(manifest_items),
+        "ok_count": manifest_stats.get("ok_count", ok_count),
+        "fail_count": manifest_stats.get("fail_count", fail_count),
+        "latest_ts": manifest_stats.get("latest_ts") or latest_ts,
+        "by_quality": by_quality,
+        "by_agent": by_agent,
+        "by_source": by_source,
+    }
+
+
+def pill(value: Any) -> str:
+    text = str(value)
+    cls = re.sub(r"[^a-z0-9-]+", "-", text.lower()).strip("-") or "unknown"
+    return f'<span class="pill pill-{html.escape(cls)}">{html.escape(text)}</span>'
+
+
+def render_count_facets(title: str, data: dict[str, int], limit: int = 12) -> str:
+    if not data:
+        return ""
+    items = sorted(data.items(), key=lambda item: (-item[1], item[0]))[:limit]
+    links = "".join(f'<span class="facet">{html.escape(key)} <strong>{count}</strong></span>' for key, count in items)
+    return f'<h3>{html.escape(title)}</h3><div class="facet-list">{links}</div>'
+
+
+def render_ingestion_page(query: dict[str, list[str]] | None = None) -> bytes:
+    data = load_ingestion_dashboard()
+    manifest_items = list(reversed(data["manifest_items"]))
+    audit = data.get("audit") or {}
+    audit_summary = audit.get("summary") or {}
+    sync_meta = data.get("sync_meta") or {}
+    vector_doctor = data.get("vector_doctor") or {}
+    vector_status = vector_doctor.get("status") or {}
+    rows: list[str] = []
+    for item in manifest_items[:160]:
+        response = item.get("response") if isinstance(item.get("response"), dict) else {}
+        wiki_path = str(response.get("note_path") or response.get("path") or "")
+        if wiki_path and not wiki_path.startswith("vault/") and not wiki_path.startswith("/"):
+            wiki_path = "vault/" + wiki_path.lstrip("/")
+        note_url = str(response.get("url") or "")
+        if wiki_path:
+            note_link = f"/note?path={quote(wiki_path, safe='/')}"
+        elif note_url.startswith("/note?"):
+            note_link = note_url
+        else:
+            note_link = "/notes"
+        rows.append(
+            "<tr>"
+            f"<td>{html.escape(format_date(item.get('ts', '')))}</td>"
+            f"<td><a href=\"{html.escape(note_link)}\">{html.escape(str(item.get('title') or ''))}</a></td>"
+            f"<td>{pill(item.get('ok'))}</td>"
+            f"<td><code>{html.escape(wiki_path)}</code></td>"
+            f"<td><code>{html.escape(str(item.get('source_file') or ''))}</code></td>"
+            "</tr>"
+        )
+    if not rows:
+        rows.append('<tr><td colspan="5" class="muted">还没有同步入库 manifest。运行 sync 脚本后这里会显示正式记录。</td></tr>')
+
+    warning_rows: list[str] = []
+    for item in audit.get("results", []) if isinstance(audit.get("results"), list) else []:
+        issues = item.get("issues") or []
+        warnings = item.get("warnings") or []
+        if not issues and not warnings:
+            continue
+        warning_rows.append(
+            "<tr>"
+            f"<td>{html.escape(str(item.get('kind') or ''))}</td>"
+            f"<td>{pill(item.get('status'))}</td>"
+            f"<td><code>{html.escape(str(item.get('path') or ''))}</code></td>"
+            f"<td>{html.escape(', '.join(str(x) for x in issues[:6]))}</td>"
+            f"<td>{html.escape(', '.join(str(x) for x in warnings[:8]))}</td>"
+            "</tr>"
+        )
+    if not warning_rows:
+        warning_rows.append('<tr><td colspan="5" class="muted">当前审计无问题或未同步审计报告。</td></tr>')
+
+    summary_json = html.escape(json.dumps(audit_summary, ensure_ascii=False, indent=2)) if audit_summary else "未同步审计摘要"
+    body = f"""
+<div class="topbar">
+  <div>
+    <div class="eyebrow">正式库面板 · 北京时间</div>
+    <h1>入库与质量面板</h1>
+    <p class="muted">这里读取 Personal Wiki 正式数据，不是临时 3425 页面。时间统一显示为中国时区 CST。</p>
+  </div>
+  <div class="top-actions">
+    <div class="nav-links"><a class="button-link" href="/">知识地图</a><a class="button-link" href="/notes">全部笔记</a></div>
+  </div>
+</div>
+<div class="dashboard-grid">
+  <div class="metric"><strong>{data['note_count']}</strong><span>正式 Wiki 笔记</span></div>
+  <div class="metric"><strong>{data['manifest_count']}</strong><span>同步入库记录</span></div>
+  <div class="metric"><strong>{data['ok_count']}</strong><span>成功入库</span></div>
+  <div class="metric"><strong>{vector_status.get('fts_chunk_count', 0)}</strong><span>FTS 检索 chunk</span></div>
+  <div class="metric"><strong>{html.escape(str(vector_status.get('semantic_status', 'unknown')))}</strong><span>Embedding 状态</span></div>
+</div>
+<div class="collection-layout">
+  <section class="panel">
+    <div class="section-actions"><div><h2>最近入库</h2><p class="muted">最新记录：{html.escape(format_date(data.get('latest_ts', '')))}；同步时间：{html.escape(format_date(sync_meta.get('synced_at', '')))}</p></div></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>入库时间</th><th>标题</th><th>状态</th><th>Wiki 路径</th><th>源文件</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+  </section>
+  <aside class="panel">
+    <h2>质量摘要</h2>
+    <pre>{summary_json}</pre>
+    <h2 style="margin-top:14px">检索 / 向量</h2>
+    <div class="facet-list">
+      <span class="facet">FTS <strong>{html.escape(str(vector_status.get('fts_status', 'unknown')))}</strong></span>
+      <span class="facet">chunks <strong>{int(vector_status.get('fts_chunk_count') or 0)}</strong></span>
+      <span class="facet">notes <strong>{int(vector_status.get('fts_note_count') or 0)}</strong></span>
+      <span class="facet">embedding <strong>{html.escape(str(vector_status.get('semantic_status', 'unknown')))}</strong></span>
+    </div>
+    <p class="muted" style="margin-top:8px">下一步：{html.escape(str(vector_status.get('next_action', '')))}</p>
+    {render_count_facets('质量状态', data.get('by_quality', {}))}
+    {render_count_facets('来源类型', data.get('by_source', {}))}
+    {render_count_facets('Agent', data.get('by_agent', {}), 8)}
+  </aside>
+</div>
+<section class="panel" style="margin-top:16px">
+  <div class="section-actions"><div><h2>审计警告 / 问题</h2><p class="muted">不合格内容不应进入主 Wiki；剩余 warning 用于驱动后续修复。</p></div></div>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>类型</th><th>状态</th><th>路径</th><th>问题</th><th>警告</th></tr></thead><tbody>{''.join(warning_rows)}</tbody></table></div>
+</section>
+"""
+    return html_page("入库与质量面板", body)
+
+
+def search_chunks(query: str, limit: int = 10) -> dict[str, Any]:
+    q = query.strip()
+    limit = max(1, min(int(limit or 10), 50))
+    if not q:
+        return {"query": q, "count": 0, "results": [], "status": "empty-query"}
+    safe_db = safe_public_path(SEARCH_DB_PATH)
+    if not safe_db.exists():
+        return {"query": q, "count": 0, "results": [], "status": "missing-index"}
+    tokens = re.findall(r"[\w\u4e00-\u9fff]+", q)
+    candidates = []
+    if tokens:
+        candidates.append(" OR ".join(tokens[:8]))
+        candidates.append(" ".join(tokens[:8]))
+    candidates.append(q)
+    con = sqlite3.connect(str(safe_db))
+    rows: list[tuple[Any, ...]] = []
+    used = ""
+    last_error = ""
+    for candidate in candidates:
+        if not candidate.strip():
+            continue
+        try:
+            rows = con.execute(
+                "select title,path,chunk_id,snippet(chunks_fts,1,'[',']','…',24) as snippet "
+                "from chunks_fts where chunks_fts match ? limit ?",
+                (candidate, limit),
+            ).fetchall()
+            used = candidate
+            if rows:
+                break
+        except sqlite3.Error as exc:
+            last_error = str(exc)
+            continue
+    con.close()
+    return {
+        "query": q,
+        "fts_query": used,
+        "status": "ok" if used else "query-error",
+        "error": last_error if not used else "",
+        "count": len(rows),
+        "results": [
+            {"title": row[0], "path": row[1], "chunk_id": row[2], "snippet": row[3]}
+            for row in rows
+        ],
+    }
+
+
+def search_agent_notes(query: str, limit: int = 10, concept: str = "") -> dict[str, Any]:
+    """Fast AI-facing retrieval over note-index metadata.
+
+    This is intentionally lightweight: it uses in-memory note-index data,
+    concept_scores, title/excerpt/search_text hits, and the vector doctor status.
+    It is not a semantic embedding search unless doctor reports semantic_status=ready.
+    """
+    q = query.strip()
+    limit = max(1, min(int(limit or 10), 50))
+    requested_concept = concept.strip()
+    index = load_note_index()
+    concepts = [str(item.get("name") or "") for item in index.get("concepts", []) if str(item.get("name") or "")]
+    query_concepts = [name for name in concepts if name and name in q]
+    tokens = [tok.casefold() for tok in re.findall(r"[\w\u4e00-\u9fff]+", q) if tok.strip()]
+    rows: list[dict[str, Any]] = []
+    for note in index.get("notes", []):
+        score = 0.0
+        reasons: dict[str, Any] = {}
+        concept_rows = note.get("concept_scores", []) if isinstance(note.get("concept_scores"), list) else []
+        concept_lookup = concept_score_lookup(concept_rows)
+        if requested_concept:
+            cscore = concept_lookup.get(requested_concept, 0.0)
+            if cscore <= 0:
+                continue
+            score += cscore * 4.0
+            reasons["requested_concept"] = {"label": requested_concept, "score": round(cscore, 3)}
+        matched_query_concepts: list[dict[str, Any]] = []
+        for label in query_concepts:
+            cscore = concept_lookup.get(label, 0.0)
+            if cscore > 0:
+                score += cscore * 3.0
+                matched_query_concepts.append({"label": label, "score": round(cscore, 3)})
+        if matched_query_concepts:
+            reasons["query_concepts"] = matched_query_concepts
+        title = str(note.get("title", ""))
+        excerpt = str(note.get("excerpt", ""))
+        search_text = str(note.get("search_text", ""))
+        tags_text = " ".join(str(item) for item in note.get("tags", []))
+        concepts_text = " ".join(str(item) for item in note.get("concepts", []))
+        lower_fields = {
+            "title": title.casefold(),
+            "excerpt": excerpt.casefold(),
+            "search_text": search_text.casefold(),
+            "tags": tags_text.casefold(),
+            "concepts": concepts_text.casefold(),
+        }
+        token_hits: dict[str, int] = {}
+        for tok in tokens[:12]:
+            if not tok:
+                continue
+            if tok in lower_fields["title"]:
+                score += 0.9
+                token_hits["title"] = token_hits.get("title", 0) + 1
+            if tok in lower_fields["concepts"]:
+                score += 0.65
+                token_hits["concepts"] = token_hits.get("concepts", 0) + 1
+            if tok in lower_fields["tags"]:
+                score += 0.35
+                token_hits["tags"] = token_hits.get("tags", 0) + 1
+            if tok in lower_fields["excerpt"]:
+                score += 0.25
+                token_hits["excerpt"] = token_hits.get("excerpt", 0) + 1
+            if tok in lower_fields["search_text"]:
+                score += 0.08
+                token_hits["body"] = token_hits.get("body", 0) + 1
+        if token_hits:
+            reasons["token_hits"] = token_hits
+        if score <= 0:
+            continue
+        public = public_note(note)
+        public["retrieval_score"] = round(score, 3)
+        public["retrieval_reasons"] = reasons
+        public["top_concept_scores"] = concept_rows[:8]
+        rows.append(public)
+    rows.sort(key=lambda item: (-float(item.get("retrieval_score") or 0), -float(item.get("created_sort") or 0)))
+    vector_status = (read_json_file(VECTOR_DOCTOR_PATH) or {}).get("status", {})
+    return {
+        "query": q,
+        "concept": requested_concept,
+        "status": "ok",
+        "retrieval_layers": {
+            "concept_scores": True,
+            "metadata_index": True,
+            "fts_chunks": bool((vector_status or {}).get("fts_status") == "ready"),
+            "semantic_embedding": (vector_status or {}).get("semantic_status", "missing"),
+        },
+        "count": min(len(rows), limit),
+        "total_candidates": len(rows),
+        "results": rows[:limit],
+    }
+
+
+def render_taxonomy_page(kind: str) -> bytes:
+    index = load_note_index()
+    if kind == "concepts":
+        title = "全部概念"
+        subtitle = "概念是知识图谱节点，用来表示人能理解的主题、系统、项目和方法。"
+        items = index.get("concepts", [])
+        param = "concept"
+    else:
+        title = "全部标签"
+        subtitle = "标签是机器筛选用的稳定 slug：domain/type/asset/purpose/topic。"
+        items = index.get("tags", [])
+        param = "tag"
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for item in items:
+        name = str(item.get("name") or "")
+        if kind == "tags" and "-" in name:
+            group = name.split("-", 1)[0]
+        else:
+            group = "concept" if kind == "concepts" else "other"
+        grouped.setdefault(group, []).append(item)
+
+    order = ["domain", "type", "asset", "purpose", "topic", "quality", "other", "concept"]
+    sections: list[str] = []
+    for group in order:
+        group_items = grouped.get(group)
+        if not group_items:
+            continue
+        links = "\n".join(
+            f'<a class="facet" href="{html.escape(url_with_params("/notes", {param: item["name"]}))}">{html.escape(str(item["name"]))} <strong>{int(item["count"])}</strong></a>'
+            for item in group_items
+        )
+        group_title = {
+            "domain": "领域 domain",
+            "type": "内容类型 type",
+            "asset": "资产形态 asset",
+            "purpose": "用途 purpose",
+            "topic": "细分主题 topic",
+            "quality": "质量 quality",
+            "other": "其它",
+            "concept": "概念节点",
+        }.get(group, group)
+        sections.append(f'<section class="panel" style="margin-top:16px"><h2>{html.escape(group_title)}</h2><div class="facet-list">{links}</div></section>')
+
+    body = f"""
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Personal Wiki 分类体系</div>
+    <h1>{html.escape(title)}</h1>
+    <p class="muted">{html.escape(subtitle)} 当前共 {len(items)} 个。</p>
+  </div>
+  <div class="top-actions"><div class="nav-links"><a class="button-link" href="/">知识地图</a><a class="button-link" href="/notes">全部笔记</a><a class="button-link" href="/ingestion">入库面板</a></div></div>
+</div>
+{''.join(sections) if sections else '<div class="empty">暂无分类。</div>'}
+"""
+    return html_page(title, body)
+
+
 def render_notes_page(query: dict[str, list[str]]) -> bytes:
     q = first_query(query, "q")
     tag = first_query(query, "tag")
@@ -2009,7 +2592,7 @@ def render_markdown_body(body: str, note_lookup: dict[str, str] | None = None) -
 
 
 def render_note(relative_path: str) -> bytes:
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
     text = path.read_text(encoding="utf-8")
@@ -2017,7 +2600,7 @@ def render_note(relative_path: str) -> bytes:
     title = note_title(path, body, fm)
     note_lookup = build_note_lookup(load_note_index())
     tags_html = "".join(f'<span class="tag">#{html.escape(str(tag))}</span>' for tag in normalize_tags(fm.get("tags", [])))
-    meta = " / ".join(part for part in [format_date(fm.get("created", "")), str(fm.get("source_type", "") or "").strip()] if part)
+    meta = " / ".join(part for part in [format_date(note_created_value(fm)), str(fm.get("source_type", "") or "").strip()] if part)
     source_url = str(fm.get("source_url", "") or "").strip() or "Telegram/Hermes input"
     source_hash = str(fm.get("source_hash", "") or "").strip()
     note_content = TAG_RE.sub("", notes_section(body)).strip()
@@ -2049,16 +2632,16 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         try:
             parsed = urlparse(self.path)
-            api_read_paths = {"/api/notes", "/api/note", "/api/tags", "/api/concepts", "/api/graph"}
-            page_read_paths = {"/", "/notes", "/note", "/manual", "/docs/USAGE.md"}
+            api_read_paths = {"/api/notes", "/api/note", "/api/tags", "/api/concepts", "/api/graph", "/api/ingestion", "/api/search/chunks", "/api/search/agent"}
+            page_read_paths = {"/", "/notes", "/note", "/tags", "/concepts", "/ingestion", "/manual", "/docs/USAGE.md"}
             if parsed.path == "/auth/read":
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", self.render_read_login(parsed))
                 return
             if parsed.path in api_read_paths and not self.authorized_read(REQUIRE_API_READ_AUTH):
                 self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
                 return
-            if parsed.path in page_read_paths and not self.authorized_read(REQUIRE_PAGE_READ_AUTH):
-                self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
+            if parsed.path in page_read_paths and not PUBLIC_PAGE_READ and not self.authorized_read(REQUIRE_PAGE_READ_AUTH):
+                self.redirect_to_read_login(parsed)
                 return
             if parsed.path == "/":
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_home())
@@ -2069,6 +2652,13 @@ class Handler(BaseHTTPRequestHandler):
             elif parsed.path == "/notes":
                 query = parse_qs(parsed.query)
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_notes_page(query))
+            elif parsed.path == "/tags":
+                self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_taxonomy_page("tags"))
+            elif parsed.path == "/concepts":
+                self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_taxonomy_page("concepts"))
+            elif parsed.path == "/ingestion":
+                query = parse_qs(parsed.query)
+                self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_ingestion_page(query))
             elif parsed.path == "/note":
                 query = parse_qs(parsed.query)
                 relative_path = query.get("path", [""])[0]
@@ -2095,6 +2685,19 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(HTTPStatus.OK, {"concepts": load_note_index().get("concepts", [])})
             elif parsed.path == "/api/graph":
                 self.send_json(HTTPStatus.OK, load_graph())
+            elif parsed.path == "/api/ingestion":
+                self.send_json(HTTPStatus.OK, load_ingestion_dashboard())
+            elif parsed.path == "/api/search/chunks":
+                query = parse_qs(parsed.query)
+                q = first_query(query, "q")
+                limit = parse_positive_int(first_query(query, "limit", "10"), 10, 50)
+                self.send_json(HTTPStatus.OK, search_chunks(q, limit))
+            elif parsed.path == "/api/search/agent":
+                query = parse_qs(parsed.query)
+                q = first_query(query, "q")
+                concept = first_query(query, "concept")
+                limit = parse_positive_int(first_query(query, "limit", "10"), 10, 50)
+                self.send_json(HTTPStatus.OK, search_agent_notes(q, limit, concept))
             else:
                 self.send_json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
         except Exception as exc:
@@ -2140,7 +2743,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(HTTPStatus.OK, relink_notes(self.read_json()))
                 return
             payload = self.read_json()
-            self.send_json(HTTPStatus.OK, ingest(payload))
+            query = parse_qs(parsed.query)
+            self.send_json(HTTPStatus.OK, ingest(payload, light=light_ingest_requested(payload, query)))
         except Exception as exc:
             self.send_error_json(exc)
 
@@ -2206,6 +2810,16 @@ class Handler(BaseHTTPRequestHandler):
         secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "").lower() == "https" else ""
         return f"{READ_AUTH_COOKIE}={token}; Path=/; HttpOnly; SameSite=Lax{secure}"
 
+    def redirect_to_read_login(self, parsed: Any) -> None:
+        next_url = parsed.path
+        if parsed.query:
+            next_url += "?" + parsed.query
+        if not next_url.startswith("/") or next_url.startswith("//"):
+            next_url = "/"
+        self.send_response(HTTPStatus.FOUND.value)
+        self.send_header("Location", f"/auth/read?next={quote(next_url, safe='')}")
+        self.end_headers()
+
     def render_read_login(self, parsed: Any) -> bytes:
         query = parse_qs(parsed.query)
         next_url = query.get("next", ["/"])[0] or "/"
@@ -2214,17 +2828,17 @@ class Handler(BaseHTTPRequestHandler):
         body = f"""
 <div class="reading-shell">
   <section class="panel">
-    <h1>Read access</h1>
-    <p>Paste your read token. The token is submitted in the request body and is not placed in the URL.</p>
+    <h1>Personal Wiki 访问</h1>
+    <p>这里不是账号密码登录。当前私有预览只需要输入只读访问口令。</p>
     <form method="post" action="/auth/read">
       <input type="hidden" name="next" value="{html.escape(next_url, quote=True)}" />
-      <label>Read token<br /><input name="token" type="password" autocomplete="current-password" /></label>
-      <p><button type="submit">Open Wiki</button></p>
+      <label>访问口令<br /><input name="token" type="password" autocomplete="current-password" /></label>
+      <p><button type="submit">打开 Wiki</button></p>
     </form>
   </section>
 </div>
 """
-        return html_page("Read access", body)
+        return html_page("Personal Wiki 访问", body)
 
     def read_form(self) -> dict[str, list[str]]:
         length = int(self.headers.get("Content-Length", "0"))

@@ -1,11 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import {
   configuredReadTokens,
+  isPersonalOsAuthDisabled,
   requestHasReadAccess,
 } from "@/lib/auth";
 
 export function proxy(request: NextRequest) {
-  if (process.env.NODE_ENV !== "production" || isPublicPath(request.nextUrl.pathname)) {
+  if (
+    process.env.NODE_ENV !== "production" ||
+    isPersonalOsAuthDisabled() ||
+    isPublicPath(request.nextUrl.pathname)
+  ) {
     return NextResponse.next();
   }
 

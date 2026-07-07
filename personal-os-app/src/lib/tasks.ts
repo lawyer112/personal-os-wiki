@@ -1,4 +1,5 @@
 import { recordActivity } from "@/lib/activity";
+import { ingestTask } from "@/lib/memory-ingestion";
 import type { TaskCreateInput, TaskUpdateInput } from "@/lib/validation";
 
 type TaskCreateServiceInput = Omit<
@@ -73,6 +74,16 @@ export async function createTask<TDb extends TaskDb>(
       sourceAgentRunId: input.sourceAgentRunId ?? null,
     },
     undoPayload: { action: "task.archive", id: task.id },
+  });
+
+  // Fire-and-forget: ingest new task into vector memory for hybrid recall.
+  ingestTask({
+    id: task.id,
+    title: input.title,
+    description: input.description ?? null,
+    nextAction: input.nextAction ?? null,
+    definitionOfDone: input.definitionOfDone ?? null,
+    projectId: input.projectId ?? null,
   });
 
   return task;

@@ -99,6 +99,14 @@ Agents should not race each other. Use the lease protocol.
 poll -> claim -> context -> execute -> heartbeat -> contribute -> submit -> review
 ```
 
+Multiple machines can run the same worker loop. The worker identity is the
+`agentId`; the placement policy is the `AgentProfile` plus task `agentTags`.
+For example, a Mac mini can run `mac-curator` with `["wiki", "mac"]`, while a
+Linux server runs `research-worker` with `["wiki", "research"]`. Both can poll
+the same Personal OS. A successful claim writes `ownerAgent`, `leaseUntil`,
+`lastHeartbeatAt`, and `status=doing`, which keeps other agents from taking the
+same task until the lease expires.
+
 Before polling, the operator must register an `AgentProfile` with matching tags
 and permissions. The task worker can claim only tasks that satisfy all of these
 conditions:
@@ -127,6 +135,28 @@ instead of trying to bypass the queue.
 GET /api/agent-inbox?agent_id=knowledge-curator&tags=wiki,curation&limit=10
 Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 ```
+
+Use this when the worker needs to inspect or rank candidate tasks before
+claiming one.
+
+### Auto-Claim Next
+
+```http
+POST /api/agent-inbox/claim-next
+Authorization: Bearer <PERSONAL_OS_API_TOKEN>
+
+{
+  "agentId": "knowledge-curator",
+  "tags": ["wiki", "curation"],
+  "limit": 10,
+  "leaseMinutes": 90
+}
+```
+
+Use this for cron-style workers that wake up on an interval, such as every 30
+minutes. Personal OS lists eligible tasks for that agent, attempts to claim the
+first one, and skips to the next candidate if another agent won the lease race.
+When no work is available, the response returns `claimed: false`.
 
 ### Claim
 

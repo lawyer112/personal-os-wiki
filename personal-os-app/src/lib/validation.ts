@@ -133,6 +133,10 @@ export const taskClaimSchema = z.object({
   leaseMinutes: z.number().int().positive().max(24 * 60).default(90),
 });
 
+export const agentInboxClaimNextSchema = agentInboxQuerySchema.extend({
+  leaseMinutes: z.number().int().positive().max(24 * 60).default(90),
+});
+
 export const taskHeartbeatSchema = z.object({
   agentId: z.string().min(1),
   leaseMinutes: z.number().int().positive().max(24 * 60).default(90),
@@ -351,6 +355,9 @@ export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;
 export type TaskCreateInput = z.infer<typeof taskCreateSchema>;
 export type TaskUpdateInput = z.infer<typeof taskUpdateSchema>;
 export type AgentInboxQueryInput = z.infer<typeof agentInboxQuerySchema>;
+export type AgentInboxClaimNextInput = z.infer<
+  typeof agentInboxClaimNextSchema
+>;
 export type TaskClaimInput = z.infer<typeof taskClaimSchema>;
 export type TaskHeartbeatInput = z.infer<typeof taskHeartbeatSchema>;
 export type TaskContributionInput = z.infer<typeof taskContributionSchema>;

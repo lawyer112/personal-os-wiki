@@ -99,12 +99,32 @@ function isoNow() {
 }
 
 async function githubJson(apiPath) {
+  const token = process.env.GITHUB_TOKEN;
   const headers = {
     Accept: "application/vnd.github+json",
     "User-Agent": "personal-os-github-radar",
   };
-  if (process.env.GITHUB_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+
+  if (token && token.startsWith("gho_")) {
+    // GitHub CLI OAuth token: use gh api proxy instead of direct fetch
+    // Unset GITHUB_TOKEN env so gh uses keyring auth instead of the broken env var
+    const { execSync } = await import("child_process");
+    const url = apiPath.startsWith("?") ? apiPath : apiPath;
+    const ghArgs = ["api", "-X", "GET", url.replace(/^\//, "")];
+    if (url.includes("?")) {
+      const [path, query] = url.split("?");
+      ghArgs[3] = path.replace(/^\//, "");
+      const params = new URLSearchParams(query);
+      params.forEach((v, k) => { ghArgs.push("-f"); ghArgs.push(`${k}=${v}`); });
+    }
+    const env = { ...process.env };
+    delete env.GITHUB_TOKEN;
+    const stdout = execSync(`gh ${ghArgs.map(a => `"${a.replace(/"/g, '\\"')}"`).join(" ")}`, { encoding: "utf-8", maxBuffer: 5 * 1024 * 1024, env });
+    return JSON.parse(stdout);
+  }
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
   }
 
   const response = await fetch(`https://api.github.com${apiPath}`, { headers });
@@ -319,6 +339,28 @@ function buildTasks(repos) {
     ));
   }
 
+  if (tasks.length === 0) {
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const topRepo = repos[0];
+    if (topRepo) {
+      const sig = (topRepo.signals && topRepo.signals[0]) || "github-radar";
+      const signalInfo = SIGNALS.find((s) => s.id === sig);
+      tasks.push(task(
+        `GitHub 雷达 ${dateStr}：评估 ${topRepo.full_name} 的吸收价值`,
+        `本轮雷达发现 ${topRepo.full_name}（stars: ${topRepo.stars}, pushed_at: ${topRepo.pushed_at || "unknown"}）。描述：${topRepo.description || "无描述"}。匹配信号：${sig}。${signalInfo ? signalInfo.nextAction : "进一步评估并决定是否吸收。"}`,
+        `产出 Wiki 评估笔记：该 repo 的核心能力、与 Personal OS/Wiki 的适配点、可吸收设计、风险；如值得吸收，创建子任务。`,
+        "github-radar"
+      ));
+    } else {
+      tasks.push(task(
+        `GitHub 雷达 ${dateStr}：扩展新查询并重新检索`,
+        "当前查询集已经穷尽，没有发现新 repo。动作是添加 1-2 个新的 GitHub 搜索查询，运行雷达并验证是否能发现新的值得关注的项目。",
+        "产出新查询设计文档或脚本更新；运行后生成至少 1 个新 repo 或 1 个新的执行任务。",
+        "github-radar"
+      ));
+    }
+  }
+
   return tasks.slice(0, 4);
 }
 
@@ -451,6 +493,20 @@ async function main() {
       console.log(`[dedup] ${tasks.length} tasks -> ${deduped.length} after dedup`);
       tasks = deduped;
     }
+  }
+
+  // Fallback: if dedup eliminated all tasks and we still have repos, create a repo-specific evaluation task
+  if (tasks.length === 0 && filteredRepos.length > 0) {
+    const dateStr = new Date().toISOString().slice(0, 10);
+    const topRepo = filteredRepos[0];
+    const sig = (topRepo.signals && topRepo.signals[0]) || "github-radar";
+    const signalInfo = SIGNALS.find((s) => s.id === sig);
+    tasks.push(task(
+      `GitHub 雷达 ${dateStr}：评估 ${topRepo.full_name} 的吸收价值`,
+      `本轮雷达发现 ${topRepo.full_name}（stars: ${topRepo.stars}, pushed_at: ${topRepo.pushed_at || "unknown"}）。描述：${topRepo.description || "无描述"}。匹配信号：${sig}。${signalInfo ? signalInfo.nextAction : "进一步评估并决定是否吸收。"}`,
+      `产出 Wiki 评估笔记：该 repo 的核心能力、与 Personal OS/Wiki 的适配点、可吸收设计、风险；如值得吸收，创建子任务。`,
+      "github-radar"
+    ));
   }
 
   const markdown = buildMarkdown(filteredRepos, tasks, registryStats);

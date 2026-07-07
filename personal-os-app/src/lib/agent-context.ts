@@ -1,10 +1,29 @@
 import { HttpError } from "@/lib/http";
 import {
-  searchWikiNotes,
+  searchAgentMemoryEpisodes,
+  type AgentMemoryContextHit,
+} from "@/lib/agentmemory-client";
+import {
+  searchSwarmVaultContext,
+  type SwarmVaultContextHit,
+} from "@/lib/swarmvault-mcp-client";
+import {
+  searchWikiChunks,
   wikiNoteUrl,
+  type WikiChunkSearchHit,
+  type WikiChunkSearchResponse,
   type WikiContextCandidate,
   type WikiNoteSummary,
 } from "@/lib/wiki-client";
+import {
+  searchMemoryVectors,
+  type MemoryVectorHit,
+} from "@/lib/memory-vector-store";
+import {
+  weightedRrfFuse,
+  DEFAULT_RRF_K,
+  type RrfSourceInput,
+} from "@/lib/rrf-fusion";
 
 type ContextDb = {
   task: unknown;
@@ -146,17 +165,39 @@ export type AgentContextTiers = {
 };
 
 export type ContextEpisode = {
-  type: "agent_run" | "task" | "wiki" | "activity";
+  type: "agent_run" | "task" | "wiki" | "activity" | "agentmemory";
   id: string;
   title: string;
   summary: string;
   relevanceScore: number;
+  source?: {
+    type: "agent_run" | "task" | "wiki" | "activity" | "agentmemory";
+    id: string;
+    path?: string;
+    url?: string;
+  };
+  provenance?: {
+    sourceType: "agent_run" | "task" | "wiki" | "activity" | "agentmemory";
+    sourceId: string;
+    sourcePath?: string;
+    sourceUrl?: string;
+    createdAt?: string;
+  };
   sourceUrl?: string;
   createdAt?: string;
+  /** Weighted RRF score after cross-source fusion (see rrf-fusion.ts). */
+  rrfScore?: number;
+  /** Names of retrieval sources that surfaced this episode, in fusion order. */
+  contributingSources?: string[];
 };
 
 export type AgentContextEvidence = {
   episodes: ContextEpisode[];
+};
+
+export type SwarmVaultContextResult = {
+  status: "ok" | "empty" | "disabled" | "error";
+  candidates: SwarmVaultContextHit[];
 };
 
 export type AgentContextPack = {
@@ -168,6 +209,7 @@ export type AgentContextPack = {
   relatedIdeas: IdeaContextRecord[];
   activity: ActivityRecord[];
   evidence: AgentContextEvidence;
+  swarmvault: SwarmVaultContextResult;
   tiers: AgentContextTiers;
   policy: AgentContextPolicy;
   nextAction: string;
@@ -180,6 +222,105 @@ export const AGENT_CONTEXT_POLICY: AgentContextPolicy = {
   mustConfirmDelete: true,
   maxWikiCandidates: 8,
   note: "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。",
+};
+
+const DEFAULT_WIKI_QUERY_TIMEOUT_MS = 5_000;
+const MAX_WIKI_QUERY_TIMEOUT_MS = 30_000;
+const MAX_FAST_WIKI_QUERY_LENGTH = 500;
+
+const getWikiQueryTimeoutMs = () => {
+  const configured = process.env.AGENT_CONTEXT_WIKI_QUERY_TIMEOUT_MS;
+  if (configured === undefined || configured.trim() === "") {
+    return DEFAULT_WIKI_QUERY_TIMEOUT_MS;
+  }
+
+  const value = Number(configured);
+  if (!Number.isFinite(value) || value <= 0) {
+    return DEFAULT_WIKI_QUERY_TIMEOUT_MS;
+  }
+
+  return Math.min(Math.trunc(value), MAX_WIKI_QUERY_TIMEOUT_MS);
+};
+
+const searchWikiChunksWithTimeout = async (
+  query: string,
+  limit: number,
+  timeoutMs: number,
+): Promise<WikiChunkSearchResponse> => {
+  const controller = new AbortController();
+  let didTimeout = false;
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeout = setTimeout(() => {
+        didTimeout = true;
+        controller.abort();
+        reject(new Error(`Personal Wiki search timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+    });
+
+    return await Promise.race([
+      searchWikiChunks(query, limit, { signal: controller.signal }),
+      timeoutPromise,
+    ]);
+  } catch (error) {
+    if (didTimeout) {
+      throw new Error(`Personal Wiki search timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    if (timeout !== undefined) {
+      clearTimeout(timeout);
+    }
+  }
+};
+
+const buildFastWikiQuery = (queries: string[]) =>
+  queries.join(" ").replace(/\s+/g, " ").slice(0, MAX_FAST_WIKI_QUERY_LENGTH);
+
+const chunkHitToNote = (hit: WikiChunkSearchHit): WikiNoteSummary => {
+  const metadata: Record<string, unknown> = {
+    retrieval: "wiki-chunks-fts",
+  };
+
+  if (hit.chunk_id !== undefined) {
+    metadata.chunk_id = hit.chunk_id;
+  }
+
+  if (hit.score !== undefined) {
+    metadata.score = hit.score;
+  }
+
+  return {
+    title: hit.title,
+    path: hit.path,
+    excerpt: hit.snippet,
+    metadata,
+  };
+};
+
+const bestRetrievedQueryForNote = (
+  note: WikiNoteSummary,
+  searchedQueries: string[],
+) => {
+  const searchableText = [
+    note.title,
+    note.excerpt,
+    note.source_type,
+    note.source_url,
+    ...(note.tags ?? []),
+    ...(note.concepts ?? []),
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .toLowerCase();
+
+  return (
+    searchedQueries.find((query) =>
+      searchableText.includes(query.toLowerCase()),
+    ) ?? searchedQueries[0] ?? ""
+  );
 };
 
 const knownContextTerms = [
@@ -667,6 +808,7 @@ function findEpisodes(
   const episodes: ContextEpisode[] = [];
 
   for (const candidate of wiki.candidates) {
+    const createdAt = candidate.created;
     episodes.push({
       type: "wiki",
       id: candidate.path,
@@ -674,23 +816,46 @@ function findEpisodes(
       summary: candidate.excerpt ?? "",
       relevanceScore: candidate.score ?? 0,
       sourceUrl: candidate.url,
-      createdAt: candidate.created,
+      createdAt,
+      source: {
+        type: "wiki",
+        id: candidate.path,
+        path: candidate.path,
+        url: candidate.url,
+      },
+      provenance: {
+        sourceType: "wiki",
+        sourceId: candidate.path,
+        sourcePath: candidate.path,
+        sourceUrl: candidate.url,
+        createdAt,
+      },
     });
   }
 
   for (const act of activity) {
     const text = `${act.action} ${act.targetType} ${act.targetId}`;
     if (episodeMatches(text, keywords)) {
+      const createdAt =
+        typeof act.createdAt === "string"
+          ? act.createdAt
+          : act.createdAt?.toISOString();
       episodes.push({
         type: "activity",
         id: act.id,
         title: `${act.action} on ${act.targetType}`,
         summary: `${act.action} ${act.targetType} ${act.targetId}`,
         relevanceScore: 12,
-        createdAt:
-          typeof act.createdAt === "string"
-            ? act.createdAt
-            : act.createdAt?.toISOString(),
+        createdAt,
+        source: {
+          type: "activity",
+          id: act.id,
+        },
+        provenance: {
+          sourceType: "activity",
+          sourceId: act.id,
+          createdAt,
+        },
       });
     }
   }
@@ -699,12 +864,21 @@ function findEpisodes(
     const run = task.sourceAgentRun;
     const text = `${run.model} ${run.reasoningSummary} ${run.outputSummary}`;
     if (episodeMatches(text, keywords) || task.sourceAgentRunId) {
+      const sourceId = task.sourceAgentRunId ?? "unknown";
       episodes.push({
         type: "agent_run",
-        id: task.sourceAgentRunId ?? "unknown",
+        id: sourceId,
         title: run.model ?? "Agent Run",
         summary: run.outputSummary ?? run.reasoningSummary ?? "",
         relevanceScore: 18,
+        source: {
+          type: "agent_run",
+          id: sourceId,
+        },
+        provenance: {
+          sourceType: "agent_run",
+          sourceId,
+        },
       });
     }
   }
@@ -712,16 +886,26 @@ function findEpisodes(
   if (task?.contributions) {
     for (const contrib of task.contributions) {
       if (episodeMatches(contrib.summary, keywords)) {
+        const createdAt =
+          typeof contrib.createdAt === "string"
+            ? contrib.createdAt
+            : contrib.createdAt?.toISOString();
         episodes.push({
           type: "task",
           id: task.id,
           title: task.title,
           summary: contrib.summary,
           relevanceScore: 22,
-          createdAt:
-            typeof contrib.createdAt === "string"
-              ? contrib.createdAt
-              : contrib.createdAt?.toISOString(),
+          createdAt,
+          source: {
+            type: "task",
+            id: task.id,
+          },
+          provenance: {
+            sourceType: "task",
+            sourceId: task.id,
+            createdAt,
+          },
         });
       }
     }
@@ -730,6 +914,111 @@ function findEpisodes(
   return episodes
     .sort((a, b) => b.relevanceScore - a.relevanceScore)
     .slice(0, 8);
+}
+
+function agentMemoryHitToEpisode(hit: AgentMemoryContextHit): ContextEpisode {
+  return {
+    type: "agentmemory",
+    id: hit.id,
+    title: hit.title,
+    summary: hit.summary,
+    relevanceScore: hit.relevanceScore,
+    createdAt: hit.createdAt,
+    source: {
+      type: "agentmemory",
+      id: hit.id,
+    },
+    provenance: {
+      sourceType: "agentmemory",
+      sourceId: hit.id,
+      createdAt: hit.createdAt,
+    },
+  };
+}
+
+function memoryVectorHitToEpisode(hit: MemoryVectorHit): ContextEpisode {
+  // Map similarity [0,1] → relevance score bucket (0–60)
+  const relevanceScore = Math.round(hit.similarity * 60);
+  const createdAt = hit.createdAt.toISOString();
+  
+  // Map sourceType from MemoryItem to ContextEpisode provenance type
+  const mapSourceType = (
+    t: string,
+  ): "agent_run" | "task" | "wiki" | "activity" | "agentmemory" => {
+    if (t === "agent_run") return "agent_run";
+    if (t === "task") return "task";
+    if (t === "wiki") return "wiki";
+    if (t === "activity") return "activity";
+    // Default inbox and unknown types to agentmemory
+    return "agentmemory";
+  };
+
+  return {
+    type: "agentmemory",
+    id: `vec:${hit.id}`,
+    title: hit.title,
+    summary: hit.body.slice(0, 200),
+    relevanceScore,
+    createdAt,
+    source: {
+      type: "agentmemory",
+      id: hit.sourceId,
+    },
+    provenance: {
+      sourceType: mapSourceType(hit.sourceType),
+      sourceId: hit.sourceId,
+      createdAt,
+    },
+  };
+}
+
+type EpisodeSourceGroup = {
+  /** Source name surfaced in ContextEpisode.contributingSources (Raven telemetry pattern). */
+  name: string;
+  /** Source reliability weight for weighted RRF. Curated/rule-based sources outrank imported ones. */
+  weight: number;
+  /** Already ranked (best first) episodes from this source. */
+  episodes: ContextEpisode[];
+};
+
+/**
+ * Fuse episodes from multiple retrieval sources (Wiki/rule-based recall,
+ * agentmemory, local vector store, ...) into a single ranked list using
+ * weighted RRF (see rrf-fusion.ts, adapted from Raven's SkillForgeRouter).
+ *
+ * Each source's per-source failure is expected to already be isolated
+ * upstream (callers pass `[]` for a failed source instead of throwing),
+ * so fusion never needs to special-case a missing source here.
+ */
+function combineEpisodesWeighted(...groups: EpisodeSourceGroup[]): ContextEpisode[] {
+  const rrfSources: RrfSourceInput<ContextEpisode>[] = groups.map((group) => ({
+    name: group.name,
+    weight: group.weight,
+    items: group.episodes.map((episode) => ({
+      key: `${episode.type}:${episode.id}`,
+      score: episode.relevanceScore,
+      item: episode,
+    })),
+  }));
+
+  const fused = weightedRrfFuse(rrfSources, { rrfK: DEFAULT_RRF_K });
+
+  return fused.slice(0, 8).map((result) => ({
+    ...result.item,
+    rrfScore: Math.round(result.rrfScore * 1000) / 1000,
+    contributingSources: result.contributingSources,
+  }));
+}
+
+/** @deprecated kept for direct-array callers; prefer combineEpisodesWeighted. */
+function combineEpisodes(...episodeGroups: ContextEpisode[][]) {
+  return combineEpisodesWeighted(
+    ...episodeGroups.map((episodes, index) => ({
+      name: `group_${index}`,
+      weight: 1,
+      episodes,
+    })),
+  );
 }
 
 export async function searchWikiContext(
@@ -742,42 +1031,40 @@ export async function searchWikiContext(
   const noteMap = new Map<string, WikiContextCandidate>();
   const failedQueries: WikiContextSearchResult["failedQueries"] = [];
   let successfulQueries = 0;
+  const wikiQueryTimeoutMs = getWikiQueryTimeoutMs();
+  const fastQuery = buildFastWikiQuery(searchedQueries);
 
-  const results = await Promise.all(
-    searchedQueries.map(async (query) => {
-      try {
-        const notes = await searchWikiNotes(query, 6);
-        return { query, notes };
-      } catch (error) {
-        return { query, error };
+  if (fastQuery) {
+    try {
+      const response = await searchWikiChunksWithTimeout(
+        fastQuery,
+        Math.max(limit * 4, 12),
+        wikiQueryTimeoutMs,
+      );
+
+      successfulQueries = 1;
+
+      for (const hit of response.results ?? []) {
+        const note = chunkHitToNote(hit);
+        const existing = noteMap.get(note.path);
+        const retrievedByQuery = bestRetrievedQueryForNote(note, searchedQueries);
+        const scored = scoreNote(note, searchedQueries, retrievedByQuery);
+        const candidate: WikiContextCandidate = {
+          ...note,
+          url: wikiNoteUrl(note.path),
+          matchedQueries: Array.from(scored.matchedQueries),
+          score: scored.score,
+        };
+
+        if (!existing || candidate.score > existing.score) {
+          noteMap.set(note.path, candidate);
+        }
       }
-    }),
-  );
-
-  for (const result of results) {
-    if ("error" in result) {
+    } catch (error) {
       failedQueries.push({
-        query: result.query,
-        message: errorMessage(result.error),
+        query: fastQuery,
+        message: errorMessage(error),
       });
-      continue;
-    }
-
-    successfulQueries += 1;
-
-    for (const note of result.notes) {
-      const existing = noteMap.get(note.path);
-      const scored = scoreNote(note, searchedQueries, result.query);
-      const candidate: WikiContextCandidate = {
-        ...note,
-        url: wikiNoteUrl(note.path),
-        matchedQueries: Array.from(scored.matchedQueries),
-        score: scored.score,
-      };
-
-      if (!existing || candidate.score > existing.score) {
-        noteMap.set(note.path, candidate);
-      }
     }
   }
 
@@ -806,16 +1093,35 @@ export async function searchWikiContextCandidates(queries: string[], limit = 8) 
 
 export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const searchQueries = [query.trim()].filter(Boolean);
-  const [wiki, queryTasks, globalActivity] = await Promise.all([
-    searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
-    getQueryHotTasks(db),
-    getQueryActivity(db),
-  ]);
+  const fastQuery = buildFastWikiQuery(searchQueries);
+  const [wiki, queryTasks, globalActivity, agentMemoryHits, swarmvaultHits, vectorHits] =
+    await Promise.all([
+      searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
+      getQueryHotTasks(db),
+      getQueryActivity(db),
+      searchAgentMemoryEpisodes(fastQuery).catch(() => [] as AgentMemoryContextHit[]),
+      searchSwarmVaultContext(fastQuery ?? query.trim()),
+      searchMemoryVectors(fastQuery ?? query.trim(), { limit: 5, minSimilarity: 0.5 }).catch(() => [] as MemoryVectorHit[]),
+    ]);
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
   const evidence = {
-    episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null),
+    episodes: combineEpisodesWeighted(
+      { name: "rule_based", weight: 1.5, episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null) },
+      { name: "agentmemory", weight: 1, episodes: agentMemoryHits.map(agentMemoryHitToEpisode) },
+      { name: "vector_store", weight: 1, episodes: vectorHits.map(memoryVectorHitToEpisode) },
+    ),
+  };
+
+  const swarmvault: SwarmVaultContextResult = {
+    status:
+      swarmvaultHits.length > 0
+        ? "ok"
+        : process.env.AGENT_CONTEXT_SWARMVAULT_ENABLED === "true"
+          ? "empty"
+          : "disabled",
+    candidates: swarmvaultHits,
   };
 
   const nextAction = computeNextAction({
@@ -833,6 +1139,7 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
     relatedIdeas,
     activity,
     evidence,
+    swarmvault,
     nextAction,
     tiers: buildContextTiers({
       task: null,
@@ -886,38 +1193,60 @@ export async function getAgentContext<TDb extends ContextDb>(
   if (task.sourceInboxItemId) {
     ideaFilters.push({ sourceInboxItemId: task.sourceInboxItemId });
   }
-  const [wiki, recentTasks, relatedIdeas, activity] = await Promise.all([
-    searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
-    taskDelegate.findMany({
-      where: {
-        id: { not: task.id },
-        status: { not: "archived" },
-        ...(task.projectId ? { projectId: task.projectId } : {}),
-      },
-      include: { project: true },
-      orderBy: [{ updatedAt: "desc" }],
-      take: 5,
-    }),
-    ideaDelegate && ideaFilters.length > 0
-      ? ideaDelegate.findMany({
-          where: {
-            status: { notIn: ["archived", "promoted"] },
-            OR: ideaFilters,
-          },
-          include: { project: true, sourceInboxItem: true },
-          orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
-          take: 5,
-        })
-      : Promise.resolve([]),
-    activityLog.findMany({
-      where: { targetType: "task", targetId: task.id },
-      orderBy: { createdAt: "desc" },
-      take: 8,
-    }),
-  ]);
+  const [wiki, recentTasks, relatedIdeas, activity, agentMemoryHits, swarmvaultHits, vectorHits] =
+    await Promise.all([
+      searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
+      taskDelegate.findMany({
+        where: {
+          id: { not: task.id },
+          status: { not: "archived" },
+          ...(task.projectId ? { projectId: task.projectId } : {}),
+        },
+        include: { project: true },
+        orderBy: [{ updatedAt: "desc" }],
+        take: 5,
+      }),
+      ideaDelegate && ideaFilters.length > 0
+        ? ideaDelegate.findMany({
+            where: {
+              status: { notIn: ["archived", "promoted"] },
+              OR: ideaFilters,
+            },
+            include: { project: true, sourceInboxItem: true },
+            orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
+            take: 5,
+          })
+        : Promise.resolve([]),
+      activityLog.findMany({
+        where: { targetType: "task", targetId: task.id },
+        orderBy: { createdAt: "desc" },
+        take: 8,
+      }),
+      searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)).catch(() => [] as AgentMemoryContextHit[]),
+      searchSwarmVaultContext(buildFastWikiQuery(searchQueries) ?? task.title),
+      searchMemoryVectors(buildFastWikiQuery(searchQueries) ?? task.title, {
+        limit: 5,
+        projectId: task.projectId ?? undefined,
+        minSimilarity: 0.5,
+      }).catch(() => [] as MemoryVectorHit[]),
+    ]);
 
   const evidence = {
-    episodes: findEpisodes("", searchQueries, wiki, activity, task),
+    episodes: combineEpisodesWeighted(
+      { name: "rule_based", weight: 1.5, episodes: findEpisodes("", searchQueries, wiki, activity, task) },
+      { name: "agentmemory", weight: 1, episodes: agentMemoryHits.map(agentMemoryHitToEpisode) },
+      { name: "vector_store", weight: 1, episodes: vectorHits.map(memoryVectorHitToEpisode) },
+    ),
+  };
+
+  const swarmvault: SwarmVaultContextResult = {
+    status:
+      swarmvaultHits.length > 0
+        ? "ok"
+        : process.env.AGENT_CONTEXT_SWARMVAULT_ENABLED === "true"
+          ? "empty"
+          : "disabled",
+    candidates: swarmvaultHits,
   };
 
   const nextAction = computeNextAction({
@@ -935,6 +1264,7 @@ export async function getAgentContext<TDb extends ContextDb>(
     relatedIdeas,
     activity,
     evidence,
+    swarmvault,
     nextAction,
     tiers: buildContextTiers({
       task,

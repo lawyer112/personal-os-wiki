@@ -396,6 +396,7 @@ export function buildIntakePayload({
     },
     wikiNotes: [
       {
+        title,
         frontmatter: {
           title,
           type: "project",
