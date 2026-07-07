@@ -1,6 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { ZodError, type ZodType } from "zod";
-import { configuredReadTokens, requestHasReadAccess } from "@/lib/auth";
+import {
+  configuredReadTokens,
+  isPersonalOsAuthDisabled,
+  requestHasReadAccess,
+} from "@/lib/auth";
 
 export async function readJson<T>(request: Request, schema: ZodType<T>) {
   let body: unknown;
@@ -28,6 +32,10 @@ export class HttpError extends Error {
 }
 
 export function requireWriteAccess(request: Request) {
+  if (isPersonalOsAuthDisabled()) {
+    return;
+  }
+
   const token = process.env.PERSONAL_OS_API_TOKEN;
 
   if (!token || token === "change-me") {
@@ -58,6 +66,10 @@ export function requireWriteAccess(request: Request) {
 }
 
 export function requireReadAccess(request: Request) {
+  if (isPersonalOsAuthDisabled()) {
+    return;
+  }
+
   const tokens = configuredReadTokens();
 
   if (tokens.length === 0) {

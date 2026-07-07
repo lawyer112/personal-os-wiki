@@ -19,16 +19,37 @@ vi.mock("@/lib/wiki-client", () => ({
     `http://wiki.local/note?path=${encodeURIComponent(path)}`,
 }));
 
+vi.mock("@/lib/memory-vector-store", () => ({
+  searchMemoryVectors: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock("@/lib/swarmvault-mcp-client", () => ({
+  searchSwarmVaultContext: vi.fn().mockResolvedValue([]),
+}));
+
+import { searchMemoryVectors } from "@/lib/memory-vector-store";
+import { searchSwarmVaultContext } from "@/lib/swarmvault-mcp-client";
+
+const mockedSearchMemoryVectors = vi.mocked(searchMemoryVectors);
+const mockedSearchSwarmVaultContext = vi.mocked(searchSwarmVaultContext);
 const mockedSearchAgentMemoryEpisodes = vi.mocked(searchAgentMemoryEpisodes);
 const mockedSearchWikiChunks = vi.mocked(searchWikiChunks);
 const mockedSearchWikiNotes = vi.mocked(searchWikiNotes);
 
+function resetMocks() {
+  mockedSearchAgentMemoryEpisodes.mockReset();
+  mockedSearchAgentMemoryEpisodes.mockResolvedValue([]);
+  mockedSearchMemoryVectors.mockReset();
+  mockedSearchMemoryVectors.mockResolvedValue([]);
+  mockedSearchSwarmVaultContext.mockReset();
+  mockedSearchSwarmVaultContext.mockResolvedValue([]);
+  mockedSearchWikiChunks.mockReset();
+  mockedSearchWikiNotes.mockReset();
+}
+
 describe("agent context harness", () => {
   beforeEach(() => {
-    mockedSearchAgentMemoryEpisodes.mockReset();
-    mockedSearchAgentMemoryEpisodes.mockResolvedValue([]);
-    mockedSearchWikiChunks.mockReset();
-    mockedSearchWikiNotes.mockReset();
+    resetMocks();
   });
 
   it("builds bounded search queries from a task without requiring model intelligence", () => {
@@ -568,5 +589,201 @@ describe("agent context harness", () => {
     expect(episodes.some((e) => e.type === "wiki")).toBe(true);
     expect(episodes.some((e) => e.type === "agent_run")).toBe(true);
     expect(episodes.some((e) => e.type === "task" && e.summary.includes("retry logic"))).toBe(true);
+  });
+
+  // ── vector recall integration tests ──────────────────────────────────────────
+
+  it("includes vector hits in evidence.episodes for query lookups (happy path)", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
+    mockedSearchMemoryVectors.mockResolvedValue([
+      {
+        id: "mv_1",
+        sourceType: "task",
+        sourceId: "task_vec_1",
+        title: "向量召回 PoC 设计",
+        body: "实现基于 cosine similarity 的 MemoryItem 检索，与 episode 混合排序后注入 context。",
+        projectId: "proj_vec",
+        similarity: 0.85,
+        createdAt: new Date("2026-07-01T10:00:00Z"),
+      },
+    ]);
+
+    const context = await getQueryAgentContext("向量召回 memory context");
+
+    expect(mockedSearchMemoryVectors).toHaveBeenCalledWith(
+      expect.stringContaining("向量召回"),
+      expect.objectContaining({ limit: 5, minSimilarity: 0.5 }),
+    );
+
+    const vecEpisode = context.evidence.episodes.find((e) => e.id === "vec:mv_1");
+    expect(vecEpisode).toBeDefined();
+    expect(vecEpisode).toMatchObject({
+      type: "agentmemory",
+      id: "vec:mv_1",
+      title: "向量召回 PoC 设计",
+      // similarity 0.85 → Math.round(0.85 * 60) = 51
+      relevanceScore: 51,
+      provenance: expect.objectContaining({
+        sourceType: "task",
+        sourceId: "task_vec_1",
+      }),
+    });
+  });
+
+  it("vector hit relevance score is computed correctly from similarity", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
+    const cases: Array<{ similarity: number; expectedScore: number }> = [
+      { similarity: 1.0, expectedScore: 60 },
+      { similarity: 0.5, expectedScore: 30 },
+      { similarity: 0.0, expectedScore: 0 },
+    ];
+
+    for (const { similarity, expectedScore } of cases) {
+      mockedSearchMemoryVectors.mockResolvedValue([
+        {
+          id: `mv_${similarity}`,
+          sourceType: "wiki",
+          sourceId: `wiki_${similarity}`,
+          title: `Hit at ${similarity}`,
+          body: "body",
+          projectId: null,
+          similarity,
+          createdAt: new Date("2026-07-01T00:00:00Z"),
+        },
+      ]);
+
+      const context = await getQueryAgentContext("test");
+      const ep = context.evidence.episodes.find((e) => e.id === `vec:mv_${similarity}`);
+      expect(ep?.relevanceScore).toBe(expectedScore);
+    }
+  });
+
+  it("vector hits are merged with agentmemory hits and deduped by type:id key", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
+    // Both a vector hit and an agentmemory hit with the same "id" but different type prefix
+    // They should be distinct episodes because vector uses "vec:<id>" prefix
+    mockedSearchAgentMemoryEpisodes.mockResolvedValue([
+      {
+        id: "shared_1",
+        title: "Agentmemory hit",
+        summary: "From agentmemory store",
+        relevanceScore: 30,
+        createdAt: "2026-07-01T10:00:00Z",
+        sessionId: "sess_1",
+        memoryType: "fact",
+      },
+    ]);
+    mockedSearchMemoryVectors.mockResolvedValue([
+      {
+        id: "vec_only",
+        sourceType: "inbox",
+        sourceId: "inbox_1",
+        title: "Vector-only hit",
+        body: "Local vector store result",
+        projectId: null,
+        similarity: 0.75,
+        createdAt: new Date("2026-07-01T09:00:00Z"),
+      },
+    ]);
+
+    const context = await getQueryAgentContext("mixed recall test");
+    const ids = context.evidence.episodes.map((e) => e.id);
+
+    expect(ids).toContain("shared_1");
+    expect(ids).toContain("vec:vec_only");
+  });
+
+  it("gracefully degrades when searchMemoryVectors throws (evidence still populated from other sources)", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({
+      status: "ok",
+      results: [
+        {
+          title: "Fallback wiki note",
+          path: "fallback/note.md",
+          snippet: "Wiki fallback when vector store is down.",
+        },
+      ],
+    });
+    mockedSearchMemoryVectors.mockRejectedValue(new Error("vector store unavailable"));
+
+    // Should not throw; vector errors are caught in agent-context.ts with .catch(() => [])
+    const context = await getQueryAgentContext("degraded vector store");
+
+    expect(context.evidence.episodes.some((e) => e.type === "wiki")).toBe(true);
+    const hasVecEpisode = context.evidence.episodes.some((e) =>
+      typeof e.id === "string" && e.id.startsWith("vec:"),
+    );
+    expect(hasVecEpisode).toBe(false);
+  });
+
+  it("includes vector hits in evidence for task-scoped getAgentContext", async () => {
+    mockedSearchWikiChunks.mockResolvedValue({ status: "ok", results: [] });
+    mockedSearchMemoryVectors.mockResolvedValue([
+      {
+        id: "mv_task_scope",
+        sourceType: "agent_run",
+        sourceId: "run_abc",
+        title: "过期过滤验证 AgentRun",
+        body: "AgentRun result: all expired items correctly excluded from recall.",
+        projectId: "project_1",
+        similarity: 0.72,
+        createdAt: new Date("2026-07-02T08:00:00Z"),
+      },
+    ]);
+
+    const task = {
+      id: "task_scoped",
+      title: "向量 + episode 混合召回验证",
+      description: "验证 /api/agent/context 向量路径",
+      status: "doing",
+      priority: "P0",
+      riskLevel: "low",
+      executionMode: "agent_allowed",
+      agentTags: [],
+      ownerAgent: null,
+      leaseUntil: null,
+      nextAction: "跑离线评测",
+      definitionOfDone: "向量命中正确注入 evidence.episodes；无 token 泄露",
+      projectId: "project_1",
+      sourceInboxItemId: null,
+      sourceAgentRunId: null,
+      project: { id: "project_1", name: "Personal OS / Wiki 知识库升级" },
+      sourceInboxItem: null,
+      sourceAgentRun: null,
+      wikiLinks: [],
+      contributions: [],
+      artifacts: [],
+      reviews: [],
+    };
+
+    const context = await getAgentContext(
+      {
+        task: {
+          findUnique: vi.fn().mockResolvedValue(task),
+          findMany: vi.fn().mockResolvedValue([]),
+        },
+        idea: { findMany: vi.fn().mockResolvedValue([]) },
+        activityLog: { findMany: vi.fn().mockResolvedValue([]) },
+      },
+      "task_scoped",
+    );
+
+    // Verify vector search was called with projectId scoping
+    expect(mockedSearchMemoryVectors).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ projectId: "project_1" }),
+    );
+
+    const vecEp = context.evidence.episodes.find((e) => e.id === "vec:mv_task_scope");
+    expect(vecEp).toBeDefined();
+    expect(vecEp).toMatchObject({
+      type: "agentmemory",
+      // similarity 0.72 → Math.round(0.72 * 60) = 43
+      relevanceScore: 43,
+      provenance: expect.objectContaining({
+        sourceType: "agent_run",
+        sourceId: "run_abc",
+      }),
+    });
   });
 });

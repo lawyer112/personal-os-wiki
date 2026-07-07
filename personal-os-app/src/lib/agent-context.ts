@@ -15,6 +15,15 @@ import {
   type WikiContextCandidate,
   type WikiNoteSummary,
 } from "@/lib/wiki-client";
+import {
+  searchMemoryVectors,
+  type MemoryVectorHit,
+} from "@/lib/memory-vector-store";
+import {
+  weightedRrfFuse,
+  DEFAULT_RRF_K,
+  type RrfSourceInput,
+} from "@/lib/rrf-fusion";
 
 type ContextDb = {
   task: unknown;
@@ -176,6 +185,10 @@ export type ContextEpisode = {
   };
   sourceUrl?: string;
   createdAt?: string;
+  /** Weighted RRF score after cross-source fusion (see rrf-fusion.ts). */
+  rrfScore?: number;
+  /** Names of retrieval sources that surfaced this episode, in fusion order. */
+  contributingSources?: string[];
 };
 
 export type AgentContextEvidence = {
@@ -923,22 +936,89 @@ function agentMemoryHitToEpisode(hit: AgentMemoryContextHit): ContextEpisode {
   };
 }
 
+function memoryVectorHitToEpisode(hit: MemoryVectorHit): ContextEpisode {
+  // Map similarity [0,1] → relevance score bucket (0–60)
+  const relevanceScore = Math.round(hit.similarity * 60);
+  const createdAt = hit.createdAt.toISOString();
+  
+  // Map sourceType from MemoryItem to ContextEpisode provenance type
+  const mapSourceType = (
+    t: string,
+  ): "agent_run" | "task" | "wiki" | "activity" | "agentmemory" => {
+    if (t === "agent_run") return "agent_run";
+    if (t === "task") return "task";
+    if (t === "wiki") return "wiki";
+    if (t === "activity") return "activity";
+    // Default inbox and unknown types to agentmemory
+    return "agentmemory";
+  };
+
+  return {
+    type: "agentmemory",
+    id: `vec:${hit.id}`,
+    title: hit.title,
+    summary: hit.body.slice(0, 200),
+    relevanceScore,
+    createdAt,
+    source: {
+      type: "agentmemory",
+      id: hit.sourceId,
+    },
+    provenance: {
+      sourceType: mapSourceType(hit.sourceType),
+      sourceId: hit.sourceId,
+      createdAt,
+    },
+  };
+}
+
+type EpisodeSourceGroup = {
+  /** Source name surfaced in ContextEpisode.contributingSources (Raven telemetry pattern). */
+  name: string;
+  /** Source reliability weight for weighted RRF. Curated/rule-based sources outrank imported ones. */
+  weight: number;
+  /** Already ranked (best first) episodes from this source. */
+  episodes: ContextEpisode[];
+};
+
+/**
+ * Fuse episodes from multiple retrieval sources (Wiki/rule-based recall,
+ * agentmemory, local vector store, ...) into a single ranked list using
+ * weighted RRF (see rrf-fusion.ts, adapted from Raven's SkillForgeRouter).
+ *
+ * Each source's per-source failure is expected to already be isolated
+ * upstream (callers pass `[]` for a failed source instead of throwing),
+ * so fusion never needs to special-case a missing source here.
+ */
+function combineEpisodesWeighted(...groups: EpisodeSourceGroup[]): ContextEpisode[] {
+  const rrfSources: RrfSourceInput<ContextEpisode>[] = groups.map((group) => ({
+    name: group.name,
+    weight: group.weight,
+    items: group.episodes.map((episode) => ({
+      key: `${episode.type}:${episode.id}`,
+      score: episode.relevanceScore,
+      item: episode,
+    })),
+  }));
+
+  const fused = weightedRrfFuse(rrfSources, { rrfK: DEFAULT_RRF_K });
+
+  return fused.slice(0, 8).map((result) => ({
+    ...result.item,
+    rrfScore: Math.round(result.rrfScore * 1000) / 1000,
+    contributingSources: result.contributingSources,
+  }));
+}
+
+/** @deprecated kept for direct-array callers; prefer combineEpisodesWeighted. */
 function combineEpisodes(...episodeGroups: ContextEpisode[][]) {
-  const episodesByKey = new Map<string, ContextEpisode>();
-
-  for (const group of episodeGroups) {
-    for (const episode of group) {
-      const key = `${episode.type}:${episode.id}`;
-      const existing = episodesByKey.get(key);
-      if (!existing || episode.relevanceScore > existing.relevanceScore) {
-        episodesByKey.set(key, episode);
-      }
-    }
-  }
-
-  return Array.from(episodesByKey.values())
-    .sort((a, b) => b.relevanceScore - a.relevanceScore)
-    .slice(0, 8);
+  return combineEpisodesWeighted(
+    ...episodeGroups.map((episodes, index) => ({
+      name: `group_${index}`,
+      weight: 1,
+      episodes,
+    })),
+  );
 }
 
 export async function searchWikiContext(
@@ -1014,21 +1094,23 @@ export async function searchWikiContextCandidates(queries: string[], limit = 8) 
 export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const searchQueries = [query.trim()].filter(Boolean);
   const fastQuery = buildFastWikiQuery(searchQueries);
-  const [wiki, queryTasks, globalActivity, agentMemoryHits, swarmvaultHits] =
+  const [wiki, queryTasks, globalActivity, agentMemoryHits, swarmvaultHits, vectorHits] =
     await Promise.all([
       searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
       getQueryHotTasks(db),
       getQueryActivity(db),
-      searchAgentMemoryEpisodes(fastQuery),
+      searchAgentMemoryEpisodes(fastQuery).catch(() => [] as AgentMemoryContextHit[]),
       searchSwarmVaultContext(fastQuery ?? query.trim()),
+      searchMemoryVectors(fastQuery ?? query.trim(), { limit: 5, minSimilarity: 0.5 }).catch(() => [] as MemoryVectorHit[]),
     ]);
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
   const evidence = {
-    episodes: combineEpisodes(
-      findEpisodes(query, searchQueries, wiki, globalActivity, null),
-      agentMemoryHits.map(agentMemoryHitToEpisode),
+    episodes: combineEpisodesWeighted(
+      { name: "rule_based", weight: 1.5, episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null) },
+      { name: "agentmemory", weight: 1, episodes: agentMemoryHits.map(agentMemoryHitToEpisode) },
+      { name: "vector_store", weight: 1, episodes: vectorHits.map(memoryVectorHitToEpisode) },
     ),
   };
 
@@ -1111,7 +1193,7 @@ export async function getAgentContext<TDb extends ContextDb>(
   if (task.sourceInboxItemId) {
     ideaFilters.push({ sourceInboxItemId: task.sourceInboxItemId });
   }
-  const [wiki, recentTasks, relatedIdeas, activity, agentMemoryHits, swarmvaultHits] =
+  const [wiki, recentTasks, relatedIdeas, activity, agentMemoryHits, swarmvaultHits, vectorHits] =
     await Promise.all([
       searchWikiContext(searchQueries, AGENT_CONTEXT_POLICY.maxWikiCandidates),
       taskDelegate.findMany({
@@ -1140,14 +1222,20 @@ export async function getAgentContext<TDb extends ContextDb>(
         orderBy: { createdAt: "desc" },
         take: 8,
       }),
-      searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)),
+      searchAgentMemoryEpisodes(buildFastWikiQuery(searchQueries)).catch(() => [] as AgentMemoryContextHit[]),
       searchSwarmVaultContext(buildFastWikiQuery(searchQueries) ?? task.title),
+      searchMemoryVectors(buildFastWikiQuery(searchQueries) ?? task.title, {
+        limit: 5,
+        projectId: task.projectId ?? undefined,
+        minSimilarity: 0.5,
+      }).catch(() => [] as MemoryVectorHit[]),
     ]);
 
   const evidence = {
-    episodes: combineEpisodes(
-      findEpisodes("", searchQueries, wiki, activity, task),
-      agentMemoryHits.map(agentMemoryHitToEpisode),
+    episodes: combineEpisodesWeighted(
+      { name: "rule_based", weight: 1.5, episodes: findEpisodes("", searchQueries, wiki, activity, task) },
+      { name: "agentmemory", weight: 1, episodes: agentMemoryHits.map(agentMemoryHitToEpisode) },
+      { name: "vector_store", weight: 1, episodes: vectorHits.map(memoryVectorHitToEpisode) },
     ),
   };
 

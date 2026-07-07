@@ -433,3 +433,29 @@ model DailyPlan {
 
   @@index([date, mode, createdAt])
 }
+
+/// Local vector memory store for hybrid episode recall PoC.
+/// Each row holds a text chunk and its embedding (Float[]) for cosine-similarity search.
+model MemoryItem {
+  id            String   @id @default(cuid())
+  /// Source type: task | activity | agent_run | wiki | inbox
+  sourceType    String
+  /// Source record id for provenance
+  sourceId      String
+  /// Human-readable title for display in context
+  title         String
+  /// Short summary / body used for retrieval
+  body          String
+  /// Optional project scope
+  projectId     String?
+  /// Embedding vector (dimension matches EMBEDDING_MODEL)
+  embedding     Float[]
+  /// Expire items after this date so stale vectors are skipped
+  expiresAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([sourceType, sourceId])
+  @@index([projectId, createdAt])
+  @@index([expiresAt])
+}

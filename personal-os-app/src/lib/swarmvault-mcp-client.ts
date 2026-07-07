@@ -83,7 +83,7 @@ async function callSwarmVaultMcp(
     });
 
     let stdout = "";
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined = undefined;
 
     const done = (err?: Error, result?: unknown) => {
       if (timer !== undefined) clearTimeout(timer);

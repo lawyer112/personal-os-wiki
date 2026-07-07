@@ -41,12 +41,14 @@ Open `http://localhost:3000`.
 
 ## Production
 
-Production writes require a real token. Do not deploy with `change-me`.
+Production reads and writes require real tokens by default. On a trusted private
+network, set `PERSONAL_OS_AUTH_DISABLED=true` to disable Personal OS API/page
+auth explicitly.
 
 ```bash
 cp .env.prod.example .env
-# edit PERSONAL_OS_API_TOKEN, PERSONAL_OS_READ_TOKEN, WIKI_READ_TOKEN,
-# WIKI_API_TOKEN, NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_WIKI_URL
+# edit PERSONAL_OS_API_TOKEN, PERSONAL_OS_READ_TOKEN, PERSONAL_OS_AUTH_DISABLED,
+# WIKI_READ_TOKEN, WIKI_API_TOKEN, NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_WIKI_URL
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
