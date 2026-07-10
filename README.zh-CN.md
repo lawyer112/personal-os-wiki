@@ -228,6 +228,33 @@ Windows 工作站推荐 WSL2 + Docker Desktop，见：[Windows Deployment Guide]
 
 决策说明见：[Vector Memory And Plan Decision](./docs/VECTOR_MEMORY_DECISION.md)。
 
+## 可验证的混合召回
+
+混合召回现在分成两条通道，不再要求一次模糊搜索同时承担“发现”和“必须引用”：
+
+- `GET /api/agent/context?q=...` 保留为向后兼容的探索式检索。
+- `POST /api/agent/context` 支持项目/领域范围、token 预算、`top_k`，以及失败即停的 `required_refs`。
+
+```json
+{
+  "query": "继续 Personal OS 召回评测",
+  "scope": { "projectName": "Personal OS", "sourceType": "agent-output" },
+  "required_refs": [
+    {
+      "memory_id": "wiki:vault/example-memory.md",
+      "version": 3,
+      "chunk_id": "结论"
+    }
+  ],
+  "top_k": 8,
+  "budget": { "tokens": 1800 }
+}
+```
+
+必须引用的证据会按 Wiki 路径或稳定 `memory_id` 精确读取，检查版本和状态，并排在模糊候选之前。记忆缺失、已撤回、已被替代或版本不一致时默认返回 `422`；只有调用方明确指定 `on_missing: "omit"` 才允许跳过。响应中的 `queryPlan` 与 `requiredRefs` 可用于审计本轮到底搜了什么、固定引用了什么。
+
+写回请优先使用 `npm run agent:intake -- ...`，或严格遵守当前 `source` 对象合同。统一脚本能兼容旧的字符串 `source`、打印不含敏感信息的字段错误，并在成功后做召回回查。新增的 `taskProposals` 默认进入 `review`；只有明确、低风险、有时长上限且主动 opt-in 的提案才会自动提升。
+
 ## 生态定位
 
 本项目接近 LLM Wiki、Obsidian RAG、Agent memory 和任务队列工具，但切口不是“再做一个记忆桶”，而是把知识变成可认领、可提交证据、可复核的 Agent 工作。

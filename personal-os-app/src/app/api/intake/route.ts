@@ -82,6 +82,29 @@ export async function POST(request: Request) {
       );
     }
 
+    const taskProposals = [];
+    for (const proposal of input.taskProposals) {
+      const { autoPromote, ...proposalInput } = proposal;
+      const canAutoPromote =
+        autoPromote &&
+        proposal.riskLevel === "low" &&
+        proposal.estimateMinutes !== undefined &&
+        proposal.estimateMinutes <= 120 &&
+        proposal.agentTags.length > 0;
+      taskProposals.push(
+        await createTask(prisma, {
+          ...proposalInput,
+          status: canAutoPromote ? "todo" : "review",
+          executionMode: canAutoPromote ? "agent_allowed" : "agent_suggested",
+          agentTags: Array.from(new Set(["task-proposal", ...proposal.agentTags])),
+          projectId: proposal.projectId ?? project?.id,
+          sourceInboxItemId: proposal.sourceInboxItemId ?? inbox.id,
+          sourceAgentRunId: proposal.sourceAgentRunId ?? run.id,
+          wikiLinks: [...sharedWikiLinks, ...proposal.wikiLinks],
+        }),
+      );
+    }
+
     const ideas = [];
     for (const ideaInput of input.ideas) {
       ideas.push(
@@ -137,6 +160,9 @@ export async function POST(request: Request) {
       input.agent.outputSummary ??
       ([
           tasks.length ? `创建 ${tasks.length} 个任务` : null,
+          taskProposals.length
+            ? `生成 ${taskProposals.length} 个受控任务提案`
+            : null,
           wikiResults.filter((result) => result.ok).length
             ? `写入 ${wikiResults.filter((result) => result.ok).length} 篇知识笔记`
             : null,
@@ -158,6 +184,7 @@ export async function POST(request: Request) {
       error:
         wikiErrors.length > 0 &&
         tasks.length === 0 &&
+        taskProposals.length === 0 &&
         notes.length === 0 &&
         ideas.length === 0 &&
         projectEvents.length === 0
@@ -183,7 +210,7 @@ export async function POST(request: Request) {
                 url: result.url,
               })),
           ],
-          tasks: tasks.map((task) => ({
+          tasks: [...tasks, ...taskProposals].map((task) => ({
             id: task.id,
             title: task.title,
             status: task.status,
@@ -208,6 +235,7 @@ export async function POST(request: Request) {
         agentRunId: run.id,
         project,
         tasks,
+        taskProposals,
         ideas,
         notes,
         projectEvents,

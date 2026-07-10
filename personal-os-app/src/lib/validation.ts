@@ -60,6 +60,46 @@ export const inboxCreateSchema = z.object({
   createdBy: z.string().min(1).default("hermes"),
 });
 
+export const agentContextRequiredRefSchema = z
+  .object({
+    memory_id: z.string().min(1).optional(),
+    memoryId: z.string().min(1).optional(),
+    path: z.string().min(1).optional(),
+    title: z.string().min(1).optional(),
+    version: z.number().int().positive().optional(),
+    chunk_id: z.string().min(1).optional(),
+    chunkId: z.string().min(1).optional(),
+    on_missing: z.enum(["fail", "omit"]).default("fail"),
+    onMissing: z.enum(["fail", "omit"]).optional(),
+  })
+  .refine(
+    (input) => Boolean(input.memory_id ?? input.memoryId ?? input.path ?? input.title),
+    { message: "required ref needs memory_id, path, or title" },
+  );
+
+export const agentContextRequestSchema = z.object({
+  query: z.string().min(1),
+  scope: z
+    .object({
+      projectId: z.string().min(1).optional(),
+      projectName: z.string().min(1).optional(),
+      domain: z.string().min(1).optional(),
+      sourceType: z.string().min(1).optional(),
+      validAt: z.string().datetime().optional(),
+    })
+    .default({}),
+  required_refs: z.array(agentContextRequiredRefSchema).default([]),
+  requiredRefs: z.array(agentContextRequiredRefSchema).default([]),
+  top_k: z.number().int().positive().max(50).optional(),
+  topK: z.number().int().positive().max(50).optional(),
+  budget: z
+    .union([
+      z.number().int().positive(),
+      z.object({ tokens: z.number().int().positive() }),
+    ])
+    .optional(),
+});
+
 export const captureCreateSchema = z
   .object({
     content: optionalFormString(12000),
@@ -318,6 +358,18 @@ export const intakeSchema = z.object({
     sourceInboxItemId: z.string().min(1).optional(),
     sourceAgentRunId: z.string().min(1).optional(),
     createdBy: z.string().min(1).default("hermes"),
+  })).default([]),
+  taskProposals: z.array(taskCreateSchema.omit({
+    status: true,
+    executionMode: true,
+    sourceInboxItemId: true,
+    sourceAgentRunId: true,
+    createdBy: true,
+  }).extend({
+    sourceInboxItemId: z.string().min(1).optional(),
+    sourceAgentRunId: z.string().min(1).optional(),
+    createdBy: z.string().min(1).default("hermes"),
+    autoPromote: z.boolean().default(false),
   })).default([]),
   ideas: z.array(ideaCreateSchema.omit({
     sourceInboxItemId: true,

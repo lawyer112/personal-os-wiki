@@ -314,6 +314,33 @@ knowledge bases. It should prove better recall through a benchmark before it
 becomes a paid dependency. Read the decision note:
 [`docs/VECTOR_MEMORY_DECISION.md`](./docs/VECTOR_MEMORY_DECISION.md).
 
+## Reliable Hybrid Recall
+
+Hybrid recall now has two lanes instead of asking one fuzzy search to do every job:
+
+- `GET /api/agent/context?q=...` remains the backward-compatible discovery path.
+- `POST /api/agent/context` accepts project/domain scope, a token budget, `top_k`, and fail-closed `required_refs` for evidence an agent must reuse.
+
+```json
+{
+  "query": "continue the Personal OS recall evaluation",
+  "scope": { "projectName": "Personal OS", "sourceType": "agent-output" },
+  "required_refs": [
+    {
+      "memory_id": "wiki:vault/example-memory.md",
+      "version": 3,
+      "chunk_id": "conclusion"
+    }
+  ],
+  "top_k": 8,
+  "budget": { "tokens": 1800 }
+}
+```
+
+Required evidence is read by exact Wiki path or stable `memory_id`, checked for version/status, and placed before fuzzy candidates. Missing, retracted, superseded, or version-mismatched evidence returns `422` unless the caller explicitly chooses `on_missing: "omit"`. The response includes `queryPlan` and `requiredRefs` so agents can audit what was searched and what was pinned.
+
+For writes, use `npm run agent:intake -- ...` or the exact current `source` object contract. The helper upgrades legacy string sources, prints non-sensitive validation paths, and can verify recall after a successful write. New `taskProposals` enter `review`; only explicit, bounded, low-risk proposals can opt into automatic promotion.
+
 ## Ecosystem Position
 
 This repository sits near LLM Wiki, Obsidian RAG, agent memory, and task-queue
