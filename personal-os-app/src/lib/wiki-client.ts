@@ -23,6 +23,14 @@ export type WikiContextCandidate = WikiNoteSummary & {
   score: number;
 };
 
+export type WikiNoteDocument = {
+  content: string;
+  frontmatter: Record<string, unknown>;
+  path: string;
+  raw_body?: string;
+  title: string;
+};
+
 type WikiNotesResponse = {
   notes?: WikiNoteSummary[];
 };
@@ -203,3 +211,16 @@ export async function searchWikiNotes(query: string, pageSize = 8) {
 
   return result.body?.notes ?? [];
 }
+
+export const readWikiNote = async (path: string) => {
+  const params = new URLSearchParams({ path });
+  const result = await wikiClient.read<WikiNoteDocument>(
+    `/api/note?${params.toString()}`,
+  );
+
+  if (!result.ok || !result.body) {
+    throw new Error(`Personal Wiki note read failed: ${result.status}`);
+  }
+
+  return result.body;
+};

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { wikiOpenUrl } from "@/lib/app-config";
+import { MobileNavigation } from "@/components/mobile_navigation";
 
 type NavItem = {
   href: string;
@@ -16,6 +17,7 @@ const navGroups: { title: string; items: NavItem[] }[] = [
       { href: "/inbox", label: "输入箱" },
       { href: "/ideas", label: "想法池" },
       { href: "/projects", label: "项目" },
+      { href: "/content-workbench", label: "内容工坊" },
       { href: "/wiki", label: "知识库" },
     ],
   },
@@ -30,8 +32,9 @@ const navGroups: { title: string; items: NavItem[] }[] = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#eef1f4] text-zinc-950">
-      <div className="grid min-h-screen grid-cols-[232px_minmax(0,1fr)]">
-        <aside className="border-r border-zinc-200 bg-white px-4 py-5">
+      <MobileNavigation groups={navGroups} />
+      <div className="grid min-h-[calc(100vh-3.5rem)] grid-cols-1 md:min-h-screen md:grid-cols-[232px_minmax(0,1fr)]">
+        <aside className="hidden border-r border-zinc-200 bg-white px-4 py-5 md:block">
           <Link href="/" className="block rounded-lg px-3 py-2">
             <div className="text-lg font-bold tracking-tight">Personal OS</div>
             <div className="mt-1 text-xs leading-5 text-zinc-500">
@@ -73,7 +76,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </aside>
 
-        <main className="min-w-0 px-6 py-5">{children}</main>
+        <main className="min-w-0 overflow-x-hidden px-4 py-4 sm:px-5 md:px-6 md:py-5">
+          {children}
+        </main>
       </div>
     </div>
   );

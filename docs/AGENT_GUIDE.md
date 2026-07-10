@@ -150,6 +150,29 @@ Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 Use this context packet first. Do not scrape the whole vault unless the context
 packet is insufficient and the task requires deeper research.
 
+When a task or previous result names evidence that must be reused, call the structured endpoint and pin it instead of hoping fuzzy retrieval returns it:
+
+```http
+POST /api/agent/context
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
+
+{
+  "query": "continue the current task",
+  "scope": { "projectName": "Personal OS" },
+  "required_refs": [
+    {
+      "memory_id": "wiki:vault/example-memory.md",
+      "version": 1,
+      "chunk_id": "conclusion"
+    }
+  ]
+}
+```
+
+Treat a `422` as a memory contract failure: find the replacement/correction or ask for review. Do not silently substitute a similarly titled note. Superseded and retracted notes remain available for audit but are not valid required evidence.
+
+For normal intake from this repository, prefer `npm run agent:intake -- --base-url <url> --payload <file> --verify-query <query>`. Never send `source` as a string: it is an object and must contain `sourceType` and `rawText`. Convert uncertain actions into `taskProposals`; they enter review unless the caller explicitly requests a bounded low-risk promotion.
+
 ### Heartbeat
 
 ```http

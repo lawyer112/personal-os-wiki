@@ -69,6 +69,7 @@ Default operating loop:
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/claim
 3. Load task context:
    GET {PERSONAL_OS_BASE_URL}/api/agent/context?taskId={taskId}
+   If a task, decision, or prior output names evidence that must be reused, call POST /api/agent/context with scope and required_refs. A missing, superseded, retracted, or version-mismatched required ref is a blocker; never silently replace it with a fuzzy hit.
 4. Execute only the claimed task.
 5. Heartbeat if the work takes time:
    POST {PERSONAL_OS_BASE_URL}/api/tasks/{taskId}/heartbeat
@@ -88,6 +89,12 @@ Every task you create or update must include:
 - riskLevel,
 - requiredOutput,
 - evidence or source links when available.
+
+Intake contract rules:
+- Never send source as a string. POST /api/intake requires source.sourceType and source.rawText.
+- Prefer the repository helper scripts/personal_os_intake.mjs when available; it normalizes the payload and reports validation issue paths without printing credentials.
+- Preserve the user's raw voice/text input in source.rawText; put cleaned summaries, knowledge notes, task proposals, and project events in their own fields.
+- Use taskProposals for uncertain extracted work. Default it to review; promote only explicit, bounded, low-risk, agent-tagged work.
 
 Bad task wording:
 - "optimize the project"

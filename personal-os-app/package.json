@@ -18,6 +18,7 @@
     "agent:run-next": "node scripts/agent-run-next.mjs",
     "agent:heartbeat": "node scripts/agent-heartbeat.mjs",
     "agent:writeback": "node scripts/agent-writeback.mjs",
+    "agent:intake": "node scripts/personal_os_intake.mjs",
     "agent:mark-task": "node scripts/agent-mark-task.mjs",
     "agent:smoke": "node scripts/agent-protocol-smoke.mjs"
   },

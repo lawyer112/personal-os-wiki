@@ -113,6 +113,29 @@ curl -H "Authorization: Bearer $PERSONAL_OS_READ_TOKEN" \
   "http://localhost:3000/api/agent/context?taskId=<task-id>"
 ```
 
+Run scoped recall and pin evidence that must be reused:
+
+```bash
+curl -X POST http://localhost:3000/api/agent/context \
+  -H "Authorization: Bearer $PERSONAL_OS_READ_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "continue the recall evaluation",
+    "scope": { "projectName": "Personal OS" },
+    "required_refs": [
+      {
+        "memory_id": "wiki:vault/example-memory.md",
+        "version": 1,
+        "chunk_id": "conclusion"
+      }
+    ],
+    "top_k": 8,
+    "budget": { "tokens": 1800 }
+  }'
+```
+
+Required refs fail closed with `422` when the note, version, active status, or Markdown heading cannot be resolved. Use `on_missing: "omit"` only when omission is safe.
+
 Submit evidence:
 
 ```bash
@@ -162,6 +185,7 @@ curl -X POST http://localhost:3000/api/planner/today \
 | Register agent profile | `/api/agent-profiles` | `GET/POST` | read for GET, write for POST |
 | Agent polls work | `/api/agent-inbox` | `GET` | `PERSONAL_OS_API_TOKEN` |
 | Agent loads context | `/api/agent/context?taskId=...` | `GET` | `PERSONAL_OS_READ_TOKEN` |
+| Agent runs scoped/required recall | `/api/agent/context` | `POST` | `PERSONAL_OS_READ_TOKEN` |
 | Agent claims work | `/api/tasks/:id/claim` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Agent heartbeats | `/api/tasks/:id/heartbeat` | `POST` | `PERSONAL_OS_API_TOKEN` |
 | Agent contributes progress | `/api/tasks/:id/contributions` | `POST` | `PERSONAL_OS_API_TOKEN` |

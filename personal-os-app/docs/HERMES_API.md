@@ -62,6 +62,8 @@ Failure interpretation:
   valid Inbox/Task payload.
 - `201`: the write succeeded.
 
+Do not send `source` as a string. The current intake contract requires an object with at least `source.sourceType` and `source.rawText`. When running from this repository, prefer `npm run agent:intake -- --base-url <url> --payload <file> --verify-query <query>` so validation failures report safe field paths and successful writes are read back.
+
 ## System Boundary
 
 Do not treat Personal OS as the replacement for Personal Wiki.
@@ -172,6 +174,33 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 
 The response includes the created Inbox item, Agent run id, ideas, tasks, Wiki write
 results, project events, and optional Telegram payload with direct object links.
+
+Use `taskProposals` for actions extracted from incomplete or ambiguous input. They are stored as `review` + `agent_suggested`. Automatic promotion requires explicit `autoPromote: true`, low risk, an estimate no greater than 120 minutes, and at least one agent tag.
+
+## Structured Hybrid Recall
+
+Use keyword GET for discovery and POST when scope or exact prior evidence matters:
+
+```http
+POST /api/agent/context
+Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
+
+{
+  "query": "继续外置记忆召回评测",
+  "scope": { "projectName": "Personal OS", "sourceType": "agent-output" },
+  "required_refs": [
+    {
+      "memory_id": "wiki:vault/example-memory.md",
+      "version": 1,
+      "chunk_id": "结论"
+    }
+  ],
+  "top_k": 8,
+  "budget": { "tokens": 1800 }
+}
+```
+
+Required refs are exact and fail closed with `422` for missing, retracted, superseded, version-mismatched, or missing-heading evidence. The response includes `queryPlan` and `requiredRefs` for retrieval auditing.
 
 The lower-level endpoints below are still available for maintenance, testing, or
 manual recovery.

@@ -1,0 +1,371 @@
+{
+  "version": "v0",
+  "status": "stable-baseline",
+  "owner": "Personal OS / Wiki knowledge upgrade",
+  "generatedFromTaskId": "cmr8iu2mv03bh0jp8d102fxkb",
+  "lifecycle": {
+    "stabilityTiers": {
+      "stable": {
+        "description": "Fields and request parameters that agents may depend on for routine automation.",
+        "changePolicy": "backward-compatible additive changes only; removal, rename, or semantic narrowing requires deprecation."
+      },
+      "experimental": {
+        "description": "Fields that are useful but still allowed to change while the feature matures.",
+        "changePolicy": "additive changes are preferred; breaking changes must keep stable fields intact and update contract tests."
+      },
+      "internal": {
+        "description": "Diagnostics or implementation details for local debugging only.",
+        "changePolicy": "may change without compatibility guarantees and must not be required by worker prompts."
+      },
+      "deprecated": {
+        "description": "Fields retained for compatibility but no longer recommended.",
+        "changePolicy": "may be removed only after the deprecation policy is satisfied."
+      }
+    },
+    "deprecationPolicy": {
+      "minimumNoticeDays": 14,
+      "removalRequires": [
+        "contract test update",
+        "migration note",
+        "Personal OS writeback"
+      ]
+    }
+  },
+  "surfaces": {
+    "GET /api/agent/context": {
+      "purpose": "Return task or keyword context for Codex, Hermes, and fallback workers.",
+      "request": {
+        "query": {
+          "stable": [
+            "taskId",
+            "q"
+          ],
+          "experimental": [
+            "budget"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "response": {
+        "body": {
+          "stable": [
+            "ok",
+            "context"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        },
+        "context": {
+          "stable": [
+            "generatedAt",
+            "task",
+            "searchQueries",
+            "wiki",
+            "recentTasks",
+            "relatedIdeas",
+            "activity",
+            "evidence",
+            "nextAction",
+            "tiers",
+            "policy"
+          ],
+          "experimental": [
+            "swarmvault",
+            "queryPlan",
+            "requiredRefs",
+            "memoryItems",
+            "tokenBudget",
+            "budget",
+            "cited",
+            "omissions"
+          ],
+          "internal": [
+            "debug"
+          ],
+          "deprecated": []
+        }
+      },
+      "compatTests": [
+        "tests/routes/agent-context-route.test.ts",
+        "tests/services/agent-context.test.ts",
+        "tests/services/api_stability_contract.test.ts"
+      ]
+    },
+    "POST /api/agent/context": {
+      "purpose": "Return scoped hybrid recall with optional fail-closed exact Wiki references.",
+      "request": {
+        "body": {
+          "stable": [
+            "query"
+          ],
+          "experimental": [
+            "scope",
+            "required_refs",
+            "top_k",
+            "budget"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "response": {
+        "body": {
+          "stable": [
+            "ok",
+            "context"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "compatTests": [
+        "tests/routes/agent_context_post.test.ts",
+        "tests/services/agent-context.test.ts",
+        "tests/services/api_stability_contract.test.ts"
+      ]
+    },
+    "POST /api/intake": {
+      "purpose": "Record agent, user, project, task, idea, note, notification, and Wiki write intents.",
+      "request": {
+        "body": {
+          "stable": [
+            "source",
+            "agent",
+            "project",
+            "wikiNotes",
+            "tasks",
+            "ideas",
+            "projectEvents",
+            "notes",
+            "notification"
+          ],
+          "experimental": [
+            "taskProposals"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "response": {
+        "body": {
+          "stable": [
+            "ok",
+            "inbox",
+            "agentRunId",
+            "project",
+            "tasks",
+            "ideas",
+            "notes",
+            "projectEvents",
+            "wiki",
+            "wiki_write_status",
+            "notification"
+          ],
+          "experimental": [
+            "taskProposals"
+          ],
+          "internal": [],
+          "deprecated": []
+        },
+        "wiki_write_status": {
+          "stable": [
+            "status",
+            "requested",
+            "succeeded",
+            "failed",
+            "errors"
+          ],
+          "experimental": [
+            "queued",
+            "job_ids"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "compatTests": [
+        "tests/routes/intake-wiki-fallback.test.ts",
+        "tests/services/api_stability_contract.test.ts"
+      ]
+    },
+    "GET /api/wiki-write-jobs": {
+      "purpose": "Expose non-sensitive Wiki write diagnostics derived from AgentRun classifications.",
+      "request": {
+        "query": {
+          "stable": [
+            "taskId",
+            "q",
+            "limit"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "response": {
+        "body": {
+          "stable": [
+            "ok",
+            "count",
+            "filters",
+            "statusCounts",
+            "jobs"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        },
+        "job": {
+          "stable": [
+            "id",
+            "runId",
+            "status",
+            "requested",
+            "queued",
+            "succeeded",
+            "failed",
+            "taskIds",
+            "model",
+            "sourcePlatform",
+            "summary",
+            "startedAt",
+            "completedAt"
+          ],
+          "experimental": [
+            "review",
+            "candidate"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "compatTests": [
+        "tests/routes/wiki-write-jobs.test.ts",
+        "tests/services/api_stability_contract.test.ts"
+      ]
+    },
+    "scripts/agent-writeback.mjs": {
+      "purpose": "Submit or contribute worker results to Personal OS without approving the task.",
+      "request": {
+        "cliFlags": {
+          "stable": [
+            "--agent-id",
+            "--task-id",
+            "--summary",
+            "--evidence",
+            "--artifact",
+            "--next",
+            "--contribute",
+            "--submit",
+            "--dod-met",
+            "--dod-not-met"
+          ],
+          "experimental": [
+            "--archive-context-pack",
+            "--archive-target-task-id",
+            "--archive-run-dir",
+            "--archive-out",
+            "--archive-project-name"
+          ],
+          "internal": [
+            "--token",
+            "--base-url"
+          ],
+          "deprecated": []
+        },
+        "contributeBody": {
+          "stable": [
+            "agentId",
+            "summary",
+            "evidenceLinks",
+            "artifactUrls",
+            "nextRecommendation"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        },
+        "submitBody": {
+          "stable": [
+            "agentId",
+            "summary",
+            "evidenceLinks",
+            "artifactUrls",
+            "nextRecommendation",
+            "resultType",
+            "definitionOfDoneMet",
+            "needsHumanDecision"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "response": {
+        "body": {
+          "stable": [
+            "ok",
+            "mode",
+            "taskId",
+            "result"
+          ],
+          "experimental": [
+            "archive"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "compatTests": [
+        "tests/services/agent_writeback.test.ts",
+        "tests/services/api_stability_contract.test.ts"
+      ]
+    },
+    "Personal Wiki frontmatter": {
+      "purpose": "Metadata contract for direct Wiki ingest and Personal OS wikiNotes writes.",
+      "request": {
+        "frontmatter": {
+          "stable": [
+            "title",
+            "type",
+            "created_by",
+            "source_type",
+            "tags",
+            "created_at",
+            "task_id",
+            "agent_id",
+            "project"
+          ],
+          "experimental": [
+            "last_reviewed",
+            "migration"
+          ],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "response": {
+        "ingestResult": {
+          "stable": [
+            "ok",
+            "title",
+            "status",
+            "note_path",
+            "url",
+            "error"
+          ],
+          "experimental": [],
+          "internal": [],
+          "deprecated": []
+        }
+      },
+      "compatTests": [
+        "tests/services/wiki-ingest.test.ts",
+        "tests/services/api_stability_contract.test.ts"
+      ]
+    }
+  }
+}

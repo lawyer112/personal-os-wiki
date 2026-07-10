@@ -197,6 +197,76 @@ describe("POST /api/intake Wiki fallback", () => {
     );
   });
 
+  it("creates task proposals in review and only promotes explicit bounded low-risk work", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "os-write-token-0000");
+
+    const { POST, mocks } = await loadIntakeRoute();
+    mocks.createTask.mockImplementation(async (_db, input) => ({
+      id: `task_${mocks.createTask.mock.calls.length}`,
+      title: input.title,
+      status: input.status,
+      executionMode: input.executionMode,
+    }));
+
+    const response = await POST(
+      intakeRequest(
+        intakeBody({
+          tasks: [],
+          taskProposals: [
+            {
+              title: "先审阅的模糊提案",
+              nextAction: "确认范围。",
+              definitionOfDone: "用户确认范围。",
+              agentTags: ["personal-os"],
+            },
+            {
+              title: "可自动提升的明确修复",
+              nextAction: "运行已知测试。",
+              definitionOfDone: "测试通过。",
+              riskLevel: "low",
+              estimateMinutes: 30,
+              agentTags: ["personal-os"],
+              autoPromote: true,
+            },
+          ],
+        }),
+      ),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(201);
+    expect(body.taskProposals).toEqual([
+      expect.objectContaining({
+        title: "先审阅的模糊提案",
+        status: "review",
+        executionMode: "agent_suggested",
+      }),
+      expect.objectContaining({
+        title: "可自动提升的明确修复",
+        status: "todo",
+        executionMode: "agent_allowed",
+      }),
+    ]);
+    expect(mocks.createTask).toHaveBeenNthCalledWith(
+      1,
+      expect.anything(),
+      expect.objectContaining({
+        status: "review",
+        executionMode: "agent_suggested",
+        agentTags: ["task-proposal", "personal-os"],
+      }),
+    );
+    expect(mocks.createTask).toHaveBeenNthCalledWith(
+      2,
+      expect.anything(),
+      expect.objectContaining({
+        status: "todo",
+        executionMode: "agent_allowed",
+      }),
+    );
+  });
+
   it("links successful Wiki writes to every task created by the same intake", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("PERSONAL_OS_API_TOKEN", "os-write-token-0000");
