@@ -1,0 +1,18 @@
+{
+  "sourceId": "sha256-verification-after-copy-e66b4a07",
+  "title": "sha256 verification after copy",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/deploy-hash-verify.log",
+  "repoRelativePath": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/deploy-hash-verify.log",
+  "storedPath": "raw/sources/sha256-verification-after-copy-e66b4a07.log",
+  "extractedTextPath": "state/extracts/sha256-verification-after-copy-e66b4a07.md",
+  "extractedMetadataPath": "state/extracts/sha256-verification-after-copy-e66b4a07.json",
+  "extractionHash": "32cb20b326e1037c5316d00e1827aa83db2fbfa69bc1c2405054afafb51249ef",
+  "mimeType": "text/plain",
+  "contentHash": "e66b4a07e256eb179948faac04eadf4b600f189afb5e84cd9f019d55cadcaf36",
+  "semanticHash": "e66b4a07e256eb179948faac04eadf4b600f189afb5e84cd9f019d55cadcaf36",
+  "createdAt": "2026-07-04T19:02:33.909Z",
+  "updatedAt": "2026-07-04T19:02:33.909Z"
+}

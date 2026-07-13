@@ -1,0 +1,19 @@
+{
+  "sourceId": "raw-manifest-ingest-test-ad835d36",
+  "title": "raw-manifest-ingest.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/raw-manifest-ingest.test.ts",
+  "repoRelativePath": "tests/services/raw-manifest-ingest.test.ts",
+  "storedPath": "raw/sources/raw-manifest-ingest-test-ad835d36.ts",
+  "extractedTextPath": "state/extracts/raw-manifest-ingest-test-ad835d36.md",
+  "extractedMetadataPath": "state/extracts/raw-manifest-ingest-test-ad835d36.json",
+  "extractionHash": "a9648d100f0c09d4cbadda9703eb593d31d722a5112f759c6303c806dfdccbe7",
+  "mimeType": "text/typescript",
+  "contentHash": "ad835d367d463986ad4730eaebebb9cbd6a4c16fdf2b1a9f7f2c8efddb6a5d1b",
+  "semanticHash": "ad835d367d463986ad4730eaebebb9cbd6a4c16fdf2b1a9f7f2c8efddb6a5d1b",
+  "createdAt": "2026-07-04T19:03:02.339Z",
+  "updatedAt": "2026-07-04T19:03:02.339Z"
+}

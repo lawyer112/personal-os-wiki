@@ -1,0 +1,77 @@
+## build
+COMMAND: npm run build
+START: 2026-06-23T21:12:21+08:00
+
+> personal-os-app@0.1.1 build
+> next build
+
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/xingqiwu/package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * /Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/package-lock.json
+
+▲ Next.js 16.2.7 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1719ms
+  Running TypeScript ...
+  Finished TypeScript in 1996ms ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/3) ...
+✓ Generating static pages using 9 workers (3/3) in 56ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /activity
+├ ƒ /api/activity
+├ ƒ /api/agent-inbox
+├ ƒ /api/agent-profiles
+├ ƒ /api/agent/context
+├ ƒ /api/agent/runs
+├ ƒ /api/agent/runs/[id]/complete
+├ ƒ /api/ideas
+├ ƒ /api/ideas/[id]
+├ ƒ /api/ideas/[id]/promote
+├ ƒ /api/inbox/items
+├ ƒ /api/intake
+├ ƒ /api/notes
+├ ƒ /api/notifications/telegram
+├ ƒ /api/planner/snapshots
+├ ƒ /api/planner/today
+├ ƒ /api/projects
+├ ƒ /api/projects/[id]/events
+├ ƒ /api/reminders/today
+├ ƒ /api/tasks
+├ ƒ /api/tasks/[id]
+├ ƒ /api/tasks/[id]/claim
+├ ƒ /api/tasks/[id]/complete
+├ ƒ /api/tasks/[id]/contributions
+├ ƒ /api/tasks/[id]/heartbeat
+├ ƒ /api/tasks/[id]/review
+├ ƒ /api/tasks/[id]/submit
+├ ƒ /api/today
+├ ƒ /api/wiki/open
+├ ƒ /auth/read
+├ ƒ /capture
+├ ƒ /ideas
+├ ƒ /inbox
+├ ƒ /notes
+├ ƒ /notes/[id]
+├ ƒ /projects
+├ ƒ /projects/[id]
+├ ƒ /tasks
+├ ƒ /tasks/[id]
+└ ƒ /wiki
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+END: 2026-06-23T21:12:27+08:00
+EXIT_CODE: 0

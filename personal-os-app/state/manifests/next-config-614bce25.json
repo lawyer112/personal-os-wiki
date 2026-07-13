@@ -1,0 +1,19 @@
+{
+  "sourceId": "next-config-614bce25",
+  "title": "next.config",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/next.config.ts",
+  "repoRelativePath": "next.config.ts",
+  "storedPath": "raw/sources/next-config-614bce25.ts",
+  "extractedTextPath": "state/extracts/next-config-614bce25.md",
+  "extractedMetadataPath": "state/extracts/next-config-614bce25.json",
+  "extractionHash": "2247b35925c7fd1200addd54f157ed4dbd2125c086519791b6f2f605ac7e42e4",
+  "mimeType": "text/typescript",
+  "contentHash": "614bce25b089c3f19b1e17a6346c74b858034040154c6621e7d35303004767cc",
+  "semanticHash": "614bce25b089c3f19b1e17a6346c74b858034040154c6621e7d35303004767cc",
+  "createdAt": "2026-07-04T19:02:49.648Z",
+  "updatedAt": "2026-07-04T19:02:49.648Z"
+}

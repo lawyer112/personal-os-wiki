@@ -1,0 +1,18 @@
+{
+  "sourceId": "skip-source-md-d64b16b1",
+  "title": "skip-source.md",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/fixtures/raw-manifest-ingest/skip-source.md",
+  "repoRelativePath": "tests/fixtures/raw-manifest-ingest/skip-source.md",
+  "storedPath": "raw/sources/skip-source-md-d64b16b1.md",
+  "extractedTextPath": "state/extracts/skip-source-md-d64b16b1.md",
+  "extractedMetadataPath": "state/extracts/skip-source-md-d64b16b1.json",
+  "extractionHash": "63b3812567958a65aff93f2f630fea20afb92b53868f43829c8a9ffd7f98d315",
+  "mimeType": "text/markdown",
+  "contentHash": "d64b16b17becd6b723175e2ff1b5af835fa2bfba3d8018d2a167cfda6174f384",
+  "semanticHash": "888b6d3ff5096b2c683e263557bc6088883b8bee8f5f525cfd2b54c6e484a3a7",
+  "createdAt": "2026-07-04T19:03:00.216Z",
+  "updatedAt": "2026-07-04T19:03:00.216Z"
+}

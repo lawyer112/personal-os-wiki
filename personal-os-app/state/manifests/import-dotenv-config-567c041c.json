@@ -1,0 +1,18 @@
+{
+  "sourceId": "import-dotenv-config-567c041c",
+  "title": "-import \"dotenv/config\";",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr1kaxne00hc0ipolmjyzdss/diff.patch",
+  "repoRelativePath": ".agent-runs/cmr1kaxne00hc0ipolmjyzdss/diff.patch",
+  "storedPath": "raw/sources/import-dotenv-config-567c041c.patch",
+  "extractedTextPath": "state/extracts/import-dotenv-config-567c041c.md",
+  "extractedMetadataPath": "state/extracts/import-dotenv-config-567c041c.json",
+  "extractionHash": "cba59b60fe54bc0cce0b2ef8964cf077ea70b062a1bc3436f19cfbfe228d9990",
+  "mimeType": "application/octet-stream",
+  "contentHash": "567c041c73481939aadb7675ca02cf465162a584d9bd0d442a166116b4c93b14",
+  "semanticHash": "567c041c73481939aadb7675ca02cf465162a584d9bd0d442a166116b4c93b14",
+  "createdAt": "2026-07-04T19:02:41.653Z",
+  "updatedAt": "2026-07-04T19:02:41.653Z"
+}

@@ -1,0 +1,61 @@
+{
+  "source": {
+    "sourceType": "agent-output",
+    "sourcePlatform": "cron/context-pack",
+    "rawText": "AgentRun context pack archived for cmqq29yi9000c0jmjcejamrel by cmqqxals8000f0jpj7dgqj12m.",
+    "createdBy": "hermes"
+  },
+  "agent": {
+    "model": "hermes-context-pack-archiver",
+    "classification": {
+      "kind": "agent-run-context-pack",
+      "task_id": "cmqqxals8000f0jpj7dgqj12m",
+      "archived_task_id": "cmqq29yi9000c0jmjcejamrel"
+    },
+    "reasoningSummary": "将 .agent-runs 目录中的 gate、worker-result、diff、测试、部署和残余风险压缩成可检索 Wiki context pack。",
+    "outputSummary": "已生成 cmqq29yi9000c0jmjcejamrel 的 AgentRun context pack。"
+  },
+  "project": {
+    "name": "Personal OS / Wiki 知识库升级",
+    "status": "active",
+    "priority": "P0",
+    "currentFocus": "Personal OS / Wiki 自驱闭环生产化"
+  },
+  "wikiNotes": [
+    {
+      "frontmatter": {
+        "title": "AgentRun context pack cmqq29yi9000c0jmjcejamrel 2026-06-23",
+        "type": "project",
+        "created_by": "hermes:worker",
+        "source_type": "agent-output",
+        "tags": [
+          "personal-os",
+          "personal-wiki",
+          "agent-run",
+          "context-pack",
+          "evidence"
+        ],
+        "created_at": "2026-06-23T19:51:42.108Z",
+        "task_id": "cmqq29yi9000c0jmjcejamrel",
+        "agent_id": "obsidianmanager1",
+        "project": "Personal OS / Wiki 知识库升级",
+        "last_reviewed": "2026-06-23"
+      },
+      "metadata": {
+        "task_id": "cmqq29yi9000c0jmjcejamrel",
+        "archive_task_id": "cmqqxals8000f0jpj7dgqj12m",
+        "agent_id": "obsidianmanager1",
+        "project": "Personal OS / Wiki 知识库升级"
+      },
+      "content": "# AgentRun Context Pack cmqq29yi9000c0jmjcejamrel\n## 结论\n- task_id: cmqq29yi9000c0jmjcejamrel\n- archive_task_id: cmqqxals8000f0jpj7dgqj12m\n- task_title: 产出 Personal OS/Wiki 优化审计 v0\n- task_status: done\n- project: Personal OS / Wiki 知识库升级\n- gate: pass\n- run_dir: .agent-runs/cmqq29yi9000c0jmjcejamrel\n- generated_at: 2026-06-23T19:51:42.108Z\n## 字段映射\n| Wiki 字段 | 来源 | 处理规则 |\n| --- | --- | --- |\n| task_id | Personal OS /api/agent/context.task.id | 作为本 context pack 的主索引 |\n| gate | .agent-runs/<task-id>/gate.json | 摘要 status、verifier、deployment、writeback |\n| diff | worker-result.diff_stat + diff.patch | 记录变更文件、diff stat 和截断后的安全摘录 |\n| 测试 | gate.verifier.commands + worker-result.commands | 保留命令、exit_code、证据路径 |\n| 部署 | gate.deployment + production_regression | 保留 backup、rollback、生产回归状态 |\n| 残余风险 | worker-result.risks / blocked_reason | 无风险时显式写“未发现新增残余风险” |\n| artifact index | run_dir 文件清单 | 只记录相对路径与大小，不写入 token/密钥 |\n## Gate\n- status: pass\n- synthesizer_allowed: true\n- definition_of_done_met: unknown\n## Diff\n- path: diff.patch\n- stat:\n```text\n未提供 diff_stat；查看 diff.patch 或 artifact index。\n```\n- changed_files:\n- 未记录 changed_files。需要查看 diff.patch。\n\n### diff excerpt\n\n```diff\n# No code diff created by task cmqq29yi9000c0jmjcejamrel.\n# This audit run generated reports and evidence under .agent-runs only.\n# Pre-existing repository dirty state was recorded in artifacts/git-status-before.log.\n\n personal-os-app/src/app/api/agent/context/route.ts |   2 +-\n personal-os-app/src/lib/agent-context.ts           | 305 ++++++++++++++++++++-\n personal-os-app/src/lib/validation.ts              |  50 +++-\n personal-os-app/src/lib/wiki-ingest.ts             | 145 ++++++++--\n .../tests/routes/intake-wiki-fallback.test.ts      | 102 +++++++\n .../tests/services/agent-context.test.ts           | 111 ++++++++\n personal-os-app/tests/services/tasks.test.ts       |  10 +\n personal-os-app/tests/services/wiki-ingest.test.ts |  91 +++++-\n 8 files changed, 780 insertions(+), 36 deletions(-)\n\n\n```\n\n## 测试 / 验证\n\n- 未发现命令记录；该 pack 标记为 evidence incomplete。\n\n## 部署 / 生产回归\n\n- deployment_status: not_applicable\n- backup_dir: 未记录\n- rollback_path: 未记录\n- production_regression_status: 未记录\n\n## 写回\n\n- writeback_status: 未记录\n- task_status_after_writeback: done\n- wiki_links:\n- 暂无已关联 Wiki 链接。\n\n## 残余风险\n\n- 未发现新增残余风险；保留源 run_dir 与备份路径用于回溯。\n\n## Artifact index\n\n- artifacts/build.log (2182 bytes)\n- artifacts/git-status-after.log (553 bytes)\n- artifacts/git-status-before.log (639 bytes)\n- artifacts/github-radar.log (185 bytes)\n- artifacts/health-checks.json (10446 bytes)\n- artifacts/intake-writeback-result.json (2356 bytes)\n- artifacts/lint.log (149 bytes)\n- artifacts/npm-test.log (2675 bytes)\n- artifacts/post-writeback-context.json (88723 bytes)\n- artifacts/production-regression.json (952 bytes)\n- artifacts/secret-scan.json (117 bytes)\n- artifacts/task-review-result.json (15007 bytes)\n- artifacts/task-submit-result.json (18825 bytes)\n- artifacts/tsc-noemit.log (117 bytes)\n- audit-report.md (8755 bytes)\n- diff.patch (802 bytes)\n- gate.json (1850 bytes)\n- github-radar/adoption-tasks.json (4388 bytes)\n- github-radar/evidence.md (8702 bytes)\n- github-radar/intake-payload.json (15438 bytes)\n- github-radar/repos.json (15203 bytes)\n- worker-result.json (7156 bytes)\n"
+    }
+  ],
+  "projectEvents": [
+    {
+      "projectName": "Personal OS / Wiki 知识库升级",
+      "title": "AgentRun context pack archived cmqq29yi9000c0jmjcejamrel",
+      "body": "已将 cmqq29yi9000c0jmjcejamrel 的 gate、diff、测试、部署、残余风险写成 Wiki context pack。归档任务：cmqqxals8000f0jpj7dgqj12m。",
+      "eventType": "agent-context-pack"
+    }
+  ]
+}

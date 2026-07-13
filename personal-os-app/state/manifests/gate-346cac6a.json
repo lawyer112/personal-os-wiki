@@ -1,0 +1,24 @@
+{
+  "sourceId": "gate-346cac6a",
+  "title": "gate",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-cron/gate.json",
+  "repoRelativePath": ".agent-runs/github-radar-cron/gate.json",
+  "storedPath": "raw/sources/gate-346cac6a.json",
+  "extractedTextPath": "state/extracts/gate-346cac6a.md",
+  "extractedMetadataPath": "state/extracts/gate-346cac6a.json",
+  "extractionHash": "bacafa25b1704ecf565011d1ae60052da69346deb06a265e3aac94a7e02fd0ec",
+  "mimeType": "application/json",
+  "contentHash": "346cac6a6d3a1aa77ace1906ad999a1b1ab7af92bb9435eb592236a53bc09c04",
+  "semanticHash": "346cac6a6d3a1aa77ace1906ad999a1b1ab7af92bb9435eb592236a53bc09c04",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "4",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:46.514Z",
+  "updatedAt": "2026-07-04T19:02:46.514Z"
+}

@@ -1,0 +1,130 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "agentcontextpanel-8e6237a9",
+  "sourceHash": "8e6237a9a90ebeb782f677c4a7131b45ee20ea7e96d7544ba4da2be07be8b9f7",
+  "semanticHash": "8e6237a9a90ebeb782f677c4a7131b45ee20ea7e96d7544ba4da2be07be8b9f7",
+  "extractionHash": "8a0cb7657cb1d5d6b03746c112c113f8fc09eca53a4ff8ed16d88a248f4d1f02",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "AgentContextPanel",
+  "summary": "AgentContextPanel is a tsx module, defining 2 top-level symbol(s), exporting 1 symbol(s), depending on 4 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:agentcontextpanel-8e6237a9:1",
+      "text": "AgentContextPanel exports AgentContextPanel.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentcontextpanel-8e6237a9"
+    },
+    {
+      "id": "claim:agentcontextpanel-8e6237a9:2",
+      "text": "AgentContextPanel defines AgentContextPanel, formatSourceType.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentcontextpanel-8e6237a9"
+    },
+    {
+      "id": "claim:agentcontextpanel-8e6237a9:3",
+      "text": "AgentContextPanel imports next/link, react, @/lib/agent-context, @/lib/task-labels.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentcontextpanel-8e6237a9"
+    }
+  ],
+  "questions": [
+    "Which downstream pages should explain how AgentContextPanel exports are consumed?",
+    "Why does AgentContextPanel depend on next/link?",
+    "What broader responsibility does AgentContextPanel serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:agentcontextpanel-8e6237a9",
+    "language": "tsx",
+    "moduleName": "src/components/AgentContextPanel",
+    "imports": [
+      {
+        "specifier": "next/link",
+        "importedSymbols": [],
+        "defaultImport": "Link",
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "react",
+        "importedSymbols": [
+          "useEffect",
+          "useState"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/agent-context",
+        "importedSymbols": [
+          "AgentContextPack"
+        ],
+        "isTypeOnly": true,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/task-labels",
+        "importedSymbols": [
+          "formatIdeaStatus"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "next/link",
+      "react",
+      "@/lib/agent-context",
+      "@/lib/task-labels"
+    ],
+    "symbols": [
+      {
+        "id": "symbol:agentcontextpanel-8e6237a9:agentcontextpanel.function",
+        "name": "AgentContextPanel",
+        "kind": "function",
+        "signature": "export function AgentContextPanel({ context, taskId, }: { context?: AgentContextPack | null; taskId?: string; })",
+        "exported": true,
+        "calls": [
+          "useState",
+          "useEffect",
+          "formatIdeaStatus",
+          "formatSourceType"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 8,
+        "endLine": 204
+      },
+      {
+        "id": "symbol:agentcontextpanel-8e6237a9:formatsourcetype.function",
+        "name": "formatSourceType",
+        "kind": "function",
+        "signature": "function formatSourceType(sourceType: string)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 206,
+        "endLine": 216
+      }
+    ],
+    "exports": [
+      "AgentContextPanel"
+    ],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.590Z"
+}

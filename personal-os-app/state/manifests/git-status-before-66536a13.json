@@ -1,0 +1,18 @@
+{
+  "sourceId": "git-status-before-66536a13",
+  "title": "git status before",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/git-status-before.log",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/git-status-before.log",
+  "storedPath": "raw/sources/git-status-before-66536a13.log",
+  "extractedTextPath": "state/extracts/git-status-before-66536a13.md",
+  "extractedMetadataPath": "state/extracts/git-status-before-66536a13.json",
+  "extractionHash": "79f12b4449635648ae7102da65ddaa6e45401facdc313dcf0e5aa8aef7282067",
+  "mimeType": "text/plain",
+  "contentHash": "66536a13b5839f5c4028090ef16774a803184e37e4235a2c67f28cb4a5ed1ca9",
+  "semanticHash": "66536a13b5839f5c4028090ef16774a803184e37e4235a2c67f28cb4a5ed1ca9",
+  "createdAt": "2026-07-04T19:02:30.303Z",
+  "updatedAt": "2026-07-04T19:02:30.303Z"
+}

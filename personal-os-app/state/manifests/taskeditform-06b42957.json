@@ -1,0 +1,19 @@
+{
+  "sourceId": "taskeditform-06b42957",
+  "title": "TaskEditForm",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/components/TaskEditForm.tsx",
+  "repoRelativePath": "src/components/TaskEditForm.tsx",
+  "storedPath": "raw/sources/taskeditform-06b42957.tsx",
+  "extractedTextPath": "state/extracts/taskeditform-06b42957.md",
+  "extractedMetadataPath": "state/extracts/taskeditform-06b42957.json",
+  "extractionHash": "ee995c0cb2ea9c52d012e87ae26b9ce20c0d80dcad456c53d28f88188dfedb87",
+  "mimeType": "text/typescript",
+  "contentHash": "06b42957ae55327dfc23c07dc7e068069f44197cbdc5f6ac326ed2fb4974635f",
+  "semanticHash": "06b42957ae55327dfc23c07dc7e068069f44197cbdc5f6ac326ed2fb4974635f",
+  "createdAt": "2026-07-04T19:02:56.772Z",
+  "updatedAt": "2026-07-04T19:02:56.772Z"
+}

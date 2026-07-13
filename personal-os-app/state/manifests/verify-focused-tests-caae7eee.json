@@ -1,0 +1,18 @@
+{
+  "sourceId": "verify-focused-tests-caae7eee",
+  "title": "verify-focused-tests",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-focused-tests.log",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-focused-tests.log",
+  "storedPath": "raw/sources/verify-focused-tests-caae7eee.log",
+  "extractedTextPath": "state/extracts/verify-focused-tests-caae7eee.md",
+  "extractedMetadataPath": "state/extracts/verify-focused-tests-caae7eee.json",
+  "extractionHash": "ed0cdd4b896cc2461114978a29f651caddfaabfac12be6c72075d2d2aefb806a",
+  "mimeType": "text/plain",
+  "contentHash": "caae7eeed639cc1027c45058eedc7e6f9b5c8d981c3bcba45834f4eee1d3d009",
+  "semanticHash": "caae7eeed639cc1027c45058eedc7e6f9b5c8d981c3bcba45834f4eee1d3d009",
+  "createdAt": "2026-07-04T19:02:32.691Z",
+  "updatedAt": "2026-07-04T19:02:32.691Z"
+}

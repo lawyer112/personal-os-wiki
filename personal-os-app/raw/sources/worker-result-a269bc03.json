@@ -1,0 +1,108 @@
+{
+  "task_id": "cmqqfl6rk00090jn58kastmq9",
+  "agent_id": "obsidianmanager1",
+  "status": "blocked_on_deployment",
+  "started_at": "2026-06-23T11:09:00.921888+00:00",
+  "ended_at": "2026-06-23T11:22:12.460317+00:00",
+  "summary": "Implemented AgentRun context pack archiver, added tests, fixed taskUpdateSchema partial PATCH default regression, ran sample dry-run on cmqqb0d7h00050jnsh6q221l1, ran real intake on cmqqfl6hp00070jn5bgoym7dx, and verified the Personal Wiki note contains task_id/gate/diff/tests/deployment/residual risks. Local verification passed; 6.37 deploy is blocked because this cron runtime lacks /data release tree, SSH access, and Docker daemon.",
+  "changed_files": [
+    "personal-os-app/scripts/archive-agent-run-context-pack.mjs",
+    "personal-os-app/tests/services/agent-run-context-pack.test.ts",
+    "personal-os-app/src/lib/validation.ts",
+    "personal-os-app/tests/services/tasks.test.ts"
+  ],
+  "diff_path": "diff.patch",
+  "diff_stat": ".../scripts/archive-agent-run-context-pack.mjs     | 524 +++++++++++++++++++++\n personal-os-app/src/lib/validation.ts              |  50 +-\n .../tests/services/agent-run-context-pack.test.ts  | 113 +++++\n personal-os-app/tests/services/tasks.test.ts       |  10 +\n 4 files changed, 690 insertions(+), 7 deletions(-)",
+  "commands": [
+    {
+      "cmd": "node --check scripts/archive-agent-run-context-pack.mjs",
+      "exit_code": 0,
+      "evidence": "artifacts/node-check-context-pack.log"
+    },
+    {
+      "cmd": "npm test -- tests/services/agent-run-context-pack.test.ts tests/services/tasks.test.ts",
+      "exit_code": 0,
+      "evidence": "artifacts/test-context-pack-tasks.log"
+    },
+    {
+      "cmd": "npm test",
+      "exit_code": 0,
+      "evidence": "artifacts/npm-test.log"
+    },
+    {
+      "cmd": "npx tsc --noEmit",
+      "exit_code": 0,
+      "evidence": "artifacts/tsc.log"
+    },
+    {
+      "cmd": "npm run lint",
+      "exit_code": 0,
+      "evidence": "artifacts/lint.log"
+    },
+    {
+      "cmd": "npm run build",
+      "exit_code": 0,
+      "evidence": "artifacts/build.log"
+    },
+    {
+      "cmd": "node scripts/archive-agent-run-context-pack.mjs --task-id=cmqqb0d7h00050jnsh6q221l1 --archive-task-id=cmqqfl6rk00090jn58kastmq9 --no-intake",
+      "exit_code": 0,
+      "evidence": "artifacts/context-pack-sample-run.log"
+    },
+    {
+      "cmd": "node scripts/archive-agent-run-context-pack.mjs --task-id=cmqqfl6hp00070jn5bgoym7dx --archive-task-id=cmqqfl6rk00090jn58kastmq9 --intake",
+      "exit_code": 0,
+      "evidence": "artifacts/context-pack-run.log"
+    },
+    {
+      "cmd": "Personal Wiki /api/note fetch verifies task_id/gate/diff/tests/deploy/risk",
+      "exit_code": 0,
+      "evidence": "artifacts/wiki-note-fetch.json"
+    },
+    {
+      "cmd": "Production health/context/wiki regression",
+      "exit_code": 0,
+      "evidence": "artifacts/production-regression.json"
+    },
+    {
+      "cmd": "Deployment prerequisite check for /data, SSH 192.168.6.37, docker",
+      "exit_code": 1,
+      "evidence": "artifacts/deployment-prereq.log"
+    }
+  ],
+  "context_pack": {
+    "sample_task_id": "cmqqb0d7h00050jnsh6q221l1",
+    "sample_result": "artifacts/context-pack-sample-cmqqb0d7h00050jnsh6q221l1/context-pack-result.json",
+    "archived_task_id": "cmqqfl6hp00070jn5bgoym7dx",
+    "intake_result": "artifacts/context-pack-cmqqfl6hp00070jn5bgoym7dx/context-pack-intake-result.json",
+    "wiki_note_path": "vault/30_projects/Personal-OS-Wiki-知识库升级/AgentRun-context-pack-cmqqfl6hp00070jn5bgoym7dx-2026-06-23.md",
+    "wiki_write_status": {
+      "status": "ok",
+      "requested": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "errors": []
+    }
+  },
+  "risks": [
+    "6.37 deployment blocked: /data release tree is not mounted, SSH to xingqiwu@192.168.6.37 fails with publickey/password denial, and local Docker daemon is unavailable.",
+    "Worktree has unrelated pre-existing uncommitted files from other tasks; diff.patch includes only the four current-task files, but deployment must copy only verified files.",
+    "A PATCH with only agentTags exposed a production taskUpdateSchema default bug and temporarily reset this task priority/executionMode; the task was repaired to P1/agent_allowed and the schema regression test now covers it."
+  ],
+  "blocked_reason": "Missing deployment authority/surface for 6.37 from this cron runtime.",
+  "writeback": {
+    "wiki_note_created": true,
+    "personal_os_intake_status": "ok",
+    "task_submission_status": "review",
+    "submit_result": "submit-result.json",
+    "definitionOfDoneMet": false,
+    "needsHumanDecision": true
+  },
+  "deployment": {
+    "status": "blocked",
+    "evidence": "artifacts/deployment-prereq.log",
+    "required_backup_dir": "/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/<timestamp>",
+    "copied_files": [],
+    "rollback_path": null
+  }
+}

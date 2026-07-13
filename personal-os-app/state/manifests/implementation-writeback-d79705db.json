@@ -1,0 +1,24 @@
+{
+  "sourceId": "implementation-writeback-d79705db",
+  "title": "implementation-writeback",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-20260623/implementation-writeback.json",
+  "repoRelativePath": ".agent-runs/github-radar-20260623/implementation-writeback.json",
+  "storedPath": "raw/sources/implementation-writeback-d79705db.json",
+  "extractedTextPath": "state/extracts/implementation-writeback-d79705db.md",
+  "extractedMetadataPath": "state/extracts/implementation-writeback-d79705db.json",
+  "extractionHash": "c3516f9de7a6ebfb5c8baf821bab72ac8bc4b56a31129c2b53a80556f47f6cf2",
+  "mimeType": "application/json",
+  "contentHash": "d79705dbde16e78f1ca8e1e9971b7b6c3cf6e5155cdffa27c243bc0009c05748",
+  "semanticHash": "d79705dbde16e78f1ca8e1e9971b7b6c3cf6e5155cdffa27c243bc0009c05748",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "9"
+  },
+  "createdAt": "2026-07-04T19:02:43.725Z",
+  "updatedAt": "2026-07-04T19:02:43.725Z"
+}

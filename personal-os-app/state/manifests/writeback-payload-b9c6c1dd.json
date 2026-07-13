@@ -1,0 +1,24 @@
+{
+  "sourceId": "writeback-payload-b9c6c1dd",
+  "title": "writeback-payload",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/writeback-payload.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/writeback-payload.json",
+  "storedPath": "raw/sources/writeback-payload-b9c6c1dd.json",
+  "extractedTextPath": "state/extracts/writeback-payload-b9c6c1dd.md",
+  "extractedMetadataPath": "state/extracts/writeback-payload-b9c6c1dd.json",
+  "extractionHash": "ab72814d1eada130225fe2c922e8f560e308feede0f6fd61540986588e20922d",
+  "mimeType": "application/json",
+  "contentHash": "b9c6c1dd01050c01a2e66f4d2dd2ebd5967b0fe247f884497bd1a3338e766b75",
+  "semanticHash": "b9c6c1dd01050c01a2e66f4d2dd2ebd5967b0fe247f884497bd1a3338e766b75",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "8",
+    "nested_depth": "5"
+  },
+  "createdAt": "2026-07-04T19:02:31.656Z",
+  "updatedAt": "2026-07-04T19:02:31.656Z"
+}

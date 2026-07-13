@@ -1,0 +1,19 @@
+{
+  "sourceId": "agent-tasks-test-ed38f9c1",
+  "title": "agent-tasks.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/agent-tasks.test.ts",
+  "repoRelativePath": "tests/services/agent-tasks.test.ts",
+  "storedPath": "raw/sources/agent-tasks-test-ed38f9c1.ts",
+  "extractedTextPath": "state/extracts/agent-tasks-test-ed38f9c1.md",
+  "extractedMetadataPath": "state/extracts/agent-tasks-test-ed38f9c1.json",
+  "extractionHash": "c4a76b677845a3553377d9e7c9982fc1d3ad4922312eeedf662b9b949687ad43",
+  "mimeType": "text/typescript",
+  "contentHash": "ed38f9c144b40a715baab8a9975581ef9483618d25b0197f625bccf9f75e4ceb",
+  "semanticHash": "ed38f9c144b40a715baab8a9975581ef9483618d25b0197f625bccf9f75e4ceb",
+  "createdAt": "2026-07-04T19:03:01.218Z",
+  "updatedAt": "2026-07-04T19:03:01.218Z"
+}

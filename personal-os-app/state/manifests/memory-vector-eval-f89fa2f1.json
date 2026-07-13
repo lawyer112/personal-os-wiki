@@ -1,0 +1,19 @@
+{
+  "sourceId": "memory-vector-eval-f89fa2f1",
+  "title": "memory-vector-eval",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/scripts/memory-vector-eval.mts",
+  "repoRelativePath": "scripts/memory-vector-eval.mts",
+  "storedPath": "raw/sources/memory-vector-eval-f89fa2f1.mts",
+  "extractedTextPath": "state/extracts/memory-vector-eval-f89fa2f1.md",
+  "extractedMetadataPath": "state/extracts/memory-vector-eval-f89fa2f1.json",
+  "extractionHash": "7b6561ce2bb7ef8978ee6e465253624c61638f77fdba419e163a05bb5a0a5ed4",
+  "mimeType": "text/typescript",
+  "contentHash": "f89fa2f19fdb1134f1e7f413aff6c2d019378629a9b22204e1d17b4f134c6ff2",
+  "semanticHash": "f89fa2f19fdb1134f1e7f413aff6c2d019378629a9b22204e1d17b4f134c6ff2",
+  "createdAt": "2026-07-04T19:02:51.807Z",
+  "updatedAt": "2026-07-04T19:02:51.807Z"
+}

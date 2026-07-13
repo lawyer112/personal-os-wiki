@@ -1,0 +1,124 @@
+{
+  "complete": {
+    "status": 200,
+    "body": {
+      "ok": true,
+      "task": {
+        "id": "cmqqfl6ge00050jn5l2cdt228",
+        "title": "实现 GitHub 知识雷达写回流水线 v0",
+        "description": "把 GitHub 检索结果从“链接列表”升级为可追溯资产：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写入 Wiki + Agent 可执行任务。对象是 GitHub 雷达输出；动作是脚本化检索、评分、写回；产物是可复跑脚本和一条 Wiki 记录。",
+        "status": "done",
+        "priority": "P0",
+        "riskLevel": "low",
+        "executionMode": "agent_allowed",
+        "agentTags": [
+          "personal-os",
+          "github-radar",
+          "agent-self-improvement"
+        ],
+        "ownerAgent": null,
+        "leaseUntil": null,
+        "lastHeartbeatAt": null,
+        "requiredOutput": "personal-os-app/scripts/github-radar-intake.mjs 或等价脚本；.agent-runs/<run-id>/repos.json、evidence.md、adoption-tasks.json；一次真实 /api/intake 写回记录。",
+        "nextAction": "编写脚本：按固定查询检索 GitHub repo，抓 README，按适配度/新鲜度/可执行性评分，生成 evidence.md 和 tasks payload。",
+        "definitionOfDone": "运行脚本后能在 120 分钟内完成一次 GitHub 雷达：至少 5 个 repo、1 条 Wiki note、至少 2 个 agent_allowed 任务；日志不含 token；npm test/tsc/lint 或脚本级测试通过。",
+        "dueDate": null,
+        "estimateMinutes": 120,
+        "createdBy": "hermes",
+        "createdAt": "2026-06-23T09:17:33.806Z",
+        "updatedAt": "2026-06-23T09:27:27.654Z",
+        "completedAt": "2026-06-23T09:27:27.654Z",
+        "submittedAt": null,
+        "projectId": "cmqq290nm00040jmj9jwa98ya",
+        "sourceInboxItemId": "cmqqfl5em00000jn5p7wmb0gd",
+        "sourceAgentRunId": "cmqqfl5ye00020jn5zg0mimeb",
+        "project": {
+          "id": "cmqq290nm00040jmj9jwa98ya",
+          "name": "Personal OS / Wiki 知识库升级",
+          "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+          "status": "active",
+          "priority": "P0",
+          "currentFocus": "GitHub 外部方案转成 Agent 自驱执行闭环",
+          "createdAt": "2026-06-23T03:04:11.410Z",
+          "updatedAt": "2026-06-23T09:23:45.645Z"
+        },
+        "sourceInboxItem": {
+          "id": "cmqqfl5em00000jn5p7wmb0gd",
+          "sourceType": "agent-output",
+          "sourcePlatform": "telegram",
+          "sourceMessageId": null,
+          "rawText": "Classic 指出 Hermes 没有主动去 GitHub 找同类项目、没有把外部方案转成执行改进。已即时运行 GitHub 雷达并生成可执行改进任务。",
+          "sourceUrl": null,
+          "attachments": [],
+          "status": "processed",
+          "createdBy": "hermes",
+          "receivedAt": "2026-06-23T09:17:32.446Z",
+          "updatedAt": "2026-06-23T09:17:34.759Z"
+        },
+        "sourceAgentRun": {
+          "id": "cmqqfl5ye00020jn5zg0mimeb",
+          "inboxItemId": "cmqqfl5em00000jn5p7wmb0gd",
+          "model": "hermes-gpt-5.5",
+          "status": "completed",
+          "classification": {
+            "kind": "github-radar",
+            "owner": "agent",
+            "repos": [
+              "swarmclawai/swarmvault",
+              "topoteretes/cognee",
+              "adoresever/graph-memory",
+              "mnemon-dev/mnemon",
+              "willynikes2/knowledge-base-server",
+              "neo4j-labs/agent-memory",
+              "0xK3vin/MegaMemory",
+              "Tencent/WeKnora"
+            ],
+            "wiki_write_status": {
+              "errors": [
+                {
+                  "error": "frontmatter-parse-error",
+                  "title": "2026-06-23 GitHub 知识雷达：Personal OS / Wiki 自驱改进候选"
+                }
+              ],
+              "failed": 1,
+              "status": "failed",
+              "requested": 1,
+              "succeeded": 0
+            }
+          },
+          "reasoningSummary": "检索 GitHub 上 Personal OS / Wiki / agent memory / RAG / Obsidian sync 相关项目，抽取可吸收设计，并转成 Personal OS Agent 可执行任务。",
+          "outputSummary": "已检索 8 个相关项目，沉淀 1 条 Wiki 记录，创建 4 个 Agent 可执行任务。",
+          "error": null,
+          "startedAt": "2026-06-23T09:17:33.158Z",
+          "completedAt": "2026-06-23T09:17:34.623Z"
+        },
+        "wikiLinks": [],
+        "claims": [],
+        "contributions": [],
+        "artifacts": [],
+        "runs": [],
+        "agentActionLogs": [],
+        "reviews": []
+      }
+    }
+  },
+  "intake_status": 201,
+  "intake_ok": true,
+  "wiki_write_status": {
+    "status": "ok",
+    "requested": 1,
+    "succeeded": 1,
+    "failed": 0,
+    "errors": []
+  },
+  "inbox_id": "cmqqfxwrj001z0jn5mf6ok9ct",
+  "agentRunId": "cmqqfxws400210jn5nu6kvxna",
+  "wiki": [
+    {
+      "ok": true,
+      "title": "2026-06-23 GitHub 雷达写回流水线 v0 已落地",
+      "status": "created",
+      "url": "http://192.168.6.37:3100/api/wiki/open?next=%2Fhttp%3A%2F%2F192.168.6.37%3A3422%2Fnote%3Fpath%3D30_projects%252FPersonal-OS-Wiki-%25E7%259F%25A5%25E8%25AF%2586%25E5%25BA%2593%25E5%258D%2587%25E7%25BA%25A7%252F2026-06-23-GitHub-%25E9%259B%25B7%25E8%25BE%25BE%25E5%2586%2599%25E5%259B%259E%25E6%25B5%2581%25E6%25B0%25B4%25E7%25BA%25BF-v0-%25E5%25B7%25B2%25E8%2590%25BD%25E5%259C%25B0.md"
+    }
+  ]
+}

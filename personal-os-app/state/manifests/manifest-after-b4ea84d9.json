@@ -1,0 +1,24 @@
+{
+  "sourceId": "manifest-after-b4ea84d9",
+  "title": "manifest.after",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/manifest.after.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/manifest.after.json",
+  "storedPath": "raw/sources/manifest-after-b4ea84d9.json",
+  "extractedTextPath": "state/extracts/manifest-after-b4ea84d9.md",
+  "extractedMetadataPath": "state/extracts/manifest-after-b4ea84d9.json",
+  "extractionHash": "940d5a2328c4c5b562fddaa3030dca7122197e4d854348bdd2a79eda799a6718",
+  "mimeType": "application/json",
+  "contentHash": "b4ea84d904d1b9a2d1623629e2fef6db7f10d190d7453b75b4211844af669f90",
+  "semanticHash": "b4ea84d904d1b9a2d1623629e2fef6db7f10d190d7453b75b4211844af669f90",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "5",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:31.206Z",
+  "updatedAt": "2026-07-04T19:02:31.206Z"
+}

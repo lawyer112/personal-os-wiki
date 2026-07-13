@@ -1,0 +1,24 @@
+{
+  "sourceId": "gate-594817c1",
+  "title": "gate",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqxals8000f0jpj7dgqj12m/gate.json",
+  "repoRelativePath": ".agent-runs/cmqqxals8000f0jpj7dgqj12m/gate.json",
+  "storedPath": "raw/sources/gate-594817c1.json",
+  "extractedTextPath": "state/extracts/gate-594817c1.md",
+  "extractedMetadataPath": "state/extracts/gate-594817c1.json",
+  "extractionHash": "0d6c6f3ad26ac9cb51132062e8aeaf91bc6c19f44a8158af513e5905d0896cae",
+  "mimeType": "application/json",
+  "contentHash": "594817c15f31510164d70c895fda34cc14a4e2a750c2448ac01f4023387c839a",
+  "semanticHash": "594817c15f31510164d70c895fda34cc14a4e2a750c2448ac01f4023387c839a",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "6",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:37.257Z",
+  "updatedAt": "2026-07-04T19:02:37.257Z"
+}

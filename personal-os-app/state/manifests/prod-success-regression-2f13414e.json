@@ -1,0 +1,18 @@
+{
+  "sourceId": "prod-success-regression-2f13414e",
+  "title": "prod-success-regression",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfucnt001t0jn5vd3wcn3u/logs/prod-success-regression.log",
+  "repoRelativePath": ".agent-runs/cmqqfucnt001t0jn5vd3wcn3u/logs/prod-success-regression.log",
+  "storedPath": "raw/sources/prod-success-regression-2f13414e.log",
+  "extractedTextPath": "state/extracts/prod-success-regression-2f13414e.md",
+  "extractedMetadataPath": "state/extracts/prod-success-regression-2f13414e.json",
+  "extractionHash": "82d2decbb6cbacb702bca024b802167e2dc51c48a63b9671321b3bad2be8e41b",
+  "mimeType": "text/plain",
+  "contentHash": "2f13414e4f4070c24e8f5182aa7537e2215a5de63b33acae26ade83dd16bdd67",
+  "semanticHash": "2f13414e4f4070c24e8f5182aa7537e2215a5de63b33acae26ade83dd16bdd67",
+  "createdAt": "2026-07-04T19:02:36.156Z",
+  "updatedAt": "2026-07-04T19:02:36.156Z"
+}

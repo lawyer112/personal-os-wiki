@@ -1,0 +1,19 @@
+{
+  "sourceId": "actions-2ca7eece",
+  "title": "actions",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/app/capture/actions.ts",
+  "repoRelativePath": "src/app/capture/actions.ts",
+  "storedPath": "raw/sources/actions-2ca7eece.ts",
+  "extractedTextPath": "state/extracts/actions-2ca7eece.md",
+  "extractedMetadataPath": "state/extracts/actions-2ca7eece.json",
+  "extractionHash": "ed7c08c73a2852fa803f436e449e97e4e43ed37149637f4aa790c0c00e1ef6f7",
+  "mimeType": "text/typescript",
+  "contentHash": "2ca7eece746b7cf0268b7c465e1d01c223a91cc39e54fe9140ac1e8d1674d3aa",
+  "semanticHash": "2ca7eece746b7cf0268b7c465e1d01c223a91cc39e54fe9140ac1e8d1674d3aa",
+  "createdAt": "2026-07-04T19:02:54.754Z",
+  "updatedAt": "2026-07-04T19:02:54.754Z"
+}

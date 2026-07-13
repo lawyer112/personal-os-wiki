@@ -1,0 +1,24 @@
+{
+  "sourceId": "wiki-retry-2-result-8dc48952",
+  "title": "wiki-retry-2-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-20260623/wiki-retry-2-result.json",
+  "repoRelativePath": ".agent-runs/github-radar-20260623/wiki-retry-2-result.json",
+  "storedPath": "raw/sources/wiki-retry-2-result-8dc48952.json",
+  "extractedTextPath": "state/extracts/wiki-retry-2-result-8dc48952.md",
+  "extractedMetadataPath": "state/extracts/wiki-retry-2-result-8dc48952.json",
+  "extractionHash": "c99fba2c954fb0524eec66486eca34be2d0b3552b894fd746f01d9f9bfe9e61d",
+  "mimeType": "application/json",
+  "contentHash": "8dc489529ff807e23d0aba1d48ead7565e2990354d7cc7a184887230837ce02c",
+  "semanticHash": "8dc489529ff807e23d0aba1d48ead7565e2990354d7cc7a184887230837ce02c",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "11",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:43.957Z",
+  "updatedAt": "2026-07-04T19:02:43.957Z"
+}

@@ -1,0 +1,24 @@
+{
+  "sourceId": "board-risk-intake-result-c22f5e1b",
+  "title": "board-risk-intake-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/board-risk-intake-result.json",
+  "repoRelativePath": ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/board-risk-intake-result.json",
+  "storedPath": "raw/sources/board-risk-intake-result-c22f5e1b.json",
+  "extractedTextPath": "state/extracts/board-risk-intake-result-c22f5e1b.md",
+  "extractedMetadataPath": "state/extracts/board-risk-intake-result-c22f5e1b.json",
+  "extractionHash": "ff038b54d98dccf78b75c617224cbe39fa5475c9c4fae2976425543fb4367202",
+  "mimeType": "application/json",
+  "contentHash": "c22f5e1b00bbab1274f035e6819b5b6ae3a5d45c933ff5c9896f70742cbd8dd0",
+  "semanticHash": "c22f5e1b00bbab1274f035e6819b5b6ae3a5d45c933ff5c9896f70742cbd8dd0",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "1"
+  },
+  "createdAt": "2026-07-04T19:02:39.229Z",
+  "updatedAt": "2026-07-04T19:02:39.229Z"
+}

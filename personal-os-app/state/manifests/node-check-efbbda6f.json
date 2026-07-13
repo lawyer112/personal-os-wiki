@@ -1,0 +1,18 @@
+{
+  "sourceId": "node-check-efbbda6f",
+  "title": "node --check",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/verification-targeted.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/verification-targeted.log",
+  "storedPath": "raw/sources/node-check-efbbda6f.log",
+  "extractedTextPath": "state/extracts/node-check-efbbda6f.md",
+  "extractedMetadataPath": "state/extracts/node-check-efbbda6f.json",
+  "extractionHash": "9599b7103c3691594557718f67f344c1ef6d9aeda5a513c7b58022a1be38f7b7",
+  "mimeType": "text/plain",
+  "contentHash": "efbbda6f4e92e73c29c23ab2166d39118f771ff43018d78cfd5f38724eac0849",
+  "semanticHash": "efbbda6f4e92e73c29c23ab2166d39118f771ff43018d78cfd5f38724eac0849",
+  "createdAt": "2026-07-04T19:02:31.517Z",
+  "updatedAt": "2026-07-04T19:02:31.517Z"
+}

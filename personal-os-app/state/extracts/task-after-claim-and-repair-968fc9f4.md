@@ -1,0 +1,16 @@
+# task-after-claim-and-repair
+Format: JSON
+Top-level: object
+Size: 2
+Nested depth: 7
+
+## Schema
+
+- ok: boolean
+- task: object (28 keys)
+
+## Preview
+
+```json
+{"ok":true,"task":{"id":"cmqqfl6rk00090jn58kastmq9","title":"实现 AgentRun context pack 自动归档 v0","description":"对象是 .agent-runs/<task-id>/ 产物；动作是提取 gate、worker-result、diff、测试、部署和风险，生成 Wiki note 并关联 Task/AgentRun；产物是自动归档脚本或服务函数。吸收 SwarmVault 的 context pack + task ledger 设计。","status":"doing","priority":"P1","riskLevel":"low","executionMode":"agent_allowed","agentTags":["personal-wiki","agent-run","context-pack","wiki"],"ownerAgent":"obsidianmanager1","leaseUntil":"2026-06-23T14:14:34.965Z","lastHeartbeatAt":"2026-06-23T11:14:34.965Z","requiredOutput":"一个归档入口，能把指定 .agent-runs/<task-id>/ 目录写成 Wiki note，并在 Personal OS task/activity 中留下 artifact 链接。","nextAction":"用 cmqqb0d7h00050jnsh6q221l1 作为样例，定义 context pack markdown 模板和字段映射。","definitionOfDone":"对一个真实 task-id 运行后，Wiki 中存在包含 task_id、gate、diff、测试、部署、残余风险的 note；Personal OS 返回 201；不泄露 token。","dueDate":null,"estimateMinutes":90,"createdBy":"hermes","createdAt":"2026-06-23T09:17:34.208Z","updatedAt":"2026-06-23T11:14:34.979Z","completedAt":null,"submittedAt":null,"projectId":"cmqq290nm00040jmj9jwa98ya","sourceInboxItemId":"cmqqfl5em00000jn5p7wmb0gd","sourceAgentRunId":"cmqqfl5ye00020jn5zg0mimeb","project":{"id":"cmqq290nm00040jmj9jwa98ya","name":"Personal OS / Wiki 知识库升级","goal":"让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。","status":"active","priority":"P0","currentFocus":"Personal OS / Wiki 自驱闭环生产化","createdAt":"2026-06-23T03:04:11.410Z","updatedAt":"2026-06-23T11:15:32.018Z"},"sourceInboxItem":{"id":"cmqqfl5em00000jn5p7wmb0gd","sourceType":"agent-output","sourcePlatform":"telegram","sourceMessageId":null,"rawText":"Classic 指出 Hermes 没有主动去 GitHub 找同类项目、没有把外部方案转成执行改进。已即时运行 GitHub 雷达并生成可执行改进任务。","sourceUrl":null,"attachments":[],"status":"processed","createdBy":"hermes","receivedAt":"2026-06-23T09:17:32.446Z","updatedAt":"2026-06-23T09:17:34.759Z"},"sourceAgentRun":{"id":"cmqqfl5ye00020jn5zg0mimeb","inboxItemId":"cmqqfl5em00000jn5p7wmb0gd","model":"hermes-gpt-5.5","status":"completed","classification":{"kind":"github-radar","owner":"agent","repos":["swarmclawai/swarmvault","topoteretes/cognee","adoresever/graph-memory","mnemon-dev/mnemon","willynikes2/knowledge-base-server","neo4j-labs/agent-memory","0xK3vin/MegaMemory","Tencent/WeKnora"],"wiki_write_status":{"errors":[{"error":"frontmatter-parse-error","title":"2026-06-23 GitHub 知识雷达：Personal OS / Wiki 自驱改进候选"}],"failed":1,"status":"failed","requested":1,"succeeded":0}},"reasoningSummary":"检索 GitHub 上 Personal OS / Wiki / agent memory / RAG / Obsidian sync 相关项目，抽取可吸收设计，并转成 Personal OS Agent 可执行任务。","outputSummary":"已检索 8 个相关项目，沉淀 1 条 Wiki 记录，创建 4 个 Agent 可执行任务。","error":null,"startedAt":"2026-06-23T09:17:33.158Z","completedAt":"2026-06-23T09:17:34.623Z"},"wikiLinks":[]}}
+```

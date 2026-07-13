@@ -1,0 +1,19 @@
+{
+  "sourceId": "github-radar-intake-703657cf",
+  "title": "github-radar-intake",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/scripts/github-radar-intake.mjs",
+  "repoRelativePath": "scripts/github-radar-intake.mjs",
+  "storedPath": "raw/sources/github-radar-intake-703657cf.mjs",
+  "extractedTextPath": "state/extracts/github-radar-intake-703657cf.md",
+  "extractedMetadataPath": "state/extracts/github-radar-intake-703657cf.json",
+  "extractionHash": "d3cc610be3d9611ed0fc7e7dd373dbac91f9e2a007359a4c761373f248ea2f0e",
+  "mimeType": "text/javascript",
+  "contentHash": "703657cfb1bb05b3d5aa9c0ea1c531c0ad59fe745a9fe4915b9b58ee9e8efdde",
+  "semanticHash": "703657cfb1bb05b3d5aa9c0ea1c531c0ad59fe745a9fe4915b9b58ee9e8efdde",
+  "createdAt": "2026-07-04T19:02:51.654Z",
+  "updatedAt": "2026-07-04T19:02:51.654Z"
+}

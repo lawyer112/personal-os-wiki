@@ -1,0 +1,24 @@
+{
+  "sourceId": "worker-result-cecf52a0",
+  "title": "worker-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/swarmvault-mcp-smoke/worker-result.json",
+  "repoRelativePath": ".agent-runs/swarmvault-mcp-smoke/worker-result.json",
+  "storedPath": "raw/sources/worker-result-cecf52a0.json",
+  "extractedTextPath": "state/extracts/worker-result-cecf52a0.md",
+  "extractedMetadataPath": "state/extracts/worker-result-cecf52a0.json",
+  "extractionHash": "e18ad8b8c8492460428198553cd4083fdc6d5efc03ea89bad12cefd0b8c862d4",
+  "mimeType": "application/json",
+  "contentHash": "cecf52a077eb385a820ad85c36851244377e9e6ebe287611472d30f734ec5136",
+  "semanticHash": "cecf52a077eb385a820ad85c36851244377e9e6ebe287611472d30f734ec5136",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:48.361Z",
+  "updatedAt": "2026-07-04T19:02:48.361Z"
+}

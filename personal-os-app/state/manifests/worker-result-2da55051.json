@@ -1,0 +1,24 @@
+{
+  "sourceId": "worker-result-2da55051",
+  "title": "worker-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq38soe001a0jmj1c8qffq0/worker-result.json",
+  "repoRelativePath": ".agent-runs/cmqq38soe001a0jmj1c8qffq0/worker-result.json",
+  "storedPath": "raw/sources/worker-result-2da55051.json",
+  "extractedTextPath": "state/extracts/worker-result-2da55051.md",
+  "extractedMetadataPath": "state/extracts/worker-result-2da55051.json",
+  "extractionHash": "315d1e760bf1aa78fe68593831e70514f7bd61852e4b12de0e4cfec079f4fecc",
+  "mimeType": "application/json",
+  "contentHash": "2da55051231a82f07caa041577f7c2a09635e9ebae60115a435763802595fea1",
+  "semanticHash": "2da55051231a82f07caa041577f7c2a09635e9ebae60115a435763802595fea1",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "14",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:32.011Z",
+  "updatedAt": "2026-07-04T19:02:32.011Z"
+}

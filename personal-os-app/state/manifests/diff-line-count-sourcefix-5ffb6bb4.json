@@ -1,0 +1,18 @@
+{
+  "sourceId": "diff-line-count-sourcefix-5ffb6bb4",
+  "title": "diff-line-count-sourcefix",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/diff-line-count-sourcefix.txt",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/diff-line-count-sourcefix.txt",
+  "storedPath": "raw/sources/diff-line-count-sourcefix-5ffb6bb4.txt",
+  "extractedTextPath": "state/extracts/diff-line-count-sourcefix-5ffb6bb4.md",
+  "extractedMetadataPath": "state/extracts/diff-line-count-sourcefix-5ffb6bb4.json",
+  "extractionHash": "22422e4645870e1cd34a41d828c201f5eab700c0ed4bafcbb1d465edaa9ea337",
+  "mimeType": "text/plain",
+  "contentHash": "5ffb6bb458e2c1762035cee9fa8bf389281fe7e9b4da66991491ecebf64edb5a",
+  "semanticHash": "5ffb6bb458e2c1762035cee9fa8bf389281fe7e9b4da66991491ecebf64edb5a",
+  "createdAt": "2026-07-04T19:02:32.375Z",
+  "updatedAt": "2026-07-04T19:02:32.375Z"
+}

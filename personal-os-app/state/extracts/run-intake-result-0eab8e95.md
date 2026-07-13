@@ -1,0 +1,22 @@
+# run-intake-result
+Format: JSON
+Top-level: object
+Size: 3
+Nested depth: 1
+
+## Schema
+
+- ok: boolean
+- status: number
+- body: string
+
+## Preview
+
+```json
+{
+  "ok": true,
+  "status": 201,
+  "body": "{\"ok\":true,\"inbox\":{\"id\":\"cmr1kjfww00hh0ipoxrqenb7a\",\"sourceType\":\"agent-output\",\"sourcePlatform\":\"cron/personal-os-agent-executor\",\"sourceMessageId\":null,\"rawText\":\"Cron 完成任务 cmr006b4p01b90jpk4trb0240：AgentRun context pack 自动归档 v0 已验证并提交 review。\",\"sourceUrl\":null,\"attachments\":[],\"status\":\"new\",\"createdBy\":\"hermes\",\"receivedAt\":\"2026-07-01T04:21:38.768Z\",\"updatedAt\":\"2026-07-01T04:21:38.768Z\"},\"agentRunId\":\"cmr1kjfxk00hj0ipo043ibngo\",\"project\":{\"id\":\"cmqq290nm00040jmj9jwa98ya\",\"name\":\"Personal OS / Wiki 知识库升级\",\"goal\":\"保持 Hermes 多 Agent 运行可观测、轻量和可恢复。\",\"status\":\"active\",\"priority\":\"P0\",\"currentFocus\":\"高并发 Agent 写 Wiki 时入口快速返回，Wiki 写入后台串行处理。\",\"createdAt\":\"2026-06-23T03:04:11.410Z\",\"updatedAt\":\"2026-07-01T04:14:46.836Z\"},\"tasks\":[],\"ideas\":[],\"notes\":[],\"projectEvents\":[{\"id\":\"cmr1kjfxu00hl0ipowzn5nzcc\",\"projectId\":\"cmqq290nm00040jmj9jwa98ya\",\"title\":\"AgentRun context pack 自动归档 v0 已验证\",\"body\":\"任务 cmr006b4p01b90jpk4trb0240：对真实 run cmqyixt4a00n90jpk3todreos 生成 context-pack 并写入 OS；Wiki 直连 ingest/readback 成功；tsc 与 2 文件 3 测试通过；残余风险是 6.37 intake→Wiki 同步写超时 aborted。证据：.agent-runs/cmr006b4p01b90jpk4trb0240/worker-result.json 与 gate.json。\",\"eventType\":\"agent-task-completed\",\"createdAt\":\"2026-07-01T04:21:38.802Z\",\"sourceInboxItemId\":\"cmr1kjfww00hh0ipoxrqenb7a\",\"sourceAgentRunId\":\"cmr1kjfxk00hj0ipo043ibngo\"}],\"wiki\":[],\"wiki_write_status\":{\"status\":\"skipped\",\"requested\":0,\"succeeded\":0,\"failed\":0,\"errors\":[]},\"notification\":null}"
+}
+
+```

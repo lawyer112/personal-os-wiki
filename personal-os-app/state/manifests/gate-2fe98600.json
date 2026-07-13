@@ -1,0 +1,24 @@
+{
+  "sourceId": "gate-2fe98600",
+  "title": "gate",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/memory-vector-backfill-cron/gate.json",
+  "repoRelativePath": ".agent-runs/memory-vector-backfill-cron/gate.json",
+  "storedPath": "raw/sources/gate-2fe98600.json",
+  "extractedTextPath": "state/extracts/gate-2fe98600.md",
+  "extractedMetadataPath": "state/extracts/gate-2fe98600.json",
+  "extractionHash": "4585932134e01ea273463897248f1e199a1052725e41e6e9951b7c3d0fef9693",
+  "mimeType": "application/json",
+  "contentHash": "2fe986003cdcbbc9ef26a9a5fc33100f03783721a06952528e64c9f919348fc0",
+  "semanticHash": "2fe986003cdcbbc9ef26a9a5fc33100f03783721a06952528e64c9f919348fc0",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:47.624Z",
+  "updatedAt": "2026-07-04T19:02:47.624Z"
+}

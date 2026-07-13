@@ -1,0 +1,24 @@
+{
+  "sourceId": "intake-payload-8d2898b7",
+  "title": "intake-payload",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-20260702/intake-payload.json",
+  "repoRelativePath": ".agent-runs/github-radar-20260702/intake-payload.json",
+  "storedPath": "raw/sources/intake-payload-8d2898b7.json",
+  "extractedTextPath": "state/extracts/intake-payload-8d2898b7.md",
+  "extractedMetadataPath": "state/extracts/intake-payload-8d2898b7.json",
+  "extractionHash": "cc7a5b09c7904d3080f2cedd80a2aa2ce112f77d270e035602ed3cbaea66d817",
+  "mimeType": "application/json",
+  "contentHash": "8d2898b71a98b653ff3204ed75b160f43116c1d821e6b7c5c1ccea384bcdb1bb",
+  "semanticHash": "8d2898b71a98b653ff3204ed75b160f43116c1d821e6b7c5c1ccea384bcdb1bb",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "6",
+    "nested_depth": "5"
+  },
+  "createdAt": "2026-07-04T19:02:45.630Z",
+  "updatedAt": "2026-07-04T19:02:45.630Z"
+}

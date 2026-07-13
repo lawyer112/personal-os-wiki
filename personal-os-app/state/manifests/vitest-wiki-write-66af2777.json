@@ -1,0 +1,18 @@
+{
+  "sourceId": "vitest-wiki-write-66af2777",
+  "title": "vitest-wiki-write",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/vitest-wiki-write.log",
+  "repoRelativePath": ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/vitest-wiki-write.log",
+  "storedPath": "raw/sources/vitest-wiki-write-66af2777.log",
+  "extractedTextPath": "state/extracts/vitest-wiki-write-66af2777.md",
+  "extractedMetadataPath": "state/extracts/vitest-wiki-write-66af2777.json",
+  "extractionHash": "46afe7f873eda77e30339845e0b8ae4670ec3ce5bc7bac6f6dcb36daba6895cd",
+  "mimeType": "text/plain",
+  "contentHash": "66af277785d23a669482a20862586869cb638cec556fd70b20aac7e6a39670b5",
+  "semanticHash": "66af277785d23a669482a20862586869cb638cec556fd70b20aac7e6a39670b5",
+  "createdAt": "2026-07-04T19:02:39.595Z",
+  "updatedAt": "2026-07-04T19:02:39.595Z"
+}

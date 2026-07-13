@@ -1,0 +1,24 @@
+{
+  "sourceId": "gate-9fce585a",
+  "title": "gate",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/swarmvault-hybrid-retrieval-feasibility/gate.json",
+  "repoRelativePath": ".agent-runs/swarmvault-hybrid-retrieval-feasibility/gate.json",
+  "storedPath": "raw/sources/gate-9fce585a.json",
+  "extractedTextPath": "state/extracts/gate-9fce585a.md",
+  "extractedMetadataPath": "state/extracts/gate-9fce585a.json",
+  "extractionHash": "6aad655779f551738af752f0baf5cfd69473f7cded81942714dd32afb0365b17",
+  "mimeType": "application/json",
+  "contentHash": "9fce585a5ba033f55e684fd214005c742dda0d373cedd5d77cb4995f95554808",
+  "semanticHash": "9fce585a5ba033f55e684fd214005c742dda0d373cedd5d77cb4995f95554808",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:48.086Z",
+  "updatedAt": "2026-07-04T19:02:48.086Z"
+}

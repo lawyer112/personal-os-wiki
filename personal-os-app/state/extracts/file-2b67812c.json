@@ -1,0 +1,9 @@
+{
+  "extractor": "image_vision",
+  "sourceKind": "image",
+  "mimeType": "image/svg+xml",
+  "producedAt": "2026-07-04T19:02:50.808Z",
+  "warnings": [
+    "Vision extraction unavailable for provider local. Configure a structured multimodal provider."
+  ]
+}

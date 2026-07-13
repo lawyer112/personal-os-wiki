@@ -1,0 +1,373 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://classic.local/schemas/classic-knowledge-object-manifest.schema.json",
+  "title": "Classic Knowledge Object Manifest v0",
+  "description": "A provenance-first manifest for Classic knowledge objects. Every task, project, evidence, decision, SOP, status record, context pack, and project hub must carry source_path, hash, freshness, and sensitivity metadata; objects without a source must be explicitly marked speculative.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "type",
+    "title",
+    "summary",
+    "source_path",
+    "source_url",
+    "source_type",
+    "hash",
+    "freshness",
+    "sensitivity",
+    "owner",
+    "created_at",
+    "updated_at",
+    "confidence",
+    "lifecycle",
+    "relationships"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "classic-knowledge-object-manifest/v0"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "pattern": "^(task|project|evidence|decision|sop|project_hub|status|context_pack|agent_run|idea|note):[A-Za-z0-9._:/#-]+$",
+      "description": "Stable object id prefixed by object type, for example task:<personal-os-task-id>."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "task",
+        "project",
+        "evidence",
+        "decision",
+        "sop",
+        "project_hub",
+        "status",
+        "context_pack",
+        "agent_run",
+        "idea",
+        "note"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "source_path": {
+      "type": ["string", "null"],
+      "minLength": 1,
+      "description": "Canonical local source path. Relative paths are resolved from the lint command working directory. Null is allowed only for speculative objects."
+    },
+    "source_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Optional external or app URL for the source."
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "agent-output",
+        "human-input",
+        "wiki-note",
+        "repo-file",
+        "system-log",
+        "api-response",
+        "web",
+        "unknown"
+      ]
+    },
+    "hash": {
+      "description": "Content hash of source_path. Null is allowed only when source_path is null and confidence is speculative.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "enum": ["sha256", "sha1"]
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{40}$|^[a-f0-9]{64}$"
+            }
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "freshness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "captured_at", "valid_until", "ttl_days", "last_checked_at"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["fresh", "stale", "unknown"]
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "ttl_days": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 3650
+        },
+        "last_checked_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "stale_reason": {
+          "type": ["string", "null"],
+          "maxLength": 500
+        }
+      }
+    },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "contains_secrets", "allowed_uses", "handling_notes"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["public", "internal", "private", "secret"]
+        },
+        "contains_secrets": {
+          "type": "boolean"
+        },
+        "allowed_uses": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "agent_context",
+              "wiki_index",
+              "task_execution",
+              "public_docs",
+              "local_only"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "handling_notes": {
+          "type": "string",
+          "maxLength": 1000
+        }
+      }
+    },
+    "owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["classic", "agent", "system", "external"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["verified", "inferred", "speculative"]
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "review_policy"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "superseded", "archived", "rejected"]
+        },
+        "review_policy": {
+          "type": "string",
+          "enum": ["classic_review_required", "agent_review_allowed", "auto_generated_draft"]
+        },
+        "reviewed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "reviewed_by": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "relationships": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["project_ids", "task_ids", "source_run_ids", "supersedes", "superseded_by", "related_ids"],
+      "properties": {
+        "project_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "task_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "source_run_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "superseded_by": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "related_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "embedding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "content_hash", "indexed_at"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "content_hash": {
+          "type": ["string", "null"],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "indexed_at": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "uri", "excerpt"],
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": ["markdown", "json", "plain_text", "external"]
+        },
+        "uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    },
+    "lint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "waivers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "reason", "expires_at"],
+            "properties": {
+              "code": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 },
+              "expires_at": { "type": ["string", "null"], "format": "date-time" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source_path": { "type": "null" }
+        },
+        "required": ["source_path"]
+      },
+      "then": {
+        "properties": {
+          "confidence": { "const": "speculative" },
+          "hash": { "type": "null" }
+        },
+        "required": ["confidence", "hash"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source_path": { "type": "string" }
+        },
+        "required": ["source_path"]
+      },
+      "then": {
+        "properties": {
+          "hash": { "type": "object" }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "sensitivity": {
+            "type": "object",
+            "properties": {
+              "contains_secrets": { "const": true }
+            },
+            "required": ["contains_secrets"]
+          }
+        },
+        "required": ["sensitivity"]
+      },
+      "then": {
+        "properties": {
+          "sensitivity": {
+            "type": "object",
+            "properties": {
+              "level": { "const": "secret" }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

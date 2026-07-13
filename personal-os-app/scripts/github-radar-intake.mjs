@@ -10,6 +10,9 @@ const DEFAULT_QUERIES = [
   "Obsidian AI knowledge base agent stars:>20",
   "self maintaining wiki RAG agent stars:>20",
   "OpenClaw Hermes Codex memory agent",
+  "LLM agent memory store knowledge graph RAG created:>2026-06-01",
+  "agent memory tier decay promotion governance created:>2026-04-01",
+  "MCP server agent memory context persistence created:>2026-05-01",
 ];
 
 const SIGNALS = [

@@ -1,0 +1,24 @@
+{
+  "sourceId": "production-smoke-81a750f8",
+  "title": "production-smoke",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/production-smoke.json",
+  "repoRelativePath": ".agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/production-smoke.json",
+  "storedPath": "raw/sources/production-smoke-81a750f8.json",
+  "extractedTextPath": "state/extracts/production-smoke-81a750f8.md",
+  "extractedMetadataPath": "state/extracts/production-smoke-81a750f8.json",
+  "extractionHash": "2f17831241e4441cbe806ba50351bc46dacf4ad383e40acea15f84ca010dd5f0",
+  "mimeType": "application/json",
+  "contentHash": "81a750f8f1ef246515e8dce5d6c324b50a1b7d29439ea8cf250e303d4b01bef7",
+  "semanticHash": "81a750f8f1ef246515e8dce5d6c324b50a1b7d29439ea8cf250e303d4b01bef7",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "4",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:33.231Z",
+  "updatedAt": "2026-07-04T19:02:33.231Z"
+}

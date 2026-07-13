@@ -1,0 +1,39 @@
+# gate
+Format: JSON
+Top-level: object
+Size: 6
+Nested depth: 2
+
+## Schema
+
+- task_id: string
+- verified_by: string
+- verified_at: string
+- status: string
+- checks: object (10 keys)
+- notes: string
+
+## Preview
+
+```json
+{
+  "task_id": "cmqqxalr800090jpjj9qafvwo",
+  "verified_by": "obsidianmanager1",
+  "verified_at": "2026-06-23T17:59:00.000Z",
+  "status": "pass",
+  "checks": {
+    "script_runs": true,
+    "local_evidence_generated": true,
+    "intake_writeback_ok": true,
+    "wiki_write_status_ok": true,
+    "project_event_created": true,
+    "task_deduplication_works": true,
+    "no_token_in_logs": true,
+    "npm_test_pass": true,
+    "tsc_pass": true,
+    "lint_pass": true
+  },
+  "notes": "增强版雷达脚本添加了持久化 source registry 和任务去重。运行 --intake 后 Wiki 写回成功，ProjectEvent 创建，任务已经存在被正确跳过。本地证据目录完整。测试、类型检查、静态分析全部通过。由于此次只修改了脚本文件，没有修改 Next.js 应用代码，不需要部署 6.37。"
+}
+
+```

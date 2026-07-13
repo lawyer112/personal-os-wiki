@@ -1,0 +1,35 @@
+# worker-result
+Format: JSON
+Top-level: object
+Size: 7
+Nested depth: 3
+
+## Schema
+
+- taskId: string
+- title: string
+- status: string
+- startedAt: string
+- completedAt: string
+- artifacts: array (1 items)
+- summary: string
+
+## Preview
+
+```json
+{
+  "taskId": "cmqqb0diw000b0jns02a62uvl",
+  "title": "产出开源候选吸收评分表 v0 并评估 OpenViking / agentmemory / Loop",
+  "status": "completed",
+  "startedAt": "2026-06-24T00:26:00Z",
+  "completedAt": "2026-06-24T00:35:00Z",
+  "artifacts": [
+    {
+      "path": ".agent-runs/cmqqb0diw000b0jns02a62uvl/open-source-candidate-evaluation-v0.md",
+      "description": "开源候选吸收评分表 v0，包含 OpenViking、agentmemory、LOOP 的完整评估"
+    }
+  ],
+  "summary": "完成对 3 个 GitHub 开源候选（OpenViking 25.9K stars、agentmemory 23.7K stars、LOOP 0 stars）的信息采集、映射分析、验证方式定义和吸收结论。结论：OpenViking 和 LOOP 作为设计借鉴，agentmemory 作为 MCP 插件级吸收候选。"
+}
+
+```

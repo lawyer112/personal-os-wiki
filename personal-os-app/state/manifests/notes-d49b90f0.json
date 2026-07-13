@@ -1,0 +1,19 @@
+{
+  "sourceId": "notes-d49b90f0",
+  "title": "notes",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/notes.ts",
+  "repoRelativePath": "src/lib/notes.ts",
+  "storedPath": "raw/sources/notes-d49b90f0.ts",
+  "extractedTextPath": "state/extracts/notes-d49b90f0.md",
+  "extractedMetadataPath": "state/extracts/notes-d49b90f0.json",
+  "extractionHash": "aae6eefd8d1a8bb04fcbb702fe3e541bbf713a40955e5b0db8232db5b4e129c4",
+  "mimeType": "text/typescript",
+  "contentHash": "d49b90f04037a93efcb0a4dd690960c3b4e0b38bdd9ddaf1de24d66865038318",
+  "semanticHash": "d49b90f04037a93efcb0a4dd690960c3b4e0b38bdd9ddaf1de24d66865038318",
+  "createdAt": "2026-07-04T19:02:58.394Z",
+  "updatedAt": "2026-07-04T19:02:58.394Z"
+}

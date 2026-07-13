@@ -1,0 +1,263 @@
+{
+  "ok": true,
+  "task": {
+    "id": "cmqq4eqa800340jmjz1go2euo",
+    "title": "定义 Classic Knowledge Object Manifest v0",
+    "description": "给任务/项目/证据/决策/SOP/Hub 定义统一元数据：id/type/source/hash/freshness/sensitivity 等。",
+    "status": "done",
+    "priority": "P0",
+    "riskLevel": "low",
+    "executionMode": "agent_allowed",
+    "agentTags": [
+      "manifest",
+      "knowledge",
+      "wiki",
+      "schema"
+    ],
+    "ownerAgent": null,
+    "leaseUntil": null,
+    "lastHeartbeatAt": "2026-06-23T08:52:45.799Z",
+    "requiredOutput": "classic-knowledge-object-manifest.schema.json + 3 个样例对象。",
+    "nextAction": "根据 council-report-v1.md 写 schema 和 lint 检查项。",
+    "definitionOfDone": "任意知识对象可追 source_path/hash/freshness/sensitivity；无来源内容标记 speculative。",
+    "dueDate": null,
+    "estimateMinutes": 90,
+    "createdBy": "hermes",
+    "createdAt": "2026-06-23T04:04:37.136Z",
+    "updatedAt": "2026-06-23T12:43:06.015Z",
+    "completedAt": "2026-06-23T12:43:06.003Z",
+    "submittedAt": "2026-06-23T08:52:45.799Z",
+    "projectId": "cmqq290nm00040jmj9jwa98ya",
+    "sourceInboxItemId": "cmqq4epm7002t0jmjebb1h78o",
+    "sourceAgentRunId": "cmqq4epqb002v0jmjrtd29afg",
+    "project": {
+      "id": "cmqq290nm00040jmj9jwa98ya",
+      "name": "Personal OS / Wiki 知识库升级",
+      "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+      "status": "active",
+      "priority": "P0",
+      "currentFocus": "Personal OS / Wiki 自驱闭环生产化",
+      "createdAt": "2026-06-23T03:04:11.410Z",
+      "updatedAt": "2026-06-23T11:15:32.018Z"
+    },
+    "sourceInboxItem": {
+      "id": "cmqq4epm7002t0jmjebb1h78o",
+      "sourceType": "manual",
+      "sourcePlatform": "hermes",
+      "sourceMessageId": "hermes-20260623-council-report-v1",
+      "rawText": "多模型 Agent 会议完成：Codex/Claude/Kimi 分别完成 GitHub 对标、系统审查、持续进化机制，Hermes 已合成 council-report-v1.md。",
+      "sourceUrl": null,
+      "attachments": [],
+      "status": "processed",
+      "createdBy": "hermes",
+      "receivedAt": "2026-06-23T04:04:36.271Z",
+      "updatedAt": "2026-06-23T04:04:38.123Z"
+    },
+    "sourceAgentRun": {
+      "id": "cmqq4epqb002v0jmjrtd29afg",
+      "inboxItemId": "cmqq4epm7002t0jmjebb1h78o",
+      "model": "gpt-5.5/openai-codex via Hermes",
+      "status": "completed",
+      "classification": {
+        "kind": "work_update",
+        "confidence": 0.98
+      },
+      "reasoningSummary": "把三方 worker 结果压缩成 Personal OS 可执行队列。因 wikiNotes 链路待修，本次只写 OS note/tasks，不直接写 Personal Wiki。",
+      "outputSummary": "多模型优化会议完成，并创建 P0/P1 后续任务。",
+      "error": null,
+      "startedAt": "2026-06-23T04:04:36.419Z",
+      "completedAt": "2026-06-23T04:04:37.977Z"
+    },
+    "wikiLinks": [],
+    "contributions": [
+      {
+        "id": "cmqqepabn001a0jnsidwdl2wh",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "taskRunId": "cmqqe9nib00170jnsylyzymgd",
+        "agentId": "hermes",
+        "summary": "定义 Classic Knowledge Object Manifest v0：新增 JSON Schema、3 个样例对象、lint 脚本、文档和 Vitest 回归测试；schema 强制 source_path/hash/freshness/sensitivity/owner/confidence/relationships，lint 覆盖 source missing、hash changed、TTL expired、owner missing、decision superseded、sensitivity violation、no-source speculative gate。",
+        "evidenceLinks": [
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/gate.json",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/worker-result.json",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-manifest-lint.log",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-full-tests.log",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-build.log"
+        ],
+        "artifactUrls": [
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/diff.patch",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/run-report.md",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/schemas/classic-knowledge-object-manifest.schema.json",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/task.classic-knowledge-object.json",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/decision.classic-knowledge-object.json",
+          "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/sop.classic-knowledge-object.json"
+        ],
+        "nextRecommendation": "Classic review diff.patch；如认可，可把 manifest schema 接入后续 /data/knowledge manifest/search 和 context-pack 任务。当前未部署、未重启 6.37、未写生产数据库。",
+        "createdAt": "2026-06-23T08:52:45.827Z"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": "cmqqepac0001g0jnske8fmyr9",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "contributionId": "cmqqepabn001a0jnsidwdl2wh",
+        "type": "link",
+        "title": null,
+        "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/sop.classic-knowledge-object.json",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T08:52:45.840Z"
+      },
+      {
+        "id": "cmqqepabz001f0jnszmhz5bsu",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "contributionId": "cmqqepabn001a0jnsidwdl2wh",
+        "type": "link",
+        "title": null,
+        "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/decision.classic-knowledge-object.json",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T08:52:45.839Z"
+      },
+      {
+        "id": "cmqqepaby001e0jns7ovg7a6n",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "contributionId": "cmqqepabn001a0jnsidwdl2wh",
+        "type": "link",
+        "title": null,
+        "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/task.classic-knowledge-object.json",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T08:52:45.838Z"
+      },
+      {
+        "id": "cmqqepabx001d0jns57jafxz8",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "contributionId": "cmqqepabn001a0jnsidwdl2wh",
+        "type": "link",
+        "title": null,
+        "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/schemas/classic-knowledge-object-manifest.schema.json",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T08:52:45.837Z"
+      },
+      {
+        "id": "cmqqepabw001c0jns8hm8tcoc",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "contributionId": "cmqqepabn001a0jnsidwdl2wh",
+        "type": "link",
+        "title": null,
+        "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/run-report.md",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T08:52:45.836Z"
+      }
+    ],
+    "runs": [
+      {
+        "id": "cmqqe9nib00170jnsylyzymgd",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "agentId": "hermes",
+        "status": "submitted",
+        "policySnapshot": {
+          "task": {
+            "status": "todo",
+            "agentTags": [
+              "manifest",
+              "knowledge",
+              "wiki",
+              "schema"
+            ],
+            "riskLevel": "low",
+            "executionMode": "agent_allowed"
+          },
+          "profile": {
+            "id": "hermes",
+            "tags": [
+              "wiki",
+              "curation",
+              "review",
+              "personal-os"
+            ],
+            "enabled": true,
+            "canWriteTasks": true,
+            "allowedRiskLevel": "medium"
+          },
+          "leaseUntil": "2026-06-23T10:40:36.192Z"
+        },
+        "resultSummary": "定义 Classic Knowledge Object Manifest v0：新增 JSON Schema、3 个样例对象、lint 脚本、文档和 Vitest 回归测试；schema 强制 source_path/hash/freshness/sensitivity/owner/confidence/relationships，lint 覆盖 source missing、hash changed、TTL expired、owner missing、decision superseded、sensitivity violation、no-source speculative gate。",
+        "startedAt": "2026-06-23T08:40:36.419Z",
+        "lastHeartbeatAt": "2026-06-23T08:40:36.192Z",
+        "submittedAt": "2026-06-23T08:52:45.799Z",
+        "endedAt": "2026-06-23T08:52:45.799Z"
+      }
+    ],
+    "agentActionLogs": [
+      {
+        "id": "cmqqepacp001j0jnsf683piv1",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "taskRunId": "cmqqe9nib00170jnsylyzymgd",
+        "agentId": "hermes",
+        "action": "task.submitted",
+        "summary": "定义 Classic Knowledge Object Manifest v0：新增 JSON Schema、3 个样例对象、lint 脚本、文档和 Vitest 回归测试；schema 强制 source_path/hash/freshness/sensitivity/owner/confidence/relationships，lint 覆盖 source missing、hash changed、TTL expired、owner missing、decision superseded、sensitivity violation、no-source speculative gate。",
+        "metadata": {
+          "resultType": "artifact",
+          "needsHumanDecision": true,
+          "definitionOfDoneMet": true
+        },
+        "createdAt": "2026-06-23T08:52:45.865Z"
+      },
+      {
+        "id": "cmqqepac1001h0jns11o2qsqp",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "taskRunId": "cmqqe9nib00170jnsylyzymgd",
+        "agentId": "hermes",
+        "action": "task.contribution.created",
+        "summary": "定义 Classic Knowledge Object Manifest v0：新增 JSON Schema、3 个样例对象、lint 脚本、文档和 Vitest 回归测试；schema 强制 source_path/hash/freshness/sensitivity/owner/confidence/relationships，lint 覆盖 source missing、hash changed、TTL expired、owner missing、decision superseded、sensitivity violation、no-source speculative gate。",
+        "metadata": {
+          "artifactUrls": [
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/diff.patch",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/run-report.md",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/schemas/classic-knowledge-object-manifest.schema.json",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/task.classic-knowledge-object.json",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/decision.classic-knowledge-object.json",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/sop.classic-knowledge-object.json"
+          ],
+          "evidenceLinks": [
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/gate.json",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/worker-result.json",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-manifest-lint.log",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-full-tests.log",
+            "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-build.log"
+          ],
+          "contributionId": "cmqqepabn001a0jnsidwdl2wh"
+        },
+        "createdAt": "2026-06-23T08:52:45.841Z"
+      },
+      {
+        "id": "cmqqe9nmy00180jns0mtd2ygk",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "taskRunId": "cmqqe9nib00170jnsylyzymgd",
+        "agentId": "hermes",
+        "action": "task.claimed",
+        "summary": "Claimed task lease until 2026-06-23T10:40:36.192Z",
+        "metadata": {
+          "leaseUntil": "2026-06-23T10:40:36.192Z"
+        },
+        "createdAt": "2026-06-23T08:40:36.586Z"
+      }
+    ],
+    "reviews": [
+      {
+        "id": "cmqqmxi1k000e0jocrept9u92",
+        "taskId": "cmqq4eqa800340jmjz1go2euo",
+        "reviewer": "obsidianmanager1",
+        "decision": "approve",
+        "comment": "Agent 自审通过：gate.json.status=pass；本地 manifest lint、focused test、tsc、lint、full test、build 全通过；6.37 已备份并只复制 8 个验证文件；docker compose build/up personal-os 成功；生产 context/task-context/docker ps/deployed manifest lint/sha256 match 全部通过。Evidence: .agent-runs/cmqq4eqa800340jmjz1go2euo/gate.json, worker-result.json, diff.patch, artifacts/production-regression-cron.json, artifacts/deploy-6.37-sourcefix.log.",
+        "createdAt": "2026-06-23T12:43:06.008Z"
+      }
+    ]
+  },
+  "review": {
+    "id": "cmqqmxi1k000e0jocrept9u92",
+    "taskId": "cmqq4eqa800340jmjz1go2euo",
+    "reviewer": "obsidianmanager1",
+    "decision": "approve",
+    "comment": "Agent 自审通过：gate.json.status=pass；本地 manifest lint、focused test、tsc、lint、full test、build 全通过；6.37 已备份并只复制 8 个验证文件；docker compose build/up personal-os 成功；生产 context/task-context/docker ps/deployed manifest lint/sha256 match 全部通过。Evidence: .agent-runs/cmqq4eqa800340jmjz1go2euo/gate.json, worker-result.json, diff.patch, artifacts/production-regression-cron.json, artifacts/deploy-6.37-sourcefix.log.",
+    "createdAt": "2026-06-23T12:43:06.008Z"
+  }
+}

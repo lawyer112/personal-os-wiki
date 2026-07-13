@@ -1,0 +1,18 @@
+{
+  "sourceId": "codex-stdout-dacd6041",
+  "title": "codex.stdout",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq38soe001a0jmj1c8qffq0/artifacts/codex.stdout.txt",
+  "repoRelativePath": ".agent-runs/cmqq38soe001a0jmj1c8qffq0/artifacts/codex.stdout.txt",
+  "storedPath": "raw/sources/codex-stdout-dacd6041.txt",
+  "extractedTextPath": "state/extracts/codex-stdout-dacd6041.md",
+  "extractedMetadataPath": "state/extracts/codex-stdout-dacd6041.json",
+  "extractionHash": "d14140b059bf652eeee6a97f9b7c9396e1bd054df0d342a396e939ec12232eb3",
+  "mimeType": "text/plain",
+  "contentHash": "dacd6041f77ffa0fc9e3bfa1b59fe1a5d9f2f7168849ab90507e8922220aadfe",
+  "semanticHash": "dacd6041f77ffa0fc9e3bfa1b59fe1a5d9f2f7168849ab90507e8922220aadfe",
+  "createdAt": "2026-07-04T19:02:31.882Z",
+  "updatedAt": "2026-07-04T19:02:31.882Z"
+}

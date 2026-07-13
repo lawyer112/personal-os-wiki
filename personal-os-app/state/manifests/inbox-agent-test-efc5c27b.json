@@ -1,0 +1,19 @@
+{
+  "sourceId": "inbox-agent-test-efc5c27b",
+  "title": "inbox-agent.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/inbox-agent.test.ts",
+  "repoRelativePath": "tests/services/inbox-agent.test.ts",
+  "storedPath": "raw/sources/inbox-agent-test-efc5c27b.ts",
+  "extractedTextPath": "state/extracts/inbox-agent-test-efc5c27b.md",
+  "extractedMetadataPath": "state/extracts/inbox-agent-test-efc5c27b.json",
+  "extractionHash": "5f9caa73c3090ab6ec89b09d44dc6066c198774716a485c8d12c1745d80ed025",
+  "mimeType": "text/typescript",
+  "contentHash": "efc5c27b9b47c2eb857d442acc78b3f5cb1e93558d4ef54100ea11b3b0128b05",
+  "semanticHash": "efc5c27b9b47c2eb857d442acc78b3f5cb1e93558d4ef54100ea11b3b0128b05",
+  "createdAt": "2026-07-04T19:03:01.874Z",
+  "updatedAt": "2026-07-04T19:03:01.874Z"
+}

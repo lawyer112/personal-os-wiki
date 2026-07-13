@@ -1,0 +1,19 @@
+{
+  "sourceId": "layout-ea912571",
+  "title": "layout",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/app/layout.tsx",
+  "repoRelativePath": "src/app/layout.tsx",
+  "storedPath": "raw/sources/layout-ea912571.tsx",
+  "extractedTextPath": "state/extracts/layout-ea912571.md",
+  "extractedMetadataPath": "state/extracts/layout-ea912571.json",
+  "extractionHash": "70fda6982b1f3ef4fffe2b7cd6f6f23b63fa567a1866c5c295e82b656996631d",
+  "mimeType": "text/typescript",
+  "contentHash": "ea9125711e2152078b06588c1134f5711bbecbf90124e615e066bbfaaa841dfc",
+  "semanticHash": "ea9125711e2152078b06588c1134f5711bbecbf90124e615e066bbfaaa841dfc",
+  "createdAt": "2026-07-04T19:02:55.251Z",
+  "updatedAt": "2026-07-04T19:02:55.251Z"
+}

@@ -1,0 +1,19 @@
+{
+  "sourceId": "appshell-a65c8bb3",
+  "title": "AppShell",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/components/AppShell.tsx",
+  "repoRelativePath": "src/components/AppShell.tsx",
+  "storedPath": "raw/sources/appshell-a65c8bb3.tsx",
+  "extractedTextPath": "state/extracts/appshell-a65c8bb3.md",
+  "extractedMetadataPath": "state/extracts/appshell-a65c8bb3.json",
+  "extractionHash": "ff6fb5d5ab8365fd115f48fdf49625b917b74a6ad6b040d6a1ad25a9b41b981f",
+  "mimeType": "text/typescript",
+  "contentHash": "a65c8bb36d0918b4517f061b3457e88cc142c9d968c1e4f00349cdc99a018ce8",
+  "semanticHash": "a65c8bb36d0918b4517f061b3457e88cc142c9d968c1e4f00349cdc99a018ce8",
+  "createdAt": "2026-07-04T19:02:56.161Z",
+  "updatedAt": "2026-07-04T19:02:56.161Z"
+}

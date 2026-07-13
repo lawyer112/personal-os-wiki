@@ -1,0 +1,19 @@
+{
+  "sourceId": "agent-context-39afb5c8",
+  "title": "agent-context",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/agent-context.ts",
+  "repoRelativePath": "src/lib/agent-context.ts",
+  "storedPath": "raw/sources/agent-context-39afb5c8.ts",
+  "extractedTextPath": "state/extracts/agent-context-39afb5c8.md",
+  "extractedMetadataPath": "state/extracts/agent-context-39afb5c8.json",
+  "extractionHash": "55d20f57bc2024fbfd74f74ba6e7a514eb0628218f5bd71b07691c4b72715bcc",
+  "mimeType": "text/typescript",
+  "contentHash": "39afb5c8d0892722b1a837e2d6f3778e6f3a3aeb889e649320c4e473e993da0d",
+  "semanticHash": "39afb5c8d0892722b1a837e2d6f3778e6f3a3aeb889e649320c4e473e993da0d",
+  "createdAt": "2026-07-04T19:02:57.203Z",
+  "updatedAt": "2026-07-04T19:02:57.203Z"
+}

@@ -1,0 +1,18 @@
+{
+  "sourceId": "diff-stat-74985aab",
+  "title": "diff-stat",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr1kaxne00hc0ipolmjyzdss/diff-stat.txt",
+  "repoRelativePath": ".agent-runs/cmr1kaxne00hc0ipolmjyzdss/diff-stat.txt",
+  "storedPath": "raw/sources/diff-stat-74985aab.txt",
+  "extractedTextPath": "state/extracts/diff-stat-74985aab.md",
+  "extractedMetadataPath": "state/extracts/diff-stat-74985aab.json",
+  "extractionHash": "1652ccf69f49dd1ed44197c63e812a34f7145976c57eef6e82b0782979ec3bdc",
+  "mimeType": "text/plain",
+  "contentHash": "74985aabec355222cc1edca3420891ae6fa3216fd283d9b6eded17d366be4fc8",
+  "semanticHash": "74985aabec355222cc1edca3420891ae6fa3216fd283d9b6eded17d366be4fc8",
+  "createdAt": "2026-07-04T19:02:41.599Z",
+  "updatedAt": "2026-07-04T19:02:41.599Z"
+}

@@ -1,0 +1,19 @@
+{
+  "sourceId": "tasks-test-8ae11650",
+  "title": "tasks.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/tasks.test.ts",
+  "repoRelativePath": "tests/services/tasks.test.ts",
+  "storedPath": "raw/sources/tasks-test-8ae11650.ts",
+  "extractedTextPath": "state/extracts/tasks-test-8ae11650.md",
+  "extractedMetadataPath": "state/extracts/tasks-test-8ae11650.json",
+  "extractionHash": "1e9d3b3d4fa900fada98ca87cc4961c4a1bdd6eaa14573855463b8f6c50adfb1",
+  "mimeType": "text/typescript",
+  "contentHash": "8ae1165047ad864ab120b36a0e99b46ddab434083f9bd76e9cf66b18fc682a97",
+  "semanticHash": "8ae1165047ad864ab120b36a0e99b46ddab434083f9bd76e9cf66b18fc682a97",
+  "createdAt": "2026-07-04T19:03:02.609Z",
+  "updatedAt": "2026-07-04T19:03:02.609Z"
+}

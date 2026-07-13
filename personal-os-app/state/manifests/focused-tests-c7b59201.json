@@ -1,0 +1,18 @@
+{
+  "sourceId": "focused-tests-c7b59201",
+  "title": "focused-tests",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfucnt001t0jn5vd3wcn3u/logs/focused-tests.log",
+  "repoRelativePath": ".agent-runs/cmqqfucnt001t0jn5vd3wcn3u/logs/focused-tests.log",
+  "storedPath": "raw/sources/focused-tests-c7b59201.log",
+  "extractedTextPath": "state/extracts/focused-tests-c7b59201.md",
+  "extractedMetadataPath": "state/extracts/focused-tests-c7b59201.json",
+  "extractionHash": "3f930246f166d95c9bb60d4742ea6533631166d67e516d3fd3b93fdfccf02391",
+  "mimeType": "text/plain",
+  "contentHash": "c7b592013c6995d66f9f1c9d0b103d3e85f89cd1a238321ae03edae789bb6e45",
+  "semanticHash": "c7b592013c6995d66f9f1c9d0b103d3e85f89cd1a238321ae03edae789bb6e45",
+  "createdAt": "2026-07-04T19:02:35.981Z",
+  "updatedAt": "2026-07-04T19:02:35.981Z"
+}

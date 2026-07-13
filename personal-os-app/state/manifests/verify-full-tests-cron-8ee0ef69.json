@@ -1,0 +1,18 @@
+{
+  "sourceId": "verify-full-tests-cron-8ee0ef69",
+  "title": "verify-full-tests-cron",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-full-tests-cron.log",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-full-tests-cron.log",
+  "storedPath": "raw/sources/verify-full-tests-cron-8ee0ef69.log",
+  "extractedTextPath": "state/extracts/verify-full-tests-cron-8ee0ef69.md",
+  "extractedMetadataPath": "state/extracts/verify-full-tests-cron-8ee0ef69.json",
+  "extractionHash": "d592f7207ff8b24ecbde689e3a35bcb46280e7bb8d37375b7ea0ac615512d87e",
+  "mimeType": "text/plain",
+  "contentHash": "8ee0ef694f1484705f27df9e873c36b15518fa95e71d9858c8ab6962fb7eaff3",
+  "semanticHash": "8ee0ef694f1484705f27df9e873c36b15518fa95e71d9858c8ab6962fb7eaff3",
+  "createdAt": "2026-07-04T19:02:32.713Z",
+  "updatedAt": "2026-07-04T19:02:32.713Z"
+}

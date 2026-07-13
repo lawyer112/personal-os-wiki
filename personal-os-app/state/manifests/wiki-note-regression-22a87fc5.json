@@ -1,0 +1,24 @@
+{
+  "sourceId": "wiki-note-regression-22a87fc5",
+  "title": "wiki-note-regression",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/wiki-note-regression.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/wiki-note-regression.json",
+  "storedPath": "raw/sources/wiki-note-regression-22a87fc5.json",
+  "extractedTextPath": "state/extracts/wiki-note-regression-22a87fc5.md",
+  "extractedMetadataPath": "state/extracts/wiki-note-regression-22a87fc5.json",
+  "extractionHash": "80a2602354bcc2928964590c696a2189983fd93c8ac4c177c501a8d3ee8f1358",
+  "mimeType": "application/json",
+  "contentHash": "22a87fc59a1017823708e1c25ab5b0bcc044e63a43044eef5b2b9e10c9f52d54",
+  "semanticHash": "22a87fc59a1017823708e1c25ab5b0bcc044e63a43044eef5b2b9e10c9f52d54",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "6",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:31.531Z",
+  "updatedAt": "2026-07-04T19:02:31.531Z"
+}

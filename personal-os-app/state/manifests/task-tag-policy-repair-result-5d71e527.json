@@ -1,0 +1,24 @@
+{
+  "sourceId": "task-tag-policy-repair-result-5d71e527",
+  "title": "task-tag-policy-repair-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/task-tag-policy-repair-result.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/task-tag-policy-repair-result.json",
+  "storedPath": "raw/sources/task-tag-policy-repair-result-5d71e527.json",
+  "extractedTextPath": "state/extracts/task-tag-policy-repair-result-5d71e527.md",
+  "extractedMetadataPath": "state/extracts/task-tag-policy-repair-result-5d71e527.json",
+  "extractionHash": "8ebb6dbfe819603a921ae7687b3d4c3b6f70d1cb8e56ff8184f6d81ccb09398c",
+  "mimeType": "application/json",
+  "contentHash": "5d71e527a7feb89bcdb09eab9960c33ea44788d256024839d0fbbec311ed8cee",
+  "semanticHash": "5d71e527a7feb89bcdb09eab9960c33ea44788d256024839d0fbbec311ed8cee",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "8"
+  },
+  "createdAt": "2026-07-04T19:02:35.533Z",
+  "updatedAt": "2026-07-04T19:02:35.533Z"
+}

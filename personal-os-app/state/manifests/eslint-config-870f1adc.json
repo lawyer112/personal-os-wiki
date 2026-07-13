@@ -1,0 +1,19 @@
+{
+  "sourceId": "eslint-config-870f1adc",
+  "title": "eslint.config",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/eslint.config.mjs",
+  "repoRelativePath": "eslint.config.mjs",
+  "storedPath": "raw/sources/eslint-config-870f1adc.mjs",
+  "extractedTextPath": "state/extracts/eslint-config-870f1adc.md",
+  "extractedMetadataPath": "state/extracts/eslint-config-870f1adc.json",
+  "extractionHash": "c054b6709cfbefa669fce746fc8badca615904fc1e8996722272ad7a1262f8db",
+  "mimeType": "text/javascript",
+  "contentHash": "870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493",
+  "semanticHash": "870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493",
+  "createdAt": "2026-07-04T19:02:49.368Z",
+  "updatedAt": "2026-07-04T19:02:49.368Z"
+}

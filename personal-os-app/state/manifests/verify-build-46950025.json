@@ -1,0 +1,18 @@
+{
+  "sourceId": "verify-build-46950025",
+  "title": "verify-build",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/verify-build.log",
+  "repoRelativePath": ".agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/verify-build.log",
+  "storedPath": "raw/sources/verify-build-46950025.log",
+  "extractedTextPath": "state/extracts/verify-build-46950025.md",
+  "extractedMetadataPath": "state/extracts/verify-build-46950025.json",
+  "extractionHash": "70dfde08d52fbecc4a559c539b462ca34cdf5f3eec961d6469f772fe4c3a4d58",
+  "mimeType": "text/plain",
+  "contentHash": "469500250b9bd62fe08e0cae9349332c80b37bfba0769ced500ee03a06303768",
+  "semanticHash": "469500250b9bd62fe08e0cae9349332c80b37bfba0769ced500ee03a06303768",
+  "createdAt": "2026-07-04T19:02:33.255Z",
+  "updatedAt": "2026-07-04T19:02:33.255Z"
+}

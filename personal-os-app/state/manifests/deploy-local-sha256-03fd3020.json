@@ -1,0 +1,18 @@
+{
+  "sourceId": "deploy-local-sha256-03fd3020",
+  "title": "deploy-local-sha256",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-local-sha256.txt",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-local-sha256.txt",
+  "storedPath": "raw/sources/deploy-local-sha256-03fd3020.txt",
+  "extractedTextPath": "state/extracts/deploy-local-sha256-03fd3020.md",
+  "extractedMetadataPath": "state/extracts/deploy-local-sha256-03fd3020.json",
+  "extractionHash": "c6f73b76eb5999ecc40b7f12fd941e36d9ce268a4dc82534a4daa3c22b12c15d",
+  "mimeType": "text/plain",
+  "contentHash": "03fd3020bdebea200abc8b8e5ca7264916a48c01643103dd43320a1087afb3c4",
+  "semanticHash": "03fd3020bdebea200abc8b8e5ca7264916a48c01643103dd43320a1087afb3c4",
+  "createdAt": "2026-07-04T19:02:32.323Z",
+  "updatedAt": "2026-07-04T19:02:32.323Z"
+}

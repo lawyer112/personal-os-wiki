@@ -1,0 +1,24 @@
+{
+  "sourceId": "completion-verification-4d0ff3dc",
+  "title": "completion-verification",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6he000u0jmjinvl77a4/completion-verification.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6he000u0jmjinvl77a4/completion-verification.json",
+  "storedPath": "raw/sources/completion-verification-4d0ff3dc.json",
+  "extractedTextPath": "state/extracts/completion-verification-4d0ff3dc.md",
+  "extractedMetadataPath": "state/extracts/completion-verification-4d0ff3dc.json",
+  "extractionHash": "f09da2bd8f8137b218bfc004fcd53ed2cd760bf9a2d4da6e94ac8c50b3051aca",
+  "mimeType": "application/json",
+  "contentHash": "4d0ff3dcd8a85833082a0c0f5e4d87bd3f72f5db201690efea2cbbf2f371fe91",
+  "semanticHash": "4d0ff3dcd8a85833082a0c0f5e4d87bd3f72f5db201690efea2cbbf2f371fe91",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "10",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:30.697Z",
+  "updatedAt": "2026-07-04T19:02:30.697Z"
+}

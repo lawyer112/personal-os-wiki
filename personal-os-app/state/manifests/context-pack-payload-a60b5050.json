@@ -1,0 +1,24 @@
+{
+  "sourceId": "context-pack-payload-a60b5050",
+  "title": "context-pack-payload",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqxalsj000i0jpjtjlqncdo/context-pack-payload.json",
+  "repoRelativePath": ".agent-runs/cmqqxalsj000i0jpjtjlqncdo/context-pack-payload.json",
+  "storedPath": "raw/sources/context-pack-payload-a60b5050.json",
+  "extractedTextPath": "state/extracts/context-pack-payload-a60b5050.md",
+  "extractedMetadataPath": "state/extracts/context-pack-payload-a60b5050.json",
+  "extractionHash": "00164ee3aaeadacfce1731efb92334bbfa4c5431c6b18559e0058f79eae63431",
+  "mimeType": "application/json",
+  "contentHash": "a60b505041e186487811a8932b5dbee1af072972e5ec3860c49d12c7bff03cdb",
+  "semanticHash": "a60b505041e186487811a8932b5dbee1af072972e5ec3860c49d12c7bff03cdb",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "5",
+    "nested_depth": "5"
+  },
+  "createdAt": "2026-07-04T19:02:37.418Z",
+  "updatedAt": "2026-07-04T19:02:37.418Z"
+}

@@ -1,0 +1,24 @@
+{
+  "sourceId": "task-classic-knowledge-object-be6ca5fe",
+  "title": "task.classic-knowledge-object",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/examples/knowledge-objects/task.classic-knowledge-object.json",
+  "repoRelativePath": "examples/knowledge-objects/task.classic-knowledge-object.json",
+  "storedPath": "raw/sources/task-classic-knowledge-object-be6ca5fe.json",
+  "extractedTextPath": "state/extracts/task-classic-knowledge-object-be6ca5fe.md",
+  "extractedMetadataPath": "state/extracts/task-classic-knowledge-object-be6ca5fe.json",
+  "extractionHash": "ccd913fc8926d9816d26692b0bcc6828fce9d2246328f3bef6c17f97192f1759",
+  "mimeType": "application/json",
+  "contentHash": "be6ca5fe4c99c8576496c566835ba1935dc8ff76085062a0fb839cdc943865b7",
+  "semanticHash": "be6ca5fe4c99c8576496c566835ba1935dc8ff76085062a0fb839cdc943865b7",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "20",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:49.578Z",
+  "updatedAt": "2026-07-04T19:02:49.578Z"
+}

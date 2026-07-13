@@ -1,0 +1,18 @@
+{
+  "sourceId": "npm-lint-a0222c78",
+  "title": "npm-lint",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6sb00100jmjuw9hw3ub/artifacts/npm-lint.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6sb00100jmjuw9hw3ub/artifacts/npm-lint.log",
+  "storedPath": "raw/sources/npm-lint-a0222c78.log",
+  "extractedTextPath": "state/extracts/npm-lint-a0222c78.md",
+  "extractedMetadataPath": "state/extracts/npm-lint-a0222c78.json",
+  "extractionHash": "8a65d07269d8c50592cf4cc8e02031e1d50f71b0ddb59488734a9e5dca435a67",
+  "mimeType": "text/plain",
+  "contentHash": "a0222c784212252122b589c31295c600e66b3ccf89c84f81d82789d0174dfd28",
+  "semanticHash": "a0222c784212252122b589c31295c600e66b3ccf89c84f81d82789d0174dfd28",
+  "createdAt": "2026-07-04T19:02:31.761Z",
+  "updatedAt": "2026-07-04T19:02:31.761Z"
+}

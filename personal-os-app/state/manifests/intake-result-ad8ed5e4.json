@@ -1,0 +1,24 @@
+{
+  "sourceId": "intake-result-ad8ed5e4",
+  "title": "intake-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-script-intake-smoke/intake-result.json",
+  "repoRelativePath": ".agent-runs/github-radar-script-intake-smoke/intake-result.json",
+  "storedPath": "raw/sources/intake-result-ad8ed5e4.json",
+  "extractedTextPath": "state/extracts/intake-result-ad8ed5e4.md",
+  "extractedMetadataPath": "state/extracts/intake-result-ad8ed5e4.json",
+  "extractionHash": "7f6c133b2f8ccc225b81ddd730f1cb6a7778d49e296f8efd94fad4996ddc1981",
+  "mimeType": "application/json",
+  "contentHash": "ad8ed5e4fe17b6ea68641e365a85d1476a0906036116f007caa3da2e158b9729",
+  "semanticHash": "ad8ed5e4fe17b6ea68641e365a85d1476a0906036116f007caa3da2e158b9729",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "11",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:47.193Z",
+  "updatedAt": "2026-07-04T19:02:47.193Z"
+}

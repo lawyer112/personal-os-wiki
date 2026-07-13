@@ -1,0 +1,40 @@
+# submit-payload
+Format: JSON
+Top-level: object
+Size: 8
+Nested depth: 2
+
+## Schema
+
+- agentId: string
+- summary: string
+- evidenceLinks: array (3 items)
+- artifactUrls: array (3 items)
+- nextRecommendation: string
+- resultType: string
+- definitionOfDoneMet: boolean
+- needsHumanDecision: boolean
+
+## Preview
+
+```json
+{
+  "agentId": "obsidianmanager1",
+  "summary": "完成 rohitg00/agentmemory 吸收价值评估：产出 source ledger、Wiki 评估笔记、两个 agent_allowed 子任务建议；结论是吸收 AgentRun context pack/provenance 等设计，不直接部署 agentmemory 本体。",
+  "evidenceLinks": [
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/source-ledger/evidence.md",
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/gate.json",
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/intake-result.json"
+  ],
+  "artifactUrls": [
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/worker-result.json",
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/source-ledger/repos.json",
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/source-ledger/adoption-tasks.json"
+  ],
+  "nextRecommendation": "下一步由 Agent 执行“实现 AgentRun context pack 自动归档 v0”。",
+  "resultType": "wiki-evaluation",
+  "definitionOfDoneMet": true,
+  "needsHumanDecision": false
+}
+
+```

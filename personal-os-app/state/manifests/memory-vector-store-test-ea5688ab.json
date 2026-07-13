@@ -1,0 +1,19 @@
+{
+  "sourceId": "memory-vector-store-test-ea5688ab",
+  "title": "memory-vector-store.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/memory-vector-store.test.ts",
+  "repoRelativePath": "tests/memory-vector-store.test.ts",
+  "storedPath": "raw/sources/memory-vector-store-test-ea5688ab.ts",
+  "extractedTextPath": "state/extracts/memory-vector-store-test-ea5688ab.md",
+  "extractedMetadataPath": "state/extracts/memory-vector-store-test-ea5688ab.json",
+  "extractionHash": "d8652968f0e3342e8e28a48a44edce98eaf0b1f2f0a6634810c82f0760a1b0d7",
+  "mimeType": "text/typescript",
+  "contentHash": "ea5688abc9f9e457a98982d8fe54b09813f3509f343dfdd4107558cf1b6e70e5",
+  "semanticHash": "ea5688abc9f9e457a98982d8fe54b09813f3509f343dfdd4107558cf1b6e70e5",
+  "createdAt": "2026-07-04T19:03:00.581Z",
+  "updatedAt": "2026-07-04T19:03:00.581Z"
+}

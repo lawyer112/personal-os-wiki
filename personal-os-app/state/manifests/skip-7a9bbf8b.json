@@ -1,0 +1,24 @@
+{
+  "sourceId": "skip-7a9bbf8b",
+  "title": "skip",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/fixtures/raw-manifest-ingest/skip.json",
+  "repoRelativePath": "tests/fixtures/raw-manifest-ingest/skip.json",
+  "storedPath": "raw/sources/skip-7a9bbf8b.json",
+  "extractedTextPath": "state/extracts/skip-7a9bbf8b.md",
+  "extractedMetadataPath": "state/extracts/skip-7a9bbf8b.json",
+  "extractionHash": "3c6fd788866e9aaecc9e1a9925a9aea1e724ff55787c59b6a413d690b2705694",
+  "mimeType": "application/json",
+  "contentHash": "7a9bbf8b2c66e5f3685e15c9e9faf9e1d98bd6fadaefe4e1fd12d57e0dcaf9af",
+  "semanticHash": "7a9bbf8b2c66e5f3685e15c9e9faf9e1d98bd6fadaefe4e1fd12d57e0dcaf9af",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "20",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:03:00.306Z",
+  "updatedAt": "2026-07-04T19:03:00.306Z"
+}

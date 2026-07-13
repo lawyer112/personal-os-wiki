@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AgentOwnerBadge } from "@/components/AgentOwnerBadge";
 import { formatPriority, formatTaskStatus } from "@/lib/task-labels";
 import type { TaskView } from "@/lib/view-models";
 
@@ -10,6 +11,7 @@ export function ReviewTaskCard({ task }: { task: TaskView }) {
   const router = useRouter();
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmArchive, setConfirmArchive] = useState(false);
   const goalText =
     task.description ??
     task.sourceAgentRun?.reasoningSummary ??
@@ -18,6 +20,7 @@ export function ReviewTaskCard({ task }: { task: TaskView }) {
   async function updateStatus(status: "todo" | "waiting" | "archived") {
     setPendingAction(status);
     setError(null);
+    setConfirmArchive(false);
     try {
       const response = await fetch(`/api/tasks/${task.id}`, {
         method: "PATCH",
@@ -54,6 +57,15 @@ export function ReviewTaskCard({ task }: { task: TaskView }) {
         <span className="shrink-0 rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
           待决定
         </span>
+      </div>
+
+      <div className="mt-2 flex flex-wrap gap-2 text-xs">
+        <AgentOwnerBadge
+          ownerAgent={task.ownerAgent}
+          leaseUntil={task.leaseUntil}
+          lastHeartbeatAt={task.lastHeartbeatAt}
+          executionMode={task.executionMode}
+        />
       </div>
 
       <div className="mt-3 grid gap-2 text-sm leading-5">
@@ -94,14 +106,35 @@ export function ReviewTaskCard({ task }: { task: TaskView }) {
         >
           转为等待
         </button>
-        <button
-          type="button"
-          disabled={pendingAction !== null}
-          onClick={() => updateStatus("archived")}
-          className="rounded-lg border border-zinc-200 px-2.5 py-1.5 text-zinc-500 disabled:opacity-50"
-        >
-          忽略
-        </button>
+        {confirmArchive ? (
+          <>
+            <span className="flex items-center text-zinc-500">确定忽略此任务？</span>
+            <button
+              type="button"
+              disabled={pendingAction !== null}
+              onClick={() => updateStatus("archived")}
+              className="rounded-lg border border-rose-300 bg-rose-50 px-2.5 py-1.5 text-rose-700 disabled:opacity-50"
+            >
+              确认忽略
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmArchive(false)}
+              className="rounded-lg border border-zinc-200 px-2.5 py-1.5 text-zinc-500"
+            >
+              取消
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            disabled={pendingAction !== null}
+            onClick={() => setConfirmArchive(true)}
+            className="rounded-lg border border-zinc-200 px-2.5 py-1.5 text-zinc-500 disabled:opacity-50"
+          >
+            忽略
+          </button>
+        )}
       </div>
       {error ? <p className="mt-2 text-xs text-rose-600">{error}</p> : null}
     </article>

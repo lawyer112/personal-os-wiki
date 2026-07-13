@@ -1,0 +1,18 @@
+{
+  "sourceId": "deploy-file-list-sourcefix-cc5c1ed4",
+  "title": "deploy-file-list-sourcefix",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-file-list-sourcefix.txt",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-file-list-sourcefix.txt",
+  "storedPath": "raw/sources/deploy-file-list-sourcefix-cc5c1ed4.txt",
+  "extractedTextPath": "state/extracts/deploy-file-list-sourcefix-cc5c1ed4.md",
+  "extractedMetadataPath": "state/extracts/deploy-file-list-sourcefix-cc5c1ed4.json",
+  "extractionHash": "3ff41baddf515a6e87534f699ddf260d002c20f886b3343687b8c0c2485aa187",
+  "mimeType": "text/plain",
+  "contentHash": "cc5c1ed4a4c14447c0a0a1b88d6f1af54455cc6a2c41f88b3ae7fdf3681742d0",
+  "semanticHash": "cc5c1ed4a4c14447c0a0a1b88d6f1af54455cc6a2c41f88b3ae7fdf3681742d0",
+  "createdAt": "2026-07-04T19:02:32.259Z",
+  "updatedAt": "2026-07-04T19:02:32.259Z"
+}

@@ -1,0 +1,18 @@
+{
+  "sourceId": "deploy-6-37-20260623-171651-140d9bd7",
+  "title": "deploy-6.37-20260623-171651",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/deploy-6.37-20260623-171651.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/deploy-6.37-20260623-171651.log",
+  "storedPath": "raw/sources/deploy-6-37-20260623-171651-140d9bd7.log",
+  "extractedTextPath": "state/extracts/deploy-6-37-20260623-171651-140d9bd7.md",
+  "extractedMetadataPath": "state/extracts/deploy-6-37-20260623-171651-140d9bd7.json",
+  "extractionHash": "f0a1bbea6ae9bb5bcf0e4919faf9619d76bd0d489bace0881d0fec28ec4ed44a",
+  "mimeType": "text/plain",
+  "contentHash": "140d9bd70c522d4c72cd7c622c8a8dcce5dd8890b40f6863b3ab9ffff4258149",
+  "semanticHash": "140d9bd70c522d4c72cd7c622c8a8dcce5dd8890b40f6863b3ab9ffff4258149",
+  "createdAt": "2026-07-04T19:02:30.521Z",
+  "updatedAt": "2026-07-04T19:02:30.521Z"
+}

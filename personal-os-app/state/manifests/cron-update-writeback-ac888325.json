@@ -1,0 +1,24 @@
+{
+  "sourceId": "cron-update-writeback-ac888325",
+  "title": "cron-update-writeback",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-20260623/cron-update-writeback.json",
+  "repoRelativePath": ".agent-runs/github-radar-20260623/cron-update-writeback.json",
+  "storedPath": "raw/sources/cron-update-writeback-ac888325.json",
+  "extractedTextPath": "state/extracts/cron-update-writeback-ac888325.md",
+  "extractedMetadataPath": "state/extracts/cron-update-writeback-ac888325.json",
+  "extractionHash": "e2d99a83ef2bcc54b4217b623de4c4d527d53cd02d6f30362fd47b80a85d24a1",
+  "mimeType": "application/json",
+  "contentHash": "ac888325de09c95b1a94d4ae3c685c1bdacfe5b61e9ff705bee76bb652f35b53",
+  "semanticHash": "ac888325de09c95b1a94d4ae3c685c1bdacfe5b61e9ff705bee76bb652f35b53",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "5",
+    "nested_depth": "9"
+  },
+  "createdAt": "2026-07-04T19:02:43.550Z",
+  "updatedAt": "2026-07-04T19:02:43.550Z"
+}

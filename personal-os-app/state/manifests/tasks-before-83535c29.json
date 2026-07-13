@@ -1,0 +1,24 @@
+{
+  "sourceId": "tasks-before-83535c29",
+  "title": "tasks-before",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqqgfgm001r0jocadvkeqzz/logs/tasks-before.json",
+  "repoRelativePath": ".agent-runs/cmqqqgfgm001r0jocadvkeqzz/logs/tasks-before.json",
+  "storedPath": "raw/sources/tasks-before-83535c29.json",
+  "extractedTextPath": "state/extracts/tasks-before-83535c29.md",
+  "extractedMetadataPath": "state/extracts/tasks-before-83535c29.json",
+  "extractionHash": "5bf6beb3bf20921fc115c0759c32597f486ea4673a8fe36b6ac9bb8984fbe3e9",
+  "mimeType": "application/json",
+  "contentHash": "83535c29554527f675d787f3122fbf37e334c048fc56fdbddedb138cceae8e1d",
+  "semanticHash": "83535c29554527f675d787f3122fbf37e334c048fc56fdbddedb138cceae8e1d",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "9"
+  },
+  "createdAt": "2026-07-04T19:02:36.532Z",
+  "updatedAt": "2026-07-04T19:02:36.532Z"
+}

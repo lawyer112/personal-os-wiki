@@ -1,0 +1,18 @@
+{
+  "sourceId": "deployment-prereq-195369a4",
+  "title": "deployment-prereq",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/deployment-prereq.log",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/deployment-prereq.log",
+  "storedPath": "raw/sources/deployment-prereq-195369a4.log",
+  "extractedTextPath": "state/extracts/deployment-prereq-195369a4.md",
+  "extractedMetadataPath": "state/extracts/deployment-prereq-195369a4.json",
+  "extractionHash": "90a67522670761b4328fea7c5f264a4eeb72b835baa16ed11f2bad42e57c7bd7",
+  "mimeType": "text/plain",
+  "contentHash": "195369a4308f3c4772dcbff232a6f55398b0d48b47f13b4c9fe8ef92dd2c3e11",
+  "semanticHash": "195369a4308f3c4772dcbff232a6f55398b0d48b47f13b4c9fe8ef92dd2c3e11",
+  "createdAt": "2026-07-04T19:02:34.765Z",
+  "updatedAt": "2026-07-04T19:02:34.765Z"
+}

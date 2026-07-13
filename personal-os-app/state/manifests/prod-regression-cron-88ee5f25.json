@@ -1,0 +1,19 @@
+{
+  "sourceId": "prod-regression-cron-88ee5f25",
+  "title": "prod-regression-cron",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/prod-regression-cron.mjs",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/prod-regression-cron.mjs",
+  "storedPath": "raw/sources/prod-regression-cron-88ee5f25.mjs",
+  "extractedTextPath": "state/extracts/prod-regression-cron-88ee5f25.md",
+  "extractedMetadataPath": "state/extracts/prod-regression-cron-88ee5f25.json",
+  "extractionHash": "a1089833a568e0be017439863654dfc57320993c65c5a1e094d3bf9c06e44172",
+  "mimeType": "text/javascript",
+  "contentHash": "88ee5f250ab8d3dd37e24c6b6efade76c55070339b799eb0b5a456976fef4c58",
+  "semanticHash": "88ee5f250ab8d3dd37e24c6b6efade76c55070339b799eb0b5a456976fef4c58",
+  "createdAt": "2026-07-04T19:02:33.079Z",
+  "updatedAt": "2026-07-04T19:02:33.079Z"
+}

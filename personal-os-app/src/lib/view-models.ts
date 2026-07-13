@@ -25,6 +25,9 @@ export type TaskView = {
   priority: string;
   riskLevel?: string;
   executionMode?: string;
+  ownerAgent?: string | null;
+  leaseUntil?: Date | string | null;
+  lastHeartbeatAt?: Date | string | null;
   nextAction: string;
   definitionOfDone: string;
   estimateMinutes?: number | null;

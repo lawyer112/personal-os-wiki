@@ -1,0 +1,18 @@
+{
+  "sourceId": "package-fd8d5253",
+  "title": "package",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/package.json",
+  "repoRelativePath": "package.json",
+  "storedPath": "raw/sources/package-fd8d5253.json",
+  "extractedTextPath": "state/extracts/package-fd8d5253.md",
+  "extractedMetadataPath": "state/extracts/package-fd8d5253.json",
+  "extractionHash": "5d207a0c4fe4b5879f72146d00f2210186c5e329ef98429080dadc3e5b9aa583",
+  "mimeType": "application/json",
+  "contentHash": "fd8d5253e73d6af7476a3d83af342bbfa83a3ca4660609c7a59dfd0d53259461",
+  "semanticHash": "fd8d5253e73d6af7476a3d83af342bbfa83a3ca4660609c7a59dfd0d53259461",
+  "createdAt": "2026-07-04T19:02:49.865Z",
+  "updatedAt": "2026-07-04T19:02:49.865Z"
+}

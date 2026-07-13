@@ -1,0 +1,18 @@
+{
+  "sourceId": "package-lock-7b007770",
+  "title": "package-lock",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/package-lock.json",
+  "repoRelativePath": "package-lock.json",
+  "storedPath": "raw/sources/package-lock-7b007770.json",
+  "extractedTextPath": "state/extracts/package-lock-7b007770.md",
+  "extractedMetadataPath": "state/extracts/package-lock-7b007770.json",
+  "extractionHash": "13cb6ed9b91a0af20b3c9b676fd0713f93e2f76f15b99763358391f820d4b12b",
+  "mimeType": "application/json",
+  "contentHash": "7b007770af4e36d3b469dfa3c152ab0fe5eb3706b9d0ff696446e154e85b059f",
+  "semanticHash": "7b007770af4e36d3b469dfa3c152ab0fe5eb3706b9d0ff696446e154e85b059f",
+  "createdAt": "2026-07-04T19:02:49.791Z",
+  "updatedAt": "2026-07-04T19:02:49.791Z"
+}

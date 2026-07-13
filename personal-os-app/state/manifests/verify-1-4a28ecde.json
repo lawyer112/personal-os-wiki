@@ -1,0 +1,18 @@
+{
+  "sourceId": "verify-1-4a28ecde",
+  "title": "verify-1",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq38soe001a0jmj1c8qffq0/artifacts/verify-1.log",
+  "repoRelativePath": ".agent-runs/cmqq38soe001a0jmj1c8qffq0/artifacts/verify-1.log",
+  "storedPath": "raw/sources/verify-1-4a28ecde.log",
+  "extractedTextPath": "state/extracts/verify-1-4a28ecde.md",
+  "extractedMetadataPath": "state/extracts/verify-1-4a28ecde.json",
+  "extractionHash": "66e892af078057351892464ea395d783a9b5f39fc697bf803a95fd9e5ecb6649",
+  "mimeType": "text/plain",
+  "contentHash": "4a28ecdeb622db523380877182695c83e81141c4221d1785476563a7647629e4",
+  "semanticHash": "4a28ecdeb622db523380877182695c83e81141c4221d1785476563a7647629e4",
+  "createdAt": "2026-07-04T19:02:31.906Z",
+  "updatedAt": "2026-07-04T19:02:31.906Z"
+}

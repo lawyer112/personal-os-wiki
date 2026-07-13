@@ -1,0 +1,24 @@
+{
+  "sourceId": "production-wiki-writeback-80c717c0",
+  "title": "production-wiki-writeback",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/production-wiki-writeback.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/production-wiki-writeback.json",
+  "storedPath": "raw/sources/production-wiki-writeback-80c717c0.json",
+  "extractedTextPath": "state/extracts/production-wiki-writeback-80c717c0.md",
+  "extractedMetadataPath": "state/extracts/production-wiki-writeback-80c717c0.json",
+  "extractionHash": "ed4006d53f9c352592e05b8cd65c9ca8ce2cb0ccbcbdb041922b5a764970e369",
+  "mimeType": "application/json",
+  "contentHash": "80c717c00962afba5ba9726af840088a6e3c3bec0d226f6c6b1fe645e178f720",
+  "semanticHash": "80c717c00962afba5ba9726af840088a6e3c3bec0d226f6c6b1fe645e178f720",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "4",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:30.630Z",
+  "updatedAt": "2026-07-04T19:02:30.630Z"
+}

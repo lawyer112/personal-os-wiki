@@ -1,0 +1,19 @@
+{
+  "sourceId": "archive-agent-run-fcdb1992",
+  "title": "archive-agent-run",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/scripts/archive-agent-run.mjs",
+  "repoRelativePath": "scripts/archive-agent-run.mjs",
+  "storedPath": "raw/sources/archive-agent-run-fcdb1992.mjs",
+  "extractedTextPath": "state/extracts/archive-agent-run-fcdb1992.md",
+  "extractedMetadataPath": "state/extracts/archive-agent-run-fcdb1992.json",
+  "extractionHash": "b55b0efd989d052006bc074176fc3965e91f20e044de5f027190ccd7d06727f1",
+  "mimeType": "text/javascript",
+  "contentHash": "fcdb19926e938d4cf8b755d55c18a3dd94bc5f2e25d59f4a39805269ddf09be5",
+  "semanticHash": "fcdb19926e938d4cf8b755d55c18a3dd94bc5f2e25d59f4a39805269ddf09be5",
+  "createdAt": "2026-07-04T19:02:51.500Z",
+  "updatedAt": "2026-07-04T19:02:51.500Z"
+}

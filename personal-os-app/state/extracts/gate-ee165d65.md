@@ -1,0 +1,37 @@
+# gate
+Format: JSON
+Top-level: object
+Size: 6
+Nested depth: 3
+
+## Schema
+
+- taskId: string
+- verifier: string
+- verifiedAt: string
+- status: string
+- checks: object (5 keys)
+- synthesizer: object (2 keys)
+
+## Preview
+
+```json
+{
+  "taskId": "cmqqxalsj000i0jpjtjlqncdo",
+  "verifier": "obsidianmanager1",
+  "verifiedAt": "2026-06-24T03:01:30.000Z",
+  "status": "pass",
+  "checks": {
+    "tsc": { "status": "pass", "output": "no errors" },
+    "eslint": { "status": "pass", "output": "no errors" },
+    "tests": { "status": "pass", "passed": 77, "failed": 0, "total": 77 },
+    "build": { "status": "pass", "output": "docker compose build personal-os succeeded" },
+    "regression": { "status": "pass", "output": "GET /api/agent/context?q=wiki+write+failed returns ok=true with evidence.episodes containing 4 wiki episodes" }
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": true,
+    "note": "Deployed to 6.37. No destructive changes; rollback via git revert and docker compose up."
+  }
+}
+
+```

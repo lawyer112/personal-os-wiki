@@ -1,0 +1,312 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "agentmemory-client-815e20cb",
+  "sourceHash": "815e20cbc5c40bf35ff5c1926cf8265956d5625be94ea9388ce15fffc7d0d113",
+  "semanticHash": "815e20cbc5c40bf35ff5c1926cf8265956d5625be94ea9388ce15fffc7d0d113",
+  "extractionHash": "4008dc6bea1a4f60c74d93512cccc04ce4fa129a0cfe2d09d9d7c77ba64fe5bb",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "agentmemory-client",
+  "summary": "agentmemory-client is a typescript module, defining 21 top-level symbol(s), exporting 2 symbol(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:agentmemory-client-815e20cb:1",
+      "text": "agentmemory-client exports AgentMemoryContextHit, searchAgentMemoryEpisodes.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentmemory-client-815e20cb"
+    },
+    {
+      "id": "claim:agentmemory-client-815e20cb:2",
+      "text": "agentmemory-client defines AgentMemoryContextHit, FetchLike, AgentMemorySearchOptions, DEFAULT_AGENTMEMORY_LIMIT, MAX_AGENTMEMORY_LIMIT, and more.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentmemory-client-815e20cb"
+    }
+  ],
+  "questions": [
+    "Which downstream pages should explain how agentmemory-client exports are consumed?",
+    "What broader responsibility does agentmemory-client serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:agentmemory-client-815e20cb",
+    "language": "typescript",
+    "moduleName": "src/lib/agentmemory-client",
+    "imports": [],
+    "dependencies": [],
+    "symbols": [
+      {
+        "id": "symbol:agentmemory-client-815e20cb:agentmemorycontexthit.type_alias",
+        "name": "AgentMemoryContextHit",
+        "kind": "type_alias",
+        "signature": "export type AgentMemoryContextHit = { id: string; title: string; summary: string; relevanceScore: number; createdAt?: string; sessionId?: string; memoryType?: string; };",
+        "exported": true,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:fetchlike.type_alias",
+        "name": "FetchLike",
+        "kind": "type_alias",
+        "signature": "type FetchLike = (input: string | URL, init?: RequestInit) => Promise<Response>;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:agentmemorysearchoptions.type_alias",
+        "name": "AgentMemorySearchOptions",
+        "kind": "type_alias",
+        "signature": "type AgentMemorySearchOptions = { baseUrl?: string; fetchImpl?: FetchLike; limit?: number; timeoutMs?: number; };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:default-agentmemory-limit.variable",
+        "name": "DEFAULT_AGENTMEMORY_LIMIT",
+        "kind": "variable",
+        "signature": "const DEFAULT_AGENTMEMORY_LIMIT = 5;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 20,
+        "endLine": 20
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:max-agentmemory-limit.variable",
+        "name": "MAX_AGENTMEMORY_LIMIT",
+        "kind": "variable",
+        "signature": "const MAX_AGENTMEMORY_LIMIT = 10;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 21,
+        "endLine": 21
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:default-agentmemory-timeout-ms.variable",
+        "name": "DEFAULT_AGENTMEMORY_TIMEOUT_MS",
+        "kind": "variable",
+        "signature": "const DEFAULT_AGENTMEMORY_TIMEOUT_MS = 1_500;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 22,
+        "endLine": 22
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:max-agentmemory-timeout-ms.variable",
+        "name": "MAX_AGENTMEMORY_TIMEOUT_MS",
+        "kind": "variable",
+        "signature": "const MAX_AGENTMEMORY_TIMEOUT_MS = 5_000;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 23,
+        "endLine": 23
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:max-agentmemory-query-length.variable",
+        "name": "MAX_AGENTMEMORY_QUERY_LENGTH",
+        "kind": "variable",
+        "signature": "const MAX_AGENTMEMORY_QUERY_LENGTH = 500;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 24,
+        "endLine": 24
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:max-agentmemory-title-length.variable",
+        "name": "MAX_AGENTMEMORY_TITLE_LENGTH",
+        "kind": "variable",
+        "signature": "const MAX_AGENTMEMORY_TITLE_LENGTH = 180;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 25,
+        "endLine": 25
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:getoptionalenv.variable",
+        "name": "getOptionalEnv",
+        "kind": "variable",
+        "signature": "const getOptionalEnv = (name: string) => { const value = process.env[name]; if (value === undefined || value.trim() === \"\") { return undefined; } return value.trim(); };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 27,
+        "endLine": 34
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:getpositiveinteger.variable",
+        "name": "getPositiveInteger",
+        "kind": "variable",
+        "signature": "const getPositiveInteger = ( value: string | undefined, fallback: number, max: number, ) => { if (value === undefined || value.trim() === \"\") { return fallback; } const parsed =...",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 36,
+        "endLine": 51
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:isagentmemoryenabled.variable",
+        "name": "isAgentMemoryEnabled",
+        "kind": "variable",
+        "signature": "const isAgentMemoryEnabled = () => process.env.AGENT_CONTEXT_AGENTMEMORY_ENABLED === \"true\";",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 53,
+        "endLine": 54
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:buildagentmemoryendpoint.variable",
+        "name": "buildAgentMemoryEndpoint",
+        "kind": "variable",
+        "signature": "const buildAgentMemoryEndpoint = (baseUrl: string) => `${baseUrl.replace(/\\/+$/, \"\")}/agentmemory/smart-search`;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 56,
+        "endLine": 57
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:asrecord.variable",
+        "name": "asRecord",
+        "kind": "variable",
+        "signature": "const asRecord = (value: unknown): Record<string, unknown> | undefined => typeof value === \"object\" && value !== null ? (value as Record<string, unknown>) : undefined;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 59,
+        "endLine": 62
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:asstring.variable",
+        "name": "asString",
+        "kind": "variable",
+        "signature": "const asString = (value: unknown) => typeof value === \"string\" ? value : undefined;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 64,
+        "endLine": 65
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:asnumber.variable",
+        "name": "asNumber",
+        "kind": "variable",
+        "signature": "const asNumber = (value: unknown) => typeof value === \"number\" && Number.isFinite(value) ? value : undefined;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 67,
+        "endLine": 68
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:truncatetext.variable",
+        "name": "truncateText",
+        "kind": "variable",
+        "signature": "const truncateText = (value: string, maxLength: number) => { if (value.length <= maxLength) { return value; } return `${value.slice(0, maxLength - 3)}...`; };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 70,
+        "endLine": 76
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:torelevancescore.variable",
+        "name": "toRelevanceScore",
+        "kind": "variable",
+        "signature": "const toRelevanceScore = (score: unknown) => { const numericScore = asNumber(score); if (numericScore === undefined) { return 1; } if (numericScore > 1) { return Math.round(nume...",
+        "exported": false,
+        "calls": [
+          "asNumber"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 78,
+        "endLine": 89
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:hittocontexthit.variable",
+        "name": "hitToContextHit",
+        "kind": "variable",
+        "signature": "const hitToContextHit = (hit: unknown): AgentMemoryContextHit | null => { const record = asRecord(hit); if (record === undefined) { return null; } const id = asString(record.obs...",
+        "exported": false,
+        "calls": [
+          "asRecord",
+          "asString",
+          "truncateText",
+          "toRelevanceScore"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 91,
+        "endLine": 122
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:fetchwithtimeout.variable",
+        "name": "fetchWithTimeout",
+        "kind": "variable",
+        "signature": "const fetchWithTimeout = async ( fetchImpl: FetchLike, endpoint: string, query: string, limit: number, timeoutMs: number, ) => { const controller = new AbortController(); let ti...",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 124,
+        "endLine": 147
+      },
+      {
+        "id": "symbol:agentmemory-client-815e20cb:searchagentmemoryepisodes.variable",
+        "name": "searchAgentMemoryEpisodes",
+        "kind": "variable",
+        "signature": "export const searchAgentMemoryEpisodes = async ( query: string, options: AgentMemorySearchOptions = {}, ): Promise<AgentMemoryContextHit[]> => { const baseUrl = options.baseUrl ...",
+        "exported": true,
+        "calls": [
+          "getOptionalEnv",
+          "isAgentMemoryEnabled",
+          "getPositiveInteger",
+          "buildAgentMemoryEndpoint",
+          "fetchWithTimeout",
+          "asRecord",
+          "hitToContextHit"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 149,
+        "endLine": 200
+      }
+    ],
+    "exports": [
+      "AgentMemoryContextHit",
+      "searchAgentMemoryEpisodes"
+    ],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.591Z"
+}

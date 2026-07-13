@@ -1,0 +1,18 @@
+{
+  "sourceId": "personal-os-158aa011",
+  "title": "Personal OS",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/README.md",
+  "repoRelativePath": "README.md",
+  "storedPath": "raw/sources/personal-os-158aa011.md",
+  "extractedTextPath": "state/extracts/personal-os-158aa011.md",
+  "extractedMetadataPath": "state/extracts/personal-os-158aa011.json",
+  "extractionHash": "d3e219f76f434240addf176e0fbda03f7b6d3eba56eed780d481eef824e149e7",
+  "mimeType": "text/markdown",
+  "contentHash": "158aa011f1c80d4a69c244356f3e9b646beee70cea76ed2c585ed8e17330d444",
+  "semanticHash": "3cb42a96457be60a44a78d5f09864c9397718871577d9e00ccc865038a797a5f",
+  "createdAt": "2026-07-04T19:02:51.260Z",
+  "updatedAt": "2026-07-04T19:02:51.260Z"
+}

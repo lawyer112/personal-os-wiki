@@ -1,0 +1,103 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "activity-f652cf76",
+  "sourceHash": "f652cf76729f6e8652b11cc79280f35d666518ea7f2b07c9095c95b58665d05d",
+  "semanticHash": "f652cf76729f6e8652b11cc79280f35d666518ea7f2b07c9095c95b58665d05d",
+  "extractionHash": "ffa8cc1d971a1f7e68d05e615528ec8f53e5e665a118e6cd14e1910cbda8f0d4",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "activity",
+  "summary": "activity is a typescript module, defining 2 top-level symbol(s), exporting 1 symbol(s), depending on 2 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:activity-f652cf76:1",
+      "text": "activity exports recordActivity.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activity-f652cf76"
+    },
+    {
+      "id": "claim:activity-f652cf76:2",
+      "text": "activity defines ActivityWritableDb, recordActivity.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activity-f652cf76"
+    },
+    {
+      "id": "claim:activity-f652cf76:3",
+      "text": "activity imports @prisma/client, @/lib/validation.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activity-f652cf76"
+    }
+  ],
+  "questions": [
+    "Which downstream pages should explain how activity exports are consumed?",
+    "Why does activity depend on @prisma/client?",
+    "What broader responsibility does activity serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:activity-f652cf76",
+    "language": "typescript",
+    "moduleName": "src/lib/activity",
+    "imports": [
+      {
+        "specifier": "@prisma/client",
+        "importedSymbols": [
+          "Prisma"
+        ],
+        "isTypeOnly": true,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/validation",
+        "importedSymbols": [
+          "ActivityCreateInput"
+        ],
+        "isTypeOnly": true,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "@prisma/client",
+      "@/lib/validation"
+    ],
+    "symbols": [
+      {
+        "id": "symbol:activity-f652cf76:activitywritabledb.type_alias",
+        "name": "ActivityWritableDb",
+        "kind": "type_alias",
+        "signature": "type ActivityWritableDb = { activityLog: unknown; };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:activity-f652cf76:recordactivity.function",
+        "name": "recordActivity",
+        "kind": "function",
+        "signature": "export async function recordActivity<TDb extends ActivityWritableDb>( db: TDb, input: ActivityCreateInput, )",
+        "exported": true,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 8,
+        "endLine": 26
+      }
+    ],
+    "exports": [
+      "recordActivity"
+    ],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.447Z"
+}

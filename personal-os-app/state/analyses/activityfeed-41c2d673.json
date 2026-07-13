@@ -1,0 +1,121 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "activityfeed-41c2d673",
+  "sourceHash": "41c2d6734fd05081c50e5d5e17b35b8ec248d2e27701faeae6314113793ba210",
+  "semanticHash": "41c2d6734fd05081c50e5d5e17b35b8ec248d2e27701faeae6314113793ba210",
+  "extractionHash": "0e8098538194ab4dbde9586f1be258213cc2c19b2c31d1042c41ed4502ce3242",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "ActivityFeed",
+  "summary": "ActivityFeed is a tsx module, defining 4 top-level symbol(s), exporting 1 symbol(s), depending on 1 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:activityfeed-41c2d673:1",
+      "text": "ActivityFeed exports ActivityFeed.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activityfeed-41c2d673"
+    },
+    {
+      "id": "claim:activityfeed-41c2d673:2",
+      "text": "ActivityFeed defines actorLabels, actionLabels, formatActivity, ActivityFeed.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activityfeed-41c2d673"
+    },
+    {
+      "id": "claim:activityfeed-41c2d673:3",
+      "text": "ActivityFeed imports @/lib/view-models.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activityfeed-41c2d673"
+    }
+  ],
+  "questions": [
+    "Which downstream pages should explain how ActivityFeed exports are consumed?",
+    "Why does ActivityFeed depend on @/lib/view-models?",
+    "What broader responsibility does ActivityFeed serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:activityfeed-41c2d673",
+    "language": "tsx",
+    "moduleName": "src/components/ActivityFeed",
+    "imports": [
+      {
+        "specifier": "@/lib/view-models",
+        "importedSymbols": [
+          "ActivityItem"
+        ],
+        "isTypeOnly": true,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "@/lib/view-models"
+    ],
+    "symbols": [
+      {
+        "id": "symbol:activityfeed-41c2d673:actorlabels.variable",
+        "name": "actorLabels",
+        "kind": "variable",
+        "signature": "const actorLabels: Record<string, string> = { user: \"我\", hermes: \"Hermes\", codex: \"Codex\", system: \"系统\", };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 3,
+        "endLine": 8
+      },
+      {
+        "id": "symbol:activityfeed-41c2d673:actionlabels.variable",
+        "name": "actionLabels",
+        "kind": "variable",
+        "signature": "const actionLabels: Record<string, string> = { \"inbox.created\": \"收到了新输入\", \"agentRun.started\": \"开始整理输入\", \"agentRun.completed\": \"完成了整理\", \"agentRun.failed\": \"整理失败\", \"task.created\":...",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 10,
+        "endLine": 25
+      },
+      {
+        "id": "symbol:activityfeed-41c2d673:formatactivity.function",
+        "name": "formatActivity",
+        "kind": "function",
+        "signature": "function formatActivity(item: ActivityItem)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 27,
+        "endLine": 31
+      },
+      {
+        "id": "symbol:activityfeed-41c2d673:activityfeed.function",
+        "name": "ActivityFeed",
+        "kind": "function",
+        "signature": "export function ActivityFeed({ items }: { items: ActivityItem[] })",
+        "exported": true,
+        "calls": [
+          "formatActivity"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 33,
+        "endLine": 58
+      }
+    ],
+    "exports": [
+      "ActivityFeed"
+    ],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.446Z"
+}

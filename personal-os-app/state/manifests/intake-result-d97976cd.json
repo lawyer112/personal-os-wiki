@@ -1,0 +1,24 @@
+{
+  "sourceId": "intake-result-d97976cd",
+  "title": "intake-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-cron/intake-result.json",
+  "repoRelativePath": ".agent-runs/github-radar-cron/intake-result.json",
+  "storedPath": "raw/sources/intake-result-d97976cd.json",
+  "extractedTextPath": "state/extracts/intake-result-d97976cd.md",
+  "extractedMetadataPath": "state/extracts/intake-result-d97976cd.json",
+  "extractionHash": "4b2910c1033f3445deb7f9363a80986e2fe01b11d6689f1b8838a0c706714c04",
+  "mimeType": "application/json",
+  "contentHash": "d97976cdcc4b86ded5e9f239cc8155ab3bb866f9688ef388c2b8456c9305a9c2",
+  "semanticHash": "d97976cdcc4b86ded5e9f239cc8155ab3bb866f9688ef388c2b8456c9305a9c2",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "11",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:46.639Z",
+  "updatedAt": "2026-07-04T19:02:46.639Z"
+}

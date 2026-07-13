@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://classic.local/schemas/raw-source-manifest.schema.json",
+  "title": "Classic Raw Source Manifest v0",
+  "type": "object",
+  "required": ["manifest_version", "generated_at", "root", "entries", "events"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "const": "raw-manifest-v0"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/event" }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "decision": {
+      "enum": ["ingest", "skip", "update"]
+    },
+    "entry": {
+      "type": "object",
+      "required": [
+        "source_id",
+        "source_type",
+        "raw_path",
+        "content_hash",
+        "hash_algorithm",
+        "size_bytes",
+        "revision",
+        "status",
+        "first_seen_at",
+        "last_seen_at",
+        "last_decision"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source_id": { "type": "string", "minLength": 1 },
+        "source_type": { "type": "string", "minLength": 1 },
+        "source_url": { "type": "string" },
+        "raw_path": { "type": "string", "minLength": 1 },
+        "content_hash": { "$ref": "#/$defs/sha256" },
+        "hash_algorithm": { "const": "sha256" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "mtime": { "type": "string", "format": "date-time" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "status": { "enum": ["ingested", "skipped", "updated", "superseded", "failed"] },
+        "wiki_note_path": { "type": "string" },
+        "personal_os_task_id": { "type": "string" },
+        "personal_os_agent_run_id": { "type": "string" },
+        "first_seen_at": { "type": "string", "format": "date-time" },
+        "last_seen_at": { "type": "string", "format": "date-time" },
+        "last_decision": { "$ref": "#/$defs/decision" },
+        "previous_hashes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sha256" },
+          "default": []
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true,
+          "default": {}
+        }
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": ["at", "source_id", "decision", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "at": { "type": "string", "format": "date-time" },
+        "source_id": { "type": "string", "minLength": 1 },
+        "decision": { "$ref": "#/$defs/decision" },
+        "reason": { "type": "string", "minLength": 1 },
+        "raw_path": { "type": "string" },
+        "wiki_note_path": { "type": "string" },
+        "previous_hash": { "$ref": "#/$defs/sha256" },
+        "next_hash": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

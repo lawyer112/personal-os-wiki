@@ -1,0 +1,19 @@
+{
+  "sourceId": "swarmvault-mcp-client-test-ac52725e",
+  "title": "swarmvault-mcp-client.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/swarmvault-mcp-client.test.ts",
+  "repoRelativePath": "tests/services/swarmvault-mcp-client.test.ts",
+  "storedPath": "raw/sources/swarmvault-mcp-client-test-ac52725e.ts",
+  "extractedTextPath": "state/extracts/swarmvault-mcp-client-test-ac52725e.md",
+  "extractedMetadataPath": "state/extracts/swarmvault-mcp-client-test-ac52725e.json",
+  "extractionHash": "0e1e6dd7922f835ecb15db7ddb6971ea07fc78608ed688698f28edcd5dbf566e",
+  "mimeType": "text/typescript",
+  "contentHash": "ac52725e59453d2d85bf3c01b0911521e7b16c27a83b02c810bfe93adb0f5064",
+  "semanticHash": "ac52725e59453d2d85bf3c01b0911521e7b16c27a83b02c810bfe93adb0f5064",
+  "createdAt": "2026-07-04T19:03:02.525Z",
+  "updatedAt": "2026-07-04T19:03:02.525Z"
+}

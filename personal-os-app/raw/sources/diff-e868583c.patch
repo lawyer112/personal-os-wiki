@@ -1,0 +1,256 @@
+diff --git a/personal-os-app/src/lib/agent-context.ts b/personal-os-app/src/lib/agent-context.ts
+index bf4c5e7..ae777ae 100644
+--- a/personal-os-app/src/lib/agent-context.ts
++++ b/personal-os-app/src/lib/agent-context.ts
+@@ -151,6 +151,19 @@ export type ContextEpisode = {
+   title: string;
+   summary: string;
+   relevanceScore: number;
++  source?: {
++    type: "agent_run" | "task" | "wiki" | "activity";
++    id: string;
++    path?: string;
++    url?: string;
++  };
++  provenance?: {
++    sourceType: "agent_run" | "task" | "wiki" | "activity";
++    sourceId: string;
++    sourcePath?: string;
++    sourceUrl?: string;
++    createdAt?: string;
++  };
+   sourceUrl?: string;
+   createdAt?: string;
+ };
+@@ -667,6 +680,7 @@ function findEpisodes(
+   const episodes: ContextEpisode[] = [];
+ 
+   for (const candidate of wiki.candidates) {
++    const createdAt = candidate.created;
+     episodes.push({
+       type: "wiki",
+       id: candidate.path,
+@@ -674,23 +688,46 @@ function findEpisodes(
+       summary: candidate.excerpt ?? "",
+       relevanceScore: candidate.score ?? 0,
+       sourceUrl: candidate.url,
+-      createdAt: candidate.created,
++      createdAt,
++      source: {
++        type: "wiki",
++        id: candidate.path,
++        path: candidate.path,
++        url: candidate.url,
++      },
++      provenance: {
++        sourceType: "wiki",
++        sourceId: candidate.path,
++        sourcePath: candidate.path,
++        sourceUrl: candidate.url,
++        createdAt,
++      },
+     });
+   }
+ 
+   for (const act of activity) {
+     const text = `${act.action} ${act.targetType} ${act.targetId}`;
+     if (episodeMatches(text, keywords)) {
++      const createdAt =
++        typeof act.createdAt === "string"
++          ? act.createdAt
++          : act.createdAt?.toISOString();
+       episodes.push({
+         type: "activity",
+         id: act.id,
+         title: `${act.action} on ${act.targetType}`,
+         summary: `${act.action} ${act.targetType} ${act.targetId}`,
+         relevanceScore: 12,
+-        createdAt:
+-          typeof act.createdAt === "string"
+-            ? act.createdAt
+-            : act.createdAt?.toISOString(),
++        createdAt,
++        source: {
++          type: "activity",
++          id: act.id,
++        },
++        provenance: {
++          sourceType: "activity",
++          sourceId: act.id,
++          createdAt,
++        },
+       });
+     }
+   }
+@@ -699,12 +736,21 @@ function findEpisodes(
+     const run = task.sourceAgentRun;
+     const text = `${run.model} ${run.reasoningSummary} ${run.outputSummary}`;
+     if (episodeMatches(text, keywords) || task.sourceAgentRunId) {
++      const sourceId = task.sourceAgentRunId ?? "unknown";
+       episodes.push({
+         type: "agent_run",
+-        id: task.sourceAgentRunId ?? "unknown",
++        id: sourceId,
+         title: run.model ?? "Agent Run",
+         summary: run.outputSummary ?? run.reasoningSummary ?? "",
+         relevanceScore: 18,
++        source: {
++          type: "agent_run",
++          id: sourceId,
++        },
++        provenance: {
++          sourceType: "agent_run",
++          sourceId,
++        },
+       });
+     }
+   }
+@@ -712,16 +758,26 @@ function findEpisodes(
+   if (task?.contributions) {
+     for (const contrib of task.contributions) {
+       if (episodeMatches(contrib.summary, keywords)) {
++        const createdAt =
++          typeof contrib.createdAt === "string"
++            ? contrib.createdAt
++            : contrib.createdAt?.toISOString();
+         episodes.push({
+           type: "task",
+           id: task.id,
+           title: task.title,
+           summary: contrib.summary,
+           relevanceScore: 22,
+-          createdAt:
+-            typeof contrib.createdAt === "string"
+-              ? contrib.createdAt
+-              : contrib.createdAt?.toISOString(),
++          createdAt,
++          source: {
++            type: "task",
++            id: task.id,
++          },
++          provenance: {
++            sourceType: "task",
++            sourceId: task.id,
++            createdAt,
++          },
+         });
+       }
+     }
+diff --git a/personal-os-app/tests/services/agent-context.test.ts b/personal-os-app/tests/services/agent-context.test.ts
+index bf08d89..4019022 100644
+--- a/personal-os-app/tests/services/agent-context.test.ts
++++ b/personal-os-app/tests/services/agent-context.test.ts
+@@ -261,9 +261,113 @@ describe("agent context harness", () => {
+       id: "act_1",
+       title: "wiki.ingest.failed on wiki",
+       relevanceScore: 12,
++      source: {
++        type: "activity",
++        id: "act_1",
++      },
++      provenance: {
++        sourceType: "activity",
++        sourceId: "act_1",
++        createdAt: "2026-06-23T12:00:00.000Z",
++      },
+     });
+   });
+ 
++  it("adds provenance to wiki, agent run, and task contribution episodes", async () => {
++    mockedSearchWikiNotes.mockResolvedValue([
++      {
++        title: "Wiki write failure runbook",
++        path: "runbooks/wiki-write-failure.md",
++        url: "http://wiki.local/note?path=runbooks%2Fwiki-write-failure.md",
++        tags: ["runbook"],
++        concepts: ["wiki"],
++        excerpt: "Steps to recover from wiki write failures.",
++        created: "2026-06-23T09:00:00.000Z",
++      },
++    ]);
++
++    const task = {
++      id: "task_current",
++      title: "Fix wiki write pipeline",
++      description: "Debug and fix wiki write failures.",
++      status: "doing",
++      priority: "P0",
++      riskLevel: "low",
++      executionMode: "agent_allowed",
++      agentTags: ["personal-os", "wiki"],
++      ownerAgent: "hermes",
++      leaseUntil: new Date(Date.now() + 60_000).toISOString(),
++      nextAction: "Apply the fix from previous runbook.",
++      definitionOfDone: "Wiki writes succeed.",
++      projectId: "project_1",
++      sourceInboxItemId: null,
++      sourceAgentRunId: "run_1",
++      project: { id: "project_1", name: "Personal OS" },
++      sourceInboxItem: null,
++      sourceAgentRun: {
++        model: "hermes-agent",
++        reasoningSummary: "Wiki write failed due to timeout.",
++        outputSummary: "Applied retry logic and succeeded.",
++      },
++      wikiLinks: [],
++      contributions: [
++        {
++          agentId: "obsidianmanager1",
++          summary: "Fixed wiki write timeout by adding retry logic.",
++          createdAt: "2026-06-23T10:00:00.000Z",
++        },
++      ],
++      artifacts: [],
++      reviews: [],
++    };
++
++    const context = await getAgentContext(
++      {
++        task: {
++          findUnique: vi.fn().mockResolvedValue(task),
++          findMany: vi.fn().mockResolvedValue([]),
++        },
++        idea: { findMany: vi.fn().mockResolvedValue([]) },
++        activityLog: { findMany: vi.fn().mockResolvedValue([]) },
++      },
++      "task_current",
++    );
++
++    expect(context.evidence.episodes).toEqual(
++      expect.arrayContaining([
++        expect.objectContaining({
++          type: "wiki",
++          id: "runbooks/wiki-write-failure.md",
++          source: expect.objectContaining({
++            type: "wiki",
++            id: "runbooks/wiki-write-failure.md",
++            path: "runbooks/wiki-write-failure.md",
++          }),
++          provenance: expect.objectContaining({
++            sourceType: "wiki",
++            sourceId: "runbooks/wiki-write-failure.md",
++            sourcePath: "runbooks/wiki-write-failure.md",
++          }),
++        }),
++        expect.objectContaining({
++          type: "agent_run",
++          id: "run_1",
++          source: { type: "agent_run", id: "run_1" },
++          provenance: { sourceType: "agent_run", sourceId: "run_1" },
++        }),
++        expect.objectContaining({
++          type: "task",
++          id: "task_current",
++          source: { type: "task", id: "task_current" },
++          provenance: expect.objectContaining({
++            sourceType: "task",
++            sourceId: "task_current",
++          }),
++        }),
++      ]),
++    );
++  });
++
+   it("recommends investigating failed agent runs when recent failures exist", async () => {
+     mockedSearchWikiNotes.mockResolvedValue([]);
+     const taskFindMany = vi.fn().mockResolvedValue([]);

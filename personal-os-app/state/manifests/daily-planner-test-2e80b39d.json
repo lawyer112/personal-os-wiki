@@ -1,0 +1,19 @@
+{
+  "sourceId": "daily-planner-test-2e80b39d",
+  "title": "daily-planner.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/daily-planner.test.ts",
+  "repoRelativePath": "tests/services/daily-planner.test.ts",
+  "storedPath": "raw/sources/daily-planner-test-2e80b39d.ts",
+  "extractedTextPath": "state/extracts/daily-planner-test-2e80b39d.md",
+  "extractedMetadataPath": "state/extracts/daily-planner-test-2e80b39d.json",
+  "extractionHash": "2d8c8e73c8a503313f970759bc393506f9470e86d4104175d42ea79f3a04cff2",
+  "mimeType": "text/typescript",
+  "contentHash": "2e80b39d9fcd500809e12e4d4af0d1270bfed945dae09b17adf9f8138acbc332",
+  "semanticHash": "2e80b39d9fcd500809e12e4d4af0d1270bfed945dae09b17adf9f8138acbc332",
+  "createdAt": "2026-07-04T19:03:01.512Z",
+  "updatedAt": "2026-07-04T19:03:01.512Z"
+}

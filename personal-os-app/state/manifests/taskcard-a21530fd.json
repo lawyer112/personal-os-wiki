@@ -1,0 +1,19 @@
+{
+  "sourceId": "taskcard-a21530fd",
+  "title": "TaskCard",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/components/TaskCard.tsx",
+  "repoRelativePath": "src/components/TaskCard.tsx",
+  "storedPath": "raw/sources/taskcard-a21530fd.tsx",
+  "extractedTextPath": "state/extracts/taskcard-a21530fd.md",
+  "extractedMetadataPath": "state/extracts/taskcard-a21530fd.json",
+  "extractionHash": "02205a8b7fb676b8c540cd2b955b06e942f477b801977520fbeda3fd6c896354",
+  "mimeType": "text/typescript",
+  "contentHash": "a21530fd9289e65f820a37afcfbe79966033ba5dc0a0de7d7d73fdcdff1c7dd2",
+  "semanticHash": "a21530fd9289e65f820a37afcfbe79966033ba5dc0a0de7d7d73fdcdff1c7dd2",
+  "createdAt": "2026-07-04T19:02:56.606Z",
+  "updatedAt": "2026-07-04T19:02:56.606Z"
+}

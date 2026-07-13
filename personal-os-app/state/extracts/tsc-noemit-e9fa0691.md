@@ -1,0 +1,5 @@
+## tsc-noemit
+COMMAND: npx tsc --noEmit
+START: 2026-06-23T21:12:18+08:00
+END: 2026-06-23T21:12:19+08:00
+EXIT_CODE: 0

@@ -1,0 +1,18 @@
+{
+  "sourceId": "diff-0c56f489",
+  "title": "diff",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+  "repoRelativePath": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+  "storedPath": "raw/sources/diff-0c56f489.patch",
+  "extractedTextPath": "state/extracts/diff-0c56f489.md",
+  "extractedMetadataPath": "state/extracts/diff-0c56f489.json",
+  "extractionHash": "667b802b46206346a2c5b820c971df1814be845cd9754a9482cece188c480d63",
+  "mimeType": "application/octet-stream",
+  "contentHash": "0c56f48917d2525269b8f938d65f350b9eae35b1675094b73732ef87b86faab8",
+  "semanticHash": "0c56f48917d2525269b8f938d65f350b9eae35b1675094b73732ef87b86faab8",
+  "createdAt": "2026-07-04T19:02:34.231Z",
+  "updatedAt": "2026-07-04T19:02:34.231Z"
+}

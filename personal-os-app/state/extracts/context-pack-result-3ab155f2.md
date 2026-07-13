@@ -1,0 +1,50 @@
+# context-pack-result
+Format: JSON
+Top-level: object
+Size: 8
+Nested depth: 4
+
+## Schema
+
+- ok: boolean
+- targetTaskId: string
+- archiveTaskId: string
+- out: string
+- runDir: string
+- taskTitle: string
+- gateStatus: string
+- intake: object (4 keys)
+
+## Preview
+
+```json
+{
+  "ok": true,
+  "targetTaskId": "cmqyixt4a00n90jpk3todreos",
+  "archiveTaskId": "cmr009fup01bu0jpkb1koq2h2",
+  "out": ".agent-runs/cmr009fup01bu0jpkb1koq2h2",
+  "runDir": ".agent-runs/cmqyixt4a00n90jpk3todreos",
+  "taskTitle": "GitHub 雷达 2026-06-29：评估 rohitg00/agentmemory 的吸收价值",
+  "gateStatus": "pass",
+  "intake": {
+    "ok": true,
+    "agentRunId": "cmr0nubsa01rq0jpkdtjwi8vd",
+    "wiki_write_status": {
+      "status": "ok",
+      "requested": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "errors": []
+    },
+    "wiki": [
+      {
+        "ok": true,
+        "title": "AgentRun context pack cmqyixt4a00n90jpk3todreos 2026-06-30",
+        "note_path": "vault/20_notes/2026-06-30/agentrun-context-pack-cmqyixt4a00n90jpk3todreos-2026-06-30.md",
+        "status": "created"
+      }
+    ]
+  }
+}
+
+```

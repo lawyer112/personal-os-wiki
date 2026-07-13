@@ -1,0 +1,12 @@
+{
+  "extractor": "structured_data",
+  "sourceKind": "data",
+  "mimeType": "application/json",
+  "producedAt": "2026-07-04T19:02:35.536Z",
+  "metadata": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "3"
+  }
+}

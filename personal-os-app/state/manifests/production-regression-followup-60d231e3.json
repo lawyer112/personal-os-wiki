@@ -1,0 +1,24 @@
+{
+  "sourceId": "production-regression-followup-60d231e3",
+  "title": "production-regression-followup",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/production-regression-followup.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/production-regression-followup.json",
+  "storedPath": "raw/sources/production-regression-followup-60d231e3.json",
+  "extractedTextPath": "state/extracts/production-regression-followup-60d231e3.md",
+  "extractedMetadataPath": "state/extracts/production-regression-followup-60d231e3.json",
+  "extractionHash": "2b90531e4e86e9e202c7d1547a845c9839e4bbb84b0189d25444062d16b910ed",
+  "mimeType": "application/json",
+  "contentHash": "60d231e3cbc299350bfbc30793bc392cb59fa68c00a5b142acdf90876cc30c87",
+  "semanticHash": "60d231e3cbc299350bfbc30793bc392cb59fa68c00a5b142acdf90876cc30c87",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "4",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:30.609Z",
+  "updatedAt": "2026-07-04T19:02:30.609Z"
+}

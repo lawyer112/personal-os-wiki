@@ -1,0 +1,62 @@
+{
+  "taskId": "cmqq4eq8z00320jmjaef38k5t",
+  "generatedAt": "2026-06-23T06:59:30Z",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "dependency install",
+      "command": "npm ci",
+      "status": "pass",
+      "evidence": "added 499 packages; npm audit reported existing vulnerabilities but install completed"
+    },
+    {
+      "name": "prisma client generation",
+      "command": "DATABASE_URL=<dummy local value> npm run prisma:generate",
+      "status": "pass",
+      "evidence": "Generated Prisma Client (v7.7.0) to ./node_modules/@prisma/client"
+    },
+    {
+      "name": "unit tests",
+      "command": "npm test -- tests/services/wiki-client.test.ts tests/services/agent-context.test.ts",
+      "status": "pass",
+      "evidence": "2 test files passed; 8 tests passed"
+    },
+    {
+      "name": "lint",
+      "command": "npm run lint",
+      "status": "pass",
+      "evidence": "eslint . exited 0"
+    },
+    {
+      "name": "typecheck",
+      "command": "npx tsc --noEmit --pretty false",
+      "status": "pass",
+      "evidence": "tsc exited 0"
+    },
+    {
+      "name": "direct Personal Wiki fetch cleanup",
+      "command": "search src for fetch(wikiUrl(",
+      "status": "pass",
+      "evidence": "0 matches"
+    },
+    {
+      "name": "live context smoke",
+      "command": "GET /api/agent/context?taskId=cmqq4eq8z00320jmjaef38k5t",
+      "status": "pass",
+      "evidence": "ok=true; wiki_status=ok; candidate_count=8; successfulQueries=8; failedQueries=[]"
+    },
+    {
+      "name": "Personal OS task update",
+      "command": "PATCH /api/tasks/cmqq4eq8z00320jmjaef38k5t",
+      "status": "pass",
+      "evidence": "task status updated to review with local patch nextAction"
+    }
+  ],
+  "residualRisk": [
+    "Patch is local only; production service was not deployed or restarted by design.",
+    "Initial task claim as obsidianmanager1 failed because task tags do not overlap the agent profile tags, so final task write-back uses task update/intake paths instead of claimed contribution unless Classic adjusts tags."
+  ],
+  "synthesizer": {
+    "allowed_to_announce_done": true
+  }
+}

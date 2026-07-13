@@ -1,0 +1,56 @@
+# intake-payload
+Format: JSON
+Top-level: object
+Size: 8
+Nested depth: 3
+
+## Schema
+
+- source: object (4 keys)
+- agent: object (4 keys)
+- project: object (2 keys)
+- wikiNotes: array (0 items)
+- tasks: array (0 items)
+- notes: array (0 items)
+- ideas: array (0 items)
+- projectEvents: array (1 items)
+
+## Preview
+
+```json
+{
+  "source": {
+    "sourceType": "agent-output",
+    "sourcePlatform": "cron/personal-os-agent-executor",
+    "rawText": "目标：修正上一次 cmqyixt4a00n90jpk3todreos review-close 的 /api/intake 写回结构，并完成读回验证。\n操作摘要：任务 review approve 已成功，状态 done；本轮重新按 intakeSchema 使用 source/agent/project/projectEvents 嵌套 payload 写回 Personal OS。\n关键文件/证据路径：.agent-runs/cmqyixt4a00n90jpk3todreos-review-close/review-result.json；intake-payload.json；intake-result.json；context-readback.json；worker-result.json；gate.json。\n验证结果：POST /api/tasks/{id}/review 返回 HTTP 200 且 task.status=done；POST /api/intake 使用嵌套 source payload；GET /api/agent/context?q=cmqyixt4a00n90jpk3todreos 读回。\n剩余风险：外部 benchmark 未本机复现；不直接安装 agentmemory，避免双真相源。\n下一步：继续处理下一个 P1 agent_allowed 任务。",
+    "createdBy": "hermes"
+  },
+  "agent": {
+    "model": "hermes-cron",
+    "classification": {
+      "kind": "task-review-close",
+      "task_id": "cmqyixt4a00n90jpk3todreos",
+      "decision": "approve",
+      "gate_status": "pass"
+    },
+    "reasoningSummary": "P0 GitHub 雷达评估任务已完成 source-ledger、contribution、submit 和 gate 验证；批准关闭并修正 intake 写回。",
+    "outputSummary": "review API 已将任务置为 done；本轮用正确 intake schema 写回项目事件并读回验证。"
+  },
+  "project": {
+    "id": "cmqq290nm00040jmj9jwa98ya",
+    "name": "Personal OS / Wiki 知识库升级"
+  },
+  "wikiNotes": [],
+  "tasks": [],
+  "notes": [],
+  "ideas": [],
+  "projectEvents": [
+    {
+      "projectId": "cmqq290nm00040jmj9jwa98ya",
+      "title": "任务关闭：GitHub 雷达 agentmemory 评估",
+      "body": "任务 cmqyixt4a00n90jpk3todreos 已 approve 关闭为 done。证据：.agent-runs/cmqyixt4a00n90jpk3todreos/ 与 .agent-runs/cmqyixt4a00n90jpk3todreos-review-close/。",
+      "eventType": "task.reviewed"
+    }
+  ]
+}
+```

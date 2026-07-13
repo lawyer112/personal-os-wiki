@@ -1,0 +1,56 @@
+{
+  "task_id": "cmqqb0d7h00050jnsh6q221l1",
+  "status": "pass",
+  "reviewer": {
+    "status": "pass",
+    "findings": [],
+    "notes": "Checked diff, token separation guardrails, intake fallback recording, typecheck, lint, full tests, and Next build. Production read-only smoke saved."
+  },
+  "verifier": {
+    "status": "pass",
+    "commands": [
+      {
+        "cmd": "npm test -- tests/services/wiki-client.test.ts tests/services/wiki-ingest.test.ts tests/routes/intake-wiki-fallback.test.ts",
+        "exit_code": 0,
+        "started_at": "2026-06-23T16:19:47+08:00",
+        "ended_at": "2026-06-23T16:19:48+08:00",
+        "evidence": "artifacts/verify-focused-tests.log"
+      },
+      {
+        "cmd": "npx tsc --noEmit",
+        "exit_code": 0,
+        "started_at": "2026-06-23T16:19:48+08:00",
+        "ended_at": "2026-06-23T16:19:50+08:00",
+        "evidence": "artifacts/verify-tsc.log"
+      },
+      {
+        "cmd": "npm run lint",
+        "exit_code": 0,
+        "started_at": "2026-06-23T16:19:50+08:00",
+        "ended_at": "2026-06-23T16:19:52+08:00",
+        "evidence": "artifacts/verify-lint.log"
+      },
+      {
+        "cmd": "npm test",
+        "exit_code": 0,
+        "started_at": "2026-06-23T16:19:52+08:00",
+        "ended_at": "2026-06-23T16:19:53+08:00",
+        "evidence": "artifacts/verify-full-tests.log"
+      },
+      {
+        "cmd": "DATABASE_URL=<dummy> npm run build",
+        "exit_code": 0,
+        "started_at": "2026-06-23T16:19:53+08:00",
+        "ended_at": "2026-06-23T16:19:58+08:00",
+        "evidence": "artifacts/verify-build.log"
+      }
+    ],
+    "screenshots": [],
+    "production_regression_record": "artifacts/production-smoke.json"
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": true,
+    "final_message_path": "final.md",
+    "reason": "all verifier commands passed"
+  }
+}

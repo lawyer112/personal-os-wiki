@@ -1,0 +1,18 @@
+{
+  "sourceId": "full-tests-3cfe7f84",
+  "title": "full-tests",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfucnt001t0jn5vd3wcn3u/logs/full-tests.log",
+  "repoRelativePath": ".agent-runs/cmqqfucnt001t0jn5vd3wcn3u/logs/full-tests.log",
+  "storedPath": "raw/sources/full-tests-3cfe7f84.log",
+  "extractedTextPath": "state/extracts/full-tests-3cfe7f84.md",
+  "extractedMetadataPath": "state/extracts/full-tests-3cfe7f84.json",
+  "extractionHash": "117f4655d077ce4b16b833207fb97c05af945cffdea0c22d1b51c48f923345f5",
+  "mimeType": "text/plain",
+  "contentHash": "3cfe7f84aa53a07e9763c94847a458fb5807c2a04d204e4c4ad743976b439b8e",
+  "semanticHash": "3cfe7f84aa53a07e9763c94847a458fb5807c2a04d204e4c4ad743976b439b8e",
+  "createdAt": "2026-07-04T19:02:36.017Z",
+  "updatedAt": "2026-07-04T19:02:36.017Z"
+}

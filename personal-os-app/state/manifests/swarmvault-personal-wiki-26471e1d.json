@@ -1,0 +1,18 @@
+{
+  "sourceId": "swarmvault-personal-wiki-26471e1d",
+  "title": "SwarmVault 混合检索设计对 Personal Wiki 可行性验证报告",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/swarmvault-hybrid-retrieval-feasibility/feasibility-report.md",
+  "repoRelativePath": ".agent-runs/swarmvault-hybrid-retrieval-feasibility/feasibility-report.md",
+  "storedPath": "raw/sources/swarmvault-personal-wiki-26471e1d.md",
+  "extractedTextPath": "state/extracts/swarmvault-personal-wiki-26471e1d.md",
+  "extractedMetadataPath": "state/extracts/swarmvault-personal-wiki-26471e1d.json",
+  "extractionHash": "387481fd0ed132a484b7e3fde6ab4bb1f013b3256402edd0c05d3891d1973451",
+  "mimeType": "text/markdown",
+  "contentHash": "26471e1dbc061564b10f54b881f7925cedf2d674deb2d3b5267fc475ad96c37f",
+  "semanticHash": "2b3a55505037f049b3be001a39562e3480b5bdefb8d79c0c08bfa7b45aca61e6",
+  "createdAt": "2026-07-04T19:02:48.021Z",
+  "updatedAt": "2026-07-04T19:02:48.021Z"
+}

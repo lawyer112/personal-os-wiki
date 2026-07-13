@@ -1,0 +1,24 @@
+{
+  "sourceId": "context-pack-result-17f2871d",
+  "title": "context-pack-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/context-pack-result.json",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/context-pack-result.json",
+  "storedPath": "raw/sources/context-pack-result-17f2871d.json",
+  "extractedTextPath": "state/extracts/context-pack-result-17f2871d.md",
+  "extractedMetadataPath": "state/extracts/context-pack-result-17f2871d.json",
+  "extractionHash": "52b3550c252affc61789537b5dd9d69f5002f3028ecf8b67f9af4876ec8d578d",
+  "mimeType": "application/json",
+  "contentHash": "17f2871d271aae54e62070ada60f3a8daeb699a4a30144acc35d8a1afe75d712",
+  "semanticHash": "17f2871d271aae54e62070ada60f3a8daeb699a4a30144acc35d8a1afe75d712",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "8",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:30.402Z",
+  "updatedAt": "2026-07-04T19:02:30.402Z"
+}

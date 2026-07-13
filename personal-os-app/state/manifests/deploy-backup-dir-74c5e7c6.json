@@ -1,0 +1,18 @@
+{
+  "sourceId": "deploy-backup-dir-74c5e7c6",
+  "title": "deploy-backup-dir",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6hp00070jn5bgoym7dx/deploy-backup-dir.txt",
+  "repoRelativePath": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/deploy-backup-dir.txt",
+  "storedPath": "raw/sources/deploy-backup-dir-74c5e7c6.txt",
+  "extractedTextPath": "state/extracts/deploy-backup-dir-74c5e7c6.md",
+  "extractedMetadataPath": "state/extracts/deploy-backup-dir-74c5e7c6.json",
+  "extractionHash": "9be58ca4435e4ddb75bff90127ddfa335f7b75ce0c6bbcdcd7080f651e8cf27b",
+  "mimeType": "text/plain",
+  "contentHash": "74c5e7c6884d9ca64dd6071e81ae14d60748b34560487cf737445e21ea4f0884",
+  "semanticHash": "74c5e7c6884d9ca64dd6071e81ae14d60748b34560487cf737445e21ea4f0884",
+  "createdAt": "2026-07-04T19:02:34.169Z",
+  "updatedAt": "2026-07-04T19:02:34.169Z"
+}

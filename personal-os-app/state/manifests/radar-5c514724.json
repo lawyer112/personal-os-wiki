@@ -1,0 +1,18 @@
+{
+  "sourceId": "radar-5c514724",
+  "title": "radar",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-cron/radar.log",
+  "repoRelativePath": ".agent-runs/github-radar-cron/radar.log",
+  "storedPath": "raw/sources/radar-5c514724.log",
+  "extractedTextPath": "state/extracts/radar-5c514724.md",
+  "extractedMetadataPath": "state/extracts/radar-5c514724.json",
+  "extractionHash": "b49e22ea3b139308ba2088709a8bc7da6518e49aab20c675bc2a40a25c1f7937",
+  "mimeType": "text/plain",
+  "contentHash": "5c5147245b02daf6cdc5a28e2c909c0203fcca30956cefa035a71158a1317548",
+  "semanticHash": "5c5147245b02daf6cdc5a28e2c909c0203fcca30956cefa035a71158a1317548",
+  "createdAt": "2026-07-04T19:02:46.757Z",
+  "updatedAt": "2026-07-04T19:02:46.757Z"
+}

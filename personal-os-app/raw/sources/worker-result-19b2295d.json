@@ -1,0 +1,100 @@
+{
+  "task_id": "cmqq2o6lz000w0jmj9mfh4cer",
+  "agent_id": "obsidianmanager1",
+  "title": "设计 _raw + manifest 增量入库试验",
+  "status": "completed",
+  "started_at": "2026-06-23T13:42:33.294Z",
+  "completed_at": "2026-06-23T13:51:35Z",
+  "selected_reason": "P1、agent_allowed、low risk，直接推进 Personal Wiki 入库去重和 OS/Wiki 可追溯闭环。",
+  "work_performed": [
+    "调用 /api/agent/context?q=agent executable tasks personal os wiki github radar 获取上下文。",
+    "查询 /api/agent-inbox 与 /api/tasks，选择 P1 agent_allowed 任务 cmqq2o6lz000w0jmj9mfh4cer。",
+    "通过 /api/tasks/cmqq2o6lz000w0jmj9mfh4cer/claim 领取任务。",
+    "在 .agent-runs/cmqq2o6lz000w0jmj9mfh4cer/ 下创建 schema、报告、样例、模拟脚本、日志和 diff。",
+    "实现 3 个样例：ingest、skip、update，并生成 manifest.before.json、manifest.after.json、decisions.json。",
+    "通过 Personal OS /api/intake 写入 Wiki note 与 ProjectEvent。",
+    "通过 Personal Wiki /api/note 回读生产 Wiki note，确认 frontmatter 白名单字段和 task_id。"
+  ],
+  "artifacts": {
+    "run_dir": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer",
+    "report": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+    "schema": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+    "script": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+    "fixtures": [
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/raw/new-agent-run.md",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/raw/duplicate-existing.md",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/raw/update-project-readme.md"
+    ],
+    "outputs": [
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/manifest.before.json",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/manifest.after.json",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json"
+    ],
+    "logs": [
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/simulate-raw-manifest-ingest.pass.log",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/verification-targeted.log",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/eslint-targeted-script-only.log",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/wiki-note-regression.json"
+    ],
+    "diff": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/diff/agent-run-files.diff",
+    "artifact_hashes": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/artifact-sha256.json"
+  },
+  "verification": [
+    {
+      "name": "simulate ingest/skip/update",
+      "command": "node .agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+      "status": "pass",
+      "evidence": "counts={ingest:1, skip:1, update:1}"
+    },
+    {
+      "name": "syntax check",
+      "command": "node --check .agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+      "status": "pass"
+    },
+    {
+      "name": "schema JSON parse",
+      "command": "python3 -m json.tool .agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+      "status": "pass"
+    },
+    {
+      "name": "decision assertions",
+      "command": "node inline assertion over examples/decisions.json",
+      "status": "pass"
+    },
+    {
+      "name": "script-only eslint",
+      "command": "./node_modules/.bin/eslint --no-ignore .agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+      "status": "pass"
+    },
+    {
+      "name": "production Wiki regression",
+      "command": "GET http://192.168.6.37:3422/api/note?path=vault/30_projects/Personal-OS-Wiki-知识库升级/_raw-manifest-增量入库试验-v0-2026-06-23.md",
+      "status": "pass",
+      "evidence": "frontmatter.created_by=hermes:worker, source_type=agent-output, task_id=cmqq2o6lz000w0jmj9mfh4cer"
+    }
+  ],
+  "writeback": {
+    "personal_os_intake_status": 201,
+    "agent_run_id": "cmqqptnfb001b0joc5764ve9m",
+    "project_event_id": "cmqqptnfo001d0jocf64hzsgm",
+    "wiki_write_status": "ok",
+    "wiki_title": "_raw + manifest 增量入库试验 v0 — 2026-06-23",
+    "wiki_path_verified": "vault/30_projects/Personal-OS-Wiki-知识库升级/_raw-manifest-增量入库试验-v0-2026-06-23.md",
+    "task_submit_status": "review",
+    "task_review_decision": "approve",
+    "task_final_status": "done",
+    "task_completed_at": "2026-06-23T14:14:14.046Z",
+    "followup_task_id": "cmqqqgfgm001r0jocadvkeqzz",
+    "followup_task_title": "实现 raw manifest 小样本 ingest 命令 v0"
+  },
+  "deployment": {
+    "status": "not_applicable",
+    "reason": "本任务只产出本地试验产物并通过 /api/intake 写 Wiki/ProjectEvent；未修改生产应用代码、Docker 镜像或 6.37 服务文件。",
+    "rollback_path": "本地 .agent-runs 产物可删除；Wiki note 如需撤回应走受控删除/归档流程。"
+  },
+  "residual_risks": [
+    "该 schema 仍是 v0 试验，尚未接入生产 ingest 命令。",
+    "全仓 npm run lint 曾因错误参数扫描 .next/generated 输出失败；本轮 gate 使用 script-only eslint 与 targeted checks。"
+  ],
+  "next_recommendation": "实现 raw manifest 小样本 ingest 命令 v0：对象是指定输入目录；动作是生成 manifest、调用 /api/intake 写 Wiki note、记录 ingest/skip/update 三类事件；产物是 scripts/raw-manifest-ingest.mjs 和 3 个回归 fixture；验收标准是 npm test + 单脚本 dry-run 通过，且只处理显式传入目录。"
+}

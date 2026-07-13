@@ -1,0 +1,59 @@
+{
+  "task_id": "cmqq2o6he000u0jmjinvl77a4",
+  "agent_id": "obsidianmanager1",
+  "status": "completed",
+  "started_at": "2026-06-23T16:57:16.028Z",
+  "ended_at": "2026-06-23T16:57:16.267Z",
+  "summary": "Produced skill-evaluation-template-v0.md and skill-evaluation-report-v0.md. Template defines 8 evaluation fields and a scoring quick reference. Report applied the template to 8 GitHub radar candidates from 2026-06-23, concluding: 2 absorbed, 3 reference-only, 2 rejected, 1 pending Classic decision. Both files were written locally and submitted to Personal OS / Wiki via /api/intake. Wiki write succeeded for 2 notes; projectEvent created; task submitted to review with definitionOfDoneMet=true.",
+  "changed_files": [
+    ".agent-runs/cmqq2o6he000u0jmjinvl77a4/skill-evaluation-template-v0.md",
+    ".agent-runs/cmqq2o6he000u0jmjinvl77a4/skill-evaluation-report-v0.md"
+  ],
+  "commands": [
+    {
+      "cmd": "write skill-evaluation-template-v0.md",
+      "exit_code": 0,
+      "evidence": ".agent-runs/cmqq2o6he000u0jmjinvl77a4/skill-evaluation-template-v0.md"
+    },
+    {
+      "cmd": "write skill-evaluation-report-v0.md",
+      "exit_code": 0,
+      "evidence": ".agent-runs/cmqq2o6he000u0jmjinvl77a4/skill-evaluation-report-v0.md"
+    },
+    {
+      "cmd": "POST /api/intake with 2 wikiNotes + projectEvent",
+      "exit_code": 201,
+      "evidence": "intake response: wiki_write_status=ok, requested=2, succeeded=2"
+    },
+    {
+      "cmd": "POST /api/tasks/cmqq2o6he000u0jmjinvl77a4/submit",
+      "exit_code": 200,
+      "evidence": "submit response: status=review, contribution created"
+    }
+  ],
+  "context_pack": {
+    "wiki_notes": [
+      {
+        "title": "Skill Evaluation Template v0",
+        "status": "revision"
+      },
+      {
+        "title": "Skill Evaluation Report v0 — GitHub Radar 2026-06-23",
+        "status": "created"
+      }
+    ],
+    "project_event": "Skill evaluation template v0 produced"
+  },
+  "risks": [
+    "No deployment risk: this task only produced local markdown files and wrote to Wiki via existing API.",
+    "No token leakage: intake payload contained no secrets; frontmatter uses hermes:worker and agent-output.",
+    "Wiki note path uses non-ASCII URL encoding; future retrieval should use exact path or search API."
+  ],
+  "writeback": {
+    "wiki_note_created": true,
+    "personal_os_intake_status": "ok",
+    "task_submission_status": "review",
+    "definitionOfDoneMet": true,
+    "needsHumanDecision": false
+  }
+}

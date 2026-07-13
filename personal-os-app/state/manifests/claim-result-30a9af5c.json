@@ -1,0 +1,24 @@
+{
+  "sourceId": "claim-result-30a9af5c",
+  "title": "claim-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqyixt4a00n90jpk3todreos/claim-result.json",
+  "repoRelativePath": ".agent-runs/cmqyixt4a00n90jpk3todreos/claim-result.json",
+  "storedPath": "raw/sources/claim-result-30a9af5c.json",
+  "extractedTextPath": "state/extracts/claim-result-30a9af5c.md",
+  "extractedMetadataPath": "state/extracts/claim-result-30a9af5c.json",
+  "extractionHash": "713807ba8acf894f330452cdcb1ea9673bf4f4dd5e657e8105de11166d34d117",
+  "mimeType": "application/json",
+  "contentHash": "30a9af5cd357f79239c80e5de1a7d41632bad626952699e26b8355b603caf2ad",
+  "semanticHash": "30a9af5cd357f79239c80e5de1a7d41632bad626952699e26b8355b603caf2ad",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "6"
+  },
+  "createdAt": "2026-07-04T19:02:38.443Z",
+  "updatedAt": "2026-07-04T19:02:38.443Z"
+}

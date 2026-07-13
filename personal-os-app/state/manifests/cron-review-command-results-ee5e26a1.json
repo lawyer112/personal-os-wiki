@@ -1,0 +1,18 @@
+{
+  "sourceId": "cron-review-command-results-ee5e26a1",
+  "title": "cron-review-command-results",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/cron-review-command-results.jsonl",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/cron-review-command-results.jsonl",
+  "storedPath": "raw/sources/cron-review-command-results-ee5e26a1.jsonl",
+  "extractedTextPath": "state/extracts/cron-review-command-results-ee5e26a1.md",
+  "extractedMetadataPath": "state/extracts/cron-review-command-results-ee5e26a1.json",
+  "extractionHash": "874a5a65596012359dc1a7f180f4f60d2507ce2732d80f51b774eceb4f996cd9",
+  "mimeType": "application/octet-stream",
+  "contentHash": "ee5e26a1daa5d7f8d019a6323cf3e7b130ad5395f71cd1119b302958b4917401",
+  "semanticHash": "ee5e26a1daa5d7f8d019a6323cf3e7b130ad5395f71cd1119b302958b4917401",
+  "createdAt": "2026-07-04T19:02:32.143Z",
+  "updatedAt": "2026-07-04T19:02:32.143Z"
+}

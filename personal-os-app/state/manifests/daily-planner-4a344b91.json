@@ -1,0 +1,18 @@
+{
+  "sourceId": "daily-planner-4a344b91",
+  "title": "Daily Planner",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/docs/DAILY_PLANNER.md",
+  "repoRelativePath": "docs/DAILY_PLANNER.md",
+  "storedPath": "raw/sources/daily-planner-4a344b91.md",
+  "extractedTextPath": "state/extracts/daily-planner-4a344b91.md",
+  "extractedMetadataPath": "state/extracts/daily-planner-4a344b91.json",
+  "extractionHash": "b92032384ce5a45512712683514620a65d035fbb5b06be03c8eb92b90f2a20ea",
+  "mimeType": "text/markdown",
+  "contentHash": "4a344b914cce61c4396ec6a5279a469f5f577a888d445135e27e10511f36c565",
+  "semanticHash": "d1060ec3421f44b9aaee15cdb6d845485e9d63d94275ea1943a93e64805101f7",
+  "createdAt": "2026-07-04T19:02:49.027Z",
+  "updatedAt": "2026-07-04T19:02:49.027Z"
+}

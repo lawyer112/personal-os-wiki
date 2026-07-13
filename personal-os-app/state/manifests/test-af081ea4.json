@@ -1,0 +1,18 @@
+{
+  "sourceId": "test-af081ea4",
+  "title": "test",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr009fup01bu0jpkb1koq2h2/test.log",
+  "repoRelativePath": ".agent-runs/cmr009fup01bu0jpkb1koq2h2/test.log",
+  "storedPath": "raw/sources/test-af081ea4.log",
+  "extractedTextPath": "state/extracts/test-af081ea4.md",
+  "extractedMetadataPath": "state/extracts/test-af081ea4.json",
+  "extractionHash": "1eceaa42bb4339a895764a51dc7b0b77788e9dd0c3b0fe76efc53bf8f57080f3",
+  "mimeType": "text/plain",
+  "contentHash": "af081ea48a197f79d7844f9385c0847a49e329777255deef17945c3adeac1236",
+  "semanticHash": "af081ea48a197f79d7844f9385c0847a49e329777255deef17945c3adeac1236",
+  "createdAt": "2026-07-04T19:02:41.142Z",
+  "updatedAt": "2026-07-04T19:02:41.142Z"
+}

@@ -1,0 +1,102 @@
+{
+  "task_id": "cmqqfl6rk00090jn58kastmq9",
+  "status": "pass",
+  "reviewer": {
+    "status": "pass",
+    "findings": [],
+    "notes": "Deployment completed on 6.37 via ub37 SSH. Docker build and up succeeded. Production regression verified: /api/today, /api/agent/context, /api/tasks all return 200 ok. PATCH partial update preserves priority/executionMode (taskUpdateSchema regression fixed)."
+  },
+  "verifier": {
+    "status": "pass",
+    "commands": [
+      {
+        "cmd": "node --check scripts/archive-agent-run-context-pack.mjs",
+        "exit_code": 0,
+        "evidence": "artifacts/node-check-context-pack.log"
+      },
+      {
+        "cmd": "npm test -- tests/services/agent-run-context-pack.test.ts tests/services/tasks.test.ts",
+        "exit_code": 0,
+        "evidence": "artifacts/test-context-pack-tasks.log"
+      },
+      {
+        "cmd": "npm test",
+        "exit_code": 0,
+        "evidence": "artifacts/npm-test.log"
+      },
+      {
+        "cmd": "npx tsc --noEmit",
+        "exit_code": 0,
+        "evidence": "artifacts/tsc.log"
+      },
+      {
+        "cmd": "npm run lint",
+        "exit_code": 0,
+        "evidence": "artifacts/lint.log"
+      },
+      {
+        "cmd": "npm run build",
+        "exit_code": 0,
+        "evidence": "artifacts/build.log"
+      },
+      {
+        "cmd": "ssh ub37 'docker compose -p personal-os-wiki-main build personal-os'",
+        "exit_code": 0,
+        "evidence": "docker_build.log"
+      },
+      {
+        "cmd": "ssh ub37 'docker compose -p personal-os-wiki-main up -d --no-deps personal-os'",
+        "exit_code": 0,
+        "evidence": "docker_up.log"
+      },
+      {
+        "cmd": "python3 /tmp/check_health3.py",
+        "exit_code": 0,
+        "evidence": "health_check.log"
+      },
+      {
+        "cmd": "python3 /tmp/test_patch.py",
+        "exit_code": 0,
+        "evidence": "patch_regression.log"
+      }
+    ],
+    "screenshots": []
+  },
+  "wiki_writeback": {
+    "status": "pass",
+    "evidence": [
+      "artifacts/context-pack-cmqqfl6hp00070jn5bgoym7dx/context-pack-intake-result.json",
+      "artifacts/wiki-note-search.json",
+      "artifacts/wiki-note-fetch.json"
+    ],
+    "note_path": "vault/30_projects/Personal-OS-Wiki-知识库升级/AgentRun-context-pack-cmqqfl6hp00070jn5bgoym7dx-2026-06-23.md"
+  },
+  "deployment": {
+    "status": "pass",
+    "evidence": "gate-deployment.json",
+    "backup_dir": "/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260623T172517Z",
+    "copied_files": [
+      "personal-os-app/scripts/archive-agent-run-context-pack.mjs",
+      "personal-os-app/src/lib/validation.ts",
+      "personal-os-app/tests/services/agent-run-context-pack.test.ts",
+      "personal-os-app/tests/services/tasks.test.ts"
+    ],
+    "rollback_path": "/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260623T172517Z"
+  },
+  "production_regression": {
+    "status": "pass",
+    "evidence": "health_check.log"
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": true,
+    "final_message_path": "final.md",
+    "reason": "All verification passed; deployment to 6.37 completed; production regression green."
+  },
+  "writeback": {
+    "status": "pass",
+    "evidence": [
+      "submit-result.json"
+    ],
+    "task_status": "done"
+  }
+}

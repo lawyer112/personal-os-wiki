@@ -1,0 +1,18 @@
+{
+  "sourceId": "git-diff-stat-0d6fc35a",
+  "title": "git-diff-stat",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/git-diff-stat.txt",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/git-diff-stat.txt",
+  "storedPath": "raw/sources/git-diff-stat-0d6fc35a.txt",
+  "extractedTextPath": "state/extracts/git-diff-stat-0d6fc35a.md",
+  "extractedMetadataPath": "state/extracts/git-diff-stat-0d6fc35a.json",
+  "extractionHash": "062a90232025cb178b94b0a7fb39b2cd342711f1c084b1a508a44286f7a3dbaa",
+  "mimeType": "text/plain",
+  "contentHash": "0d6fc35add8f7aecca53d86144d4240bd272cb99758f073ea83a898f35082ab0",
+  "semanticHash": "0d6fc35add8f7aecca53d86144d4240bd272cb99758f073ea83a898f35082ab0",
+  "createdAt": "2026-07-04T19:02:33.010Z",
+  "updatedAt": "2026-07-04T19:02:33.010Z"
+}

@@ -1,0 +1,24 @@
+{
+  "sourceId": "decisions-58c2fa25",
+  "title": "decisions",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json",
+  "storedPath": "raw/sources/decisions-58c2fa25.json",
+  "extractedTextPath": "state/extracts/decisions-58c2fa25.md",
+  "extractedMetadataPath": "state/extracts/decisions-58c2fa25.json",
+  "extractionHash": "1dd9d93fd6a47349c0fbfc3e71264398cb32ae760e462d3d1105010aefe9dd03",
+  "mimeType": "application/json",
+  "contentHash": "58c2fa251aedda5cb9b885990869fed7ce734090eaf79079e21bb67bf201cd1f",
+  "semanticHash": "58c2fa251aedda5cb9b885990869fed7ce734090eaf79079e21bb67bf201cd1f",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "5",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:31.194Z",
+  "updatedAt": "2026-07-04T19:02:31.194Z"
+}

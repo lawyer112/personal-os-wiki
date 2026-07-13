@@ -1,0 +1,24 @@
+{
+  "sourceId": "direct-improvement-0ecd8b57",
+  "title": "direct-improvement",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-20260629/direct-improvement.json",
+  "repoRelativePath": ".agent-runs/github-radar-20260629/direct-improvement.json",
+  "storedPath": "raw/sources/direct-improvement-0ecd8b57.json",
+  "extractedTextPath": "state/extracts/direct-improvement-0ecd8b57.md",
+  "extractedMetadataPath": "state/extracts/direct-improvement-0ecd8b57.json",
+  "extractionHash": "ca26c6784c0c98fce6ed4fc5189db985f9bb5aa195b2f786bf158b54c8174aed",
+  "mimeType": "application/json",
+  "contentHash": "0ecd8b5738cf461e27900b193f706d03098f4a6561c18c69bc5ae0884f60f48c",
+  "semanticHash": "0ecd8b5738cf461e27900b193f706d03098f4a6561c18c69bc5ae0884f60f48c",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "6",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:44.896Z",
+  "updatedAt": "2026-07-04T19:02:44.896Z"
+}

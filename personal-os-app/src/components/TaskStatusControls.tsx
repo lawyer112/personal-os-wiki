@@ -15,7 +15,6 @@ const statusActions = [
   { status: "todo", label: "标回今日" },
   { status: "waiting", label: "等待" },
   { status: "blocked", label: "卡住" },
-  { status: "archived", label: "忽略" },
 ] as const;
 
 export function TaskStatusControls({
@@ -26,11 +25,13 @@ export function TaskStatusControls({
   const router = useRouter();
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [confirmArchive, setConfirmArchive] = useState(false);
   const isDone = status === "done";
 
   async function patchStatus(nextStatus: string) {
     setPending(nextStatus);
     setError(null);
+    setConfirmArchive(false);
     try {
       const response =
         nextStatus === "done"
@@ -107,6 +108,35 @@ export function TaskStatusControls({
             {action.label}
           </button>
         ))}
+        {confirmArchive ? (
+          <>
+            <span className="flex items-center text-zinc-500">确认归档？</span>
+            <button
+              type="button"
+              disabled={pending !== null}
+              onClick={() => patchStatus("archived")}
+              className="rounded-lg border border-rose-300 bg-rose-50 px-2.5 py-1.5 text-rose-700 disabled:opacity-50"
+            >
+              确认归档
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmArchive(false)}
+              className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-zinc-500"
+            >
+              取消
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            disabled={pending !== null || status === "archived"}
+            onClick={() => setConfirmArchive(true)}
+            className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-zinc-700 disabled:opacity-50"
+          >
+            忽略
+          </button>
+        )}
       </div>
       <div className="mt-2 text-xs text-zinc-500">
         当前：{formatTaskStatus(status)}

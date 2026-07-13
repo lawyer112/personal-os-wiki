@@ -1,0 +1,70 @@
+{
+  "task_id": "cmqqfl6hp00070jn5bgoym7dx",
+  "status": "pass",
+  "reviewer": {
+    "status": "pass",
+    "findings": [],
+    "notes": "Code diff is scoped to agent-context service, route wiring, and agent-context tests; compatibility fields are preserved."
+  },
+  "verifier": {
+    "status": "pass",
+    "commands": [
+      {
+        "cmd": "npm test -- tests/services/agent-context.test.ts",
+        "exit_code": 0,
+        "evidence": "artifacts/test-agent-context.log"
+      },
+      {
+        "cmd": "npx tsc --noEmit",
+        "exit_code": 0,
+        "evidence": "artifacts/tsc.log"
+      },
+      {
+        "cmd": "npm run lint",
+        "exit_code": 0,
+        "evidence": "artifacts/lint.log"
+      },
+      {
+        "cmd": "npm test",
+        "exit_code": 0,
+        "evidence": "artifacts/npm-test.log"
+      },
+      {
+        "cmd": "DATABASE_URL=postgresql://user:<stub>@127.0.0.1:5432/personal_os_build_stub npm run build",
+        "exit_code": 0,
+        "evidence": "artifacts/build-with-database-url-stub.log"
+      }
+    ],
+    "screenshots": []
+  },
+  "deployment": {
+    "status": "pass",
+    "backup_dir": "/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260623-102853",
+    "evidence": [
+      "artifacts/deploy-copy.log",
+      "artifacts/deploy-hash-verify.log",
+      "artifacts/deploy-build-up.log",
+      "artifacts/production-regression.json"
+    ],
+    "rollback_path": "/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260623-102853"
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": true,
+    "final_message_path": "final.md",
+    "reason": "Local verification, deployment, and production regression passed."
+  },
+  "writeback": {
+    "status": "pass",
+    "evidence": [
+      "intake-result.json",
+      "submit-result.json",
+      "deployment-intake-result.json",
+      "review-result.json"
+    ],
+    "task_status": "done"
+  },
+  "production_regression": {
+    "status": "pass",
+    "evidence": "artifacts/production-regression.json"
+  }
+}

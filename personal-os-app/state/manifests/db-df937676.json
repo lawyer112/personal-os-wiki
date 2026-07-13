@@ -1,0 +1,19 @@
+{
+  "sourceId": "db-df937676",
+  "title": "db",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/db.ts",
+  "repoRelativePath": "src/lib/db.ts",
+  "storedPath": "raw/sources/db-df937676.ts",
+  "extractedTextPath": "state/extracts/db-df937676.md",
+  "extractedMetadataPath": "state/extracts/db-df937676.json",
+  "extractionHash": "984351f14bd4a437c05725a70842fe3ea1d442a8a037542cbca8a79c1028b7b6",
+  "mimeType": "text/typescript",
+  "contentHash": "df937676c5ea085e67b5a5040685528ce32c5b7040ee4c552268f2fd2bf649fa",
+  "semanticHash": "df937676c5ea085e67b5a5040685528ce32c5b7040ee4c552268f2fd2bf649fa",
+  "createdAt": "2026-07-04T19:02:57.807Z",
+  "updatedAt": "2026-07-04T19:02:57.807Z"
+}

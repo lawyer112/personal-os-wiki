@@ -1,0 +1,24 @@
+{
+  "sourceId": "post-submit-context-a793a4c9",
+  "title": "post-submit-context",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/post-submit-context.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/post-submit-context.json",
+  "storedPath": "raw/sources/post-submit-context-a793a4c9.json",
+  "extractedTextPath": "state/extracts/post-submit-context-a793a4c9.md",
+  "extractedMetadataPath": "state/extracts/post-submit-context-a793a4c9.json",
+  "extractionHash": "0e893c5cb82caf8351fef942bf93f0cd49ec2510bfe620faddb097237fff5de1",
+  "mimeType": "application/json",
+  "contentHash": "a793a4c9d301883db8458efcbfaddac599106c0dd069449a7307560167628605",
+  "semanticHash": "a793a4c9d301883db8458efcbfaddac599106c0dd069449a7307560167628605",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "8"
+  },
+  "createdAt": "2026-07-04T19:02:35.290Z",
+  "updatedAt": "2026-07-04T19:02:35.290Z"
+}

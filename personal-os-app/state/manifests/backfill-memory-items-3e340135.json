@@ -1,0 +1,19 @@
+{
+  "sourceId": "backfill-memory-items-3e340135",
+  "title": "backfill-memory-items",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/scripts/backfill-memory-items.mjs",
+  "repoRelativePath": "scripts/backfill-memory-items.mjs",
+  "storedPath": "raw/sources/backfill-memory-items-3e340135.mjs",
+  "extractedTextPath": "state/extracts/backfill-memory-items-3e340135.md",
+  "extractedMetadataPath": "state/extracts/backfill-memory-items-3e340135.json",
+  "extractionHash": "86221e980eb7f2884f7130b751ad699d5660fad05c57ea428d9fc9bcff2ba5bc",
+  "mimeType": "text/javascript",
+  "contentHash": "3e340135ba8b03847fb6f7c2ee351fc92a66b3a6189b471d84e3440814c8c718",
+  "semanticHash": "3e340135ba8b03847fb6f7c2ee351fc92a66b3a6189b471d84e3440814c8c718",
+  "createdAt": "2026-07-04T19:02:51.575Z",
+  "updatedAt": "2026-07-04T19:02:51.575Z"
+}

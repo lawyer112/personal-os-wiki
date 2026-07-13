@@ -1,0 +1,19 @@
+{
+  "sourceId": "embedding-providers-test-44d6ee1c",
+  "title": "embedding-providers.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/embedding-providers.test.ts",
+  "repoRelativePath": "tests/services/embedding-providers.test.ts",
+  "storedPath": "raw/sources/embedding-providers-test-44d6ee1c.ts",
+  "extractedTextPath": "state/extracts/embedding-providers-test-44d6ee1c.md",
+  "extractedMetadataPath": "state/extracts/embedding-providers-test-44d6ee1c.json",
+  "extractionHash": "03d83bde2e0e8ae8104b9445ce0e1541333a6eddec92f0a9ad2a95c2f7325c1c",
+  "mimeType": "text/typescript",
+  "contentHash": "44d6ee1c37d67eafb1b94468bce7e6c983e6dd73f8e15c2797079206ec176689",
+  "semanticHash": "44d6ee1c37d67eafb1b94468bce7e6c983e6dd73f8e15c2797079206ec176689",
+  "createdAt": "2026-07-04T19:03:01.607Z",
+  "updatedAt": "2026-07-04T19:03:01.607Z"
+}

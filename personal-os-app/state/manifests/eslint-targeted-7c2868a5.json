@@ -1,0 +1,18 @@
+{
+  "sourceId": "eslint-targeted-7c2868a5",
+  "title": "eslint-targeted",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/eslint-targeted.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/eslint-targeted.log",
+  "storedPath": "raw/sources/eslint-targeted-7c2868a5.log",
+  "extractedTextPath": "state/extracts/eslint-targeted-7c2868a5.md",
+  "extractedMetadataPath": "state/extracts/eslint-targeted-7c2868a5.json",
+  "extractionHash": "04abcf88525f185706a8eb22161c858f84597adfaee9af37dcfe763a051c511b",
+  "mimeType": "text/plain",
+  "contentHash": "7c2868a5062e4049afc4e7de8ea7f0a5406f4aab6921c3a63706f77945436d5d",
+  "semanticHash": "7c2868a5062e4049afc4e7de8ea7f0a5406f4aab6921c3a63706f77945436d5d",
+  "createdAt": "2026-07-04T19:02:31.462Z",
+  "updatedAt": "2026-07-04T19:02:31.462Z"
+}

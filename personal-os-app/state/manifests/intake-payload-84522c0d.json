@@ -1,0 +1,24 @@
+{
+  "sourceId": "intake-payload-84522c0d",
+  "title": "intake-payload",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/memory-vector-backfill-cron/intake-payload.json",
+  "repoRelativePath": ".agent-runs/memory-vector-backfill-cron/intake-payload.json",
+  "storedPath": "raw/sources/intake-payload-84522c0d.json",
+  "extractedTextPath": "state/extracts/intake-payload-84522c0d.md",
+  "extractedMetadataPath": "state/extracts/intake-payload-84522c0d.json",
+  "extractionHash": "831e4809dd9de3c4f36ee5d5da9deea87fb5ae57feedc9c32e38befe050e09f1",
+  "mimeType": "application/json",
+  "contentHash": "84522c0d53a9b31b3c4c58aecb6c0d6578e6522dfbad1e66c2065a898ced3d87",
+  "semanticHash": "84522c0d53a9b31b3c4c58aecb6c0d6578e6522dfbad1e66c2065a898ced3d87",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:47.688Z",
+  "updatedAt": "2026-07-04T19:02:47.688Z"
+}

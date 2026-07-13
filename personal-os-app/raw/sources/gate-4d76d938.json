@@ -1,0 +1,51 @@
+{
+  "task_id": "agent-context-next-action-20260624",
+  "status": "pass",
+  "reviewer": {
+    "status": "pass",
+    "findings": []
+  },
+  "verifier": {
+    "status": "pass",
+    "commands": [
+      {
+        "cmd": "npx tsc --noEmit",
+        "exit_code": 0,
+        "evidence": "no type errors with nextAction changes"
+      },
+      {
+        "cmd": "npm test",
+        "exit_code": 0,
+        "evidence": "78 tests passed (20 test files)"
+      },
+      {
+        "cmd": "npm run lint",
+        "exit_code": 0,
+        "evidence": "eslint clean"
+      },
+      {
+        "cmd": "git commit and push origin main",
+        "exit_code": 0,
+        "evidence": "commit 649e9cd pushed to github.com/lawyer112/personal-os-wiki"
+      }
+    ],
+    "screenshots": [],
+    "notes": "Local npm run build fails due to missing DATABASE_URL (pre-existing env issue on macOS; not caused by this change). Build verified on 6.37 in previous deploys."
+  },
+  "deployment": {
+    "status": "blocked",
+    "reason": "SSH to 6.37 blocked (Permission denied publickey,password). Cannot run docker compose build/up or copy files."
+  },
+  "production_regression": {
+    "status": "pending",
+    "reason": "Deployment blocked; regression pending after deploy."
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": false,
+    "reason": "Deployment blocked; cannot run production regression."
+  },
+  "writeback": {
+    "status": "pending",
+    "reason": "Will write back after this artifact is saved."
+  }
+}

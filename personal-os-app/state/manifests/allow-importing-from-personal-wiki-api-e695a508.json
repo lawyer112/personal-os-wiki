@@ -1,0 +1,19 @@
+{
+  "sourceId": "allow-importing-from-personal-wiki-api-e695a508",
+  "title": "Allow importing from personal-wiki api/",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "python",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqrhygxf001s0jo8hy523haz/graph_nav_poc.py",
+  "repoRelativePath": ".agent-runs/cmqrhygxf001s0jo8hy523haz/graph_nav_poc.py",
+  "storedPath": "raw/sources/allow-importing-from-personal-wiki-api-e695a508.py",
+  "extractedTextPath": "state/extracts/allow-importing-from-personal-wiki-api-e695a508.md",
+  "extractedMetadataPath": "state/extracts/allow-importing-from-personal-wiki-api-e695a508.json",
+  "extractionHash": "6b890bf3b510052827a7efc610c3c9b77918362c34e49f133a3fa11bb766dd4c",
+  "mimeType": "application/octet-stream",
+  "contentHash": "e695a508c754e8cf80ab883390c0c3c08744751527a349f89da7cdb6e7eb8887",
+  "semanticHash": "e695a508c754e8cf80ab883390c0c3c08744751527a349f89da7cdb6e7eb8887",
+  "createdAt": "2026-07-04T19:02:37.874Z",
+  "updatedAt": "2026-07-04T19:02:37.874Z"
+}

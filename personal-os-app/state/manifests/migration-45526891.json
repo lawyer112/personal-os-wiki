@@ -1,0 +1,19 @@
+{
+  "sourceId": "migration-45526891",
+  "title": "migration",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "sql",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/prisma/migrations/20260701000100_wiki_write_jobs/migration.sql",
+  "repoRelativePath": "prisma/migrations/20260701000100_wiki_write_jobs/migration.sql",
+  "storedPath": "raw/sources/migration-45526891.sql",
+  "extractedTextPath": "state/extracts/migration-45526891.md",
+  "extractedMetadataPath": "state/extracts/migration-45526891.json",
+  "extractionHash": "0f152d536618e1759d64777090c959b71cd98f31c747bafe064ac3fa0e1891e1",
+  "mimeType": "application/sql",
+  "contentHash": "455268914e13e35b52c2bbb143d5b5345b3cf152f046305dceddc11c4e78d99e",
+  "semanticHash": "455268914e13e35b52c2bbb143d5b5345b3cf152f046305dceddc11c4e78d99e",
+  "createdAt": "2026-07-04T19:02:50.655Z",
+  "updatedAt": "2026-07-04T19:02:50.655Z"
+}

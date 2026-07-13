@@ -1,0 +1,18 @@
+{
+  "sourceId": "update-source-md-c0410da3",
+  "title": "update-source.md",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/fixtures/raw-manifest-ingest/update-source.md",
+  "repoRelativePath": "tests/fixtures/raw-manifest-ingest/update-source.md",
+  "storedPath": "raw/sources/update-source-md-c0410da3.md",
+  "extractedTextPath": "state/extracts/update-source-md-c0410da3.md",
+  "extractedMetadataPath": "state/extracts/update-source-md-c0410da3.json",
+  "extractionHash": "0c2c0312c6ee8a6f9759b4f2ad1f73a695be18f4ad646f54c9b5b9a2e167cae6",
+  "mimeType": "text/markdown",
+  "contentHash": "c0410da38593433d73d3d1f94dc5551d6a08b753600d99179a7ec8a44dc18a05",
+  "semanticHash": "d0370ea70917d6f6accd5306b77e5ae5d2608dc0633d07ac12c26d1915df9319",
+  "createdAt": "2026-07-04T19:03:00.398Z",
+  "updatedAt": "2026-07-04T19:03:00.398Z"
+}

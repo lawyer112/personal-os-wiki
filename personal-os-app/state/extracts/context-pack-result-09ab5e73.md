@@ -1,0 +1,49 @@
+# context-pack-result
+Format: JSON
+Top-level: object
+Size: 8
+Nested depth: 4
+
+## Schema
+
+- ok: boolean
+- targetTaskId: string
+- archiveTaskId: string
+- out: string
+- runDir: string
+- taskTitle: string
+- gateStatus: string
+- intake: object (4 keys)
+
+## Preview
+
+```json
+{
+  "ok": true,
+  "targetTaskId": "cmqqfl6hp00070jn5bgoym7dx",
+  "archiveTaskId": "cmqqfl6rk00090jn58kastmq9",
+  "out": ".agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/context-pack-cmqqfl6hp00070jn5bgoym7dx",
+  "runDir": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx",
+  "taskTitle": "把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0",
+  "gateStatus": "pass",
+  "intake": {
+    "ok": true,
+    "agentRunId": "cmqqjsvva000k0jp6mothwp9k",
+    "wiki_write_status": {
+      "status": "ok",
+      "requested": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "errors": []
+    },
+    "wiki": [
+      {
+        "ok": true,
+        "title": "AgentRun context pack cmqqfl6hp00070jn5bgoym7dx 2026-06-23",
+        "status": "created"
+      }
+    ]
+  }
+}
+
+```

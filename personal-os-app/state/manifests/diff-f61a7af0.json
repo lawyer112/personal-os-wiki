@@ -1,0 +1,18 @@
+{
+  "sourceId": "diff-f61a7af0",
+  "title": "diff",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-cron/diff.patch",
+  "repoRelativePath": ".agent-runs/github-radar-cron/diff.patch",
+  "storedPath": "raw/sources/diff-f61a7af0.patch",
+  "extractedTextPath": "state/extracts/diff-f61a7af0.md",
+  "extractedMetadataPath": "state/extracts/diff-f61a7af0.json",
+  "extractionHash": "0fb02cbed53b6648e10b0324e897a16a9a2d8e22b2a7ed14d8a4805e9a622956",
+  "mimeType": "application/octet-stream",
+  "contentHash": "f61a7af065f3c5d1301d943129ed4883bd93561dbf127d835ac1e8e7ac75acf2",
+  "semanticHash": "f61a7af065f3c5d1301d943129ed4883bd93561dbf127d835ac1e8e7ac75acf2",
+  "createdAt": "2026-07-04T19:02:46.275Z",
+  "updatedAt": "2026-07-04T19:02:46.275Z"
+}

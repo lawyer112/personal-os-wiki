@@ -1,0 +1,27 @@
+{
+  "taskId": "cmr1kaxne00hc0ipolmjyzdss",
+  "status": "fail",
+  "allowed_to_announce_done": false,
+  "checkedAt": "2026-07-01T07:55:49.551777+00:00",
+  "checks": [
+    {
+      "name": "node syntax/help",
+      "status": "pass"
+    },
+    {
+      "name": "eslint",
+      "status": "pass"
+    },
+    {
+      "name": "compose config",
+      "status": "blocked",
+      "detail": "POSTGRES_PASSWORD missing in cron env"
+    },
+    {
+      "name": "deploy 6.37",
+      "status": "blocked",
+      "detail": "Docker daemon unavailable"
+    }
+  ],
+  "decision": "Do not announce done. Code artifacts prepared; deployment and live queue verification remain blocked."
+}

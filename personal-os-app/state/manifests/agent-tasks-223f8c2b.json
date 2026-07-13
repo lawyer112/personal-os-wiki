@@ -1,0 +1,19 @@
+{
+  "sourceId": "agent-tasks-223f8c2b",
+  "title": "agent-tasks",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/agent-tasks.ts",
+  "repoRelativePath": "src/lib/agent-tasks.ts",
+  "storedPath": "raw/sources/agent-tasks-223f8c2b.ts",
+  "extractedTextPath": "state/extracts/agent-tasks-223f8c2b.md",
+  "extractedMetadataPath": "state/extracts/agent-tasks-223f8c2b.json",
+  "extractionHash": "b48310c22587e3b74b972302f9eaefdb43d8eab157433a7fcb3a8bdc80f290ba",
+  "mimeType": "text/typescript",
+  "contentHash": "223f8c2b8c4d64a532e639b87f4e140c7d6c6f404e67ef84a2d5ac3d08f9ac89",
+  "semanticHash": "223f8c2b8c4d64a532e639b87f4e140c7d6c6f404e67ef84a2d5ac3d08f9ac89",
+  "createdAt": "2026-07-04T19:02:57.299Z",
+  "updatedAt": "2026-07-04T19:02:57.299Z"
+}

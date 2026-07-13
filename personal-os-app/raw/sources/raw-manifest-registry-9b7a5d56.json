@@ -1,0 +1,10 @@
+{
+  "task:raw-ingest-fixture-skip": {
+    "hash": "d64b16b17becd6b723175e2ff1b5af835fa2bfba3d8018d2a167cfda6174f384",
+    "ingestedAt": "2026-06-23T00:00:00+08:00"
+  },
+  "task:raw-ingest-fixture-update": {
+    "hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "ingestedAt": "2026-06-23T00:00:00+08:00"
+  }
+}

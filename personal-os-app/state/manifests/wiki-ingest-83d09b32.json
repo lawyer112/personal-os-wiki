@@ -1,0 +1,19 @@
+{
+  "sourceId": "wiki-ingest-83d09b32",
+  "title": "wiki-ingest",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/wiki-ingest.ts",
+  "repoRelativePath": "src/lib/wiki-ingest.ts",
+  "storedPath": "raw/sources/wiki-ingest-83d09b32.ts",
+  "extractedTextPath": "state/extracts/wiki-ingest-83d09b32.md",
+  "extractedMetadataPath": "state/extracts/wiki-ingest-83d09b32.json",
+  "extractionHash": "afc34927640dac35faf43786459dd31522ac83abd3fa29b2d9b521094fd1d59b",
+  "mimeType": "text/typescript",
+  "contentHash": "83d09b32c241bfc641591e054ae97fc4cbb394e53fd038349541cba18608c26e",
+  "semanticHash": "83d09b32c241bfc641591e054ae97fc4cbb394e53fd038349541cba18608c26e",
+  "createdAt": "2026-07-04T19:02:59.494Z",
+  "updatedAt": "2026-07-04T19:02:59.494Z"
+}

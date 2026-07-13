@@ -1,0 +1,24 @@
+{
+  "sourceId": "verify-adhoc-fe19de24",
+  "title": "verify-adhoc",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr1kaxne00hc0ipolmjyzdss/verify-adhoc.json",
+  "repoRelativePath": ".agent-runs/cmr1kaxne00hc0ipolmjyzdss/verify-adhoc.json",
+  "storedPath": "raw/sources/verify-adhoc-fe19de24.json",
+  "extractedTextPath": "state/extracts/verify-adhoc-fe19de24.md",
+  "extractedMetadataPath": "state/extracts/verify-adhoc-fe19de24.json",
+  "extractionHash": "3184ed5c5bf09d107983671b63a5acd70d28049a0aeefd06e78308ebcbf01a19",
+  "mimeType": "application/json",
+  "contentHash": "fe19de24d7e5685d0190fbec897962bba7047751942afda4d1e9846b069c1eea",
+  "semanticHash": "fe19de24d7e5685d0190fbec897962bba7047751942afda4d1e9846b069c1eea",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "8",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:41.817Z",
+  "updatedAt": "2026-07-04T19:02:41.817Z"
+}

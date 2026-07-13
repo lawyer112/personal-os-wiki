@@ -1,0 +1,24 @@
+{
+  "sourceId": "health-checks-bfde7c3c",
+  "title": "health-checks",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/health-checks.json",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/health-checks.json",
+  "storedPath": "raw/sources/health-checks-bfde7c3c.json",
+  "extractedTextPath": "state/extracts/health-checks-bfde7c3c.md",
+  "extractedMetadataPath": "state/extracts/health-checks-bfde7c3c.json",
+  "extractionHash": "2ed8e8eac9c6def6462cbfe272b8ad16970f6b123b6f3d7f1ebe60c77d048306",
+  "mimeType": "application/json",
+  "contentHash": "bfde7c3c7c36a1e9c9a3178aba462486bcc84a5d6c923139314e0f045f2761e2",
+  "semanticHash": "bfde7c3c7c36a1e9c9a3178aba462486bcc84a5d6c923139314e0f045f2761e2",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "5"
+  },
+  "createdAt": "2026-07-04T19:02:30.315Z",
+  "updatedAt": "2026-07-04T19:02:30.315Z"
+}

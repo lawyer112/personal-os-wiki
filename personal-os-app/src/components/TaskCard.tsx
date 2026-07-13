@@ -1,6 +1,7 @@
 import Link from "next/link";
 import clsx from "clsx";
 import { TaskStatusControls } from "@/components/TaskStatusControls";
+import { AgentOwnerBadge } from "@/components/AgentOwnerBadge";
 import { formatPriority, formatTaskStatus } from "@/lib/task-labels";
 import type { TaskView } from "@/lib/view-models";
 
@@ -76,6 +77,12 @@ export function TaskCard({ task, tone = "review" }: TaskCardProps) {
         <span className="rounded-lg border border-zinc-200 bg-white px-2 py-1 text-zinc-600">
           {formatTaskStatus(task.status)}
         </span>
+        <AgentOwnerBadge
+          ownerAgent={task.ownerAgent}
+          leaseUntil={task.leaseUntil}
+          lastHeartbeatAt={task.lastHeartbeatAt}
+          executionMode={task.executionMode}
+        />
       </div>
       <div className="mt-3 flex items-center justify-between gap-2 border-t border-zinc-100 pt-3">
         <TaskStatusControls taskId={task.id} status={task.status} compact />

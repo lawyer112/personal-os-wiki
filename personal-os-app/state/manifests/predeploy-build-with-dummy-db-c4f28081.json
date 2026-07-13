@@ -1,0 +1,18 @@
+{
+  "sourceId": "predeploy-build-with-dummy-db-c4f28081",
+  "title": "predeploy-build-with-dummy-db",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/predeploy-build-with-dummy-db.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/predeploy-build-with-dummy-db.log",
+  "storedPath": "raw/sources/predeploy-build-with-dummy-db-c4f28081.log",
+  "extractedTextPath": "state/extracts/predeploy-build-with-dummy-db-c4f28081.md",
+  "extractedMetadataPath": "state/extracts/predeploy-build-with-dummy-db-c4f28081.json",
+  "extractionHash": "e414249161388128d3cdcbb936a1185d39b416803f6b4f5f4dd9bfbaa8ae79e3",
+  "mimeType": "text/plain",
+  "contentHash": "c4f2808154170febf4314fc06976e57c23e778cb79f96484d22d69050437c819",
+  "semanticHash": "c4f2808154170febf4314fc06976e57c23e778cb79f96484d22d69050437c819",
+  "createdAt": "2026-07-04T19:02:30.550Z",
+  "updatedAt": "2026-07-04T19:02:30.550Z"
+}

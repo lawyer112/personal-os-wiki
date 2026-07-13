@@ -1,0 +1,65 @@
+# wiki-retry-result
+Format: JSON
+Top-level: object
+Size: 11
+Nested depth: 4
+
+## Schema
+
+- ok: boolean
+- inbox: object (11 keys)
+- agentRunId: string
+- project: object (8 keys)
+- tasks: array (0 items)
+- ideas: array (0 items)
+- notes: array (0 items)
+- projectEvents: array (1 items)
+- wiki: array (1 items)
+- wiki_write_status: object (5 keys)
+- notification: null
+
+## Preview
+
+```json
+{
+  "ok": true,
+  "inbox": {
+    "id": "cmqqfmh6o000r0jn5z19oyi5y",
+    "sourceType": "agent-output",
+    "sourcePlatform": "telegram",
+    "sourceMessageId": null,
+    "rawText": "补写 GitHub 知识雷达 Wiki note：使用生产 Wiki frontmatter 格式，修正上一轮 legacy note frontmatter-parse-error。",
+    "sourceUrl": null,
+    "attachments": [],
+    "status": "new",
+    "createdBy": "hermes",
+    "receivedAt": "2026-06-23T09:18:34.368Z",
+    "updatedAt": "2026-06-23T09:18:34.368Z"
+  },
+  "agentRunId": "cmqqfmh7a000t0jn5l9p2d92p",
+  "project": {
+    "id": "cmqq290nm00040jmj9jwa98ya",
+    "name": "Personal OS / Wiki 知识库升级",
+    "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+    "status": "active",
+    "priority": "P0",
+    "currentFocus": "把 GitHub 外部方案转成自驱执行闭环",
+    "createdAt": "2026-06-23T03:04:11.410Z",
+    "updatedAt": "2026-06-23T09:18:34.598Z"
+  },
+  "tasks": [],
+  "ideas": [],
+  "notes": [],
+  "projectEvents": [
+    {
+      "id": "cmqqfmheb000w0jn5i0firsbl",
+      "projectId": "cmqq290nm00040jmj9jwa98ya",
+      "title": "GitHub 雷达 Wiki 记录已补写成功",
+      "body": "上一轮 simple note 写 Wiki 返回 frontmatter-parse-error；已按生产 frontmatter note 格式重试，用于沉淀 GitHub 外部方案和四个 Agent 执行任务。",
+      "eventType": "wiki-write-retry",
+      "createdAt": "2026-06-23T09:18:34.643Z",
+      "sourceInboxItemId": "cmqqfmh6o000r0jn5z19oyi5y",
+      "sourceAgentRunId": "cmqqfmh7a000t0jn5l9p2d92p"
+    }
+…
+```

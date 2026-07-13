@@ -1,0 +1,37 @@
+# gate-implementation
+Format: JSON
+Top-level: object
+Size: 6
+Nested depth: 3
+
+## Schema
+
+- taskId: string
+- verifier: string
+- verifiedAt: string
+- status: string
+- checks: object (5 keys)
+- synthesizer: object (2 keys)
+
+## Preview
+
+```json
+{
+  "taskId": "cmqqxals8000f0jpj7dgqj12m",
+  "verifier": "obsidianmanager1",
+  "verifiedAt": "2026-06-23T19:33:00.000Z",
+  "status": "pass",
+  "checks": {
+    "tsc": { "status": "pass", "output": "no errors" },
+    "eslint": { "status": "pass", "output": "no errors" },
+    "tests": { "status": "pass", "passed": 0, "failed": 0, "total": 0, "note": "脚本级 E2E 验证替代 unit test" },
+    "build": { "status": "pass", "output": "docker compose build personal-os succeeded on 6.37" },
+    "regression": { "status": "pass", "output": "GET /api/agent/context?q=test returns ok=true with tiers hot/warm/cold" }
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": true,
+    "note": "Deployed to 6.37. Backup at /data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260624-033220/. Rollback via docker compose up."
+  }
+}
+
+```

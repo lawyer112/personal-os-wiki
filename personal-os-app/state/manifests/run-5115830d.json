@@ -1,0 +1,24 @@
+{
+  "sourceId": "run-5115830d",
+  "title": "run",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6hp00070jn5bgoym7dx/run.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/run.json",
+  "storedPath": "raw/sources/run-5115830d.json",
+  "extractedTextPath": "state/extracts/run-5115830d.md",
+  "extractedMetadataPath": "state/extracts/run-5115830d.json",
+  "extractionHash": "c5d396fe65a5e7c2d969942daa4e6cdad300c099c6b6fc3298478a4eac3e7227",
+  "mimeType": "application/json",
+  "contentHash": "5115830dc1da7dc2090856add28908f993729736a4dac8697da9a32a8d64f975",
+  "semanticHash": "5115830dc1da7dc2090856add28908f993729736a4dac8697da9a32a8d64f975",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "1"
+  },
+  "createdAt": "2026-07-04T19:02:34.379Z",
+  "updatedAt": "2026-07-04T19:02:34.379Z"
+}

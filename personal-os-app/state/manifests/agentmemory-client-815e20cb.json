@@ -1,0 +1,19 @@
+{
+  "sourceId": "agentmemory-client-815e20cb",
+  "title": "agentmemory-client",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/agentmemory-client.ts",
+  "repoRelativePath": "src/lib/agentmemory-client.ts",
+  "storedPath": "raw/sources/agentmemory-client-815e20cb.ts",
+  "extractedTextPath": "state/extracts/agentmemory-client-815e20cb.md",
+  "extractedMetadataPath": "state/extracts/agentmemory-client-815e20cb.json",
+  "extractionHash": "4008dc6bea1a4f60c74d93512cccc04ce4fa129a0cfe2d09d9d7c77ba64fe5bb",
+  "mimeType": "text/typescript",
+  "contentHash": "815e20cbc5c40bf35ff5c1926cf8265956d5625be94ea9388ce15fffc7d0d113",
+  "semanticHash": "815e20cbc5c40bf35ff5c1926cf8265956d5625be94ea9388ce15fffc7d0d113",
+  "createdAt": "2026-07-04T19:02:57.389Z",
+  "updatedAt": "2026-07-04T19:02:57.389Z"
+}

@@ -1,0 +1,24 @@
+{
+  "task_id": "cmr006b4p01b90jpk4trb0240",
+  "agent_id": "obsidianmanager1",
+  "status": "completed",
+  "summary": "对真实 AgentRun cmqyixt4a00n90jpk3todreos 跑通 scripts/archive-agent-run.mjs 自动归档：生成 context-pack.md/intake-payload.json，通过 Personal OS /api/intake 写入项目事件；6.37 同步 Wiki 写入超时 aborted，但直连 Personal Wiki /api/ingest 31.168s 成功，Wiki note 已读回且包含 task_id/gate/diff/tests/deploy/residual risk。",
+  "decision": "本轮交付 v0 归档闭环，不在同一任务内修复 6.37 intake→Wiki 同步超时；将其作为残余风险/后续任务。",
+  "changed_files": [],
+  "artifacts": [
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/context-pack/context-pack.md",
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/context-pack/intake-payload.json",
+    ".agent-runs/cmqyixt4a00n90jpk3todreos/context-pack/intake-result.json",
+    ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/wiki-ingest-probe.json",
+    ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/wiki-note-readback.json",
+    ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/secret-scan.json",
+    ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/tsc.log",
+    ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/vitest-wiki-write.log"
+  ],
+  "remaining_risks": [
+    "6.37 当前 /api/intake 仍走同步 Wiki 写入路径，Personal Wiki 图重算约 31s 导致 fetch abort；OS intake 顶层 ok，但 wiki_write_status=failed。",
+    "本地已有 wiki-write-jobs 队列代码但线上未体现该路径，且未确认有 worker drain queued jobs；需单独任务处理。",
+    "重复直连 ingest 生成 -2 后缀 Wiki note，说明归档重复运行会产生重复 note，后续可做幂等去重。"
+  ],
+  "completed_at": "2026-07-01T04:21:38Z"
+}

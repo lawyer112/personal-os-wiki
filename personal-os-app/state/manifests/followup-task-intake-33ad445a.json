@@ -1,0 +1,24 @@
+{
+  "sourceId": "followup-task-intake-33ad445a",
+  "title": "followup-task-intake",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/followup-task-intake.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/followup-task-intake.json",
+  "storedPath": "raw/sources/followup-task-intake-33ad445a.json",
+  "extractedTextPath": "state/extracts/followup-task-intake-33ad445a.md",
+  "extractedMetadataPath": "state/extracts/followup-task-intake-33ad445a.json",
+  "extractionHash": "d2443e476c304b8a441e1a9b511f3d85b9367366e21fd07de52433bd7deda66e",
+  "mimeType": "application/json",
+  "contentHash": "33ad445a9ec1f96af151be5732058ae1a2b7b5e142793716fa138d57f6ea4671",
+  "semanticHash": "33ad445a9ec1f96af151be5732058ae1a2b7b5e142793716fa138d57f6ea4671",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "6"
+  },
+  "createdAt": "2026-07-04T19:02:30.539Z",
+  "updatedAt": "2026-07-04T19:02:30.539Z"
+}

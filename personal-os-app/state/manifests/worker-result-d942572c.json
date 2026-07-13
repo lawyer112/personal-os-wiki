@@ -1,0 +1,24 @@
+{
+  "sourceId": "worker-result-d942572c",
+  "title": "worker-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/swarmvault-hybrid-retrieval-feasibility/worker-result.json",
+  "repoRelativePath": ".agent-runs/swarmvault-hybrid-retrieval-feasibility/worker-result.json",
+  "storedPath": "raw/sources/worker-result-d942572c.json",
+  "extractedTextPath": "state/extracts/worker-result-d942572c.md",
+  "extractedMetadataPath": "state/extracts/worker-result-d942572c.json",
+  "extractionHash": "320466493b4b0db51e2215dee47c50c783a12a3e76907b29998c1a7f8c5ab30f",
+  "mimeType": "application/json",
+  "contentHash": "d942572c1fe7d6299f9a38bb66f717747fbcb1e78e617adc37d2abf1d4e0cbf8",
+  "semanticHash": "d942572c1fe7d6299f9a38bb66f717747fbcb1e78e617adc37d2abf1d4e0cbf8",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:48.227Z",
+  "updatedAt": "2026-07-04T19:02:48.227Z"
+}

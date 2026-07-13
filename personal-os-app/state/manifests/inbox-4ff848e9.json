@@ -1,0 +1,19 @@
+{
+  "sourceId": "inbox-4ff848e9",
+  "title": "inbox",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/inbox.ts",
+  "repoRelativePath": "src/lib/inbox.ts",
+  "storedPath": "raw/sources/inbox-4ff848e9.ts",
+  "extractedTextPath": "state/extracts/inbox-4ff848e9.md",
+  "extractedMetadataPath": "state/extracts/inbox-4ff848e9.json",
+  "extractionHash": "02b2f1696eb80295c66d280f9729cc24c75f69f804a2fa869c211a2ed4ee56f9",
+  "mimeType": "text/typescript",
+  "contentHash": "4ff848e9df6e77ad4b93b38a475d513c4ff394155ddb1b74875a181067ffb72d",
+  "semanticHash": "4ff848e9df6e77ad4b93b38a475d513c4ff394155ddb1b74875a181067ffb72d",
+  "createdAt": "2026-07-04T19:02:58.143Z",
+  "updatedAt": "2026-07-04T19:02:58.143Z"
+}

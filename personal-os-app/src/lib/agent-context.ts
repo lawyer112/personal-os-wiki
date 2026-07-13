@@ -1,4 +1,5 @@
 import { HttpError } from "@/lib/http";
+import { searchMemoryVectors } from "@/lib/memory-vector-store";
 import {
   searchWikiNotes,
   wikiNoteUrl,
@@ -146,7 +147,7 @@ export type AgentContextTiers = {
 };
 
 export type ContextEpisode = {
-  type: "agent_run" | "task" | "wiki" | "activity";
+  type: "agent_run" | "task" | "wiki" | "activity" | "memory";
   id: string;
   title: string;
   summary: string;
@@ -217,6 +218,47 @@ const stopWords = new Set([
   "with",
 ]);
 
+// Low-information role/structural terms that should not dominate ranking when
+// mixed with concrete technical concepts. Keep in sync with tests.
+const BROAD_ROLE_TERMS = new Set([
+  "用户",
+  "管理员",
+  "知识库管理员",
+  "管理员",
+  "assistant",
+  "助手",
+  "agent",
+  "bot",
+  "classic",
+  "hermes",
+  "xingqiwu",
+  "我",
+  "你",
+  "我们",
+  "大家",
+  "所有人",
+  "每个人",
+  "someone",
+  "everyone",
+  "anyone",
+  "user",
+  "admin",
+  "manager",
+  "operator",
+  "owner",
+  "viewer",
+  "reader",
+  "writer",
+  "executor",
+  "worker",
+  "observer",
+]);
+
+// Penalty applied per broad role term match. Tuned so a note whose title only
+// matches broad terms still scores lower than a note whose title matches a
+// concrete concept.
+const BROAD_ROLE_PENALTY = 18;
+
 export function buildContextSearchQueries(task: TaskRecord, limit = 8) {
   const text = [
     task.title,
@@ -248,8 +290,8 @@ export function buildContextSearchQueries(task: TaskRecord, limit = 8) {
     }
   }
 
-  for (const match of text.matchAll(/[A-Za-z][A-Za-z0-9_.-]{2,}/g)) {
-    const token = match[0];
+  const tokens = text.match(/[A-Za-z][A-Za-z0-9_.-]{2,}/g) ?? [];
+  for (const token of tokens) {
     if (!stopWords.has(token.toLowerCase())) {
       addQuery(queries, token);
     }
@@ -263,6 +305,15 @@ function addQuery(queries: Set<string>, value: string) {
   if (query.length >= 2 && query.length <= 80) {
     queries.add(query);
   }
+}
+
+function isBroadRoleTerm(term: string): boolean {
+  return BROAD_ROLE_TERMS.has(term.toLowerCase().trim());
+}
+
+function countBroadRoleMatches(text: string, queries: string[]): number {
+  const lowerText = text.toLowerCase();
+  return queries.filter((q) => isBroadRoleTerm(q) && lowerText.includes(q.toLowerCase())).length;
 }
 
 function scoreNote(
@@ -317,6 +368,11 @@ function scoreNote(
     score += 5;
     matchedQueries.add(retrievedByQuery);
   }
+
+  // Down-rank notes whose signal comes mainly from broad role/structural terms.
+  const broadTitleHits = countBroadRoleMatches(note.title ?? "", queries);
+  const broadExcerptHits = countBroadRoleMatches(note.excerpt ?? "", queries);
+  score -= BROAD_ROLE_PENALTY * (broadTitleHits + broadExcerptHits * 0.5);
 
   return { matchedQueries, score };
 }
@@ -656,6 +712,43 @@ function episodeMatches(text: string, keywords: string[]): boolean {
   });
 }
 
+async function findMemoryEpisodes(
+  query: string,
+  searchQueries: string[],
+): Promise<ContextEpisode[]> {
+  // Read-only vector candidate recall. Degrades to [] if the MemoryItem
+  // table is empty, missing, or the search fails - never breaks context.
+  //
+  // Can be disabled via MEMORY_VECTOR_RECALL_ENABLED=false for safe rollback.
+  if (
+    (process.env.MEMORY_VECTOR_RECALL_ENABLED ?? "true").toLowerCase() ===
+    "false"
+  ) {
+    return [];
+  }
+  const probe = [query, ...searchQueries].map((q) => q.trim()).filter(Boolean);
+  if (probe.length === 0) return [];
+  try {
+    const hits = await searchMemoryVectors(probe.join(" "), {
+      limit: 5,
+      minSimilarity: 0.3,
+    });
+    return hits.map((hit) => ({
+      type: "memory" as const,
+      id: `vec:${hit.id}`,
+      title: hit.title,
+      summary: hit.body.slice(0, 240),
+      relevanceScore: Math.round(hit.similarity * 60),
+      createdAt:
+        typeof hit.createdAt === "string"
+          ? hit.createdAt
+          : hit.createdAt?.toISOString(),
+    }));
+  } catch {
+    return [];
+  }
+}
+
 function findEpisodes(
   query: string,
   searchQueries: string[],
@@ -814,8 +907,14 @@ export async function getQueryAgentContext(query: string, db?: QueryContextDb) {
   const recentTasks: unknown[] = [];
   const relatedIdeas: IdeaContextRecord[] = [];
   const activity: ActivityRecord[] = [];
+  const memoryEpisodes = await findMemoryEpisodes(query, searchQueries);
   const evidence = {
-    episodes: findEpisodes(query, searchQueries, wiki, globalActivity, null),
+    episodes: [
+      ...findEpisodes(query, searchQueries, wiki, globalActivity, null),
+      ...memoryEpisodes,
+    ]
+      .sort((a, b) => b.relevanceScore - a.relevanceScore)
+      .slice(0, 8),
   };
 
   const nextAction = computeNextAction({
@@ -916,8 +1015,14 @@ export async function getAgentContext<TDb extends ContextDb>(
     }),
   ]);
 
+  const memoryEpisodes = await findMemoryEpisodes("", searchQueries);
   const evidence = {
-    episodes: findEpisodes("", searchQueries, wiki, activity, task),
+    episodes: [
+      ...findEpisodes("", searchQueries, wiki, activity, task),
+      ...memoryEpisodes,
+    ]
+      .sort((a, b) => b.relevanceScore - a.relevanceScore)
+      .slice(0, 8),
   };
 
   const nextAction = computeNextAction({

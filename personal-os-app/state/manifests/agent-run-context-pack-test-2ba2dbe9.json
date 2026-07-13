@@ -1,0 +1,19 @@
+{
+  "sourceId": "agent-run-context-pack-test-2ba2dbe9",
+  "title": "agent-run-context-pack.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/agent-run-context-pack.test.ts",
+  "repoRelativePath": "tests/services/agent-run-context-pack.test.ts",
+  "storedPath": "raw/sources/agent-run-context-pack-test-2ba2dbe9.ts",
+  "extractedTextPath": "state/extracts/agent-run-context-pack-test-2ba2dbe9.md",
+  "extractedMetadataPath": "state/extracts/agent-run-context-pack-test-2ba2dbe9.json",
+  "extractionHash": "b4c8c693de29edf198df648f2e045bdbea76382c79f0ccc1708d478ef4206a95",
+  "mimeType": "text/typescript",
+  "contentHash": "2ba2dbe9bba898ca048684175bd075215d572b5849ef451695475a0c35eb2263",
+  "semanticHash": "2ba2dbe9bba898ca048684175bd075215d572b5849ef451695475a0c35eb2263",
+  "createdAt": "2026-07-04T19:03:01.129Z",
+  "updatedAt": "2026-07-04T19:03:01.129Z"
+}

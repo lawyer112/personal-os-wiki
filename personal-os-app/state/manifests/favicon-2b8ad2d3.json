@@ -1,0 +1,17 @@
+{
+  "sourceId": "favicon-2b8ad2d3",
+  "title": "favicon",
+  "originType": "file",
+  "sourceKind": "image",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/app/favicon.ico",
+  "repoRelativePath": "src/app/favicon.ico",
+  "storedPath": "raw/sources/favicon-2b8ad2d3.ico",
+  "extractedMetadataPath": "state/extracts/favicon-2b8ad2d3.json",
+  "extractionHash": "602332ffaee382b498a97ef594afb5258baa1708477b57e0a4aaa89424710c78",
+  "mimeType": "image/vnd.microsoft.icon",
+  "contentHash": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
+  "semanticHash": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
+  "createdAt": "2026-07-04T19:02:54.900Z",
+  "updatedAt": "2026-07-04T19:02:54.900Z"
+}

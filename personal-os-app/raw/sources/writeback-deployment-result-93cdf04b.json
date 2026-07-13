@@ -1,0 +1,304 @@
+{
+  "review": {
+    "status": 200,
+    "body": {
+      "ok": true,
+      "task": {
+        "id": "cmqqb0d7h00050jnsh6q221l1",
+        "title": "实现 wikiClient 读写分离抽象并补齐 401 / 降级测试",
+        "description": "把 WIKI_READ_TOKEN 与 WIKI_API_TOKEN 的职责固化进 client abstraction，避免读接口拿写 token 或写接口拿读 token；同时保持 /api/intake 在 Wiki 失败时不阻断 OS 写入。",
+        "status": "done",
+        "priority": "P0",
+        "riskLevel": "medium",
+        "executionMode": "agent_allowed",
+        "agentTags": [
+          "personal-os",
+          "personal-wiki",
+          "wiki-client",
+          "auth"
+        ],
+        "ownerAgent": null,
+        "leaseUntil": null,
+        "lastHeartbeatAt": "2026-06-23T08:21:24.652Z",
+        "requiredOutput": "代码 diff、测试用例、CI 通过结果、生产回归记录。",
+        "nextAction": "在 personal-os-app/src/lib/wiki-client.ts 中拆分 read/write client，并新增 token matrix 测试。",
+        "definitionOfDone": "npm test、tsc、lint、build 全通过；读 token 只能读、写 token 只能写；/api/intake Wiki 写失败仍返回 201 并记录 wiki_write_status。",
+        "dueDate": null,
+        "estimateMinutes": 120,
+        "createdBy": "hermes",
+        "createdAt": "2026-06-23T07:09:24.317Z",
+        "updatedAt": "2026-06-23T09:07:01.801Z",
+        "completedAt": "2026-06-23T09:07:01.566Z",
+        "submittedAt": "2026-06-23T08:21:24.652Z",
+        "projectId": "cmqq290nm00040jmj9jwa98ya",
+        "sourceInboxItemId": "cmqqb0cgl00000jnsnx6e8s2i",
+        "sourceAgentRunId": "cmqqb0coj00020jns1toyk3th",
+        "project": {
+          "id": "cmqq290nm00040jmj9jwa98ya",
+          "name": "Personal OS / Wiki 知识库升级",
+          "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+          "status": "active",
+          "priority": "P0",
+          "currentFocus": "GitHub review、CI 可信度、6.37 生产稳定性、Agent 自驱执行闭环",
+          "createdAt": "2026-06-23T03:04:11.410Z",
+          "updatedAt": "2026-06-23T07:09:24.043Z"
+        },
+        "sourceInboxItem": {
+          "id": "cmqqb0cgl00000jnsnx6e8s2i",
+          "sourceType": "agent-output",
+          "sourcePlatform": "telegram",
+          "sourceMessageId": null,
+          "rawText": "完成 Personal OS / Wiki 仓库 review、外部方案检索、GitHub 推送、CI 修复、依赖安全更新与 6.37 生产部署回写。",
+          "sourceUrl": null,
+          "attachments": [],
+          "status": "processed",
+          "createdBy": "hermes",
+          "receivedAt": "2026-06-23T07:09:23.349Z",
+          "updatedAt": "2026-06-23T07:09:25.135Z"
+        },
+        "sourceAgentRun": {
+          "id": "cmqqb0coj00020jns1toyk3th",
+          "inboxItemId": "cmqqb0cgl00000jnsnx6e8s2i",
+          "model": "hermes-gpt-5.5",
+          "status": "completed",
+          "classification": {
+            "kind": "project-review",
+            "owner": "agent",
+            "project": "Personal OS / Wiki 知识库升级"
+          },
+          "reasoningSummary": "用户质疑是否做了 review、优化、GitHub 推送；已实际核查仓库、检索外部方案、修复 CI、推送 GitHub、部署 6.37，并沉淀为项目事件与 Wiki 记录。",
+          "outputSummary": "已写入 repo review / push / CI / 生产部署记录，并新增 Agent 后续任务。",
+          "error": null,
+          "startedAt": "2026-06-23T07:09:23.635Z",
+          "completedAt": "2026-06-23T07:09:24.961Z"
+        },
+        "wikiLinks": [
+          {
+            "id": "cmqqb0d7k00060jnsq0g46mz5",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "noteTitle": "2026-06-23 Personal OS Wiki GitHub Review / Push / CI 修复记录",
+            "notePath": "30_projects/Personal-OS-Wiki-知识库升级/2026-06-23-Personal-OS-Wiki-GitHub-Review-Push-CI-修复记录.md",
+            "noteUrl": "http://192.168.6.37:3100/api/wiki/open?next=%2Fnote%3Fpath%3D30_projects%252FPersonal-OS-Wiki-%25E7%259F%25A5%25E8%25AF%2586%25E5%25BA%2593%25E5%258D%2587%25E7%25BA%25A7%252F2026-06-23-Personal-OS-Wiki-GitHub-Review-Push-CI-%25E4%25BF%25AE%25E5%25A4%258D%25E8%25AE%25B0%25E5%25BD%2595.md",
+            "sourceType": "personal-wiki",
+            "sourceInboxItemId": "cmqqb0cgl00000jnsnx6e8s2i",
+            "sourceAgentRunId": "cmqqb0coj00020jns1toyk3th",
+            "createdAt": "2026-06-23T07:09:24.317Z"
+          }
+        ],
+        "contributions": [
+          {
+            "id": "cmqqdkyt9000z0jnskc1vgef4",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "taskRunId": "cmqqd9u0n000w0jns2slyobel",
+            "agentId": "hermes",
+            "summary": "实现 wikiClient read/write 分离与 /api/intake Wiki 降级记录：read 仅 GET/HEAD + WIKI_READ_TOKEN，write 仅 POST/PUT/PATCH/DELETE + WIKI_API_TOKEN；Wiki 写失败时 /api/intake 保持 201，并在响应与 AgentRun classification 写入 wiki_write_status。",
+            "evidenceLinks": [
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/gate.json",
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/worker-result.json",
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/verify-full-tests.log",
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/verify-build.log",
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/production-smoke.json"
+            ],
+            "artifactUrls": [
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/diff.patch",
+              "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/run-report.md"
+            ],
+            "nextRecommendation": "Classic review diff.patch；如认可，再安排低风险部署窗口。当前未部署、未重启 6.37、未写生产数据库。",
+            "createdAt": "2026-06-23T08:21:24.669Z"
+          }
+        ],
+        "artifacts": [
+          {
+            "id": "cmqqdkytc00110jns4gbrhqj1",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "contributionId": "cmqqdkyt9000z0jnskc1vgef4",
+            "type": "link",
+            "title": null,
+            "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/run-report.md",
+            "verification": "unverified",
+            "createdAt": "2026-06-23T08:21:24.672Z"
+          },
+          {
+            "id": "cmqqdkytb00100jnsj2zgcaux",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "contributionId": "cmqqdkyt9000z0jnskc1vgef4",
+            "type": "link",
+            "title": null,
+            "url": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/diff.patch",
+            "verification": "unverified",
+            "createdAt": "2026-06-23T08:21:24.671Z"
+          }
+        ],
+        "runs": [
+          {
+            "id": "cmqqd9u0n000w0jns2slyobel",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "agentId": "hermes",
+            "status": "submitted",
+            "policySnapshot": {
+              "task": {
+                "status": "todo",
+                "agentTags": [
+                  "personal-os",
+                  "personal-wiki",
+                  "wiki-client",
+                  "auth"
+                ],
+                "riskLevel": "medium",
+                "executionMode": "agent_allowed"
+              },
+              "profile": {
+                "id": "hermes",
+                "tags": [
+                  "wiki",
+                  "curation",
+                  "review",
+                  "personal-os"
+                ],
+                "enabled": true,
+                "canWriteTasks": true,
+                "allowedRiskLevel": "medium"
+              },
+              "leaseUntil": "2026-06-23T10:12:43.976Z"
+            },
+            "resultSummary": "实现 wikiClient read/write 分离与 /api/intake Wiki 降级记录：read 仅 GET/HEAD + WIKI_READ_TOKEN，write 仅 POST/PUT/PATCH/DELETE + WIKI_API_TOKEN；Wiki 写失败时 /api/intake 保持 201，并在响应与 AgentRun classification 写入 wiki_write_status。",
+            "startedAt": "2026-06-23T08:12:45.239Z",
+            "lastHeartbeatAt": "2026-06-23T08:12:43.976Z",
+            "submittedAt": "2026-06-23T08:21:24.652Z",
+            "endedAt": "2026-06-23T08:21:24.652Z"
+          }
+        ],
+        "agentActionLogs": [
+          {
+            "id": "cmqqdkyv700140jnsj9wo0f9p",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "taskRunId": "cmqqd9u0n000w0jns2slyobel",
+            "agentId": "hermes",
+            "action": "task.submitted",
+            "summary": "实现 wikiClient read/write 分离与 /api/intake Wiki 降级记录：read 仅 GET/HEAD + WIKI_READ_TOKEN，write 仅 POST/PUT/PATCH/DELETE + WIKI_API_TOKEN；Wiki 写失败时 /api/intake 保持 201，并在响应与 AgentRun classification 写入 wiki_write_status。",
+            "metadata": {
+              "resultType": "code+tests",
+              "needsHumanDecision": true,
+              "definitionOfDoneMet": true
+            },
+            "createdAt": "2026-06-23T08:21:24.739Z"
+          },
+          {
+            "id": "cmqqdkytd00120jnsh4tqg2k2",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "taskRunId": "cmqqd9u0n000w0jns2slyobel",
+            "agentId": "hermes",
+            "action": "task.contribution.created",
+            "summary": "实现 wikiClient read/write 分离与 /api/intake Wiki 降级记录：read 仅 GET/HEAD + WIKI_READ_TOKEN，write 仅 POST/PUT/PATCH/DELETE + WIKI_API_TOKEN；Wiki 写失败时 /api/intake 保持 201，并在响应与 AgentRun classification 写入 wiki_write_status。",
+            "metadata": {
+              "artifactUrls": [
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/diff.patch",
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/run-report.md"
+              ],
+              "evidenceLinks": [
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/gate.json",
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/worker-result.json",
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/verify-full-tests.log",
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/verify-build.log",
+                "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/production-smoke.json"
+              ],
+              "contributionId": "cmqqdkyt9000z0jnskc1vgef4"
+            },
+            "createdAt": "2026-06-23T08:21:24.673Z"
+          },
+          {
+            "id": "cmqqd9u0r000x0jnsa4v5mjsk",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "taskRunId": "cmqqd9u0n000w0jns2slyobel",
+            "agentId": "hermes",
+            "action": "task.claimed",
+            "summary": "Claimed task lease until 2026-06-23T10:12:43.976Z",
+            "metadata": {
+              "leaseUntil": "2026-06-23T10:12:43.976Z"
+            },
+            "createdAt": "2026-06-23T08:12:45.243Z"
+          }
+        ],
+        "reviews": [
+          {
+            "id": "cmqqf7mmr00050jo4n6dm4yfv",
+            "taskId": "cmqqb0d7h00050jnsh6q221l1",
+            "reviewer": "hermes",
+            "decision": "approve",
+            "comment": "Gate pass 后已由 Hermes 直接部署 6.37，不再要求 Classic 手工 review；GitHub CI 通过，生产构建/重启/回归通过。",
+            "createdAt": "2026-06-23T09:07:01.587Z"
+          }
+        ]
+      },
+      "review": {
+        "id": "cmqqf7mmr00050jo4n6dm4yfv",
+        "taskId": "cmqqb0d7h00050jnsh6q221l1",
+        "reviewer": "hermes",
+        "decision": "approve",
+        "comment": "Gate pass 后已由 Hermes 直接部署 6.37，不再要求 Classic 手工 review；GitHub CI 通过，生产构建/重启/回归通过。",
+        "createdAt": "2026-06-23T09:07:01.587Z"
+      }
+    }
+  },
+  "intake": {
+    "status": 201,
+    "body": {
+      "ok": true,
+      "inbox": {
+        "id": "cmqqf7mvi00070jo4nlgqwxsr",
+        "sourceType": "agent-output",
+        "sourcePlatform": "telegram",
+        "sourceMessageId": null,
+        "rawText": "wikiClient 读写分离任务已完成部署回写；修正执行器不应要求 Classic review。",
+        "sourceUrl": null,
+        "attachments": [],
+        "status": "new",
+        "createdBy": "hermes",
+        "receivedAt": "2026-06-23T09:07:01.902Z",
+        "updatedAt": "2026-06-23T09:07:01.902Z"
+      },
+      "agentRunId": "cmqqf7n3u00090jo4n3spwxpo",
+      "project": {
+        "id": "cmqq290nm00040jmj9jwa98ya",
+        "name": "Personal OS / Wiki 知识库升级",
+        "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+        "status": "active",
+        "priority": "P0",
+        "currentFocus": "Agent 自驱执行不再把 gate=pass 的内部部署推给 Classic",
+        "createdAt": "2026-06-23T03:04:11.410Z",
+        "updatedAt": "2026-06-23T09:07:02.440Z"
+      },
+      "tasks": [],
+      "ideas": [],
+      "notes": [],
+      "projectEvents": [
+        {
+          "id": "cmqqf7nb6000c0jo4vjq8himm",
+          "projectId": "cmqq290nm00040jmj9jwa98ya",
+          "title": "wikiClient 读写分离已由 Hermes 直接部署到 6.37",
+          "body": "任务 cmqqb0d7h00050jnsh6q221l1 已 approve/done；GitHub CI run 28014816221 通过；6.37 personal-os 已重建重启；生产回归 context/wiki/page/intake 均通过。执行器后续不应再要求 Classic review 已 gate=pass 的内部部署。",
+          "eventType": "deployment",
+          "createdAt": "2026-06-23T09:07:02.466Z",
+          "sourceInboxItemId": "cmqqf7mvi00070jo4nlgqwxsr",
+          "sourceAgentRunId": "cmqqf7n3u00090jo4n3spwxpo"
+        }
+      ],
+      "wiki": [
+        {
+          "ok": true,
+          "title": "2026-06-23 wikiClient 读写分离部署记录",
+          "status": "created",
+          "url": "http://192.168.6.37:3100/api/wiki/open?next=%2Fhttp%3A%2F%2F192.168.6.37%3A3422%2Fnote%3Fpath%3D30_projects%252FPersonal-OS-Wiki-%25E7%259F%25A5%25E8%25AF%2586%25E5%25BA%2593%25E5%258D%2587%25E7%25BA%25A7%252F2026-06-23-wikiClient-%25E8%25AF%25BB%25E5%2586%2599%25E5%2588%2586%25E7%25A6%25BB%25E9%2583%25A8%25E7%25BD%25B2%25E8%25AE%25B0%25E5%25BD%2595.md"
+        }
+      ],
+      "wiki_write_status": {
+        "status": "ok",
+        "requested": 1,
+        "succeeded": 1,
+        "failed": 0,
+        "errors": []
+      },
+      "notification": null
+    }
+  }
+}

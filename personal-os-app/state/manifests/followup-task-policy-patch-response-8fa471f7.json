@@ -1,0 +1,24 @@
+{
+  "sourceId": "followup-task-policy-patch-response-8fa471f7",
+  "title": "followup-task-policy-patch-response",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/followup-task-policy-patch-response.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/followup-task-policy-patch-response.json",
+  "storedPath": "raw/sources/followup-task-policy-patch-response-8fa471f7.json",
+  "extractedTextPath": "state/extracts/followup-task-policy-patch-response-8fa471f7.md",
+  "extractedMetadataPath": "state/extracts/followup-task-policy-patch-response-8fa471f7.json",
+  "extractionHash": "289585287493651a279c0623f333a60ed449368648d9cb5672bc87145c718eca",
+  "mimeType": "application/json",
+  "contentHash": "8fa471f785bc60248c7f98cf3909fdb580b5f4efa1d59d67e3098b1c311c4929",
+  "semanticHash": "8fa471f785bc60248c7f98cf3909fdb580b5f4efa1d59d67e3098b1c311c4929",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:31.281Z",
+  "updatedAt": "2026-07-04T19:02:31.281Z"
+}

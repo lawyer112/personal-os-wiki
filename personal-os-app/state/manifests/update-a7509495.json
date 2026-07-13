@@ -1,0 +1,24 @@
+{
+  "sourceId": "update-a7509495",
+  "title": "update",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/fixtures/raw-manifest-ingest/update.json",
+  "repoRelativePath": "tests/fixtures/raw-manifest-ingest/update.json",
+  "storedPath": "raw/sources/update-a7509495.json",
+  "extractedTextPath": "state/extracts/update-a7509495.md",
+  "extractedMetadataPath": "state/extracts/update-a7509495.json",
+  "extractionHash": "ad9e654c5e7bab4cf95e7232fb6c42f3667864780a93b596ea5270aa3298d00f",
+  "mimeType": "application/json",
+  "contentHash": "a750949594679b15863bc028e2cdeabde64d7ddfc808335d4d6c02a7cbdca673",
+  "semanticHash": "a750949594679b15863bc028e2cdeabde64d7ddfc808335d4d6c02a7cbdca673",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "20",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:03:00.489Z",
+  "updatedAt": "2026-07-04T19:03:00.489Z"
+}

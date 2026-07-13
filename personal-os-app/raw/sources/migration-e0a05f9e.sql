@@ -1,0 +1,2 @@
+ALTER TABLE "DailyPlan"
+  ADD COLUMN "timezone" TEXT NOT NULL DEFAULT 'UTC';

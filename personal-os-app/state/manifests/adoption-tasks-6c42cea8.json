@@ -1,0 +1,24 @@
+{
+  "sourceId": "adoption-tasks-6c42cea8",
+  "title": "adoption-tasks",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqyixt4a00n90jpk3todreos/source-ledger/adoption-tasks.json",
+  "repoRelativePath": ".agent-runs/cmqyixt4a00n90jpk3todreos/source-ledger/adoption-tasks.json",
+  "storedPath": "raw/sources/adoption-tasks-6c42cea8.json",
+  "extractedTextPath": "state/extracts/adoption-tasks-6c42cea8.md",
+  "extractedMetadataPath": "state/extracts/adoption-tasks-6c42cea8.json",
+  "extractionHash": "5e807371211043945a47670a601ed4cd815e8ba9856fc23ec1ef9c209db929ca",
+  "mimeType": "application/json",
+  "contentHash": "6c42cea8b960164cb1ada52e4ac31d3472ea470521fb2ce22f48f904665f5a74",
+  "semanticHash": "6c42cea8b960164cb1ada52e4ac31d3472ea470521fb2ce22f48f904665f5a74",
+  "details": {
+    "format": "json",
+    "top_level_type": "array",
+    "top_level_size": "2",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:38.956Z",
+  "updatedAt": "2026-07-04T19:02:38.956Z"
+}

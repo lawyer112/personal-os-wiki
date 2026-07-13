@@ -1,0 +1,18 @@
+{
+  "sourceId": "diff-01a11b74",
+  "title": "diff",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/fix-wiki-frontmatter-parse-error/diff.patch",
+  "repoRelativePath": ".agent-runs/fix-wiki-frontmatter-parse-error/diff.patch",
+  "storedPath": "raw/sources/diff-01a11b74.patch",
+  "extractedTextPath": "state/extracts/diff-01a11b74.md",
+  "extractedMetadataPath": "state/extracts/diff-01a11b74.json",
+  "extractionHash": "36893fb1e8e877046f3f278cee11277351a095901086f48adf1fbec6def1394d",
+  "mimeType": "application/octet-stream",
+  "contentHash": "01a11b74be3f60826bb6da6d358ebf9dea19ce66d4cc8aa8b257e9754e56b775",
+  "semanticHash": "01a11b74be3f60826bb6da6d358ebf9dea19ce66d4cc8aa8b257e9754e56b775",
+  "createdAt": "2026-07-04T19:02:43.299Z",
+  "updatedAt": "2026-07-04T19:02:43.299Z"
+}

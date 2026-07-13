@@ -1,0 +1,288 @@
+{
+  "ok": true,
+  "task": {
+    "id": "cmqq2o6lz000w0jmj9mfh4cer",
+    "title": "设计 _raw + manifest 增量入库试验",
+    "description": "吸收 Ar9av/llmwiki 的 _raw 暂存和 manifest delta tracking，降低重复加工和手工入库成本。",
+    "status": "review",
+    "priority": "P1",
+    "riskLevel": "low",
+    "executionMode": "agent_allowed",
+    "agentTags": [
+      "wiki",
+      "manifest",
+      "raw",
+      "workflow"
+    ],
+    "ownerAgent": null,
+    "leaseUntil": null,
+    "lastHeartbeatAt": "2026-06-23T14:14:13.989Z",
+    "requiredOutput": "目录约定、manifest JSON schema、一次 ingest 流程、重复文件跳过规则。",
+    "nextAction": "先在本地报告里写 schema 和伪代码；不改生产目录。",
+    "definitionOfDone": "能用 3 个样例文件说明 ingest、skip、update 三种路径。",
+    "dueDate": null,
+    "estimateMinutes": 90,
+    "createdBy": "hermes",
+    "createdAt": "2026-06-23T03:15:58.967Z",
+    "updatedAt": "2026-06-23T14:14:14.017Z",
+    "completedAt": null,
+    "submittedAt": "2026-06-23T14:14:13.989Z",
+    "projectId": "cmqq290nm00040jmj9jwa98ya",
+    "sourceInboxItemId": "cmqq2o5yh000j0jmjus8lrd06",
+    "sourceAgentRunId": "cmqq2o63r000l0jmjbrv5nr4z",
+    "project": {
+      "id": "cmqq290nm00040jmj9jwa98ya",
+      "name": "Personal OS / Wiki 知识库升级",
+      "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+      "status": "active",
+      "priority": "P0",
+      "currentFocus": "Personal OS / Wiki 自驱闭环生产化",
+      "createdAt": "2026-06-23T03:04:11.410Z",
+      "updatedAt": "2026-06-23T13:23:07.623Z"
+    },
+    "sourceInboxItem": {
+      "id": "cmqq2o5yh000j0jmjus8lrd06",
+      "sourceType": "telegram",
+      "sourcePlatform": "telegram",
+      "sourceMessageId": "telegram-20260623-knowledge-manager-worker-synthesis",
+      "rawText": "异步 worker 汇总完成：开源候选评估、/api/intake+wikiNotes 500 与 Wiki 401 审计、6.37/28T 知识资产分层方案。需要转成 Personal OS 执行队列。",
+      "sourceUrl": null,
+      "attachments": [],
+      "status": "processed",
+      "createdBy": "user",
+      "receivedAt": "2026-06-23T03:15:58.121Z",
+      "updatedAt": "2026-06-23T03:15:59.812Z"
+    },
+    "sourceAgentRun": {
+      "id": "cmqq2o63r000l0jmjbrv5nr4z",
+      "inboxItemId": "cmqq2o5yh000j0jmjus8lrd06",
+      "model": "gpt-5.5/openai-codex via Hermes",
+      "status": "completed",
+      "classification": {
+        "kind": "work_update",
+        "confidence": 0.97
+      },
+      "reasoningSummary": "3 个 worker 的结果需要压缩成 Agent 执行队列和 Classic 拍板项。因 /api/intake + wikiNotes 当前 500，本次只写 Personal OS note/tasks，不写 wikiNotes。",
+      "outputSummary": "已形成 Personal OS/Wiki 优化审计 v1，并新增 P0/P1 执行任务。",
+      "error": null,
+      "startedAt": "2026-06-23T03:15:58.311Z",
+      "completedAt": "2026-06-23T03:15:59.668Z"
+    },
+    "wikiLinks": [],
+    "contributions": [
+      {
+        "id": "cmqqq6p6f001g0jocu1k9u6ki",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "taskRunId": "cmqqpcpun00160joc433w5mj6",
+        "agentId": "obsidianmanager1",
+        "summary": "完成 _raw + manifest 增量入库试验 v0：产出目录约定、raw-source-manifest JSON Schema、ingest/skip/update 三个样例、可复跑模拟脚本、验证日志，并通过 /api/intake 写入 Wiki note 与 ProjectEvent。",
+        "evidenceLinks": [
+          ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/gate.json",
+          ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/worker-result.json",
+          "vault/30_projects/Personal-OS-Wiki-知识库升级/_raw-manifest-增量入库试验-v0-2026-06-23.md",
+          "Personal OS AgentRun cmqqptnfb001b0joc5764ve9m",
+          "Personal OS ProjectEvent cmqqptnfo001d0jocf64hzsgm"
+        ],
+        "artifactUrls": [
+          ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+          ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+          ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+          ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json"
+        ],
+        "nextRecommendation": "下一步如要生产化，创建 raw manifest 小样本 ingest 命令任务：只处理显式输入目录，调用 /api/intake 写 Wiki note，并把 ingest/skip/update 写入 manifest events。",
+        "createdAt": "2026-06-23T14:14:14.007Z"
+      }
+    ],
+    "artifacts": [
+      {
+        "id": "cmqqq6p6l001k0jocqaq67d2b",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+        "type": "link",
+        "title": null,
+        "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T14:14:14.013Z"
+      },
+      {
+        "id": "cmqqq6p6k001i0joc5r0ltemj",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+        "type": "link",
+        "title": null,
+        "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T14:14:14.012Z"
+      },
+      {
+        "id": "cmqqq6p6k001j0jocv9tb2qrk",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+        "type": "link",
+        "title": null,
+        "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T14:14:14.012Z"
+      },
+      {
+        "id": "cmqqq6p6i001h0joc0vbire9g",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+        "type": "link",
+        "title": null,
+        "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+        "verification": "unverified",
+        "createdAt": "2026-06-23T14:14:14.010Z"
+      }
+    ],
+    "runs": [
+      {
+        "id": "cmqqpcpun00160joc433w5mj6",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "agentId": "obsidianmanager1",
+        "status": "running",
+        "policySnapshot": {
+          "task": {
+            "status": "todo",
+            "agentTags": [
+              "wiki",
+              "manifest",
+              "raw",
+              "workflow"
+            ],
+            "riskLevel": "low",
+            "executionMode": "agent_allowed"
+          },
+          "profile": {
+            "id": "obsidianmanager1",
+            "tags": [
+              "hermes",
+              "obsidian",
+              "wiki",
+              "memory"
+            ],
+            "enabled": true,
+            "canWriteTasks": true,
+            "allowedRiskLevel": "medium"
+          },
+          "leaseUntil": "2026-06-23T16:50:55.133Z"
+        },
+        "resultSummary": null,
+        "startedAt": "2026-06-23T13:50:55.199Z",
+        "lastHeartbeatAt": "2026-06-23T13:50:55.133Z",
+        "submittedAt": null,
+        "endedAt": null
+      }
+    ],
+    "agentActionLogs": [
+      {
+        "id": "cmqqq6p6m001l0jocn5licj67",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "taskRunId": "cmqqpcpun00160joc433w5mj6",
+        "agentId": "obsidianmanager1",
+        "action": "task.contribution.created",
+        "summary": "完成 _raw + manifest 增量入库试验 v0：产出目录约定、raw-source-manifest JSON Schema、ingest/skip/update 三个样例、可复跑模拟脚本、验证日志，并通过 /api/intake 写入 Wiki note 与 ProjectEvent。",
+        "metadata": {
+          "artifactUrls": [
+            ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+            ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+            ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+            ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json"
+          ],
+          "evidenceLinks": [
+            ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/gate.json",
+            ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/worker-result.json",
+            "vault/30_projects/Personal-OS-Wiki-知识库升级/_raw-manifest-增量入库试验-v0-2026-06-23.md",
+            "Personal OS AgentRun cmqqptnfb001b0joc5764ve9m",
+            "Personal OS ProjectEvent cmqqptnfo001d0jocf64hzsgm"
+          ],
+          "contributionId": "cmqqq6p6f001g0jocu1k9u6ki"
+        },
+        "createdAt": "2026-06-23T14:14:14.014Z"
+      },
+      {
+        "id": "cmqqpcpup00170joc7spjmoby",
+        "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+        "taskRunId": "cmqqpcpun00160joc433w5mj6",
+        "agentId": "obsidianmanager1",
+        "action": "task.claimed",
+        "summary": "Claimed task lease until 2026-06-23T16:50:55.133Z",
+        "metadata": {
+          "leaseUntil": "2026-06-23T16:50:55.133Z"
+        },
+        "createdAt": "2026-06-23T13:50:55.201Z"
+      }
+    ],
+    "reviews": []
+  },
+  "contribution": {
+    "id": "cmqqq6p6f001g0jocu1k9u6ki",
+    "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+    "taskRunId": "cmqqpcpun00160joc433w5mj6",
+    "agentId": "obsidianmanager1",
+    "summary": "完成 _raw + manifest 增量入库试验 v0：产出目录约定、raw-source-manifest JSON Schema、ingest/skip/update 三个样例、可复跑模拟脚本、验证日志，并通过 /api/intake 写入 Wiki note 与 ProjectEvent。",
+    "evidenceLinks": [
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/gate.json",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/worker-result.json",
+      "vault/30_projects/Personal-OS-Wiki-知识库升级/_raw-manifest-增量入库试验-v0-2026-06-23.md",
+      "Personal OS AgentRun cmqqptnfb001b0joc5764ve9m",
+      "Personal OS ProjectEvent cmqqptnfo001d0jocf64hzsgm"
+    ],
+    "artifactUrls": [
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+      ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json"
+    ],
+    "nextRecommendation": "下一步如要生产化，创建 raw manifest 小样本 ingest 命令任务：只处理显式输入目录，调用 /api/intake 写 Wiki note，并把 ingest/skip/update 写入 manifest events。",
+    "createdAt": "2026-06-23T14:14:14.007Z"
+  },
+  "artifacts": [
+    {
+      "id": "cmqqq6p6i001h0joc0vbire9g",
+      "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+      "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+      "type": "link",
+      "title": null,
+      "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+      "verification": "unverified",
+      "createdAt": "2026-06-23T14:14:14.010Z"
+    },
+    {
+      "id": "cmqqq6p6k001i0joc5r0ltemj",
+      "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+      "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+      "type": "link",
+      "title": null,
+      "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/schema/raw-source-manifest.schema.json",
+      "verification": "unverified",
+      "createdAt": "2026-06-23T14:14:14.012Z"
+    },
+    {
+      "id": "cmqqq6p6k001j0jocv9tb2qrk",
+      "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+      "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+      "type": "link",
+      "title": null,
+      "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/scripts/simulate-raw-manifest-ingest.mjs",
+      "verification": "unverified",
+      "createdAt": "2026-06-23T14:14:14.012Z"
+    },
+    {
+      "id": "cmqqq6p6l001k0jocqaq67d2b",
+      "taskId": "cmqq2o6lz000w0jmj9mfh4cer",
+      "contributionId": "cmqqq6p6f001g0jocu1k9u6ki",
+      "type": "link",
+      "title": null,
+      "url": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/examples/decisions.json",
+      "verification": "unverified",
+      "createdAt": "2026-06-23T14:14:14.013Z"
+    }
+  ],
+  "wiki": {
+    "ok": true,
+    "title": "设计 _raw + manifest 增量入库试验 — 完成总结",
+    "status": "created",
+    "url": "http://192.168.6.37:3100/api/wiki/open?next=%2Fhttp%3A%2F%2F192.168.6.37%3A3422%2Fnote%3Fpath%3D30_projects%252FPersonal-OS-Wiki-%25E7%259F%25A5%25E8%25AF%2586%25E5%25BA%2593%25E5%258D%2587%25E7%25BA%25A7%252F%25E8%25AE%25BE%25E8%25AE%25A1-_raw-manifest-%25E5%25A2%259E%25E9%2587%258F%25E5%2585%25A5%25E5%25BA%2593%25E8%25AF%2595%25E9%25AA%258C-%25E5%25AE%258C%25E6%2588%2590%25E6%2580%25BB%25E7%25BB%2593.md"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "sourceId": "production-regression-7a4621e8",
+  "title": "production-regression",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/production-regression.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/production-regression.json",
+  "storedPath": "raw/sources/production-regression-7a4621e8.json",
+  "extractedTextPath": "state/extracts/production-regression-7a4621e8.md",
+  "extractedMetadataPath": "state/extracts/production-regression-7a4621e8.json",
+  "extractionHash": "fe78aa83232d59d43fe5a967db334e1cf6aebe10066d30a2986d121642aac692",
+  "mimeType": "application/json",
+  "contentHash": "7a4621e85a8afa98a57e8482b662608467b98729a34bfdd51e9f8d13dd6ea7ca",
+  "semanticHash": "7a4621e85a8afa98a57e8482b662608467b98729a34bfdd51e9f8d13dd6ea7ca",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "5",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:34.939Z",
+  "updatedAt": "2026-07-04T19:02:34.939Z"
+}

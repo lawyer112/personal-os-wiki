@@ -1,0 +1,18 @@
+{
+  "sourceId": "raw-manifest-v0-bb3956ac",
+  "title": "_raw + manifest 增量入库试验 v0",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/reports/raw-manifest-ingest-v0.md",
+  "storedPath": "raw/sources/raw-manifest-v0-bb3956ac.md",
+  "extractedTextPath": "state/extracts/raw-manifest-v0-bb3956ac.md",
+  "extractedMetadataPath": "state/extracts/raw-manifest-v0-bb3956ac.json",
+  "extractionHash": "6db18860072b61fe2274497614f773325d1693a68ae092ef1c8acb69e9d7046f",
+  "mimeType": "text/markdown",
+  "contentHash": "bb3956ac20f9cd698605014aedaf69046a52e88c54ebb1a24e34b7bf290e924d",
+  "semanticHash": "2b3be160c76c5e147071bda7cd4964b161f23eb264e73ed39242ac3890a56ec7",
+  "createdAt": "2026-07-04T19:02:31.546Z",
+  "updatedAt": "2026-07-04T19:02:31.546Z"
+}

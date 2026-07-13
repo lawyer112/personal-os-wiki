@@ -1,0 +1,57 @@
+# intake-result
+Format: JSON
+Top-level: object
+Size: 3
+Nested depth: 4
+
+## Schema
+
+- httpStatus: number
+- ok: boolean
+- body: object (11 keys)
+
+## Preview
+
+```json
+{
+  "httpStatus": 201,
+  "ok": true,
+  "body": {
+    "ok": true,
+    "inbox": {
+      "id": "cmr115w8g003y0ipox44w9te2",
+      "sourceType": "agent-output",
+      "sourcePlatform": "cron/personal-os-agent-executor",
+      "sourceMessageId": null,
+      "rawText": "目标：修正上一次 cmqyixt4a00n90jpk3todreos review-close 的 /api/intake 写回结构，并完成读回验证。\n操作摘要：任务 review approve 已成功，状态 done；本轮重新按 intakeSchema 使用 source/agent/project/projectEvents 嵌套 payload 写回 Personal OS。\n关键文件/证据路径：.agent-runs/cmqyixt4a00n90jpk3todreos-review-close/review-result.json；intake-payload.json；intake-result.json；context-readback.json；worker-result.json；gate.json。\n验证结果：POST /api/tasks/{id}/review 返回 HTTP 200 且 task.status=done；POST /api/intake 使用嵌套 source payload；GET /api/agent/context?q=cmqyixt4a00n90jpk3todreos 读回。\n剩余风险：外部 benchmark 未本机复现；不直接安装 agentmemory，避免双真相源。\n下一步：继续处理下一个 P1 agent_allowed 任务。",
+      "sourceUrl": null,
+      "attachments": [],
+      "status": "new",
+      "createdBy": "hermes",
+      "receivedAt": "2026-06-30T19:19:14.032Z",
+      "updatedAt": "2026-06-30T19:19:14.032Z"
+    },
+    "agentRunId": "cmr115w8y00400ipo7zv9lw26",
+    "project": {
+      "id": "cmqq290nm00040jmj9jwa98ya",
+      "name": "Personal OS / Wiki 知识库升级",
+      "goal": "保持 Hermes 多 Agent 运行可观测、轻量和可恢复。",
+      "status": "active",
+      "priority": "P1",
+      "currentFocus": "多 Agent 50-100 并发优化",
+      "createdAt": "2026-06-23T03:04:11.410Z",
+      "updatedAt": "2026-06-30T14:12:18.355Z"
+    },
+    "tasks": [],
+    "ideas": [],
+    "notes": [],
+    "projectEvents": [
+      {
+        "id": "cmr115w9800420iporvcwaykc",
+        "projectId": "cmqq290nm00040jmj9jwa98ya",
+        "title": "任务关闭：GitHub 雷达 agentmemory 评估",
+        "body": "任务 cmqyixt4a00n90jpk3todreos 已 approve 关闭为 done。证据：.agent-runs/cmqyixt4a00n90jpk3todreos/ 与 .agent-runs/cmqyixt4a00n90jpk3todreos-review-close/。",
+        "eventType": "task.reviewed",
+        "createdAt": "2026-06-30T19:19:14.060Z",
+…
+```

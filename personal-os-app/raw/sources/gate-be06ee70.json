@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "tests": {
+    "agent-context.test.ts": "9 passed",
+    "tsc": "clean",
+    "lint": "clean",
+    "build": "production build succeeded (Docker)"
+  },
+  "healthCheck": {
+    "apiOk": true,
+    "evidenceField": true,
+    "episodesCount": 6,
+    "tiersOk": true
+  }
+}

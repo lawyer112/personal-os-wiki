@@ -1,0 +1,24 @@
+{
+  "sourceId": "ingest-a901204e",
+  "title": "ingest",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/fixtures/raw-manifest-ingest/ingest.json",
+  "repoRelativePath": "tests/fixtures/raw-manifest-ingest/ingest.json",
+  "storedPath": "raw/sources/ingest-a901204e.json",
+  "extractedTextPath": "state/extracts/ingest-a901204e.md",
+  "extractedMetadataPath": "state/extracts/ingest-a901204e.json",
+  "extractionHash": "5ec08634d689c89eb4b13bb0a00870d6f3c52ed6e1caf90986d2536c2dc49bd6",
+  "mimeType": "application/json",
+  "contentHash": "a901204ed52cebf9034ff27ffbb7317c509c5fa140a0166eb1438646d5a3976e",
+  "semanticHash": "a901204ed52cebf9034ff27ffbb7317c509c5fa140a0166eb1438646d5a3976e",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "20",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:03:00.126Z",
+  "updatedAt": "2026-07-04T19:03:00.126Z"
+}

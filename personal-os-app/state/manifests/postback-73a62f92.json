@@ -1,0 +1,19 @@
+{
+  "sourceId": "postback-73a62f92",
+  "title": "postback",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqyixt4a00n90jpk3todreos/postback.mjs",
+  "repoRelativePath": ".agent-runs/cmqyixt4a00n90jpk3todreos/postback.mjs",
+  "storedPath": "raw/sources/postback-73a62f92.mjs",
+  "extractedTextPath": "state/extracts/postback-73a62f92.md",
+  "extractedMetadataPath": "state/extracts/postback-73a62f92.json",
+  "extractionHash": "44bb31fc85baf8c5a5025b9eaf573503ba34d4297611b3e4d982e0127bb2bc30",
+  "mimeType": "text/javascript",
+  "contentHash": "73a62f928b01c980ea5b7020bbd3976d32b23cbd41aca60f92198950242cf4e0",
+  "semanticHash": "73a62f928b01c980ea5b7020bbd3976d32b23cbd41aca60f92198950242cf4e0",
+  "createdAt": "2026-07-04T19:02:38.911Z",
+  "updatedAt": "2026-07-04T19:02:38.911Z"
+}

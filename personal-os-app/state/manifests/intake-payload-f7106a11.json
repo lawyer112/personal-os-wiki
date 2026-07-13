@@ -1,0 +1,24 @@
+{
+  "sourceId": "intake-payload-f7106a11",
+  "title": "intake-payload",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr009fup01bu0jpkb1koq2h2/intake-test/intake-payload.json",
+  "repoRelativePath": ".agent-runs/cmr009fup01bu0jpkb1koq2h2/intake-test/intake-payload.json",
+  "storedPath": "raw/sources/intake-payload-f7106a11.json",
+  "extractedTextPath": "state/extracts/intake-payload-f7106a11.md",
+  "extractedMetadataPath": "state/extracts/intake-payload-f7106a11.json",
+  "extractionHash": "cdec8f08b1cd240a3f39aba56f2493e312d0d9b5e26a87a3ec70f89ecedd639c",
+  "mimeType": "application/json",
+  "contentHash": "f7106a111bb262dc1d725589362dec37ce1e4a2126c72661b22574a633e2dc5b",
+  "semanticHash": "f7106a111bb262dc1d725589362dec37ce1e4a2126c72661b22574a633e2dc5b",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "8",
+    "nested_depth": "5"
+  },
+  "createdAt": "2026-07-04T19:02:40.894Z",
+  "updatedAt": "2026-07-04T19:02:40.894Z"
+}

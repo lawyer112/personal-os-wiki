@@ -1,0 +1,18 @@
+{
+  "sourceId": "predeploy-lint-9da228b2",
+  "title": "predeploy-lint",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/predeploy-lint.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/predeploy-lint.log",
+  "storedPath": "raw/sources/predeploy-lint-9da228b2.log",
+  "extractedTextPath": "state/extracts/predeploy-lint-9da228b2.md",
+  "extractedMetadataPath": "state/extracts/predeploy-lint-9da228b2.json",
+  "extractionHash": "01e252e2b96e373d32d5ac04bf4e093874e8ddc7fd53bcdfe35fab5bf892aee8",
+  "mimeType": "text/plain",
+  "contentHash": "9da228b20aee02e5f083c9757151120b54fb56e2d740ff8498b8e8f48bc332aa",
+  "semanticHash": "9da228b20aee02e5f083c9757151120b54fb56e2d740ff8498b8e8f48bc332aa",
+  "createdAt": "2026-07-04T19:02:30.599Z",
+  "updatedAt": "2026-07-04T19:02:30.599Z"
+}

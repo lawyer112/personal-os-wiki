@@ -1,0 +1,92 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "adoption-tasks-29197751",
+  "sourceHash": "29197751c22c4883be32ac54b232e56a4df82f19e1a0ec0566ddf548fd3d0275",
+  "semanticHash": "29197751c22c4883be32ac54b232e56a4df82f19e1a0ec0566ddf548fd3d0275",
+  "extractionHash": "d323c7477b0bb6419b82d6d9d38cfea1304b75d3f7eeb89c0a28a8bf9921ce26",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "adoption-tasks",
+  "summary": "adoption-tasks Format: JSON Top-level: array Size: 3 Nested depth: 3 ## Schema - (root) array (3) ## Preview json [ { \"title\": \"安装 SwarmVault CLI 并验证 MCP server 可用性\", \"priority\": \"P1\", \"owner\": \"agent\", \"executionMode\": \"agent_allowed\", \"estimatedMinutes\": 60, \"actions\": [ \"确认 node >= 24 版本\", \"npm install -g @swarmvaultai/cli\", \"swarmvault quickstart /Users/xingqiwu/Documents/New\\\\ project\\\\ 5/personal-os-wiki/personal-os-app --no-serve\", \"swarmvault mcp 启动验证\", \"写 gate.json 记录结果\" ], \"definitionOfDone\": \"swarmvault mcp 能正常 stdio 启动，graph_status/context tools 可调用；写 .agent-runs/swarmvault-mcp-smoke/gate.json\" }, { \"title\": \"接入 SwarmVault MCP 到 /api/agent/context 作为 hybrid search 补充层\", \"priority\": \"P1\", \"owner\": \"agent\", \"executionMode\": \"agent_allowed\", \"estimatedMinutes\": 120, \"dependsOn\": \"安装 SwarmVault CLI 并验证 MCP server 可用性\", \"actions\": [ \"在 Personal OS agent context 服务里增加 SwarmVault MCP tool call\", \"query=代码 x 记忆 时同时查 SwarmVault graph + Personal OS episodic\", \"合并返回 tiers.hot 里的 swarmvault candidates\", \"新增集成测试\" ], \"definitionOfDone\": \"/api/agent/context?q=code+memory 返回 swarmvault.candidates 字段；npm test 通过\" }, { \"title\": \"参考 SwarmVault Agent Context Pack 设计重构 context 输出 budget/cited/omissions\", \"priority\": \"P2\", \"owner\": \"agent\", \"executionMode\": \"agent_allowed\", \"estimatedMinutes\": 120, \"actions\": [ \"研究 swarmvault context build 输出格式\", \"为 /api/agent/context 增加 budget 参数和 omissions 字段\", …",
+  "concepts": [
+    {
+      "id": "concept:swarmvault",
+      "name": "swarmvault",
+      "description": "Frequently referenced concept in adoption-tasks."
+    },
+    {
+      "id": "concept:agent",
+      "name": "agent",
+      "description": "Frequently referenced concept in adoption-tasks."
+    },
+    {
+      "id": "concept:context",
+      "name": "context",
+      "description": "Frequently referenced concept in adoption-tasks."
+    },
+    {
+      "id": "concept:json",
+      "name": "json",
+      "description": "Frequently referenced concept in adoption-tasks."
+    },
+    {
+      "id": "concept:actions",
+      "name": "actions",
+      "description": "Frequently referenced concept in adoption-tasks."
+    },
+    {
+      "id": "concept:allowed",
+      "name": "allowed",
+      "description": "Frequently referenced concept in adoption-tasks."
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity:format",
+      "name": "Format:",
+      "description": "Named entity mentioned in adoption-tasks."
+    },
+    {
+      "id": "entity:top",
+      "name": "Top-",
+      "description": "Named entity mentioned in adoption-tasks."
+    },
+    {
+      "id": "entity:size",
+      "name": "Size:",
+      "description": "Named entity mentioned in adoption-tasks."
+    },
+    {
+      "id": "entity:nested",
+      "name": "Nested",
+      "description": "Named entity mentioned in adoption-tasks."
+    },
+    {
+      "id": "entity:schema",
+      "name": "Schema -",
+      "description": "Named entity mentioned in adoption-tasks."
+    },
+    {
+      "id": "entity:preview",
+      "name": "Preview",
+      "description": "Named entity mentioned in adoption-tasks."
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim:adoption-tasks-29197751:1",
+      "text": "adoption-tasks Format: JSON Top-level: array Size: 3 Nested depth: 3 ## Schema - (root) array (3) ## Preview json [ { \"title\": \"安装 SwarmVault CLI 并验证 MCP server 可用性\", \"priority\": \"P1\", \"owner\": \"agent\", \"executionMode\": \"agent_allowed\", \"estimatedMinutes\": 60, \"actions\": [ \"确认 node >= 24 版本\", \"npm install -g @swarmvaultai/cli\", \"swarmvault quickstart /Users/xingqiwu/Documents/New\\\\ project\\\\ 5/personal-os-wiki/personal-os-app --no-serve\", \"swarmvault mcp 启动验证\", \"写 gate.json 记录结果\" ], \"definitionOfDone\": \"swarmvault mcp 能正常 stdio 启动，graph_status/context tools 可调用；写 .agent-runs/swarmvault-mcp-smoke/gate.json\" }, { \"title\": \"接入 SwarmVault MCP 到 /api/agent/context 作为 hybrid search 补充层\", \"priority\": \"P1\", \"owner\": \"agent\", \"executionMode\": \"agent_allowed\", \"estimatedMinutes\": 120, \"dependsOn\": \"安装 SwarmVault CLI 并验证 MCP server 可用性\", \"actions\": [ \"在 Personal OS agent context 服务里增加 SwarmVault MCP tool call\", \"query=代码 x 记忆 时同时查 SwarmVault graph + Personal OS episodic\", \"合并返回 tiers.hot 里的 swarmvault candidates\", \"新增集成测试\" ], \"definitionOfDone\": \"/api/agent/context?q=code+memory 返回 swarmvault.candidates 字段；npm test 通过\" }, { \"title\": \"参考 SwarmVault Agent Context Pack 设计重构 context 输出 budget/cited/omissions\", \"priority\": \"P2\", \"owner\": \"agent\", \"executionMode\": \"agent_allowed\", \"estimatedMinutes\": 120, \"actions\": [ \"研究 swarmvault context build 输出格式\", \"为 /api/agent/context 增加 budget 参数和 omissions 字段\", …",
+      "confidence": 0.55,
+      "status": "extracted",
+      "polarity": "negative",
+      "citation": "adoption-tasks-29197751"
+    }
+  ],
+  "questions": [
+    "How does swarmvault relate to adoption-tasks?",
+    "How does agent relate to adoption-tasks?",
+    "How does context relate to adoption-tasks?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "producedAt": "2026-07-04T19:03:03.508Z"
+}

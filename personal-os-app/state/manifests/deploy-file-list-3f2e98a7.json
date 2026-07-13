@@ -1,0 +1,18 @@
+{
+  "sourceId": "deploy-file-list-3f2e98a7",
+  "title": "deploy-file-list",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-file-list.txt",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-file-list.txt",
+  "storedPath": "raw/sources/deploy-file-list-3f2e98a7.txt",
+  "extractedTextPath": "state/extracts/deploy-file-list-3f2e98a7.md",
+  "extractedMetadataPath": "state/extracts/deploy-file-list-3f2e98a7.json",
+  "extractionHash": "56e69f9117623fcde1768b54617153edf825de47f11b48be4927d8bdfad5a810",
+  "mimeType": "text/plain",
+  "contentHash": "3f2e98a71bfe6a0649aa8e1a2ae68cc3d44fbe2d9c565d1c4ae5410d131a89fa",
+  "semanticHash": "3f2e98a71bfe6a0649aa8e1a2ae68cc3d44fbe2d9c565d1c4ae5410d131a89fa",
+  "createdAt": "2026-07-04T19:02:32.279Z",
+  "updatedAt": "2026-07-04T19:02:32.279Z"
+}

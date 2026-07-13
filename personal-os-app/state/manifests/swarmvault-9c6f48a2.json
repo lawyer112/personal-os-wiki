@@ -1,0 +1,18 @@
+{
+  "sourceId": "swarmvault-9c6f48a2",
+  "title": "SwarmVault 吸收评估证据",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr3c5vz1016a0jnyp38qp2yc/evidence.md",
+  "repoRelativePath": ".agent-runs/cmr3c5vz1016a0jnyp38qp2yc/evidence.md",
+  "storedPath": "raw/sources/swarmvault-9c6f48a2.md",
+  "extractedTextPath": "state/extracts/swarmvault-9c6f48a2.md",
+  "extractedMetadataPath": "state/extracts/swarmvault-9c6f48a2.json",
+  "extractionHash": "64eb396a54d572ec8ea5e230d86373da25c030ff4712383309b5b9543357c2c9",
+  "mimeType": "text/markdown",
+  "contentHash": "9c6f48a2b329433fc334064a2fe617025134a5db59e22e0891958fa4921370c4",
+  "semanticHash": "bec36d591f533873fb0953d9de54e671cb638dbb8f076cad77cf9b8ac7d4b277",
+  "createdAt": "2026-07-04T19:02:43.023Z",
+  "updatedAt": "2026-07-04T19:02:43.023Z"
+}

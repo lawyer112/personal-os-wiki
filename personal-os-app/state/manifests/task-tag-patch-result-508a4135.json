@@ -1,0 +1,24 @@
+{
+  "sourceId": "task-tag-patch-result-508a4135",
+  "title": "task-tag-patch-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/task-tag-patch-result.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/task-tag-patch-result.json",
+  "storedPath": "raw/sources/task-tag-patch-result-508a4135.json",
+  "extractedTextPath": "state/extracts/task-tag-patch-result-508a4135.md",
+  "extractedMetadataPath": "state/extracts/task-tag-patch-result-508a4135.json",
+  "extractionHash": "6838a7f5576634ac5da1180e6ffd2c4a996226b883e7db95e8ab05209a58c587",
+  "mimeType": "application/json",
+  "contentHash": "508a41354e4377d3de561ffad05eec3ca62147a9199bf1b9fd507bf5392e6d83",
+  "semanticHash": "508a41354e4377d3de561ffad05eec3ca62147a9199bf1b9fd507bf5392e6d83",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "8"
+  },
+  "createdAt": "2026-07-04T19:02:35.498Z",
+  "updatedAt": "2026-07-04T19:02:35.498Z"
+}

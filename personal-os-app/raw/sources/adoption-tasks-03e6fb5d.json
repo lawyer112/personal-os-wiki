@@ -1,0 +1,21 @@
+[
+  {
+    "title": "GitHub 雷达 2026-06-29：评估 rohitg00/agentmemory 的吸收价值",
+    "description": "本轮雷达发现 rohitg00/agentmemory（stars: 24226, updated: undefined 前）。描述：#1 Persistent memory for AI coding agents based on real-world benchmarks。匹配信号：source-registry。把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+    "status": "todo",
+    "priority": "P0",
+    "riskLevel": "low",
+    "executionMode": "agent_allowed",
+    "agentTags": [
+      "personal-os",
+      "personal-wiki",
+      "github-radar",
+      "agent-self-improvement"
+    ],
+    "requiredOutput": "产出 Wiki 评估笔记：该 repo 的核心能力、与 Personal OS/Wiki 的适配点、可吸收设计、风险；如值得吸收，创建子任务。",
+    "nextAction": "本轮雷达发现 rohitg00/agentmemory（stars: 24226, updated: undefined 前）。描述：#1 Persistent memory for AI coding agents based on real-world benchmarks。匹配信号：source-registry。把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+    "definitionOfDone": "产出 Wiki 评估笔记：该 repo 的核心能力、与 Personal OS/Wiki 的适配点、可吸收设计、风险；如值得吸收，创建子任务。",
+    "estimateMinutes": 120,
+    "createdBy": "hermes"
+  }
+]

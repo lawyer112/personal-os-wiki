@@ -1,0 +1,18 @@
+{
+  "sourceId": "swarmvault-schema-b10ad2d9",
+  "title": "SwarmVault Schema",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/swarmvault.schema.md",
+  "repoRelativePath": "swarmvault.schema.md",
+  "storedPath": "raw/sources/swarmvault-schema-b10ad2d9.md",
+  "extractedTextPath": "state/extracts/swarmvault-schema-b10ad2d9.md",
+  "extractedMetadataPath": "state/extracts/swarmvault-schema-b10ad2d9.json",
+  "extractionHash": "417ca0dba60d50a1ea7e28a51c7aaaf5a6a6ccb79626598b9975ea1b95b8cfcf",
+  "mimeType": "text/markdown",
+  "contentHash": "b10ad2d95756d1e27cf48f211ebe48e05d76679916a49ab7609c52c8388b0620",
+  "semanticHash": "9e93581e5ad4eb7a49309af0263d43e8304e383f93a0c606c2161d713334df19",
+  "createdAt": "2026-07-04T19:02:59.839Z",
+  "updatedAt": "2026-07-04T19:02:59.839Z"
+}

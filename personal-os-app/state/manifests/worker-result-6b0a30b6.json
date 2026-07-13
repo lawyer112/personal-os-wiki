@@ -1,0 +1,24 @@
+{
+  "sourceId": "worker-result-6b0a30b6",
+  "title": "worker-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/memory-vector-backfill-cron/worker-result.json",
+  "repoRelativePath": ".agent-runs/memory-vector-backfill-cron/worker-result.json",
+  "storedPath": "raw/sources/worker-result-6b0a30b6.json",
+  "extractedTextPath": "state/extracts/worker-result-6b0a30b6.md",
+  "extractedMetadataPath": "state/extracts/worker-result-6b0a30b6.json",
+  "extractionHash": "83ec0d5ef385713d242fda55dc6ef152c12b6cb375a5493a5d038be09ff68074",
+  "mimeType": "application/json",
+  "contentHash": "6b0a30b6ad0bf10d730c69941baf320f8b6f94851a1a5011a0cd7e4ea402628b",
+  "semanticHash": "6b0a30b6ad0bf10d730c69941baf320f8b6f94851a1a5011a0cd7e4ea402628b",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "8",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:47.753Z",
+  "updatedAt": "2026-07-04T19:02:47.753Z"
+}

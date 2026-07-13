@@ -1,0 +1,24 @@
+{
+  "sourceId": "context-readback-5ad6d35b",
+  "title": "context-readback",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/context-readback.json",
+  "repoRelativePath": ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/context-readback.json",
+  "storedPath": "raw/sources/context-readback-5ad6d35b.json",
+  "extractedTextPath": "state/extracts/context-readback-5ad6d35b.md",
+  "extractedMetadataPath": "state/extracts/context-readback-5ad6d35b.json",
+  "extractionHash": "09964e7991a1b54859843b1dcfd3385cd2d52dcc62d9640756a50872a7868db5",
+  "mimeType": "application/json",
+  "contentHash": "5ad6d35ba6ca82ffbf8df17399e12933a09c255e2c18fc6877ff9fbbf85fdc18",
+  "semanticHash": "5ad6d35ba6ca82ffbf8df17399e12933a09c255e2c18fc6877ff9fbbf85fdc18",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "1"
+  },
+  "createdAt": "2026-07-04T19:02:39.276Z",
+  "updatedAt": "2026-07-04T19:02:39.276Z"
+}

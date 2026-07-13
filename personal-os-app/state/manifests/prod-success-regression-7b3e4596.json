@@ -1,0 +1,24 @@
+{
+  "sourceId": "prod-success-regression-7b3e4596",
+  "title": "prod-success-regression",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfucnt001t0jn5vd3wcn3u/artifacts/prod-success-regression.json",
+  "repoRelativePath": ".agent-runs/cmqqfucnt001t0jn5vd3wcn3u/artifacts/prod-success-regression.json",
+  "storedPath": "raw/sources/prod-success-regression-7b3e4596.json",
+  "extractedTextPath": "state/extracts/prod-success-regression-7b3e4596.md",
+  "extractedMetadataPath": "state/extracts/prod-success-regression-7b3e4596.json",
+  "extractionHash": "bd773ab124e7eb4a43fb45303a06f9826dd790875bf817a94e1666b48611997a",
+  "mimeType": "application/json",
+  "contentHash": "7b3e459651022c25c9a7371063f11019157ffde3c498368dcdc6a64e3f1c9bd5",
+  "semanticHash": "7b3e459651022c25c9a7371063f11019157ffde3c498368dcdc6a64e3f1c9bd5",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "13",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:35.713Z",
+  "updatedAt": "2026-07-04T19:02:35.713Z"
+}

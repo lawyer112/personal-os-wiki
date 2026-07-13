@@ -1,0 +1,61 @@
+{
+  "status": 201,
+  "body": {
+    "ok": true,
+    "inbox": {
+      "id": "cmqqh09r7000l0jo5ae2end9c",
+      "sourceType": "agent-output",
+      "sourcePlatform": "cron/personal-os-worker",
+      "sourceMessageId": null,
+      "rawText": "任务 cmqqfucnt001t0jn5vd3wcn3u 完成：Personal OS wikiNotes frontmatter contract 修复、验证、部署、生产回归。",
+      "sourceUrl": null,
+      "attachments": [],
+      "status": "new",
+      "createdBy": "hermes",
+      "receivedAt": "2026-06-23T09:57:17.539Z",
+      "updatedAt": "2026-06-23T09:57:17.539Z"
+    },
+    "agentRunId": "cmqqh09v1000n0jo54k8gdrp3",
+    "project": {
+      "id": "cmqq290nm00040jmj9jwa98ya",
+      "name": "Personal OS / Wiki 知识库升级",
+      "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+      "status": "active",
+      "priority": "P0",
+      "currentFocus": "Personal OS / Wiki 自驱闭环生产化",
+      "createdAt": "2026-06-23T03:04:11.410Z",
+      "updatedAt": "2026-06-23T09:57:17.902Z"
+    },
+    "tasks": [],
+    "ideas": [],
+    "notes": [],
+    "projectEvents": [
+      {
+        "id": "cmqqh0a6f000q0jo5ck0a8zc6",
+        "projectId": "cmqq290nm00040jmj9jwa98ya",
+        "title": "已部署 Personal OS wikiNotes frontmatter 合约修复",
+        "body": "task_id=cmqqfucnt001t0jn5vd3wcn3u; gate=pass; backup=/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260623T095149Z; production success/fallback regressions passed.",
+        "eventType": "agent-deployment",
+        "createdAt": "2026-06-23T09:57:18.087Z",
+        "sourceInboxItemId": "cmqqh09r7000l0jo5ae2end9c",
+        "sourceAgentRunId": "cmqqh09v1000n0jo54k8gdrp3"
+      }
+    ],
+    "wiki": [
+      {
+        "ok": true,
+        "title": "AgentRun cmqqfucnt001t0jn5vd3wcn3u：Personal OS wikiNotes frontmatter 合约修复完成",
+        "status": "created",
+        "url": "http://192.168.6.37:3100/api/wiki/open?next=%2Fhttp%3A%2F%2F192.168.6.37%3A3422%2Fnote%3Fpath%3D30_projects%252FPersonal-OS-Wiki-%25E7%259F%25A5%25E8%25AF%2586%25E5%25BA%2593%25E5%258D%2587%25E7%25BA%25A7%252FAgentRun-cmqqfucnt001t0jn5vd3wcn3uPersonal-OS-wikiNotes-frontmatter-%25E5%2590%2588%25E7%25BA%25A6%25E4%25BF%25AE%25E5%25A4%258D%25E5%25AE%258C%25E6%2588%2590.md"
+      }
+    ],
+    "wiki_write_status": {
+      "status": "ok",
+      "requested": 1,
+      "succeeded": 1,
+      "failed": 0,
+      "errors": []
+    },
+    "notification": null
+  }
+}

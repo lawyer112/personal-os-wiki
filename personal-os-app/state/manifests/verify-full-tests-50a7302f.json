@@ -1,0 +1,18 @@
+{
+  "sourceId": "verify-full-tests-50a7302f",
+  "title": "verify-full-tests",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-full-tests.log",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/verify-full-tests.log",
+  "storedPath": "raw/sources/verify-full-tests-50a7302f.log",
+  "extractedTextPath": "state/extracts/verify-full-tests-50a7302f.md",
+  "extractedMetadataPath": "state/extracts/verify-full-tests-50a7302f.json",
+  "extractionHash": "f4f18efd3e409d996435a107ad701d6e4bcd42d34b55b0ef6bced1772c66a272",
+  "mimeType": "text/plain",
+  "contentHash": "50a7302f784d61330167903078f0c3c050f6b218e8b1c3294d3be3da85a8defb",
+  "semanticHash": "50a7302f784d61330167903078f0c3c050f6b218e8b1c3294d3be3da85a8defb",
+  "createdAt": "2026-07-04T19:02:32.757Z",
+  "updatedAt": "2026-07-04T19:02:32.757Z"
+}

@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "inbox": {
+    "id": "cmqr1mg8600020jpme21yic2a",
+    "sourceType": "agent-output",
+    "sourcePlatform": "cron/context-pack",
+    "sourceMessageId": null,
+    "rawText": "AgentRun context pack archived for cmqqxals8000f0jpj7dgqj12m by cmqqxals8000f0jpj7dgqj12m.",
+    "sourceUrl": null,
+    "attachments": [],
+    "status": "new",
+    "createdBy": "hermes",
+    "receivedAt": "2026-06-23T19:34:24.678Z",
+    "updatedAt": "2026-06-23T19:34:24.678Z"
+  },
+  "agentRunId": "cmqr1mg8f00040jpmnjwmgk6b",
+  "project": {
+    "id": "cmqq290nm00040jmj9jwa98ya",
+    "name": "Personal OS / Wiki 知识库升级",
+    "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+    "status": "active",
+    "priority": "P0",
+    "currentFocus": "Personal OS / Wiki 自驱闭环生产化",
+    "createdAt": "2026-06-23T03:04:11.410Z",
+    "updatedAt": "2026-06-23T19:34:24.697Z"
+  },
+  "tasks": [],
+  "ideas": [],
+  "notes": [],
+  "projectEvents": [
+    {
+      "id": "cmqr1mg9400070jpmwlz32kbe",
+      "projectId": "cmqq290nm00040jmj9jwa98ya",
+      "title": "AgentRun context pack archived cmqqxals8000f0jpj7dgqj12m",
+      "body": "已将 cmqqxals8000f0jpj7dgqj12m 的 gate、diff、测试、部署、残余风险写成 Wiki context pack。归档任务：cmqqxals8000f0jpj7dgqj12m。",
+      "eventType": "agent-context-pack",
+      "createdAt": "2026-06-23T19:34:24.712Z",
+      "sourceInboxItemId": "cmqr1mg8600020jpme21yic2a",
+      "sourceAgentRunId": "cmqr1mg8f00040jpmnjwmgk6b"
+    }
+  ],
+  "wiki": [
+    {
+      "ok": true,
+      "title": "AgentRun context pack cmqqxals8000f0jpj7dgqj12m 2026-06-23",
+      "status": "created",
+      "url": "http://192.168.6.37:3100/api/wiki/open?next=%2Fhttp%3A%2F%2F192.168.6.37%3A3422%2Fnote%3Fpath%3D30_projects%252FPersonal-OS-Wiki-%25E7%259F%25A5%25E8%25AF%2586%25E5%25BA%2593%25E5%258D%2587%25E7%25BA%25A7%252FAgentRun-context-pack-cmqqxals8000f0jpj7dgqj12m-2026-06-23.md"
+    }
+  ],
+  "wiki_write_status": {
+    "status": "ok",
+    "requested": 1,
+    "succeeded": 1,
+    "failed": 0,
+    "errors": []
+  },
+  "notification": null
+}

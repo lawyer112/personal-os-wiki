@@ -1,0 +1,24 @@
+{
+  "sourceId": "deployment-gate-550a1766",
+  "title": "deployment-gate",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/deployment-gate.json",
+  "repoRelativePath": ".agent-runs/cmqqb0d7h00050jnsh6q221l1/deployment-gate.json",
+  "storedPath": "raw/sources/deployment-gate-550a1766.json",
+  "extractedTextPath": "state/extracts/deployment-gate-550a1766.md",
+  "extractedMetadataPath": "state/extracts/deployment-gate-550a1766.json",
+  "extractionHash": "68afd5f01b24589d6e3eb1c25d4942e5ba245e402f2ef0c6fba8c5e8647b83ea",
+  "mimeType": "application/json",
+  "contentHash": "550a1766931efdd32848ce030aba91e5befbdfe4c69db9d5762f297f2c9f8dd9",
+  "semanticHash": "550a1766931efdd32848ce030aba91e5befbdfe4c69db9d5762f297f2c9f8dd9",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "9",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:33.387Z",
+  "updatedAt": "2026-07-04T19:02:33.387Z"
+}

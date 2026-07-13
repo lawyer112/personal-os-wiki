@@ -1,0 +1,24 @@
+{
+  "sourceId": "writeback-deployment-result-93cdf04b",
+  "title": "writeback-deployment-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/writeback-deployment-result.json",
+  "repoRelativePath": ".agent-runs/cmqqb0d7h00050jnsh6q221l1/artifacts/writeback-deployment-result.json",
+  "storedPath": "raw/sources/writeback-deployment-result-93cdf04b.json",
+  "extractedTextPath": "state/extracts/writeback-deployment-result-93cdf04b.md",
+  "extractedMetadataPath": "state/extracts/writeback-deployment-result-93cdf04b.json",
+  "extractionHash": "6bb0d73b4647d8509e2b0da77a7020ce3b9703856e7facbd406b2a6ff9c8bfb0",
+  "mimeType": "application/json",
+  "contentHash": "93cdf04b4a0b36c377461a498f5ed84c556df125fb27d43e9f1894ace63e8175",
+  "semanticHash": "93cdf04b4a0b36c377461a498f5ed84c556df125fb27d43e9f1894ace63e8175",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "9"
+  },
+  "createdAt": "2026-07-04T19:02:33.362Z",
+  "updatedAt": "2026-07-04T19:02:33.362Z"
+}

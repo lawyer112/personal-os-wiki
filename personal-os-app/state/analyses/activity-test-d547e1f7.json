@@ -1,0 +1,64 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "activity-test-d547e1f7",
+  "sourceHash": "d547e1f77057c6d1e61994915c17360a7209d0ab8b6928ccef8d19c9df6d430f",
+  "semanticHash": "d547e1f77057c6d1e61994915c17360a7209d0ab8b6928ccef8d19c9df6d430f",
+  "extractionHash": "6b67d2391e4085cd0516b23e15288d5dab7183111658c8bc4e0de2a3214d588d",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "activity.test",
+  "summary": "activity.test is a typescript module, defining 0 top-level symbol(s), exporting 0 symbol(s), depending on 2 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:activity-test-d547e1f7:1",
+      "text": "activity.test imports vitest, @/lib/activity.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "activity-test-d547e1f7"
+    }
+  ],
+  "questions": [
+    "Why does activity.test depend on vitest?",
+    "What broader responsibility does activity.test serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:activity-test-d547e1f7",
+    "language": "typescript",
+    "moduleName": "tests/services/activity.test",
+    "imports": [
+      {
+        "specifier": "vitest",
+        "importedSymbols": [
+          "describe",
+          "expect",
+          "it",
+          "vi"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/activity",
+        "importedSymbols": [
+          "recordActivity"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "vitest",
+      "@/lib/activity"
+    ],
+    "symbols": [],
+    "exports": [],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.443Z"
+}

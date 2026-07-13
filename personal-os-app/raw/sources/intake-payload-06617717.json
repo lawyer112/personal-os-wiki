@@ -1,0 +1,137 @@
+{
+  "source": {
+    "sourceType": "agent-output",
+    "sourcePlatform": "cron/github-radar",
+    "rawText": "GitHub 雷达运行：筛选 4 个 repo，生成 4 个候选任务。",
+    "createdBy": "hermes"
+  },
+  "agent": {
+    "model": "hermes-github-radar-script",
+    "classification": {
+      "kind": "github-radar",
+      "repos": [
+        "swarmclawai/swarmvault",
+        "ruvnet/agent-harness-generator",
+        "Walliiee/agent-harness",
+        "willynikes2/knowledge-base-server"
+      ]
+    },
+    "reasoningSummary": "GitHub 雷达脚本检索开源 Personal OS/Wiki/Agent Memory/RAG 项目，抽取可吸收设计并转成 Agent 可执行任务。",
+    "outputSummary": "已筛选 4 个 repo，写入 Wiki，并生成 4 个任务候选。"
+  },
+  "project": {
+    "name": "Personal OS / Wiki 知识库升级",
+    "status": "active",
+    "priority": "P0",
+    "currentFocus": "GitHub 外部方案转成 Agent 自驱执行闭环"
+  },
+  "wikiNotes": [
+    {
+      "frontmatter": {
+        "title": "GitHub 知识雷达 2026-06-23 Personal OS Wiki 自驱候选",
+        "type": "project",
+        "created_by": "hermes:worker",
+        "source_type": "agent-output",
+        "tags": [
+          "personal-os",
+          "personal-wiki",
+          "github-radar",
+          "agent-memory",
+          "idea"
+        ],
+        "created_at": "2026-06-23T09:23:16.025Z",
+        "task_id": "github-radar-20260623",
+        "agent_id": "hermes:github-radar",
+        "project": "Personal OS / Wiki 知识库升级",
+        "last_reviewed": "2026-06-23"
+      },
+      "content": "# GitHub 知识雷达 2026-06-23\n\n## 结论\n\n本轮输出不是链接列表，而是可执行吸收判断。优先吸收 Source Registry、Context Pack、Hot/Warm/Cold Context、Graph Recall、Agent Hooks。\n\n## 已筛选项目\n\n### swarmclawai/swarmvault\n- URL: https://github.com/swarmclawai/swarmvault\n- Score: 65.58\n- Signals: Source Registry / evidence ledger；Agent context pack / task ledger；Hot / warm / cold memory tiering；Graph recall: FTS/vector/community/PPR/episodic traces；Agent lifecycle hooks / MCP integration；Doctor / next-command guidance\n- Why: The local-first LLM Wiki: open-source knowledge graph builder, RAG knowledge base, and agent memory store. Built on Andrej Karpathy's pattern. An Obsidian alternative for personal knowledge management, AI second brain, and durable Claude Code / Codex / OpenClaw memory.\n- Absorb:\n  - 把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。\n  - 把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。\n  - 让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。\n\n### ruvnet/agent-harness-generator\n- URL: https://github.com/ruvnet/agent-harness-generator\n- Score: 65.29\n- Signals: Source Registry / evidence ledger；Agent context pack / task ledger；Hot / warm / cold memory tiering；Graph recall: FTS/vector/community/PPR/episodic traces；Agent lifecycle hooks / MCP integration；Doctor / next-command guidance\n- Why: 🛠️ The meta-harness for AI agents — scaffold your own focused, branded agent harness with its own npx CLI, MCP server, memory, learning loop, and witness-signed releases. Works with Claude Code, Codex, pi.dev, Hermes, OpenClaw, and RVM (hardware-isolated sandbox).\n- Absorb:\n  - 把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。\n  - 把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。\n  - 让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。\n\n### Walliiee/agent-harness\n- URL: https://github.com/Walliiee/agent-harness\n- Score: 65\n- Signals: Source Registry / evidence ledger；Agent context pack / task ledger；Hot / warm / cold memory tiering；Graph recall: FTS/vector/community/PPR/episodic traces；Agent lifecycle hooks / MCP integration；Doctor / next-command guidance\n- Why: A drop-in self-improving memory + operations harness for AI agents (OpenClaw / Hermes / Claude Code / Codex). Layered memory, autonomous drift-fixing loop, evals, and one-command DR. Templates + scripts, no secrets.\n- Absorb:\n  - 把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。\n  - 把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。\n  - 让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。\n\n### willynikes2/knowledge-base-server\n- URL: https://github.com/willynikes2/knowledge-base-server\n- Score: 61.17\n- Signals: Source Registry / evidence ledger；Agent context pack / task ledger；Hot / warm / cold memory tiering；Graph recall: FTS/vector/community/PPR/episodic traces；Agent lifecycle hooks / MCP integration；Doctor / next-command guidance\n- Why: Make every AI agent you use smarter. Persistent memory with SQLite FTS5, MCP server, Obsidian sync, and self-learning intelligence pipeline.\n- Absorb:\n  - 把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。\n  - 把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。\n  - 让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。\n\n## 已生成 Agent 任务\n\n- 实现 GitHub 雷达 Source Registry 写回 v0 — 运行 github-radar-intake.mjs --intake 后，生成本地证据目录，并在 Personal OS 出现 Wiki note、ProjectEvent、至少 1 个 agent_allowed 任务；日志不含 token。\n- 把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0 — query=personal os wiki 时返回 tiers.hot、tiers.warm、tiers.cold；hot 含当前 P0/P1 agent_allowed task 或最近阻塞；npm test/tsc/lint/build 通过。\n- 实现 AgentRun context pack 自动归档 v0 — 对真实 task-id 运行后，Wiki note 包含 task_id、gate、diff、测试、部署、残余风险；Personal OS 返回 201；不泄露 token。\n- 给 Personal OS context 增加同类任务 episode 召回 v0 — query=wiki write failed 时返回最近修复记录、相关 Wiki note、可执行 runbook；新增测试通过。\n\n## Classic 需要做\n\n无。Agent 负责继续执行、验证、写回。"
+    }
+  ],
+  "tasks": [
+    {
+      "title": "实现 GitHub 雷达 Source Registry 写回 v0",
+      "description": "对象是 GitHub 雷达运行结果；动作是保存 repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki 与 Task；产物是可复跑脚本和一次真实写回记录。",
+      "status": "todo",
+      "priority": "P0",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "github-radar",
+        "agent-self-improvement"
+      ],
+      "requiredOutput": "运行 github-radar-intake.mjs --intake 后，生成本地证据目录，并在 Personal OS 出现 Wiki note、ProjectEvent、至少 1 个 agent_allowed 任务；日志不含 token。",
+      "nextAction": "对象是 GitHub 雷达运行结果；动作是保存 repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki 与 Task；产物是可复跑脚本和一次真实写回记录。",
+      "definitionOfDone": "运行 github-radar-intake.mjs --intake 后，生成本地证据目录，并在 Personal OS 出现 Wiki note、ProjectEvent、至少 1 个 agent_allowed 任务；日志不含 token。",
+      "estimateMinutes": 120,
+      "createdBy": "hermes"
+    },
+    {
+      "title": "把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0",
+      "description": "对象是 Personal OS agent context API；动作是按执行优先级给任务、Wiki、Activity、Idea 分层；产物是 tiers 字段和回归测试。",
+      "status": "todo",
+      "priority": "P0",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "memory-tiering",
+        "agent-self-improvement"
+      ],
+      "requiredOutput": "query=personal os wiki 时返回 tiers.hot、tiers.warm、tiers.cold；hot 含当前 P0/P1 agent_allowed task 或最近阻塞；npm test/tsc/lint/build 通过。",
+      "nextAction": "对象是 Personal OS agent context API；动作是按执行优先级给任务、Wiki、Activity、Idea 分层；产物是 tiers 字段和回归测试。",
+      "definitionOfDone": "query=personal os wiki 时返回 tiers.hot、tiers.warm、tiers.cold；hot 含当前 P0/P1 agent_allowed task 或最近阻塞；npm test/tsc/lint/build 通过。",
+      "estimateMinutes": 120,
+      "createdBy": "hermes"
+    },
+    {
+      "title": "实现 AgentRun context pack 自动归档 v0",
+      "description": "对象是 .agent-runs/<task-id>/ 产物；动作是提取 gate、worker-result、diff、测试、部署和风险并生成 Wiki note；产物是归档入口。",
+      "status": "todo",
+      "priority": "P1",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "context-pack",
+        "agent-self-improvement"
+      ],
+      "requiredOutput": "对真实 task-id 运行后，Wiki note 包含 task_id、gate、diff、测试、部署、残余风险；Personal OS 返回 201；不泄露 token。",
+      "nextAction": "对象是 .agent-runs/<task-id>/ 产物；动作是提取 gate、worker-result、diff、测试、部署和风险并生成 Wiki note；产物是归档入口。",
+      "definitionOfDone": "对真实 task-id 运行后，Wiki note 包含 task_id、gate、diff、测试、部署、残余风险；Personal OS 返回 201；不泄露 token。",
+      "estimateMinutes": 120,
+      "createdBy": "hermes"
+    },
+    {
+      "title": "给 Personal OS context 增加同类任务 episode 召回 v0",
+      "description": "对象是 /api/agent/context；动作是把最近同类 AgentRun/Wiki 记录作为可复用 episode 返回；产物是 context.evidence.episodes。",
+      "status": "todo",
+      "priority": "P1",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "graph-recall",
+        "agent-self-improvement"
+      ],
+      "requiredOutput": "query=wiki write failed 时返回最近修复记录、相关 Wiki note、可执行 runbook；新增测试通过。",
+      "nextAction": "对象是 /api/agent/context；动作是把最近同类 AgentRun/Wiki 记录作为可复用 episode 返回；产物是 context.evidence.episodes。",
+      "definitionOfDone": "query=wiki write failed 时返回最近修复记录、相关 Wiki note、可执行 runbook；新增测试通过。",
+      "estimateMinutes": 120,
+      "createdBy": "hermes"
+    }
+  ],
+  "projectEvents": [
+    {
+      "projectName": "Personal OS / Wiki 知识库升级",
+      "title": "GitHub 雷达已生成可执行吸收候选",
+      "body": "筛选 4 个 repo；主要信号：source-registry, context-pack, memory-tiering, graph-recall, agent-hooks, doctor-next",
+      "eventType": "github-radar"
+    }
+  ]
+}

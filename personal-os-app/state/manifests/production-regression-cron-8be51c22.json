@@ -1,0 +1,24 @@
+{
+  "sourceId": "production-regression-cron-8be51c22",
+  "title": "production-regression-cron",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/production-regression-cron.json",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/production-regression-cron.json",
+  "storedPath": "raw/sources/production-regression-cron-8be51c22.json",
+  "extractedTextPath": "state/extracts/production-regression-cron-8be51c22.md",
+  "extractedMetadataPath": "state/extracts/production-regression-cron-8be51c22.json",
+  "extractionHash": "0aff51aa0f1fed8f0d8a826ab080b3ba00b04cb4c49612174063952a36308c0e",
+  "mimeType": "application/json",
+  "contentHash": "8be51c226ed23294a988de04c699441797fa283791ab8d3d74a11bdc7994df32",
+  "semanticHash": "8be51c226ed23294a988de04c699441797fa283791ab8d3d74a11bdc7994df32",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "4",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:32.526Z",
+  "updatedAt": "2026-07-04T19:02:32.526Z"
+}

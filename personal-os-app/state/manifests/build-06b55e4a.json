@@ -1,0 +1,18 @@
+{
+  "sourceId": "build-06b55e4a",
+  "title": "build",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/build.log",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/build.log",
+  "storedPath": "raw/sources/build-06b55e4a.log",
+  "extractedTextPath": "state/extracts/build-06b55e4a.md",
+  "extractedMetadataPath": "state/extracts/build-06b55e4a.json",
+  "extractionHash": "9bd382f2875eb5fef055cde9ee516ac5861f1c96853ea70e62b3744579a25f0c",
+  "mimeType": "text/plain",
+  "contentHash": "06b55e4a593f0ef1f7a7e39d02452e6d15fb83e20b845759b1877fc5ad248e67",
+  "semanticHash": "06b55e4a593f0ef1f7a7e39d02452e6d15fb83e20b845759b1877fc5ad248e67",
+  "createdAt": "2026-07-04T19:02:30.292Z",
+  "updatedAt": "2026-07-04T19:02:30.292Z"
+}

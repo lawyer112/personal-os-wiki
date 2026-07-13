@@ -1,0 +1,84 @@
+{
+  "task_id": "github-radar-cron",
+  "timestamp": "2026-06-24T09:24:00Z",
+  "status": "pass",
+  "actions": [
+    {
+      "name": "github-radar-intake",
+      "cmd": "node scripts/github-radar-intake.mjs --intake --limit=8 --task-id=github-radar-cron",
+      "exit_code": 0,
+      "result": "repos=8, tasks=0 (dedup), registry=8 entries, wiki_write_status=ok, agentRunId=cmqre4akm000f0jnt81a1kbtx"
+    },
+    {
+      "name": "test-suite",
+      "cmd": "npm test",
+      "exit_code": 0,
+      "result": "78 tests passed (20 test files)"
+    },
+    {
+      "name": "type-check",
+      "cmd": "npx tsc --noEmit",
+      "exit_code": 0,
+      "result": "no type errors"
+    },
+    {
+      "name": "lint",
+      "cmd": "npm run lint",
+      "exit_code": 0,
+      "result": "eslint clean"
+    },
+    {
+      "name": "commit-and-push",
+      "cmd": "git add src/lib/validation.ts && git commit -m 'feat(wiki-ingest): ...' && git push origin main",
+      "exit_code": 0,
+      "result": "commit 6602d1f pushed to github.com/lawyer112/personal-os-wiki"
+    },
+    {
+      "name": "ci-wait",
+      "cmd": "poll GitHub Actions run 28068772550",
+      "exit_code": 0,
+      "result": "conclusion=success"
+    },
+    {
+      "name": "backup-remote",
+      "cmd": "ssh ub37 'cp -r ...'",
+      "exit_code": 0,
+      "result": "backup created at 20260624-013744"
+    },
+    {
+      "name": "deploy",
+      "cmd": "ssh ub37 'docker compose build personal-os && docker compose up -d --no-deps personal-os'",
+      "exit_code": 0,
+      "result": "container recreated and started; image personal-os-app:demo updated"
+    },
+    {
+      "name": "production-health-check",
+      "cmd": "ssh ub37 'curl ...'",
+      "exit_code": 0,
+      "result": "Personal OS /api/tasks ok=True (35 tasks); Wiki /api/notes 20 notes; container healthy"
+    }
+  ],
+  "verifier": {
+    "status": "pass",
+    "findings": []
+  },
+  "ci": {
+    "status": "pass",
+    "url": "https://github.com/lawyer112/personal-os-wiki/actions/runs/28068772550",
+    "conclusion": "success"
+  },
+  "deployment": {
+    "status": "deployed",
+    "host": "192.168.6.37",
+    "backup": "/data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/20260624-013744",
+    "container": "personal-os-wiki-main-personal-os-1"
+  },
+  "production_regression": {
+    "status": "pass",
+    "findings": [
+      "Personal OS API /api/tasks returns 200 with 35 tasks",
+      "Wiki API /api/notes returns 200 with 20 notes",
+      "Container personal-os-wiki-main-personal-os-1 up and healthy"
+    ]
+  }
+}

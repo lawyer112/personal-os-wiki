@@ -1,0 +1,19 @@
+{
+  "sourceId": "wiki-open-test-fe0f8a41",
+  "title": "wiki-open.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/routes/wiki-open.test.ts",
+  "repoRelativePath": "tests/routes/wiki-open.test.ts",
+  "storedPath": "raw/sources/wiki-open-test-fe0f8a41.ts",
+  "extractedTextPath": "state/extracts/wiki-open-test-fe0f8a41.md",
+  "extractedMetadataPath": "state/extracts/wiki-open-test-fe0f8a41.json",
+  "extractionHash": "0535acdfcb78ac4adae80978cdf0d46950fbc0bb608db0c251c1a1b7f7af24cf",
+  "mimeType": "text/typescript",
+  "contentHash": "fe0f8a41d1b812d1a458b82f23bf50206c86283f075304e7d640db6900deb109",
+  "semanticHash": "fe0f8a41d1b812d1a458b82f23bf50206c86283f075304e7d640db6900deb109",
+  "createdAt": "2026-07-04T19:03:00.862Z",
+  "updatedAt": "2026-07-04T19:03:00.862Z"
+}

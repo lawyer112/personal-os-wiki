@@ -1,0 +1,21 @@
+{
+  "status": 200,
+  "path": "vault/30_projects/Personal-OS-Wiki-知识库升级/_raw-manifest-增量入库试验-v0-2026-06-23.md",
+  "title": "_raw + manifest 增量入库试验 v0 — 2026-06-23",
+  "frontmatter": {
+    "created_by": "hermes:worker",
+    "source_type": "agent-output",
+    "task_id": "cmqq2o6lz000w0jmj9mfh4cer",
+    "agent_id": "obsidianmanager1",
+    "project": "Personal OS / Wiki 知识库升级",
+    "tags": [
+      "personal-os",
+      "personal-wiki",
+      "manifest",
+      "raw",
+      "agent-output"
+    ]
+  },
+  "contains_task_id": true,
+  "content_length": 5425
+}

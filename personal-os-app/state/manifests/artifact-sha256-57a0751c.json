@@ -1,0 +1,24 @@
+{
+  "sourceId": "artifact-sha256-57a0751c",
+  "title": "artifact-sha256",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/artifact-sha256.json",
+  "repoRelativePath": ".agent-runs/cmqq2o6lz000w0jmj9mfh4cer/logs/artifact-sha256.json",
+  "storedPath": "raw/sources/artifact-sha256-57a0751c.json",
+  "extractedTextPath": "state/extracts/artifact-sha256-57a0751c.md",
+  "extractedMetadataPath": "state/extracts/artifact-sha256-57a0751c.json",
+  "extractionHash": "242b148249a5b2170a4e18ce18703b7a3fffc4da59a6c4b88337cdadf9d5f587",
+  "mimeType": "application/json",
+  "contentHash": "57a0751c93c9171c0322f48fb6c1bcdc4161a74ceeb2b8394959b4ae71183e4d",
+  "semanticHash": "57a0751c93c9171c0322f48fb6c1bcdc4161a74ceeb2b8394959b4ae71183e4d",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:31.320Z",
+  "updatedAt": "2026-07-04T19:02:31.320Z"
+}

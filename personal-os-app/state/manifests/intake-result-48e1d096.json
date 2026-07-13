@@ -1,0 +1,17 @@
+{
+  "sourceId": "intake-result-48e1d096",
+  "title": "intake-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/agent-context-agentmemory-recall-20260702/intake-result.json",
+  "repoRelativePath": ".agent-runs/agent-context-agentmemory-recall-20260702/intake-result.json",
+  "storedPath": "raw/sources/intake-result-48e1d096.json",
+  "extractedMetadataPath": "state/extracts/intake-result-48e1d096.json",
+  "extractionHash": "a94f61f90be6d9b5000e81831fdb69fa8d7481c5954050fe6a82a3926f3066af",
+  "mimeType": "application/json",
+  "contentHash": "48e1d09680cf5db0ce7fbd4714f4531824e5b7ccd2c9ced860fa99f473737e5e",
+  "semanticHash": "48e1d09680cf5db0ce7fbd4714f4531824e5b7ccd2c9ced860fa99f473737e5e",
+  "createdAt": "2026-07-04T19:02:30.224Z",
+  "updatedAt": "2026-07-04T19:02:30.224Z"
+}

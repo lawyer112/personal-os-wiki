@@ -1,0 +1,24 @@
+{
+  "sourceId": "wiki-ingest-probe-22535210",
+  "title": "wiki-ingest-probe",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/wiki-ingest-probe.json",
+  "repoRelativePath": ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/wiki-ingest-probe.json",
+  "storedPath": "raw/sources/wiki-ingest-probe-22535210.json",
+  "extractedTextPath": "state/extracts/wiki-ingest-probe-22535210.md",
+  "extractedMetadataPath": "state/extracts/wiki-ingest-probe-22535210.json",
+  "extractionHash": "30787476de3bf879dcdebd3168470eb9c395b2529a6dc8307a6cc1a743e0fad4",
+  "mimeType": "application/json",
+  "contentHash": "22535210f88d1320e0dd10594c7f117a7441f8d541dde9676c93cf47b7660235",
+  "semanticHash": "22535210f88d1320e0dd10594c7f117a7441f8d541dde9676c93cf47b7660235",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "8",
+    "nested_depth": "1"
+  },
+  "createdAt": "2026-07-04T19:02:39.642Z",
+  "updatedAt": "2026-07-04T19:02:39.642Z"
+}

@@ -1,0 +1,24 @@
+{
+  "sourceId": "docker-compose-d13e1fe3",
+  "title": "docker-compose",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/docker-compose.yml",
+  "repoRelativePath": "docker-compose.yml",
+  "storedPath": "raw/sources/docker-compose-d13e1fe3.yml",
+  "extractedTextPath": "state/extracts/docker-compose-d13e1fe3.md",
+  "extractedMetadataPath": "state/extracts/docker-compose-d13e1fe3.json",
+  "extractionHash": "b5ef81e1a042743d399f7abf0c0d5685608f16f8bf1705a8ec75d166f0de7ee5",
+  "mimeType": "text/yaml",
+  "contentHash": "d13e1fe3df2feb363fa825295ef54bf3ca36438f09ecdd4afab02f116cd039ac",
+  "semanticHash": "d13e1fe3df2feb363fa825295ef54bf3ca36438f09ecdd4afab02f116cd039ac",
+  "details": {
+    "format": "yaml",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:48.833Z",
+  "updatedAt": "2026-07-04T19:02:48.833Z"
+}

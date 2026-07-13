@@ -1,0 +1,18 @@
+{
+  "sourceId": "run-17838f7b",
+  "title": "run",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-cron/run.log",
+  "repoRelativePath": ".agent-runs/github-radar-cron/run.log",
+  "storedPath": "raw/sources/run-17838f7b.log",
+  "extractedTextPath": "state/extracts/run-17838f7b.md",
+  "extractedMetadataPath": "state/extracts/run-17838f7b.json",
+  "extractionHash": "5a004a3a3ae3e45a344958d99f8af2c0a447ef8b054aa06f9b58ba6c30d8a69c",
+  "mimeType": "text/plain",
+  "contentHash": "17838f7baa140f0f37335180d8a1e66980ce550e774c4b5d35f00b94955e5f3c",
+  "semanticHash": "17838f7baa140f0f37335180d8a1e66980ce550e774c4b5d35f00b94955e5f3c",
+  "createdAt": "2026-07-04T19:02:46.877Z",
+  "updatedAt": "2026-07-04T19:02:46.877Z"
+}

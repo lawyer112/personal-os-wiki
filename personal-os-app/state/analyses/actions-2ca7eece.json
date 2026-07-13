@@ -1,0 +1,138 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "actions-2ca7eece",
+  "sourceHash": "2ca7eece746b7cf0268b7c465e1d01c223a91cc39e54fe9140ac1e8d1674d3aa",
+  "semanticHash": "2ca7eece746b7cf0268b7c465e1d01c223a91cc39e54fe9140ac1e8d1674d3aa",
+  "extractionHash": "ed7c08c73a2852fa803f436e449e97e4e43ed37149637f4aa790c0c00e1ef6f7",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "actions",
+  "summary": "actions is a typescript module, defining 2 top-level symbol(s), exporting 2 symbol(s), depending on 5 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:actions-2ca7eece:1",
+      "text": "actions exports CaptureActionState, createCaptureAction.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "actions-2ca7eece"
+    },
+    {
+      "id": "claim:actions-2ca7eece:2",
+      "text": "actions defines CaptureActionState, createCaptureAction.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "actions-2ca7eece"
+    },
+    {
+      "id": "claim:actions-2ca7eece:3",
+      "text": "actions imports next/cache, @/lib/db, @/lib/capture, @/lib/inbox, and more.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "actions-2ca7eece"
+    }
+  ],
+  "questions": [
+    "Which downstream pages should explain how actions exports are consumed?",
+    "Why does actions depend on next/cache?",
+    "What broader responsibility does actions serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:actions-2ca7eece",
+    "language": "typescript",
+    "moduleName": "src/app/capture/actions",
+    "imports": [
+      {
+        "specifier": "next/cache",
+        "importedSymbols": [
+          "revalidatePath"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/db",
+        "importedSymbols": [
+          "prisma"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/capture",
+        "importedSymbols": [
+          "captureToInboxInput"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/inbox",
+        "importedSymbols": [
+          "createInboxItem"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/validation",
+        "importedSymbols": [
+          "captureCreateSchema"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "next/cache",
+      "@/lib/db",
+      "@/lib/capture",
+      "@/lib/inbox",
+      "@/lib/validation"
+    ],
+    "symbols": [
+      {
+        "id": "symbol:actions-2ca7eece:captureactionstate.type_alias",
+        "name": "CaptureActionState",
+        "kind": "type_alias",
+        "signature": "export type CaptureActionState = { ok: boolean; itemId?: string; error?: string; values?: { content?: string; }; };",
+        "exported": true,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:actions-2ca7eece:createcaptureaction.function",
+        "name": "createCaptureAction",
+        "kind": "function",
+        "signature": "export async function createCaptureAction( _previousState: CaptureActionState, formData: FormData, ): Promise<CaptureActionState>",
+        "exported": true,
+        "calls": [
+          "createInboxItem",
+          "captureToInboxInput",
+          "revalidatePath"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 18,
+        "endLine": 47
+      }
+    ],
+    "exports": [
+      "CaptureActionState",
+      "createCaptureAction"
+    ],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.465Z"
+}

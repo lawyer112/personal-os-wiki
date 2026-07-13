@@ -1,0 +1,24 @@
+{
+  "sourceId": "worker-result-673516c6",
+  "title": "worker-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-20260624/worker-result.json",
+  "repoRelativePath": ".agent-runs/github-radar-20260624/worker-result.json",
+  "storedPath": "raw/sources/worker-result-673516c6.json",
+  "extractedTextPath": "state/extracts/worker-result-673516c6.md",
+  "extractedMetadataPath": "state/extracts/worker-result-673516c6.json",
+  "extractionHash": "c4446fdc904cfe669cca7d4cea3928c8dc34ec32ae04878dac5ba4ec808af37b",
+  "mimeType": "application/json",
+  "contentHash": "673516c6351cec6c1eac93bcb702cf9f336e0a39d90311c16e5272cd311dbaed",
+  "semanticHash": "673516c6351cec6c1eac93bcb702cf9f336e0a39d90311c16e5272cd311dbaed",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "6",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:44.564Z",
+  "updatedAt": "2026-07-04T19:02:44.564Z"
+}

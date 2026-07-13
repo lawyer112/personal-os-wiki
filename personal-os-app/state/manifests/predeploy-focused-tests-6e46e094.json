@@ -1,0 +1,18 @@
+{
+  "sourceId": "predeploy-focused-tests-6e46e094",
+  "title": "predeploy-focused-tests",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/predeploy-focused-tests.log",
+  "repoRelativePath": ".agent-runs/cmqq2o6gt000s0jmjpc2aqnbp/artifacts/predeploy-focused-tests.log",
+  "storedPath": "raw/sources/predeploy-focused-tests-6e46e094.log",
+  "extractedTextPath": "state/extracts/predeploy-focused-tests-6e46e094.md",
+  "extractedMetadataPath": "state/extracts/predeploy-focused-tests-6e46e094.json",
+  "extractionHash": "3d3f7ffb1513b395782f24e70da2e1bcec32db31e5e675572b62aeb03fc20993",
+  "mimeType": "text/plain",
+  "contentHash": "6e46e09489e80bb0555963b2d08577a6d783679bc22c3d07cc197dc84a5327c1",
+  "semanticHash": "6e46e09489e80bb0555963b2d08577a6d783679bc22c3d07cc197dc84a5327c1",
+  "createdAt": "2026-07-04T19:02:30.580Z",
+  "updatedAt": "2026-07-04T19:02:30.580Z"
+}

@@ -1,0 +1,24 @@
+{
+  "sourceId": "post-submit-task-a823af51",
+  "title": "post-submit-task",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/post-submit-task.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/post-submit-task.json",
+  "storedPath": "raw/sources/post-submit-task-a823af51.json",
+  "extractedTextPath": "state/extracts/post-submit-task-a823af51.md",
+  "extractedMetadataPath": "state/extracts/post-submit-task-a823af51.json",
+  "extractionHash": "55e26dea7b15edf56a2037fd069881e367eb496ad5470b7751a88ee178a07073",
+  "mimeType": "application/json",
+  "contentHash": "a823af51ea0844f07d601917ca82ad17dd28d0a91234c70ef42f68d0e10bdd2c",
+  "semanticHash": "a823af51ea0844f07d601917ca82ad17dd28d0a91234c70ef42f68d0e10bdd2c",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "7"
+  },
+  "createdAt": "2026-07-04T19:02:35.325Z",
+  "updatedAt": "2026-07-04T19:02:35.325Z"
+}

@@ -1,0 +1,19 @@
+{
+  "sourceId": "capture-test-cf0f2521",
+  "title": "capture.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/services/capture.test.ts",
+  "repoRelativePath": "tests/services/capture.test.ts",
+  "storedPath": "raw/sources/capture-test-cf0f2521.ts",
+  "extractedTextPath": "state/extracts/capture-test-cf0f2521.md",
+  "extractedMetadataPath": "state/extracts/capture-test-cf0f2521.json",
+  "extractionHash": "d7277dfc4e7449b808e2051f6f7b7b773f0cb813106baada7f8e7eb30aad2545",
+  "mimeType": "text/typescript",
+  "contentHash": "cf0f252106b945192c726b4426220b13e40416435a3833ca519df73312d73326",
+  "semanticHash": "cf0f252106b945192c726b4426220b13e40416435a3833ca519df73312d73326",
+  "createdAt": "2026-07-04T19:03:01.413Z",
+  "updatedAt": "2026-07-04T19:03:01.413Z"
+}

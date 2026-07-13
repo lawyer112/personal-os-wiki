@@ -1,0 +1,18 @@
+{
+  "sourceId": "intake-test-bfb4e2fd",
+  "title": "intake-test",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr009fup01bu0jpkb1koq2h2/intake-test.log",
+  "repoRelativePath": ".agent-runs/cmr009fup01bu0jpkb1koq2h2/intake-test.log",
+  "storedPath": "raw/sources/intake-test-bfb4e2fd.log",
+  "extractedTextPath": "state/extracts/intake-test-bfb4e2fd.md",
+  "extractedMetadataPath": "state/extracts/intake-test-bfb4e2fd.json",
+  "extractionHash": "565f4006212108dd4af3e22433b42d35081f109103f94013c69ee7491ae3f6e5",
+  "mimeType": "text/plain",
+  "contentHash": "bfb4e2fd7cccdea6281e14c643723b91c88e0766e0548d33bd277fc11df591ca",
+  "semanticHash": "bfb4e2fd7cccdea6281e14c643723b91c88e0766e0548d33bd277fc11df591ca",
+  "createdAt": "2026-07-04T19:02:40.819Z",
+  "updatedAt": "2026-07-04T19:02:40.819Z"
+}

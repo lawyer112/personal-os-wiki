@@ -1,0 +1,24 @@
+{
+  "sourceId": "worker-result-3c122b71",
+  "title": "worker-result",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/fix-wiki-frontmatter-parse-error/worker-result.json",
+  "repoRelativePath": ".agent-runs/fix-wiki-frontmatter-parse-error/worker-result.json",
+  "storedPath": "raw/sources/worker-result-3c122b71.json",
+  "extractedTextPath": "state/extracts/worker-result-3c122b71.md",
+  "extractedMetadataPath": "state/extracts/worker-result-3c122b71.json",
+  "extractionHash": "4df4e00633d857b7fad70a2865d336c683d0574482dfb87f295182fb55fcabbb",
+  "mimeType": "application/json",
+  "contentHash": "3c122b716ccbd1740157c9f757e9066c339ef86a96363e1825c6f3df9daf68bf",
+  "semanticHash": "3c122b716ccbd1740157c9f757e9066c339ef86a96363e1825c6f3df9daf68bf",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "7",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:43.456Z",
+  "updatedAt": "2026-07-04T19:02:43.456Z"
+}

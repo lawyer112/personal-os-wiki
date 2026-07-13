@@ -1,0 +1,18 @@
+{
+  "sourceId": "github-radar-83d0c2eb",
+  "title": "github-radar",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/github-radar.log",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/github-radar.log",
+  "storedPath": "raw/sources/github-radar-83d0c2eb.log",
+  "extractedTextPath": "state/extracts/github-radar-83d0c2eb.md",
+  "extractedMetadataPath": "state/extracts/github-radar-83d0c2eb.json",
+  "extractionHash": "fdb051a687d34d08d750eb4cc58f61c7523a6cd7c63ddcb3c81f07c10b50ffdb",
+  "mimeType": "text/plain",
+  "contentHash": "83d0c2eb56c827d18715f425dba4b8015a5643a08ab8d181e7a5c58399621152",
+  "semanticHash": "83d0c2eb56c827d18715f425dba4b8015a5643a08ab8d181e7a5c58399621152",
+  "createdAt": "2026-07-04T19:02:30.310Z",
+  "updatedAt": "2026-07-04T19:02:30.310Z"
+}

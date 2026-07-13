@@ -1,0 +1,24 @@
+{
+  "sourceId": "wiki-note-search-2c584efa",
+  "title": "wiki-note-search",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/wiki-note-search.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/artifacts/wiki-note-search.json",
+  "storedPath": "raw/sources/wiki-note-search-2c584efa.json",
+  "extractedTextPath": "state/extracts/wiki-note-search-2c584efa.md",
+  "extractedMetadataPath": "state/extracts/wiki-note-search-2c584efa.json",
+  "extractionHash": "674da6c178e8af5db7147384a399ed1df4fe370aa52987f1dde5a97a3519f538",
+  "mimeType": "application/json",
+  "contentHash": "2c584efafca8d05b21ee9825aeaca0489c2896436976813672f198708d23a363",
+  "semanticHash": "2c584efafca8d05b21ee9825aeaca0489c2896436976813672f198708d23a363",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "5",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:35.050Z",
+  "updatedAt": "2026-07-04T19:02:35.050Z"
+}

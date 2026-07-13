@@ -1,0 +1,288 @@
+{
+  "ok": true,
+  "inbox": {
+    "id": "cmr35vrpa011k0jnynq057yza",
+    "sourceType": "agent-output",
+    "sourcePlatform": "cron/github-radar-evaluation",
+    "sourceMessageId": null,
+    "rawText": "SwarmVault 评估完成：值得吸收，分三阶段进行。核心能力：本地优先 LLM Wiki、混合检索、MCP server、Agent Task Ledger。",
+    "sourceUrl": null,
+    "attachments": [],
+    "status": "new",
+    "createdBy": "hermes",
+    "receivedAt": "2026-07-02T07:06:52.030Z",
+    "updatedAt": "2026-07-02T07:06:52.030Z"
+  },
+  "agentRunId": "cmr35vrpe011m0jnyn4qe2qp4",
+  "project": {
+    "id": "cmr1xndbz00170jnybuk3m9q3",
+    "name": "Personal OS / Wiki 知识库升级",
+    "goal": "提升 Codex、Hermes 与 Personal Wiki 的长期记忆、上下文召回和任务闭环能力。",
+    "status": "active",
+    "priority": "P0",
+    "currentFocus": "GitHub 外部方案转成 Agent 自驱执行闭环",
+    "createdAt": "2026-07-01T10:28:37.055Z",
+    "updatedAt": "2026-07-02T07:06:52.039Z"
+  },
+  "tasks": [
+    {
+      "id": "cmr35vrps011r0jny6w6s9x7m",
+      "title": "安装 SwarmVault CLI 并验证 MCP server 可用性",
+      "description": "依赖：无。动作：确认 node >= 24 版本；npm install -g @swarmvaultai/cli；swarmvault quickstart /Users/xingqiwu/Documents/New\\ project\\ 5/personal-os-wiki/personal-os-app --no-serve；swarmvault mcp 启动验证；写 gate.json 记录结果。",
+      "status": "todo",
+      "priority": "P1",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "swarmvault",
+        "agent-self-improvement"
+      ],
+      "ownerAgent": null,
+      "leaseUntil": null,
+      "lastHeartbeatAt": null,
+      "requiredOutput": "swarmvault mcp 能正常 stdio 启动，graph_status/context tools 可调用；写 .agent-runs/swarmvault-mcp-smoke/gate.json",
+      "nextAction": "确认 node >= 24 版本",
+      "definitionOfDone": "swarmvault mcp 能正常 stdio 启动，graph_status/context tools 可调用；写 .agent-runs/swarmvault-mcp-smoke/gate.json",
+      "dueDate": null,
+      "estimateMinutes": 60,
+      "createdBy": "hermes",
+      "createdAt": "2026-07-02T07:06:52.048Z",
+      "updatedAt": "2026-07-02T07:06:52.048Z",
+      "completedAt": null,
+      "submittedAt": null,
+      "projectId": "cmr1xndbz00170jnybuk3m9q3",
+      "sourceInboxItemId": "cmr35vrpa011k0jnynq057yza",
+      "sourceAgentRunId": "cmr35vrpe011m0jnyn4qe2qp4",
+      "project": {
+        "id": "cmr1xndbz00170jnybuk3m9q3",
+        "name": "Personal OS / Wiki 知识库升级",
+        "goal": "提升 Codex、Hermes 与 Personal Wiki 的长期记忆、上下文召回和任务闭环能力。",
+        "status": "active",
+        "priority": "P0",
+        "currentFocus": "GitHub 外部方案转成 Agent 自驱执行闭环",
+        "createdAt": "2026-07-01T10:28:37.055Z",
+        "updatedAt": "2026-07-02T07:06:52.039Z"
+      },
+      "sourceInboxItem": {
+        "id": "cmr35vrpa011k0jnynq057yza",
+        "sourceType": "agent-output",
+        "sourcePlatform": "cron/github-radar-evaluation",
+        "sourceMessageId": null,
+        "rawText": "SwarmVault 评估完成：值得吸收，分三阶段进行。核心能力：本地优先 LLM Wiki、混合检索、MCP server、Agent Task Ledger。",
+        "sourceUrl": null,
+        "attachments": [],
+        "status": "processing",
+        "createdBy": "hermes",
+        "receivedAt": "2026-07-02T07:06:52.030Z",
+        "updatedAt": "2026-07-02T07:06:52.036Z"
+      },
+      "sourceAgentRun": {
+        "id": "cmr35vrpe011m0jnyn4qe2qp4",
+        "inboxItemId": "cmr35vrpa011k0jnynq057yza",
+        "model": "hermes-obsidianmanager1",
+        "status": "running",
+        "classification": {
+          "kind": "github-radar-evaluation",
+          "repo": "swarmclawai/swarmvault",
+          "recommendation": "值得吸收，但分阶段进行"
+        },
+        "reasoningSummary": "评估 swarmclawai/swarmvault (stars: 592)。适配度高，建议分阶段吸收：MCP server 验证、接入 context API、重构 context 输出。",
+        "outputSummary": null,
+        "error": null,
+        "startedAt": "2026-07-02T07:06:52.034Z",
+        "completedAt": null
+      },
+      "wikiLinks": [],
+      "claims": [],
+      "contributions": [],
+      "artifacts": [],
+      "reviews": []
+    },
+    {
+      "id": "cmr35vrq6011t0jny68jy2rcz",
+      "title": "接入 SwarmVault MCP 到 /api/agent/context 作为 hybrid search 补充层",
+      "description": "依赖：安装 SwarmVault CLI 并验证 MCP server 可用性。动作：在 Personal OS agent context 服务里增加 SwarmVault MCP tool call；query=代码 x 记忆 时同时查 SwarmVault graph + Personal OS episodic；合并返回 tiers.hot 里的 swarmvault candidates；新增集成测试。",
+      "status": "todo",
+      "priority": "P1",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "swarmvault",
+        "agent-self-improvement"
+      ],
+      "ownerAgent": null,
+      "leaseUntil": null,
+      "lastHeartbeatAt": null,
+      "requiredOutput": "/api/agent/context?q=code+memory 返回 swarmvault.candidates 字段；npm test 通过",
+      "nextAction": "在 Personal OS agent context 服务里增加 SwarmVault MCP tool call",
+      "definitionOfDone": "/api/agent/context?q=code+memory 返回 swarmvault.candidates 字段；npm test 通过",
+      "dueDate": null,
+      "estimateMinutes": 120,
+      "createdBy": "hermes",
+      "createdAt": "2026-07-02T07:06:52.062Z",
+      "updatedAt": "2026-07-02T07:06:52.062Z",
+      "completedAt": null,
+      "submittedAt": null,
+      "projectId": "cmr1xndbz00170jnybuk3m9q3",
+      "sourceInboxItemId": "cmr35vrpa011k0jnynq057yza",
+      "sourceAgentRunId": "cmr35vrpe011m0jnyn4qe2qp4",
+      "project": {
+        "id": "cmr1xndbz00170jnybuk3m9q3",
+        "name": "Personal OS / Wiki 知识库升级",
+        "goal": "提升 Codex、Hermes 与 Personal Wiki 的长期记忆、上下文召回和任务闭环能力。",
+        "status": "active",
+        "priority": "P0",
+        "currentFocus": "GitHub 外部方案转成 Agent 自驱执行闭环",
+        "createdAt": "2026-07-01T10:28:37.055Z",
+        "updatedAt": "2026-07-02T07:06:52.039Z"
+      },
+      "sourceInboxItem": {
+        "id": "cmr35vrpa011k0jnynq057yza",
+        "sourceType": "agent-output",
+        "sourcePlatform": "cron/github-radar-evaluation",
+        "sourceMessageId": null,
+        "rawText": "SwarmVault 评估完成：值得吸收，分三阶段进行。核心能力：本地优先 LLM Wiki、混合检索、MCP server、Agent Task Ledger。",
+        "sourceUrl": null,
+        "attachments": [],
+        "status": "processing",
+        "createdBy": "hermes",
+        "receivedAt": "2026-07-02T07:06:52.030Z",
+        "updatedAt": "2026-07-02T07:06:52.036Z"
+      },
+      "sourceAgentRun": {
+        "id": "cmr35vrpe011m0jnyn4qe2qp4",
+        "inboxItemId": "cmr35vrpa011k0jnynq057yza",
+        "model": "hermes-obsidianmanager1",
+        "status": "running",
+        "classification": {
+          "kind": "github-radar-evaluation",
+          "repo": "swarmclawai/swarmvault",
+          "recommendation": "值得吸收，但分阶段进行"
+        },
+        "reasoningSummary": "评估 swarmclawai/swarmvault (stars: 592)。适配度高，建议分阶段吸收：MCP server 验证、接入 context API、重构 context 输出。",
+        "outputSummary": null,
+        "error": null,
+        "startedAt": "2026-07-02T07:06:52.034Z",
+        "completedAt": null
+      },
+      "wikiLinks": [],
+      "claims": [],
+      "contributions": [],
+      "artifacts": [],
+      "reviews": []
+    },
+    {
+      "id": "cmr35vrqe011v0jnyx59jydt9",
+      "title": "参考 SwarmVault Agent Context Pack 设计重构 context 输出 budget/cited/omissions",
+      "description": "依赖：无。动作：研究 swarmvault context build 输出格式；为 /api/agent/context 增加 budget 参数和 omissions 字段；高优先级 tiers.hot 内容带 cited 引用来源；新增测试。",
+      "status": "todo",
+      "priority": "P2",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "personal-wiki",
+        "swarmvault",
+        "agent-self-improvement"
+      ],
+      "ownerAgent": null,
+      "leaseUntil": null,
+      "lastHeartbeatAt": null,
+      "requiredOutput": "/api/agent/context?q=xxx&budget=4000 返回带 cited + omissions 的裁剪上下文；tsc/lint 通过",
+      "nextAction": "研究 swarmvault context build 输出格式",
+      "definitionOfDone": "/api/agent/context?q=xxx&budget=4000 返回带 cited + omissions 的裁剪上下文；tsc/lint 通过",
+      "dueDate": null,
+      "estimateMinutes": 120,
+      "createdBy": "hermes",
+      "createdAt": "2026-07-02T07:06:52.070Z",
+      "updatedAt": "2026-07-02T07:06:52.070Z",
+      "completedAt": null,
+      "submittedAt": null,
+      "projectId": "cmr1xndbz00170jnybuk3m9q3",
+      "sourceInboxItemId": "cmr35vrpa011k0jnynq057yza",
+      "sourceAgentRunId": "cmr35vrpe011m0jnyn4qe2qp4",
+      "project": {
+        "id": "cmr1xndbz00170jnybuk3m9q3",
+        "name": "Personal OS / Wiki 知识库升级",
+        "goal": "提升 Codex、Hermes 与 Personal Wiki 的长期记忆、上下文召回和任务闭环能力。",
+        "status": "active",
+        "priority": "P0",
+        "currentFocus": "GitHub 外部方案转成 Agent 自驱执行闭环",
+        "createdAt": "2026-07-01T10:28:37.055Z",
+        "updatedAt": "2026-07-02T07:06:52.039Z"
+      },
+      "sourceInboxItem": {
+        "id": "cmr35vrpa011k0jnynq057yza",
+        "sourceType": "agent-output",
+        "sourcePlatform": "cron/github-radar-evaluation",
+        "sourceMessageId": null,
+        "rawText": "SwarmVault 评估完成：值得吸收，分三阶段进行。核心能力：本地优先 LLM Wiki、混合检索、MCP server、Agent Task Ledger。",
+        "sourceUrl": null,
+        "attachments": [],
+        "status": "processing",
+        "createdBy": "hermes",
+        "receivedAt": "2026-07-02T07:06:52.030Z",
+        "updatedAt": "2026-07-02T07:06:52.036Z"
+      },
+      "sourceAgentRun": {
+        "id": "cmr35vrpe011m0jnyn4qe2qp4",
+        "inboxItemId": "cmr35vrpa011k0jnynq057yza",
+        "model": "hermes-obsidianmanager1",
+        "status": "running",
+        "classification": {
+          "kind": "github-radar-evaluation",
+          "repo": "swarmclawai/swarmvault",
+          "recommendation": "值得吸收，但分阶段进行"
+        },
+        "reasoningSummary": "评估 swarmclawai/swarmvault (stars: 592)。适配度高，建议分阶段吸收：MCP server 验证、接入 context API、重构 context 输出。",
+        "outputSummary": null,
+        "error": null,
+        "startedAt": "2026-07-02T07:06:52.034Z",
+        "completedAt": null
+      },
+      "wikiLinks": [],
+      "claims": [],
+      "contributions": [],
+      "artifacts": [],
+      "reviews": []
+    }
+  ],
+  "ideas": [],
+  "notes": [],
+  "projectEvents": [
+    {
+      "id": "cmr35vrqj011x0jny4c1jpule",
+      "projectId": "cmr1xndbz00170jnybuk3m9q3",
+      "title": "SwarmVault 评估完成：值得分阶段吸收",
+      "body": "核心能力：本地优先 LLM Wiki、混合检索、MCP server、Agent Task Ledger。适配度高，已生成 3 个 P1 子任务。",
+      "eventType": "github-radar-evaluation",
+      "createdAt": "2026-07-02T07:06:52.075Z",
+      "sourceInboxItemId": "cmr35vrpa011k0jnynq057yza",
+      "sourceAgentRunId": "cmr35vrpe011m0jnyn4qe2qp4"
+    }
+  ],
+  "wiki": [
+    {
+      "ok": true,
+      "title": "SwarmVault 吸收价值评估",
+      "status": "queued",
+      "job_id": "cmr35vrpl011p0jnyrmvqhiwp"
+    }
+  ],
+  "wiki_write_status": {
+    "status": "queued",
+    "requested": 1,
+    "queued": 1,
+    "succeeded": 0,
+    "failed": 0,
+    "errors": [],
+    "job_ids": [
+      "cmr35vrpl011p0jnyrmvqhiwp"
+    ]
+  },
+  "notification": null
+}

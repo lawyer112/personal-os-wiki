@@ -1,0 +1,24 @@
+{
+  "sourceId": "review-payload-f83134c7",
+  "title": "review-payload",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqyixt4a00n90jpk3todreos-review-close/review-payload.json",
+  "repoRelativePath": ".agent-runs/cmqyixt4a00n90jpk3todreos-review-close/review-payload.json",
+  "storedPath": "raw/sources/review-payload-f83134c7.json",
+  "extractedTextPath": "state/extracts/review-payload-f83134c7.md",
+  "extractedMetadataPath": "state/extracts/review-payload-f83134c7.json",
+  "extractionHash": "9adfa9675b8119a1f827950b75768d78e910207fe95b1a02738f810538e715e4",
+  "mimeType": "application/json",
+  "contentHash": "f83134c7ebf2b1cb07cccf05efe3afb563ea7f437263e49af1439dff17129b4d",
+  "semanticHash": "f83134c7ebf2b1cb07cccf05efe3afb563ea7f437263e49af1439dff17129b4d",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "1"
+  },
+  "createdAt": "2026-07-04T19:02:38.312Z",
+  "updatedAt": "2026-07-04T19:02:38.312Z"
+}

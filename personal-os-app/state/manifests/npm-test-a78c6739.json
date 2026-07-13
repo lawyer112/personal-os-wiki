@@ -1,0 +1,18 @@
+{
+  "sourceId": "npm-test-a78c6739",
+  "title": "npm-test",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/npm-test.log",
+  "repoRelativePath": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/npm-test.log",
+  "storedPath": "raw/sources/npm-test-a78c6739.log",
+  "extractedTextPath": "state/extracts/npm-test-a78c6739.md",
+  "extractedMetadataPath": "state/extracts/npm-test-a78c6739.json",
+  "extractionHash": "2fa16de898acb514701261864146e9d0832dfd17532d0321346f51f184cf31aa",
+  "mimeType": "text/plain",
+  "contentHash": "a78c673923801c11e35e34edd56433bcafe3ce82ca2f25ac40e3456c5e0f4375",
+  "semanticHash": "a78c673923801c11e35e34edd56433bcafe3ce82ca2f25ac40e3456c5e0f4375",
+  "createdAt": "2026-07-04T19:02:33.987Z",
+  "updatedAt": "2026-07-04T19:02:33.987Z"
+}

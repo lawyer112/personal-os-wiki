@@ -1,0 +1,24 @@
+{
+  "sourceId": "intake-writeback-cron-245e7697",
+  "title": "intake-writeback-cron",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/intake-writeback-cron.json",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/intake-writeback-cron.json",
+  "storedPath": "raw/sources/intake-writeback-cron-245e7697.json",
+  "extractedTextPath": "state/extracts/intake-writeback-cron-245e7697.md",
+  "extractedMetadataPath": "state/extracts/intake-writeback-cron-245e7697.json",
+  "extractionHash": "1b03e6aa9fc9d8d0bb3d71b25deb7ee9cb7fe00490dbc23c692b2f7c5e40e4cb",
+  "mimeType": "application/json",
+  "contentHash": "245e7697528d574c7064d977c691bb4136d589fbf2155f08d20bc57ac8f38aa7",
+  "semanticHash": "245e7697528d574c7064d977c691bb4136d589fbf2155f08d20bc57ac8f38aa7",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "11",
+    "nested_depth": "3"
+  },
+  "createdAt": "2026-07-04T19:02:32.397Z",
+  "updatedAt": "2026-07-04T19:02:32.397Z"
+}

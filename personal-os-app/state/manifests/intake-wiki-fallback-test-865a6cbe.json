@@ -1,0 +1,19 @@
+{
+  "sourceId": "intake-wiki-fallback-test-865a6cbe",
+  "title": "intake-wiki-fallback.test",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/tests/routes/intake-wiki-fallback.test.ts",
+  "repoRelativePath": "tests/routes/intake-wiki-fallback.test.ts",
+  "storedPath": "raw/sources/intake-wiki-fallback-test-865a6cbe.ts",
+  "extractedTextPath": "state/extracts/intake-wiki-fallback-test-865a6cbe.md",
+  "extractedMetadataPath": "state/extracts/intake-wiki-fallback-test-865a6cbe.json",
+  "extractionHash": "e683bdf4ebd5fb76eaef9c8190cb2d7c18b6cd05d028cb80544323c97203fe1f",
+  "mimeType": "text/typescript",
+  "contentHash": "865a6cbe375993e063358c99b54850d720ca8b3c11c94417e84208d50e08d545",
+  "semanticHash": "865a6cbe375993e063358c99b54850d720ca8b3c11c94417e84208d50e08d545",
+  "createdAt": "2026-07-04T19:03:00.671Z",
+  "updatedAt": "2026-07-04T19:03:00.671Z"
+}

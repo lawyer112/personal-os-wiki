@@ -1,0 +1,62 @@
+{
+  "source": {
+    "sourceType": "agent-output",
+    "sourcePlatform": "cron/context-pack",
+    "rawText": "AgentRun context pack archived for cmqyixt4a00n90jpk3todreos by cmr009fup01bu0jpkb1koq2h2.",
+    "createdBy": "hermes"
+  },
+  "agent": {
+    "model": "hermes-context-pack-archiver",
+    "classification": {
+      "kind": "agent-run-context-pack",
+      "task_id": "cmr009fup01bu0jpkb1koq2h2",
+      "archived_task_id": "cmqyixt4a00n90jpk3todreos"
+    },
+    "reasoningSummary": "将 .agent-runs 目录中的 gate、worker-result、diff、测试、部署和残余风险压缩成可检索 Wiki context pack。",
+    "outputSummary": "已生成 cmqyixt4a00n90jpk3todreos 的 AgentRun context pack。"
+  },
+  "project": {
+    "name": "Personal OS / Wiki 知识库升级",
+    "status": "active",
+    "priority": "P0",
+    "currentFocus": "Personal OS / Wiki 自驱闭环生产化"
+  },
+  "wikiNotes": [
+    {
+      "title": "AgentRun context pack cmqyixt4a00n90jpk3todreos 2026-06-30",
+      "frontmatter": {
+        "title": "AgentRun context pack cmqyixt4a00n90jpk3todreos 2026-06-30",
+        "type": "project",
+        "created_by": "hermes:worker",
+        "source_type": "agent-output",
+        "tags": [
+          "personal-os",
+          "personal-wiki",
+          "agent-run",
+          "context-pack",
+          "evidence"
+        ],
+        "created_at": "2026-06-30T13:06:13.194Z",
+        "task_id": "cmqyixt4a00n90jpk3todreos",
+        "agent_id": "obsidianmanager1",
+        "project": "Personal OS / Wiki 知识库升级",
+        "last_reviewed": "2026-06-30"
+      },
+      "metadata": {
+        "task_id": "cmqyixt4a00n90jpk3todreos",
+        "archive_task_id": "cmr009fup01bu0jpkb1koq2h2",
+        "agent_id": "obsidianmanager1",
+        "project": "Personal OS / Wiki 知识库升级"
+      },
+      "content": "# AgentRun Context Pack cmqyixt4a00n90jpk3todreos\n## 结论\n- task_id: cmqyixt4a00n90jpk3todreos\n- archive_task_id: cmr009fup01bu0jpkb1koq2h2\n- task_title: GitHub 雷达 2026-06-29：评估 rohitg00/agentmemory 的吸收价值\n- task_status: review\n- project: Personal OS / Wiki 知识库升级\n- gate: pass\n- run_dir: .agent-runs/cmqyixt4a00n90jpk3todreos\n- generated_at: 2026-06-30T13:06:13.194Z\n## 字段映射\n| Wiki 字段 | 来源 | 处理规则 |\n| --- | --- | --- |\n| task_id | Personal OS /api/agent/context.task.id | 作为本 context pack 的主索引 |\n| gate | .agent-runs/<task-id>/gate.json | 摘要 status、verifier、deployment、writeback |\n| diff | worker-result.diff_stat + diff.patch | 记录变更文件、diff stat 和截断后的安全摘录 |\n| 测试 | gate.verifier.commands + worker-result.commands | 保留命令、exit_code、证据路径 |\n| 部署 | gate.deployment + production_regression | 保留 backup、rollback、生产回归状态 |\n| 残余风险 | worker-result.risks / blocked_reason | 无风险时显式写“未发现新增残余风险” |\n| artifact index | run_dir 文件清单 | 只记录相对路径与大小，不写入 token/密钥 |\n## Gate\n- status: pass\n- synthesizer_allowed: true\n- definition_of_done_met: unknown\n## Diff\n- path: missing\n- stat:\n```text\n未提供 diff_stat；查看 diff.patch 或 artifact index。\n```\n- changed_files:\n- 未记录 changed_files。需要查看 diff.patch。\n\n### diff excerpt\n\n```diff\ndiff.patch 不存在或为空。\n\n```\n\n## 测试 / 验证\n\n- 未发现命令记录；该 pack 标记为 evidence incomplete。\n\n## 部署 / 生产回归\n\n- deployment_status: not_needed\n- backup_dir: 未记录\n- rollback_path: 未记录\n- production_regression_status: 未记录\n\n## 写回\n\n- writeback_status: 未记录\n- task_status_after_writeback: 未记录\n- wiki_links:\n- GitHub 知识雷达 2026-06-29 Personal OS Wiki 自驱候选 — vault/20_notes/2026-06-29/github-知识雷达-2026-06-29-personal-os-wiki-自驱候选.md\n\n## 残余风险\n\n- 未发现新增残余风险；保留源 run_dir 与备份路径用于回溯。\n\n## Artifact index\n\n- claim-result.json (4265 bytes)\n- context-readback.json (4518 bytes)\n- gate.json (882 bytes)\n- intake-payload.json (7049 bytes)\n- intake-result.json (8236 bytes)\n- lint.log (42 bytes)\n- npm-install.log (242 bytes)\n- postback.mjs (2191 bytes)\n- source-ledger/adoption-tasks.json (1719 bytes)\n- source-ledger/evidence.md (2951 bytes)\n- source-ledger/repos.json (855 bytes)\n- submit-payload.json (937 bytes)\n- submit-result.json (7550 bytes)\n- worker-result.json (664 bytes)\n"
+    }
+  ],
+  "projectEvents": [
+    {
+      "projectName": "Personal OS / Wiki 知识库升级",
+      "title": "AgentRun context pack archived cmqyixt4a00n90jpk3todreos",
+      "body": "已将 cmqyixt4a00n90jpk3todreos 的 gate、diff、测试、部署、残余风险写成 Wiki context pack。归档任务：cmr009fup01bu0jpkb1koq2h2。",
+      "eventType": "agent-context-pack"
+    }
+  ]
+}

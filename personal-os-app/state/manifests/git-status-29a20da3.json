@@ -1,0 +1,18 @@
+{
+  "sourceId": "git-status-29a20da3",
+  "title": "git-status",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr1kaxne00hc0ipolmjyzdss/git-status.txt",
+  "repoRelativePath": ".agent-runs/cmr1kaxne00hc0ipolmjyzdss/git-status.txt",
+  "storedPath": "raw/sources/git-status-29a20da3.txt",
+  "extractedTextPath": "state/extracts/git-status-29a20da3.md",
+  "extractedMetadataPath": "state/extracts/git-status-29a20da3.json",
+  "extractionHash": "783ac07b9bb2cc84f9f9767b29ee88ede885ca13f02b918f7f0f1d0dcaa1df6d",
+  "mimeType": "text/plain",
+  "contentHash": "29a20da311dc79a319a5c2b6d76c8fe7f18174bb7a460ecc39c0d5690701683f",
+  "semanticHash": "29a20da311dc79a319a5c2b6d76c8fe7f18174bb7a460ecc39c0d5690701683f",
+  "createdAt": "2026-07-04T19:02:41.759Z",
+  "updatedAt": "2026-07-04T19:02:41.759Z"
+}

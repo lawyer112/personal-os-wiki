@@ -1,0 +1,19 @@
+{
+  "sourceId": "view-models-be2cb9a2",
+  "title": "view-models",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/view-models.ts",
+  "repoRelativePath": "src/lib/view-models.ts",
+  "storedPath": "raw/sources/view-models-be2cb9a2.ts",
+  "extractedTextPath": "state/extracts/view-models-be2cb9a2.md",
+  "extractedMetadataPath": "state/extracts/view-models-be2cb9a2.json",
+  "extractionHash": "027844ef06e41ec4fc4995ac2f3f84b29f28b9cb6ba3508ac86ee91f700b4f8f",
+  "mimeType": "text/typescript",
+  "contentHash": "be2cb9a22edcac2dded299de66fa22fb181bf2e7f05e0632113000046d79370f",
+  "semanticHash": "be2cb9a22edcac2dded299de66fa22fb181bf2e7f05e0632113000046d79370f",
+  "createdAt": "2026-07-04T19:02:59.310Z",
+  "updatedAt": "2026-07-04T19:02:59.310Z"
+}

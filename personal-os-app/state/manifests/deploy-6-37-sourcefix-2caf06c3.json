@@ -1,0 +1,18 @@
+{
+  "sourceId": "deploy-6-37-sourcefix-2caf06c3",
+  "title": "deploy-6.37-sourcefix",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-6.37-sourcefix.log",
+  "repoRelativePath": ".agent-runs/cmqq4eqa800340jmjz1go2euo/artifacts/deploy-6.37-sourcefix.log",
+  "storedPath": "raw/sources/deploy-6-37-sourcefix-2caf06c3.log",
+  "extractedTextPath": "state/extracts/deploy-6-37-sourcefix-2caf06c3.md",
+  "extractedMetadataPath": "state/extracts/deploy-6-37-sourcefix-2caf06c3.json",
+  "extractionHash": "9e6fb7c4f4956d2c6a5a847f856a37d8557fa70cfb880c447512c8095e28f42b",
+  "mimeType": "text/plain",
+  "contentHash": "2caf06c38dce0c40c99da706c2f4c05590bef0c4588ba4f3516d4e2863302650",
+  "semanticHash": "2caf06c38dce0c40c99da706c2f4c05590bef0c4588ba4f3516d4e2863302650",
+  "createdAt": "2026-07-04T19:02:32.188Z",
+  "updatedAt": "2026-07-04T19:02:32.188Z"
+}

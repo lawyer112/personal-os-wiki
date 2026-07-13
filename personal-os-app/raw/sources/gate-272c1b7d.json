@@ -1,0 +1,49 @@
+{
+  "taskId": "cmqqxalrv000c0jpj83y7moe8",
+  "verifier": "hermes-coding-lane",
+  "checks": [
+    {
+      "name": "agent-context-unit-tests",
+      "status": "pass",
+      "evidence": "tests/services/agent-context.test.ts: 7 passed, 7 total",
+      "command": "npm test -- --run tests/services/agent-context.test.ts"
+    },
+    {
+      "name": "full-test-suite",
+      "status": "pass",
+      "evidence": "20 test files passed, 78 tests total",
+      "command": "npm test -- --run"
+    },
+    {
+      "name": "tsc",
+      "status": "pass",
+      "evidence": "npx tsc --noEmit: no errors",
+      "command": "npx tsc --noEmit"
+    },
+    {
+      "name": "lint",
+      "status": "pass",
+      "evidence": "eslint .: no errors after fixing any types in raw-manifest-ingest.test.ts",
+      "command": "npm run lint"
+    },
+    {
+      "name": "build",
+      "status": "pass",
+      "evidence": "next build succeeded with DATABASE_URL=postgresql://localhost:5432/dummy",
+      "command": "DATABASE_URL=postgresql://localhost:5432/dummy npm run build",
+      "note": "Build requires DATABASE_URL env var; this is a runtime dependency, not a code defect."
+    },
+    {
+      "name": "api-integration",
+      "status": "pass",
+      "evidence": "GET /api/agent/context?q=agent%20executable%20tasks%20personal%20os%20wiki%20github%20radar returned tiers.hot with 5 P0/P1 agent_allowed tasks, tiers.warm with 1 wiki note, tiers.cold with 1 policy item",
+      "command": "curl -s http://192.168.6.37:3100/api/agent/context?q=..."
+    }
+  ],
+  "status": "pass",
+  "verifiedAt": "2026-06-24T02:22:00Z",
+  "residualRisks": [
+    "Build requires DATABASE_URL environment variable; ensure docker-compose.prod.yml or CI sets it.",
+    "The raw-manifest-ingest.test.ts lint fix is a cross-task change; verify it doesn't conflict with the owning task's intent."
+  ]
+}

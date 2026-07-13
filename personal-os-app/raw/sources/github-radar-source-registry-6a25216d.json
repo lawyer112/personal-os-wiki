@@ -1,0 +1,361 @@
+{
+  "created_at": "2026-06-23T17:58:17.168Z",
+  "updated_at": "2026-07-03T01:02:42.769Z",
+  "entries": [
+    {
+      "full_name": "swarmclawai/swarmvault",
+      "url": "https://github.com/swarmclawai/swarmvault",
+      "description": "The local-first LLM Wiki: open-source knowledge graph builder, RAG knowledge base, and agent memory store. Built on Andrej Karpathy's pattern. An Obsidian alternative for personal knowledge management, AI second brain, and durable Claude Code / Codex / OpenClaw memory.",
+      "stars": 580,
+      "first_seen": "2026-06-23T17:58:29.976Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 34,
+      "first_score": 65.58,
+      "last_score": 65.59,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "ruvnet/agent-harness-generator",
+      "url": "https://github.com/ruvnet/agent-harness-generator",
+      "description": "🛠️ The meta-harness for AI agents — scaffold your own focused, branded agent harness with its own npx CLI, MCP server, memory, learning loop, and witness-signed releases. Works with Claude Code, Codex, pi.dev, Hermes, OpenClaw, and RVM (hardware-isolated sandbox).",
+      "stars": 294,
+      "first_seen": "2026-06-23T17:58:29.976Z",
+      "last_seen": "2026-06-29T01:13:15.825Z",
+      "times_seen": 28,
+      "first_score": 65.29,
+      "last_score": 65.34,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "Zhonghao1995/agentic-swmm-workflow",
+      "url": "https://github.com/Zhonghao1995/agentic-swmm-workflow",
+      "description": "Agentic SWMM is an automated, auditable, and memory-informed framework for reproducible stormwater modelling, integrating QGIS and EPA SWMM through the aiswmm runtime, reusable Skills, and MCP interfaces, with QA verification, provenance tracking, calibration support, and Codex, Hermes, Claude code as well as OpenClaw compatibility",
+      "stars": 14,
+      "first_seen": "2026-06-23T17:58:29.976Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 25,
+      "first_score": 65.01,
+      "last_score": 65.02,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "aaronnat23/disp8ch",
+      "url": "https://github.com/aaronnat23/disp8ch",
+      "description": "Self-hosted AI workspace where chat becomes visual workflows, multi-agent operations, and reviewable automations. Local memory; local or cloud models",
+      "stars": 3,
+      "first_seen": "2026-06-23T17:58:29.976Z",
+      "last_seen": "2026-07-01T22:01:52.069Z",
+      "times_seen": 24,
+      "first_score": 65,
+      "last_score": 65.02,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "Walliiee/agent-harness",
+      "url": "https://github.com/Walliiee/agent-harness",
+      "description": "A drop-in self-improving memory + operations harness for AI agents (OpenClaw / Hermes / Claude Code / Codex). Layered memory, autonomous drift-fixing loop, evals, and one-command DR. Templates + scripts, no secrets.",
+      "stars": 0,
+      "first_seen": "2026-06-23T20:25:11.424Z",
+      "last_seen": "2026-06-24T00:25:07.723Z",
+      "times_seen": 12,
+      "first_score": 65,
+      "last_score": 65,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "willynikes2/knowledge-base-server",
+      "url": "https://github.com/willynikes2/knowledge-base-server",
+      "description": "Make every AI agent you use smarter. Persistent memory with SQLite FTS5, MCP server, Obsidian sync, and self-learning intelligence pipeline.",
+      "stars": 171,
+      "first_seen": "2026-06-23T20:25:11.424Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 31,
+      "first_score": 61.17,
+      "last_score": 61.17,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "EverMind-AI/EverOS",
+      "url": "https://github.com/EverMind-AI/EverOS",
+      "description": "Self-evolving memory across Agent and platform. The one portable memory layer for every agent they use - Claude Code, Codex, OpenClaw, Hermes, and more",
+      "stars": 8574,
+      "first_seen": "2026-06-23T20:25:11.424Z",
+      "last_seen": "2026-06-24T08:30:24.242Z",
+      "times_seen": 24,
+      "first_score": 60,
+      "last_score": 60,
+      "signals": [
+        "source-registry",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "mnemon-dev/mnemon",
+      "url": "https://github.com/mnemon-dev/mnemon",
+      "description": "LLM-supervised persistent memory for AI agents — graph-based recall, cross-session knowledge, single binary. Works with Claude Code, OpenClaw, and any CLI agent.",
+      "stars": 360,
+      "first_seen": "2026-06-23T20:25:11.424Z",
+      "last_seen": "2026-07-02T10:02:41.674Z",
+      "times_seen": 25,
+      "first_score": 55.36,
+      "last_score": 55.37,
+      "signals": [
+        "source-registry",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "itechmeat/open-second-brain",
+      "url": "https://github.com/itechmeat/open-second-brain",
+      "description": "Local-first 🧠 memory for Hermes Agent that lives in your Obsidian vault and remembers project context. Nightly 😴 dream passes turn repeat corrections into confirmed preferences with measurable confidence. Adapters ship for Claude Code, Codex, and OpenClaw, with an MCP server for anything else.",
+      "stars": 94,
+      "first_seen": "2026-06-24T00:51:46.562Z",
+      "last_seen": "2026-06-24T08:30:24.242Z",
+      "times_seen": 13,
+      "first_score": 65.09,
+      "last_score": 65.09,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "OriginTrail/dkg",
+      "url": "https://github.com/OriginTrail/dkg",
+      "description": "OriginTrail Decentralized Knowledge Graph (DKG) is a decentralized knowledge infrastructure for multi-agent AI memory — enabling agents to publish, verify, and query shared knowledge as cryptographically verifiable graph assets across a peer-to-peer network.",
+      "stars": 162,
+      "first_seen": "2026-06-24T02:02:19.066Z",
+      "last_seen": "2026-06-24T08:30:24.242Z",
+      "times_seen": 10,
+      "first_score": 55.16,
+      "last_score": 55.16,
+      "signals": [
+        "source-registry",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "caura-ai/caura-memclaw",
+      "url": "https://github.com/caura-ai/caura-memclaw",
+      "description": "Governed shared memory for AI agent fleets — multi-agent, multi-tenant, MCP-native. Trust tiers, keystone policies, audit trails, knowledge graph, self-improving retrieval. Apache 2.0.",
+      "stars": 134,
+      "first_seen": "2026-06-24T08:13:49.455Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 11,
+      "first_score": 55.13,
+      "last_score": 55.23,
+      "signals": [
+        "source-registry",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "rohitg00/agentmemory",
+      "url": "https://github.com/rohitg00/agentmemory",
+      "description": "#1 Persistent memory for AI coding agents based on real-world benchmarks",
+      "stars": 24226,
+      "first_seen": "2026-06-29T01:13:15.825Z",
+      "last_seen": "2026-06-29T01:46:43.374Z",
+      "times_seen": 4,
+      "first_score": 70,
+      "last_score": 70,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "dzhng/duet-agent",
+      "url": "https://github.com/dzhng/duet-agent",
+      "description": "An opinionated full-stack agent harness with native memories, long running tasks, and multi-agent relay",
+      "stars": 35,
+      "first_seen": "2026-06-29T01:13:15.825Z",
+      "last_seen": "2026-07-02T10:02:41.674Z",
+      "times_seen": 6,
+      "first_score": 65.03,
+      "last_score": 65.04,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "lac5q/memroos",
+      "url": "https://github.com/lac5q/memroos",
+      "description": "MemroOS: memory OS for agent workflows, with a NOC-style operator console for memory, skills, dispatch, evals, and trust.",
+      "stars": 4,
+      "first_seen": "2026-06-29T01:13:15.825Z",
+      "last_seen": "2026-06-29T01:13:15.825Z",
+      "times_seen": 1,
+      "first_score": 65,
+      "last_score": 65,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "mycelium-io/mycelium",
+      "url": "https://github.com/mycelium-io/mycelium",
+      "description": "Multi-agent coordination + persistent memory, semantic negotiation, async rooms, and a shared knowledge graph",
+      "stars": 97,
+      "first_seen": "2026-07-01T01:05:17.459Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 2,
+      "first_score": 65.1,
+      "last_score": 65.1,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "AVIDS2/memorix",
+      "url": "https://github.com/AVIDS2/memorix",
+      "description": "Open-source cross-agent memory layer for coding agents via MCP. Compatible with Claude Code, Codex, Cursor, Windsurf, Gemini CLI, Antigravity, OpenClaw, Hermes Agent, Oh-my-Pi, Pi, Copilot, Kiro, OpenCode, and Trae.",
+      "stars": 520,
+      "first_seen": "2026-07-01T01:05:17.459Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 6,
+      "first_score": 55.52,
+      "last_score": 55.52,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "EverMind-AI/Raven",
+      "url": "https://github.com/EverMind-AI/Raven",
+      "description": "The memory-first self-improving agent harness built on EverOS.",
+      "stars": 38,
+      "first_seen": "2026-07-01T13:06:18.434Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 5,
+      "first_score": 65.04,
+      "last_score": 65.39,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    },
+    {
+      "full_name": "ruvnet/metaharness",
+      "url": "https://github.com/ruvnet/metaharness",
+      "description": "🛠️ The meta-harness for AI agents — scaffold your own focused, branded agent harness with its own npx CLI, MCP server, memory, learning loop, and witness-signed releases. Works with Claude Code, Codex, pi.dev, Hermes, OpenClaw, and RVM (hardware-isolated sandbox).",
+      "stars": 353,
+      "first_seen": "2026-07-03T01:02:42.726Z",
+      "last_seen": "2026-07-03T01:02:42.726Z",
+      "times_seen": 1,
+      "first_score": 65.35,
+      "last_score": 65.35,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "status": "new"
+    }
+  ]
+}

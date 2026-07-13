@@ -1,0 +1,56 @@
+# docker-compose.prod
+Format: YAML
+Top-level: object
+Size: 2
+Nested depth: 5
+
+## Schema
+
+- services: object (3 keys)
+- volumes: object (2 keys)
+
+## Preview
+
+```yaml
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: personal_os
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: personal_os
+    volumes:
+      - personal_os_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U personal_os -d personal_os"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      args:
+        HTTP_PROXY: ${HTTP_PROXY:-}
+        HTTPS_PROXY: ${HTTPS_PROXY:-}
+        NPM_CONFIG_REGISTRY: ${NPM_CONFIG_REGISTRY:-https://registry.npmmirror.com}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://personal_os:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/personal_os?schema=public
+      PERSONAL_OS_API_TOKEN: ${PERSONAL_OS_API_TOKEN:-}
+      PERSONAL_OS_READ_TOKEN: ${PERSONAL_OS_READ_TOKEN:-}
+      PERSONAL_OS_AUTH_DISABLED: ${PERSONAL_OS_AUTH_DISABLED:-false}
+      WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:?set WIKI_READ_TOKEN}
+      WIKI_API_TOKEN: ${WIKI_API_TOKEN:-}
+      PERSONAL_OS_VAULT_DIR: ./data/vault
+      PERSONAL_OS_ATTACHMENT_DIR: ./data/attachments
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:?set NEXT_PUBLIC_APP_URL}
+      NEXT_PUBLIC_WIKI_URL: ${NEXT_PUBLIC_WIKI_URL:?set NEXT_PUBLIC_WIKI_URL}
+    ports:
+      - "0.0.0.0:3100:3000"
+…
+```

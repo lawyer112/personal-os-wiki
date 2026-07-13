@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { AgentContextPanel } from "@/components/AgentContextPanel";
+import { AgentOwnerBadge } from "@/components/AgentOwnerBadge";
 import { TaskEditForm } from "@/components/TaskEditForm";
 import { TaskStatusControls } from "@/components/TaskStatusControls";
 import type { AgentContextPack } from "@/lib/agent-context";
@@ -66,6 +67,23 @@ export function TaskInspector({
           </div>
         </div>
       </div>
+
+      {(task.ownerAgent || task.executionMode === "agent_allowed" || task.executionMode === "agent_required") && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-zinc-500">Agent 状态：</span>
+          <AgentOwnerBadge
+            ownerAgent={task.ownerAgent}
+            leaseUntil={task.leaseUntil}
+            lastHeartbeatAt={task.lastHeartbeatAt}
+            executionMode={task.executionMode}
+          />
+          {task.leaseUntil && (
+            <span className="text-zinc-400">
+              租约至 {new Date(task.leaseUntil).toLocaleString("zh-CN", { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" })}
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="mt-4">
         <h3 className="text-sm font-semibold text-zinc-950">今日目标</h3>

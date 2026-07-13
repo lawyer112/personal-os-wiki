@@ -358,4 +358,50 @@ describe("agent context harness", () => {
     expect(episodes.some((e) => e.type === "agent_run")).toBe(true);
     expect(episodes.some((e) => e.type === "task" && e.summary.includes("retry logic"))).toBe(true);
   });
+
+  it("skips memory vector recall when MEMORY_VECTOR_RECALL_ENABLED=false", async () => {
+    const prev = process.env.MEMORY_VECTOR_RECALL_ENABLED;
+    process.env.MEMORY_VECTOR_RECALL_ENABLED = "false";
+    try {
+      mockedSearchWikiNotes.mockResolvedValue([
+        {
+          title: "Wiki note",
+          path: "wiki/note.md",
+          tags: [],
+          concepts: [],
+          excerpt: "Some wiki content.",
+        },
+      ]);
+      const taskFindMany = vi.fn().mockResolvedValue([
+        {
+          id: "task_disable",
+          title: "Task with memory recall disabled",
+          status: "todo",
+          priority: "P1",
+          riskLevel: "low",
+          executionMode: "agent_allowed",
+          ownerAgent: null,
+          leaseUntil: null,
+          nextAction: "Do something.",
+          definitionOfDone: "Done.",
+          project: { id: "project_1", name: "Personal OS" },
+        },
+      ]);
+      const activityLogFindMany = vi.fn().mockResolvedValue([]);
+
+      const context = await getQueryAgentContext("test query", {
+        task: { findMany: taskFindMany },
+        activityLog: { findMany: activityLogFindMany },
+      });
+
+      // No memory episodes should appear when disabled
+      expect(context.evidence.episodes.some((e) => e.type === "memory")).toBe(false);
+    } finally {
+      if (prev === undefined) {
+        delete process.env.MEMORY_VECTOR_RECALL_ENABLED;
+      } else {
+        process.env.MEMORY_VECTOR_RECALL_ENABLED = prev;
+      }
+    }
+  });
 });

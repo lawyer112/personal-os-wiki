@@ -1,0 +1,18 @@
+{
+  "sourceId": "dry-run-54614726",
+  "title": "dry-run",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr009fup01bu0jpkb1koq2h2/dry-run.log",
+  "repoRelativePath": ".agent-runs/cmr009fup01bu0jpkb1koq2h2/dry-run.log",
+  "storedPath": "raw/sources/dry-run-54614726.log",
+  "extractedTextPath": "state/extracts/dry-run-54614726.md",
+  "extractedMetadataPath": "state/extracts/dry-run-54614726.json",
+  "extractionHash": "1c0eb5d51ffc697d3a90a3eb6e05abcd2654cbc8c4ec44fc614787cde38ef8bf",
+  "mimeType": "text/plain",
+  "contentHash": "54614726648c76d651b057aaee51cee6560c3c599ad541e978e2af19fd7537e3",
+  "semanticHash": "54614726648c76d651b057aaee51cee6560c3c599ad541e978e2af19fd7537e3",
+  "createdAt": "2026-07-04T19:02:40.643Z",
+  "updatedAt": "2026-07-04T19:02:40.643Z"
+}

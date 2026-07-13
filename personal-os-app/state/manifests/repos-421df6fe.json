@@ -1,0 +1,24 @@
+{
+  "sourceId": "repos-421df6fe",
+  "title": "repos",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/github-radar-script-intake-smoke/repos.json",
+  "repoRelativePath": ".agent-runs/github-radar-script-intake-smoke/repos.json",
+  "storedPath": "raw/sources/repos-421df6fe.json",
+  "extractedTextPath": "state/extracts/repos-421df6fe.md",
+  "extractedMetadataPath": "state/extracts/repos-421df6fe.json",
+  "extractionHash": "424f52edd22652bfb2e7637a27a178a9da498d31ce224b14e84ea3ffdeec9c11",
+  "mimeType": "application/json",
+  "contentHash": "421df6fe0b7bcb72b047be47da6b7229523435c859869d4501ae293d9cb41229",
+  "semanticHash": "421df6fe0b7bcb72b047be47da6b7229523435c859869d4501ae293d9cb41229",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:47.272Z",
+  "updatedAt": "2026-07-04T19:02:47.272Z"
+}

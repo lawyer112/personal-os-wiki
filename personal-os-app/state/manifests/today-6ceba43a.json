@@ -1,0 +1,19 @@
+{
+  "sourceId": "today-6ceba43a",
+  "title": "today",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/today.ts",
+  "repoRelativePath": "src/lib/today.ts",
+  "storedPath": "raw/sources/today-6ceba43a.ts",
+  "extractedTextPath": "state/extracts/today-6ceba43a.md",
+  "extractedMetadataPath": "state/extracts/today-6ceba43a.json",
+  "extractionHash": "dd988ad1968410db2cb80d0d7d2d4e8268b24d5cfb80cf7a7cae7b7bac33836f",
+  "mimeType": "text/typescript",
+  "contentHash": "6ceba43aba8fe43818a3b565d386dad4c48c746cd8bed155ee67936258281ef4",
+  "semanticHash": "6ceba43aba8fe43818a3b565d386dad4c48c746cd8bed155ee67936258281ef4",
+  "createdAt": "2026-07-04T19:02:59.104Z",
+  "updatedAt": "2026-07-04T19:02:59.104Z"
+}

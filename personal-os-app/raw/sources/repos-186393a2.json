@@ -1,0 +1,257 @@
+{
+  "generated_at": "2026-07-03T01:02:42.766Z",
+  "repos": [
+    {
+      "full_name": "swarmclawai/swarmvault",
+      "url": "https://github.com/swarmclawai/swarmvault",
+      "description": "The local-first LLM Wiki: open-source knowledge graph builder, RAG knowledge base, and agent memory store. Built on Andrej Karpathy's pattern. An Obsidian alternative for personal knowledge management, AI second brain, and durable Claude Code / Codex / OpenClaw memory.",
+      "stars": 593,
+      "pushed_at": "2026-06-30T20:28:43Z",
+      "query": "AI personal knowledge management RAG memory stars:>50",
+      "default_branch": "main",
+      "score": 65.59,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。"
+      ],
+      "readme_excerpt": "# SwarmVault <!-- readme-language-nav:start --> **Languages:** [English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md) <!-- readme-language-nav:end --> [![npm](https://img.shields.io/npm/v/@swarmvaultai/cli)](https://www.npmjs.com/package/@swarmvaultai/cli) [![npm downloads](https://img.shields.io/npm/dw/@swarmvaultai/cli)](https://www.npmjs.com/package/@swarmvaultai/cli) [![GitHub stars](https://img.shi"
+    },
+    {
+      "full_name": "EverMind-AI/Raven",
+      "url": "https://github.com/EverMind-AI/Raven",
+      "description": "The memory-first self-improving agent harness built on EverOS.",
+      "stars": 391,
+      "pushed_at": "2026-07-02T14:09:40Z",
+      "query": "OpenClaw Hermes Codex memory agent",
+      "default_branch": "main",
+      "score": 65.39,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。"
+      ],
+      "readme_excerpt": "<div align=\"center\" id=\"readme-top\"> ![Raven banner](https://github.com/user-attachments/assets/5a99d736-49ee-49c9-8b51-890f14078e78) <p align=\"center\"> <a href=\"https://x.com/evermind\"><img src=\"https://img.shields.io/badge/EverMind-000000?labelColor=gray&style=for-the-badge&logo=x&logoColor=white\" alt=\"X\"></a> <a href=\"https://huggingface.co/EverMind-AI\"><img src=\"https://img.shields.io/badge/🤗_HuggingFace-EverMin"
+    },
+    {
+      "full_name": "ruvnet/metaharness",
+      "url": "https://github.com/ruvnet/metaharness",
+      "description": "🛠️ The meta-harness for AI agents — scaffold your own focused, branded agent harness with its own npx CLI, MCP server, memory, learning loop, and witness-signed releases. Works with Claude Code, Codex, pi.dev, Hermes, OpenClaw, and RVM (hardware-isolated sandbox).",
+      "stars": 353,
+      "pushed_at": "2026-07-02T21:58:39Z",
+      "query": "OpenClaw Hermes Codex memory agent",
+      "default_branch": "main",
+      "score": 65.35,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。"
+      ],
+      "readme_excerpt": "<div align=\"center\"> # MetaHarness ### Mint a custom AI agent harness from any repo. `npx metaharness` · [open the Studio →](https://ruvnet.github.io/metaharness/) <sub>(Repo: `ruvnet/metaharness` · CLI: `metaharness` · Library: `@ruvnet/agent-harness-generator`)</sub> [![Open the Studio](https://img.shields.io/badge/Studio-open_in_browser_↗-7c5cff?style=for-the-badge&logo=githubpages&logoColor=white)](https://ruvnet"
+    },
+    {
+      "full_name": "mycelium-io/mycelium",
+      "url": "https://github.com/mycelium-io/mycelium",
+      "description": "Multi-agent coordination + persistent memory, semantic negotiation, async rooms, and a shared knowledge graph",
+      "stars": 98,
+      "pushed_at": "2026-07-02T22:01:17Z",
+      "query": "agent memory knowledge graph stars:>50",
+      "default_branch": "main",
+      "score": 65.1,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。"
+      ],
+      "readme_excerpt": "# mycelium <div align=\"center\"> <img src=\"docs/banner.png?v=2\" alt=\"mycelium\" width=\"800\" /> </div> <p align=\"center\"> <a href=\"https://github.com/mycelium-io/mycelium/actions/workflows/ci.yml?branch=main\"><img src=\"https://img.shields.io/github/actions/workflow/status/mycelium-io/mycelium/ci.yml?branch=main&style=for-the-badge\" alt=\"CI status\"></a> <a href=\"https://github.com/mycelium-io/mycelium/releases\"><img src="
+    },
+    {
+      "full_name": "Zhonghao1995/agentic-swmm-workflow",
+      "url": "https://github.com/Zhonghao1995/agentic-swmm-workflow",
+      "description": "Agentic SWMM is an automated, auditable, and memory-informed framework for reproducible stormwater modelling, integrating QGIS and EPA SWMM through the aiswmm runtime, reusable Skills, and MCP interfaces, with QA verification, provenance tracking, calibration support, and Codex, Hermes, Claude code as well as OpenClaw compatibility",
+      "stars": 16,
+      "pushed_at": "2026-07-02T16:11:00Z",
+      "query": "OpenClaw Hermes Codex memory agent",
+      "default_branch": "main",
+      "score": 65.02,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。"
+      ],
+      "readme_excerpt": "# Agentic SWMM Workflow <p align=\"center\"> <img src=\"docs/figs/agentic_swmm_logo.png\" alt=\"Agentic SWMM logo with agentic robot, stormwater system, and SWMM wordmark\" width=\"900\" /> </p> <p align=\"center\"> <a href=\"https://aiswmm.com/demo/\"> <img src=\"https://img.shields.io/badge/demo-live-1a7f37\" alt=\"Demo Live — aiswmm.com/demo\" /> </a> <a href=\"https://github.com/Zhonghao1995/agentic-swmm-workflow/actions/workflow"
+    },
+    {
+      "full_name": "willynikes2/knowledge-base-server",
+      "url": "https://github.com/willynikes2/knowledge-base-server",
+      "description": "Make every AI agent you use smarter. Persistent memory with SQLite FTS5, MCP server, Obsidian sync, and self-learning intelligence pipeline.",
+      "stars": 174,
+      "pushed_at": "2026-04-04T01:21:48Z",
+      "query": "Obsidian AI knowledge base agent stars:>20",
+      "default_branch": "master",
+      "score": 61.17,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。"
+      ],
+      "readme_excerpt": "# knowledge-base-server **Make every AI agent you use smarter.** A persistent memory system that captures, classifies, synthesizes, and retrieves knowledge for AI agents. One brain, multiple agents, compounding intelligence. Production-proven with 200+ documents, three agents (Claude, Codex, Gemini), and daily use. This is not just a search engine. It is an intelligence pipeline that turns raw information into refine"
+    },
+    {
+      "full_name": "AVIDS2/memorix",
+      "url": "https://github.com/AVIDS2/memorix",
+      "description": "Open-source cross-agent memory layer for coding agents via MCP. Compatible with Claude Code, Codex, Cursor, Windsurf, Gemini CLI, Antigravity, OpenClaw, Hermes Agent, Oh-my-Pi, Pi, Copilot, Kiro, OpenCode, and Trae.",
+      "stars": 521,
+      "pushed_at": "2026-07-02T15:27:51Z",
+      "query": "OpenClaw Hermes Codex memory agent",
+      "default_branch": "main",
+      "score": 55.52,
+      "signals": [
+        "source-registry",
+        "context-pack",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Agent context pack / task ledger",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "把 .agent-runs/<task-id>/ 自动归档成 Wiki note，包含 gate、diff、测试、部署、风险和下一步。",
+        "给 context 检索加入同类任务 episode 和图谱邻接证据，避免空候选和重复踩坑。"
+      ],
+      "readme_excerpt": "<p align=\"center\"> <img src=\"https://raw.githubusercontent.com/AVIDS2/memorix/main/assets/readme-hero.svg\" alt=\"Memorix\" width=\"720\"> </p> <h1 align=\"center\">Memorix</h1> <p align=\"center\"> <strong>Local-first shared memory layer for AI coding agents.</strong><br> One project memory system for Claude Code, Codex, Cursor, Windsurf, Copilot, Gemini CLI, OpenCode, OpenClaw, Hermes Agent, Oh-my-Pi, Pi, Kiro, Antigravity,"
+    },
+    {
+      "full_name": "caura-ai/caura-memclaw",
+      "url": "https://github.com/caura-ai/caura-memclaw",
+      "description": "Governed shared memory for AI agent fleets — multi-agent, multi-tenant, MCP-native. Trust tiers, keystone policies, audit trails, knowledge graph, self-improving retrieval. Apache 2.0.",
+      "stars": 233,
+      "pushed_at": "2026-07-02T22:16:45Z",
+      "query": "agent memory knowledge graph stars:>50",
+      "default_branch": "main",
+      "score": 55.23,
+      "signals": [
+        "source-registry",
+        "memory-tiering",
+        "graph-recall",
+        "agent-hooks",
+        "doctor-next"
+      ],
+      "signalLabels": [
+        "Source Registry / evidence ledger",
+        "Hot / warm / cold memory tiering",
+        "Graph recall: FTS/vector/community/PPR/episodic traces",
+        "Agent lifecycle hooks / MCP integration",
+        "Doctor / next-command guidance"
+      ],
+      "adoption": [
+        "把外部来源写成 source ledger：repos.json、evidence.md、adoption-tasks.json，并通过 /api/intake 写回 Wiki + Task。",
+        "让 /api/agent/context 输出 tiers.hot、tiers.warm、tiers.cold，优先喂给自驱执行器。",
+        "给 context 检索加入同类任务 episode 和图谱邻接证据，避免空候选和重复踩坑。"
+      ],
+      "readme_excerpt": "<p align=\"center\"> <img src=\"static/images/memCLAW_logo_dark.png\" alt=\"MemClaw\" width=\"420\" /> </p> <h3 align=\"center\">Fleet memory for AI agents &mdash; governed, shared, self-improving.</h3> <p align=\"center\"> <a href=\"LICENSE\"><img src=\"https://img.shields.io/badge/License-Apache_2.0-blue.svg\" alt=\"License\" /></a> <a href=\"https://github.com/caura-ai/caura-memclaw/stargazers\"><img src=\"https://img.shields.io/githu"
+    }
+  ]
+}

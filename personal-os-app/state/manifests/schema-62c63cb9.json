@@ -1,0 +1,18 @@
+{
+  "sourceId": "schema-62c63cb9",
+  "title": "schema",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/prisma/schema.prisma",
+  "repoRelativePath": "prisma/schema.prisma",
+  "storedPath": "raw/sources/schema-62c63cb9.prisma",
+  "extractedTextPath": "state/extracts/schema-62c63cb9.md",
+  "extractedMetadataPath": "state/extracts/schema-62c63cb9.json",
+  "extractionHash": "6a88d11b3fcb0194d48c2da0403f01e9b64e54696b99b2f8989250df7217607a",
+  "mimeType": "application/octet-stream",
+  "contentHash": "62c63cb9d27fc2eaf1a2918fbf19e0b99c8e49a26f5e1d1b4e61aa7cbc7d397c",
+  "semanticHash": "62c63cb9d27fc2eaf1a2918fbf19e0b99c8e49a26f5e1d1b4e61aa7cbc7d397c",
+  "createdAt": "2026-07-04T19:02:50.730Z",
+  "updatedAt": "2026-07-04T19:02:50.730Z"
+}

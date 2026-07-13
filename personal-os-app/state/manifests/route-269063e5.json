@@ -1,0 +1,19 @@
+{
+  "sourceId": "route-269063e5",
+  "title": "route",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/app/api/ideas/[id]/promote/route.ts",
+  "repoRelativePath": "src/app/api/ideas/[id]/promote/route.ts",
+  "storedPath": "raw/sources/route-269063e5.ts",
+  "extractedTextPath": "state/extracts/route-269063e5.md",
+  "extractedMetadataPath": "state/extracts/route-269063e5.json",
+  "extractionHash": "259899ec7d3fe3d3635dd53be2b702eecf87ba20d212f0167eb6ffef694c15a0",
+  "mimeType": "text/typescript",
+  "contentHash": "269063e52f7960daf09d1c17cd6c9908033483f9e9507988e0bf3f84cb7fe1e5",
+  "semanticHash": "269063e52f7960daf09d1c17cd6c9908033483f9e9507988e0bf3f84cb7fe1e5",
+  "createdAt": "2026-07-04T19:02:52.806Z",
+  "updatedAt": "2026-07-04T19:02:52.806Z"
+}

@@ -1,0 +1,18 @@
+{
+  "sourceId": "codex-final-c7e03ad2",
+  "title": "codex.final",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq38soe001a0jmj1c8qffq0/artifacts/codex.final.txt",
+  "repoRelativePath": ".agent-runs/cmqq38soe001a0jmj1c8qffq0/artifacts/codex.final.txt",
+  "storedPath": "raw/sources/codex-final-c7e03ad2.txt",
+  "extractedTextPath": "state/extracts/codex-final-c7e03ad2.md",
+  "extractedMetadataPath": "state/extracts/codex-final-c7e03ad2.json",
+  "extractionHash": "60d5518eb4839522b543170ff9c59793a4170a0ec09b8a48a83b8450fce6cef4",
+  "mimeType": "text/plain",
+  "contentHash": "c7e03ad29f0a9d85a04443324c884db38e116ac9af73c28950c9efba629d1a24",
+  "semanticHash": "c7e03ad29f0a9d85a04443324c884db38e116ac9af73c28950c9efba629d1a24",
+  "createdAt": "2026-07-04T19:02:31.831Z",
+  "updatedAt": "2026-07-04T19:02:31.831Z"
+}

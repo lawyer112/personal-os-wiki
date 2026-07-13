@@ -1,0 +1,18 @@
+{
+  "sourceId": "personal-os-wiki-v0-66fb6bfe",
+  "title": "Personal OS / Wiki 优化审计 v0",
+  "originType": "file",
+  "sourceKind": "markdown",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/audit-report.md",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/audit-report.md",
+  "storedPath": "raw/sources/personal-os-wiki-v0-66fb6bfe.md",
+  "extractedTextPath": "state/extracts/personal-os-wiki-v0-66fb6bfe.md",
+  "extractedMetadataPath": "state/extracts/personal-os-wiki-v0-66fb6bfe.json",
+  "extractionHash": "0e38b177d480c8231dc164bd96677be7eb32291f7cbef3d093bc939ac4c7e0c5",
+  "mimeType": "text/markdown",
+  "contentHash": "66fb6bfee838046aa73b3bd0a822a8f0267f2d67e40dd38c293d95fa4ce13fde",
+  "semanticHash": "f88e66b3e3bb7856d8bf2463bccdb3a3a1cfbdc66420908109e35886775d92bf",
+  "createdAt": "2026-07-04T19:02:30.380Z",
+  "updatedAt": "2026-07-04T19:02:30.380Z"
+}

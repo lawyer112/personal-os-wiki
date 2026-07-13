@@ -1,0 +1,18 @@
+{
+  "sourceId": "dockerignore-9fe94c08",
+  "title": ".dockerignore",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.dockerignore",
+  "repoRelativePath": ".dockerignore",
+  "storedPath": "raw/sources/dockerignore-9fe94c08.bin",
+  "extractedTextPath": "state/extracts/dockerignore-9fe94c08.md",
+  "extractedMetadataPath": "state/extracts/dockerignore-9fe94c08.json",
+  "extractionHash": "7a7d52214218deb2955f81c39e0dbd2861a995830fd8229e05f01ab01dd57822",
+  "mimeType": "application/octet-stream",
+  "contentHash": "9fe94c0821c1dc27494b134fbc6abcb32db0e0d138b3cfae379b3c2ac130251c",
+  "semanticHash": "9fe94c0821c1dc27494b134fbc6abcb32db0e0d138b3cfae379b3c2ac130251c",
+  "createdAt": "2026-07-04T19:02:48.431Z",
+  "updatedAt": "2026-07-04T19:02:48.431Z"
+}

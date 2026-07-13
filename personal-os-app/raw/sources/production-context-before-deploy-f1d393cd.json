@@ -1,0 +1,17 @@
+{
+  "http_status": 200,
+  "ok": true,
+  "context_keys": [
+    "activity",
+    "generatedAt",
+    "policy",
+    "recentTasks",
+    "relatedIdeas",
+    "searchQueries",
+    "task",
+    "wiki"
+  ],
+  "has_tiers": false,
+  "wiki_status": "ok",
+  "recent_tasks_count": 0
+}

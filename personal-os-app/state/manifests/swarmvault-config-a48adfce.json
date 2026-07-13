@@ -1,0 +1,24 @@
+{
+  "sourceId": "swarmvault-config-a48adfce",
+  "title": "swarmvault.config",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/swarmvault.config.json",
+  "repoRelativePath": "swarmvault.config.json",
+  "storedPath": "raw/sources/swarmvault-config-a48adfce.json",
+  "extractedTextPath": "state/extracts/swarmvault-config-a48adfce.md",
+  "extractedMetadataPath": "state/extracts/swarmvault-config-a48adfce.json",
+  "extractionHash": "1d3c5c5f6df5663e3afecd09a28702213791bda57c3160892bff4ed576bb9350",
+  "mimeType": "application/json",
+  "contentHash": "a48adfced81a10f2038f523d6b935d4e392fd752cc7fc79d6c2306d5a13470b1",
+  "semanticHash": "a48adfced81a10f2038f523d6b935d4e392fd752cc7fc79d6c2306d5a13470b1",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "13",
+    "nested_depth": "4"
+  },
+  "createdAt": "2026-07-04T19:02:59.751Z",
+  "updatedAt": "2026-07-04T19:02:59.751Z"
+}

@@ -1,0 +1,18 @@
+{
+  "sourceId": "no-code-diff-created-by-task-cmqq29yi9000c0jmjcejamrel-edc64a84",
+  "title": "No code diff created by task cmqq29yi9000c0jmjcejamrel.",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/diff.patch",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/diff.patch",
+  "storedPath": "raw/sources/no-code-diff-created-by-task-cmqq29yi9000c0jmjcejamrel-edc64a84.patch",
+  "extractedTextPath": "state/extracts/no-code-diff-created-by-task-cmqq29yi9000c0jmjcejamrel-edc64a84.md",
+  "extractedMetadataPath": "state/extracts/no-code-diff-created-by-task-cmqq29yi9000c0jmjcejamrel-edc64a84.json",
+  "extractionHash": "82371a6fe97f6374583e7c646b9b50c9be903043b49db1a33196fc33b8a7899c",
+  "mimeType": "application/octet-stream",
+  "contentHash": "edc64a849f36955f41931bb9ce5405000f760b3d081ca68658e6f9a6e0b365e4",
+  "semanticHash": "edc64a849f36955f41931bb9ce5405000f760b3d081ca68658e6f9a6e0b365e4",
+  "createdAt": "2026-07-04T19:02:30.419Z",
+  "updatedAt": "2026-07-04T19:02:30.419Z"
+}

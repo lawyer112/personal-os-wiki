@@ -1,0 +1,41 @@
+# gate
+Format: JSON
+Top-level: object
+Size: 6
+Nested depth: 3
+
+## Schema
+
+- task_id: string
+- checked_at: string
+- status: string
+- checks: array (6 items)
+- synthesizer: object (2 keys)
+- risks: array (2 items)
+
+## Preview
+
+```json
+{
+  "task_id": "agent-context-agentmemory-recall-20260702",
+  "checked_at": "2026-07-02T01:29:30Z",
+  "status": "pass",
+  "checks": [
+    {"name": "tsc --noEmit", "passed": true},
+    {"name": "vitest full suite (94 tests)", "passed": true},
+    {"name": "agentmemory-client + embedding-providers new tests (6)", "passed": true},
+    {"name": "live agentmemory smart-search reachable on localhost:3111", "passed": true},
+    {"name": "no secrets in diff/output", "passed": true},
+    {"name": "personal_os_intake_writeback_201", "passed": true, "detail": "inboxId cmr2tt01w00ra0jny2mg2r62z, agentRunId cmr2tt02300rc0jny8i9pgv07"}
+  ],
+  "synthesizer": {
+    "allowed_to_announce_done": true,
+    "reason": "代码改动已本地验证通过（tsc+全量测试+真实服务连通性），未部署到生产，符合中风险任务的谨慎处理；已如实写回 Personal OS 并说明未完成 DoD 的剩余部分。"
+  },
+  "risks": [
+    "P0 父任务尚未整体完成",
+    "本地 commit 未 push"
+  ]
+}
+
+```

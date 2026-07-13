@@ -1,0 +1,19 @@
+{
+  "sourceId": "postcss-config-dfac7ac2",
+  "title": "postcss.config",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "javascript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/postcss.config.mjs",
+  "repoRelativePath": "postcss.config.mjs",
+  "storedPath": "raw/sources/postcss-config-dfac7ac2.mjs",
+  "extractedTextPath": "state/extracts/postcss-config-dfac7ac2.md",
+  "extractedMetadataPath": "state/extracts/postcss-config-dfac7ac2.json",
+  "extractionHash": "425cae8fc388694ad57c611494bda31a54262a7e4c78217fbf21a9a296fba7b3",
+  "mimeType": "text/javascript",
+  "contentHash": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
+  "semanticHash": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
+  "createdAt": "2026-07-04T19:02:49.939Z",
+  "updatedAt": "2026-07-04T19:02:49.939Z"
+}

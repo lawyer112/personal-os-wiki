@@ -1,0 +1,24 @@
+{
+  "sourceId": "heartbeat-before-archive-63e68e52",
+  "title": "heartbeat-before-archive",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6rk00090jn58kastmq9/heartbeat-before-archive.json",
+  "repoRelativePath": ".agent-runs/cmqqfl6rk00090jn58kastmq9/heartbeat-before-archive.json",
+  "storedPath": "raw/sources/heartbeat-before-archive-63e68e52.json",
+  "extractedTextPath": "state/extracts/heartbeat-before-archive-63e68e52.md",
+  "extractedMetadataPath": "state/extracts/heartbeat-before-archive-63e68e52.json",
+  "extractionHash": "be17bf3738d011bd1dcb0fe415804a76d32559e7bfeb31ace8676da2abe8ace8",
+  "mimeType": "application/json",
+  "contentHash": "63e68e524643ff9457d504cdf85adb30748d8afcb71439498ddf7e6d0021d481",
+  "semanticHash": "63e68e524643ff9457d504cdf85adb30748d8afcb71439498ddf7e6d0021d481",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "2",
+    "nested_depth": "8"
+  },
+  "createdAt": "2026-07-04T19:02:35.256Z",
+  "updatedAt": "2026-07-04T19:02:35.256Z"
+}

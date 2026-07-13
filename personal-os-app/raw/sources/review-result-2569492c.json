@@ -1,0 +1,286 @@
+{
+  "http_status": 200,
+  "result": {
+    "ok": true,
+    "task": {
+      "id": "cmqqfl6hp00070jn5bgoym7dx",
+      "title": "把 /api/agent/context 输出升级为 hot/warm/cold 三层上下文 v0",
+      "description": "对象是 Personal OS agent context API；动作是按执行优先级给任务、Wiki、Activity、Idea 分层；产物是 tiers 字段和测试。吸收 knowledge-base-server 的三层记忆设计。",
+      "status": "done",
+      "priority": "P0",
+      "riskLevel": "low",
+      "executionMode": "agent_allowed",
+      "agentTags": [
+        "personal-os",
+        "context",
+        "memory-tiering"
+      ],
+      "ownerAgent": null,
+      "leaseUntil": null,
+      "lastHeartbeatAt": "2026-06-23T10:27:00.509Z",
+      "requiredOutput": "/api/agent/context JSON 增加 tiers.hot、tiers.warm、tiers.cold；保留兼容字段；新增测试覆盖空结果、当前任务、历史 Wiki 命中。",
+      "nextAction": "阅读 src/app/api/agent/context/route.ts 和相关 service，定义分层规则并写失败测试。",
+      "definitionOfDone": "query=personal os wiki 时返回 hot/warm/cold；hot 至少含当前 P0/P1 agent_allowed task 或最近阻塞；npm test、tsc、lint、build 全通过。",
+      "dueDate": null,
+      "estimateMinutes": 120,
+      "createdBy": "hermes",
+      "createdAt": "2026-06-23T09:17:33.853Z",
+      "updatedAt": "2026-06-23T10:31:27.039Z",
+      "completedAt": "2026-06-23T10:31:27.005Z",
+      "submittedAt": "2026-06-23T10:27:00.509Z",
+      "projectId": "cmqq290nm00040jmj9jwa98ya",
+      "sourceInboxItemId": "cmqqfl5em00000jn5p7wmb0gd",
+      "sourceAgentRunId": "cmqqfl5ye00020jn5zg0mimeb",
+      "project": {
+        "id": "cmqq290nm00040jmj9jwa98ya",
+        "name": "Personal OS / Wiki 知识库升级",
+        "goal": "让 Personal OS / Personal Wiki 成为 Agent 可稳定调用、可持续吸收新知识、支撑项目落地的外置记忆/RAG 系统。",
+        "status": "active",
+        "priority": "P0",
+        "currentFocus": "Personal OS / Wiki 自驱闭环生产化",
+        "createdAt": "2026-06-23T03:04:11.410Z",
+        "updatedAt": "2026-06-23T10:31:11.671Z"
+      },
+      "sourceInboxItem": {
+        "id": "cmqqfl5em00000jn5p7wmb0gd",
+        "sourceType": "agent-output",
+        "sourcePlatform": "telegram",
+        "sourceMessageId": null,
+        "rawText": "Classic 指出 Hermes 没有主动去 GitHub 找同类项目、没有把外部方案转成执行改进。已即时运行 GitHub 雷达并生成可执行改进任务。",
+        "sourceUrl": null,
+        "attachments": [],
+        "status": "processed",
+        "createdBy": "hermes",
+        "receivedAt": "2026-06-23T09:17:32.446Z",
+        "updatedAt": "2026-06-23T09:17:34.759Z"
+      },
+      "sourceAgentRun": {
+        "id": "cmqqfl5ye00020jn5zg0mimeb",
+        "inboxItemId": "cmqqfl5em00000jn5p7wmb0gd",
+        "model": "hermes-gpt-5.5",
+        "status": "completed",
+        "classification": {
+          "kind": "github-radar",
+          "owner": "agent",
+          "repos": [
+            "swarmclawai/swarmvault",
+            "topoteretes/cognee",
+            "adoresever/graph-memory",
+            "mnemon-dev/mnemon",
+            "willynikes2/knowledge-base-server",
+            "neo4j-labs/agent-memory",
+            "0xK3vin/MegaMemory",
+            "Tencent/WeKnora"
+          ],
+          "wiki_write_status": {
+            "errors": [
+              {
+                "error": "frontmatter-parse-error",
+                "title": "2026-06-23 GitHub 知识雷达：Personal OS / Wiki 自驱改进候选"
+              }
+            ],
+            "failed": 1,
+            "status": "failed",
+            "requested": 1,
+            "succeeded": 0
+          }
+        },
+        "reasoningSummary": "检索 GitHub 上 Personal OS / Wiki / agent memory / RAG / Obsidian sync 相关项目，抽取可吸收设计，并转成 Personal OS Agent 可执行任务。",
+        "outputSummary": "已检索 8 个相关项目，沉淀 1 条 Wiki 记录，创建 4 个 Agent 可执行任务。",
+        "error": null,
+        "startedAt": "2026-06-23T09:17:33.158Z",
+        "completedAt": "2026-06-23T09:17:34.623Z"
+      },
+      "wikiLinks": [],
+      "contributions": [
+        {
+          "id": "cmqqi2hio001h0jo55kticzhh",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "taskRunId": "cmqqhp9v700160jo5oh57sllg",
+          "agentId": "hermes",
+          "summary": "已本地实现 /api/agent/context tiers.hot/warm/cold，并跑通 agent-context 定向测试、tsc、lint、全量测试和 build。生产部署按 runbook 继续尝试，但当前环境缺少 6.37 部署通道：本机无 /data release tree，SSH 到 192.168.6.37 被拒绝，Docker daemon 不可用。因此 definitionOfDone 尚未满足，不能宣布完成。",
+          "evidenceLinks": [
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/worker-result.json",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/gate.json",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/deployment-prereq.log",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/production-context-before-deploy.json"
+          ],
+          "artifactUrls": [
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/worker-result.json",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/gate.json",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/test-agent-context.log",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/npm-test.log",
+            ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/build-with-database-url-stub.log"
+          ],
+          "nextRecommendation": "给当前 Hermes 运行环境提供 6.37 部署通道（SSH key/password、可用 Docker context，或 on-host deploy runner）。拿到部署通道后只复制本任务 3 个已验证文件，先备份到 /data/archive/personal-os-wiki/releases/8ade72d/.deploy-backups/<timestamp>/，再 build/up personal-os 并回归 /api/agent/context?q=personal os wiki 必须出现 tiers.hot/warm/cold。",
+          "createdAt": "2026-06-23T10:27:00.528Z"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": "cmqqi2hiy001n0jo5gkvgfyx3",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "contributionId": "cmqqi2hio001h0jo55kticzhh",
+          "type": "link",
+          "title": null,
+          "url": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/build-with-database-url-stub.log",
+          "verification": "unverified",
+          "createdAt": "2026-06-23T10:27:00.538Z"
+        },
+        {
+          "id": "cmqqi2hix001m0jo5y3qf5y59",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "contributionId": "cmqqi2hio001h0jo55kticzhh",
+          "type": "link",
+          "title": null,
+          "url": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/npm-test.log",
+          "verification": "unverified",
+          "createdAt": "2026-06-23T10:27:00.537Z"
+        },
+        {
+          "id": "cmqqi2hiw001l0jo5in5wxqyu",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "contributionId": "cmqqi2hio001h0jo55kticzhh",
+          "type": "link",
+          "title": null,
+          "url": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/test-agent-context.log",
+          "verification": "unverified",
+          "createdAt": "2026-06-23T10:27:00.536Z"
+        },
+        {
+          "id": "cmqqi2hiv001k0jo5b10ycqm1",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "contributionId": "cmqqi2hio001h0jo55kticzhh",
+          "type": "link",
+          "title": null,
+          "url": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+          "verification": "unverified",
+          "createdAt": "2026-06-23T10:27:00.535Z"
+        },
+        {
+          "id": "cmqqi2hiu001j0jo5yv23dftj",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "contributionId": "cmqqi2hio001h0jo55kticzhh",
+          "type": "link",
+          "title": null,
+          "url": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/gate.json",
+          "verification": "unverified",
+          "createdAt": "2026-06-23T10:27:00.534Z"
+        }
+      ],
+      "runs": [
+        {
+          "id": "cmqqhp9v700160jo5oh57sllg",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "agentId": "hermes",
+          "status": "submitted",
+          "policySnapshot": {
+            "task": {
+              "status": "todo",
+              "agentTags": [
+                "personal-os",
+                "context",
+                "memory-tiering"
+              ],
+              "riskLevel": "low",
+              "executionMode": "agent_allowed"
+            },
+            "profile": {
+              "id": "hermes",
+              "tags": [
+                "wiki",
+                "curation",
+                "review",
+                "personal-os"
+              ],
+              "enabled": true,
+              "canWriteTasks": true,
+              "allowedRiskLevel": "medium"
+            },
+            "leaseUntil": "2026-06-23T13:16:43.649Z"
+          },
+          "resultSummary": "已本地实现 /api/agent/context tiers.hot/warm/cold，并跑通 agent-context 定向测试、tsc、lint、全量测试和 build。生产部署按 runbook 继续尝试，但当前环境缺少 6.37 部署通道：本机无 /data release tree，SSH 到 192.168.6.37 被拒绝，Docker daemon 不可用。因此 definitionOfDone 尚未满足，不能宣布完成。",
+          "startedAt": "2026-06-23T10:16:44.083Z",
+          "lastHeartbeatAt": "2026-06-23T10:16:43.649Z",
+          "submittedAt": "2026-06-23T10:27:00.509Z",
+          "endedAt": "2026-06-23T10:27:00.509Z"
+        }
+      ],
+      "agentActionLogs": [
+        {
+          "id": "cmqqi2hjg001q0jo56406jy8x",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "taskRunId": "cmqqhp9v700160jo5oh57sllg",
+          "agentId": "hermes",
+          "action": "task.submitted",
+          "summary": "已本地实现 /api/agent/context tiers.hot/warm/cold，并跑通 agent-context 定向测试、tsc、lint、全量测试和 build。生产部署按 runbook 继续尝试，但当前环境缺少 6.37 部署通道：本机无 /data release tree，SSH 到 192.168.6.37 被拒绝，Docker daemon 不可用。因此 definitionOfDone 尚未满足，不能宣布完成。",
+          "metadata": {
+            "resultType": "artifact",
+            "needsHumanDecision": true,
+            "definitionOfDoneMet": false
+          },
+          "createdAt": "2026-06-23T10:27:00.556Z"
+        },
+        {
+          "id": "cmqqi2hiz001o0jo5xw2udhpc",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "taskRunId": "cmqqhp9v700160jo5oh57sllg",
+          "agentId": "hermes",
+          "action": "task.contribution.created",
+          "summary": "已本地实现 /api/agent/context tiers.hot/warm/cold，并跑通 agent-context 定向测试、tsc、lint、全量测试和 build。生产部署按 runbook 继续尝试，但当前环境缺少 6.37 部署通道：本机无 /data release tree，SSH 到 192.168.6.37 被拒绝，Docker daemon 不可用。因此 definitionOfDone 尚未满足，不能宣布完成。",
+          "metadata": {
+            "artifactUrls": [
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/worker-result.json",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/gate.json",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/test-agent-context.log",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/npm-test.log",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/build-with-database-url-stub.log"
+            ],
+            "evidenceLinks": [
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/worker-result.json",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/gate.json",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/diff.patch",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/deployment-prereq.log",
+              ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/production-context-before-deploy.json"
+            ],
+            "contributionId": "cmqqi2hio001h0jo55kticzhh"
+          },
+          "createdAt": "2026-06-23T10:27:00.540Z"
+        },
+        {
+          "id": "cmqqhp9w400170jo5h4bocvcp",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "taskRunId": "cmqqhp9v700160jo5oh57sllg",
+          "agentId": "hermes",
+          "action": "task.claimed",
+          "summary": "Claimed task lease until 2026-06-23T13:16:43.649Z",
+          "metadata": {
+            "leaseUntil": "2026-06-23T13:16:43.649Z"
+          },
+          "createdAt": "2026-06-23T10:16:44.116Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "cmqqi875600080jp63piumnb0",
+          "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+          "reviewer": "hermes",
+          "decision": "approve",
+          "comment": "Agent 自审通过：gate.json.status=pass；本地 npm test/tsc/lint/build 通过；6.37 已备份、复制 3 个已验证文件、docker compose build/up personal-os 成功；生产回归确认 /api/agent/context?q=personal os wiki 返回 tiers.hot/warm/cold，task context hot 包含当前任务，兼容字段保留。",
+          "createdAt": "2026-06-23T10:31:27.018Z"
+        }
+      ]
+    },
+    "review": {
+      "id": "cmqqi875600080jp63piumnb0",
+      "taskId": "cmqqfl6hp00070jn5bgoym7dx",
+      "reviewer": "hermes",
+      "decision": "approve",
+      "comment": "Agent 自审通过：gate.json.status=pass；本地 npm test/tsc/lint/build 通过；6.37 已备份、复制 3 个已验证文件、docker compose build/up personal-os 成功；生产回归确认 /api/agent/context?q=personal os wiki 返回 tiers.hot/warm/cold，task context hot 包含当前任务，兼容字段保留。",
+      "createdAt": "2026-06-23T10:31:27.018Z"
+    }
+  }
+}

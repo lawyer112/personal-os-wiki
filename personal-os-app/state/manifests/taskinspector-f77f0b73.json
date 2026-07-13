@@ -1,0 +1,19 @@
+{
+  "sourceId": "taskinspector-f77f0b73",
+  "title": "TaskInspector",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/components/TaskInspector.tsx",
+  "repoRelativePath": "src/components/TaskInspector.tsx",
+  "storedPath": "raw/sources/taskinspector-f77f0b73.tsx",
+  "extractedTextPath": "state/extracts/taskinspector-f77f0b73.md",
+  "extractedMetadataPath": "state/extracts/taskinspector-f77f0b73.json",
+  "extractionHash": "f99822f45d424d59c7a2541b14563e107103032ba881a895e29450862c87d887",
+  "mimeType": "text/typescript",
+  "contentHash": "f77f0b73082737205611efc9c46e56c0313f3e244c558cbf76c8016dcf5d8b4a",
+  "semanticHash": "f77f0b73082737205611efc9c46e56c0313f3e244c558cbf76c8016dcf5d8b4a",
+  "createdAt": "2026-07-04T19:02:56.848Z",
+  "updatedAt": "2026-07-04T19:02:56.848Z"
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "github-radar-cron",
+  "status": "pass",
+  "checks": {
+    "script_exit_code": 0,
+    "personal_os_intake_ok": true,
+    "wiki_write_confirmed": true,
+    "token_leak_check": "pass"
+  },
+  "synthesizer": {
+    "allowed_to_announce_done": true
+  }
+}

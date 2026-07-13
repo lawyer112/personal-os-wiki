@@ -1,0 +1,19 @@
+{
+  "sourceId": "wiki-client-d49c14f2",
+  "title": "wiki-client",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/wiki-client.ts",
+  "repoRelativePath": "src/lib/wiki-client.ts",
+  "storedPath": "raw/sources/wiki-client-d49c14f2.ts",
+  "extractedTextPath": "state/extracts/wiki-client-d49c14f2.md",
+  "extractedMetadataPath": "state/extracts/wiki-client-d49c14f2.json",
+  "extractionHash": "74faeed20092ba17759d1730adb850ef6ef6ded2c56e64614e38db391c09724d",
+  "mimeType": "text/typescript",
+  "contentHash": "d49c14f25752f7ad3e53e049dca16941b662916c804d17369dc7dd28df63be88",
+  "semanticHash": "d49c14f25752f7ad3e53e049dca16941b662916c804d17369dc7dd28df63be88",
+  "createdAt": "2026-07-04T19:02:59.402Z",
+  "updatedAt": "2026-07-04T19:02:59.402Z"
+}

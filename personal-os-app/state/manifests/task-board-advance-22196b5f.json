@@ -1,0 +1,24 @@
+{
+  "sourceId": "task-board-advance-22196b5f",
+  "title": "task-board-advance",
+  "originType": "file",
+  "sourceKind": "data",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/task-board-advance.json",
+  "repoRelativePath": ".agent-runs/cmr006b4p01b90jpk4trb0240/artifacts/task-board-advance.json",
+  "storedPath": "raw/sources/task-board-advance-22196b5f.json",
+  "extractedTextPath": "state/extracts/task-board-advance-22196b5f.md",
+  "extractedMetadataPath": "state/extracts/task-board-advance-22196b5f.json",
+  "extractionHash": "5a6617a686039cd006c4e0ecf3af99b5badd9d684613bd8ef523df17d8a380c1",
+  "mimeType": "application/json",
+  "contentHash": "22196b5fbe75131f8fe454179151bf0e7b65137acb81bd34d03b1edcc348229d",
+  "semanticHash": "22196b5fbe75131f8fe454179151bf0e7b65137acb81bd34d03b1edcc348229d",
+  "details": {
+    "format": "json",
+    "top_level_type": "object",
+    "top_level_size": "3",
+    "nested_depth": "2"
+  },
+  "createdAt": "2026-07-04T19:02:39.469Z",
+  "updatedAt": "2026-07-04T19:02:39.469Z"
+}

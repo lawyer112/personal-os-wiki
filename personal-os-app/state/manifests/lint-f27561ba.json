@@ -1,0 +1,18 @@
+{
+  "sourceId": "lint-f27561ba",
+  "title": "lint",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/lint.log",
+  "repoRelativePath": ".agent-runs/cmqq29yi9000c0jmjcejamrel/artifacts/lint.log",
+  "storedPath": "raw/sources/lint-f27561ba.log",
+  "extractedTextPath": "state/extracts/lint-f27561ba.md",
+  "extractedMetadataPath": "state/extracts/lint-f27561ba.json",
+  "extractionHash": "8b5680d76caddbcd276d5811c6dc6c2a7801f08d6e43c27eeb22babd597fa9bb",
+  "mimeType": "text/plain",
+  "contentHash": "f27561ba608b219fe2941129ce4582a547a1e3212ab4cada32cb7b3b369076c5",
+  "semanticHash": "f27561ba608b219fe2941129ce4582a547a1e3212ab4cada32cb7b3b369076c5",
+  "createdAt": "2026-07-04T19:02:30.325Z",
+  "updatedAt": "2026-07-04T19:02:30.325Z"
+}

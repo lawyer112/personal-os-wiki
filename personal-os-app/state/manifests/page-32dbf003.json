@@ -1,0 +1,19 @@
+{
+  "sourceId": "page-32dbf003",
+  "title": "page",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/app/inbox/page.tsx",
+  "repoRelativePath": "src/app/inbox/page.tsx",
+  "storedPath": "raw/sources/page-32dbf003.tsx",
+  "extractedTextPath": "state/extracts/page-32dbf003.md",
+  "extractedMetadataPath": "state/extracts/page-32dbf003.json",
+  "extractionHash": "9705aad13eaee867165228b5f0e5dacc8a15e36c05099d44a863424fe84a157e",
+  "mimeType": "text/typescript",
+  "contentHash": "32dbf003d2ed79369625dd2bb6079f41e0ed40da3cfd7032b319083f4094a9bd",
+  "semanticHash": "32dbf003d2ed79369625dd2bb6079f41e0ed40da3cfd7032b319083f4094a9bd",
+  "createdAt": "2026-07-04T19:02:55.167Z",
+  "updatedAt": "2026-07-04T19:02:55.167Z"
+}

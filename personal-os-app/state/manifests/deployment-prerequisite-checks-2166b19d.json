@@ -1,0 +1,18 @@
+{
+  "sourceId": "deployment-prerequisite-checks-2166b19d",
+  "title": "Deployment prerequisite checks",
+  "originType": "file",
+  "sourceKind": "text",
+  "sourceClass": "first_party",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/.agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/deployment-prereq.log",
+  "repoRelativePath": ".agent-runs/cmqqfl6hp00070jn5bgoym7dx/artifacts/deployment-prereq.log",
+  "storedPath": "raw/sources/deployment-prerequisite-checks-2166b19d.log",
+  "extractedTextPath": "state/extracts/deployment-prerequisite-checks-2166b19d.md",
+  "extractedMetadataPath": "state/extracts/deployment-prerequisite-checks-2166b19d.json",
+  "extractionHash": "fd55e13740d518fed4cd0abb13bcc7d9c6f638a0acd2adf991ac4aa89e1d1c78",
+  "mimeType": "text/plain",
+  "contentHash": "2166b19d43993b069f5f02c1c2b3f76b56b07da2cf926b4ca61169895efb46a5",
+  "semanticHash": "2166b19d43993b069f5f02c1c2b3f76b56b07da2cf926b4ca61169895efb46a5",
+  "createdAt": "2026-07-04T19:02:33.938Z",
+  "updatedAt": "2026-07-04T19:02:33.938Z"
+}

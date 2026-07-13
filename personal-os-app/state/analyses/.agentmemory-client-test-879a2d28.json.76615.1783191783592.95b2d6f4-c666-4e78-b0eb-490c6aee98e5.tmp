@@ -1,0 +1,134 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "agentmemory-client-test-879a2d28",
+  "sourceHash": "879a2d28b537543f23c2028f5a3d4ce5c2c17c02213afd6fb4116f8f552fa351",
+  "semanticHash": "879a2d28b537543f23c2028f5a3d4ce5c2c17c02213afd6fb4116f8f552fa351",
+  "extractionHash": "14d01a54722ffe7ba2a313dd493724eb8db17cf3b20c0f89bf4888f5c817378f",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "agentmemory-client.test",
+  "summary": "agentmemory-client.test is a typescript module, defining 5 top-level symbol(s), exporting 0 symbol(s), depending on 2 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:agentmemory-client-test-879a2d28:1",
+      "text": "agentmemory-client.test defines previousEnabled, previousUrl, previousLimit, previousTimeout, restoreEnv.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentmemory-client-test-879a2d28"
+    },
+    {
+      "id": "claim:agentmemory-client-test-879a2d28:2",
+      "text": "agentmemory-client.test imports vitest, @/lib/agentmemory-client.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agentmemory-client-test-879a2d28"
+    }
+  ],
+  "questions": [
+    "Why does agentmemory-client.test depend on vitest?",
+    "What broader responsibility does agentmemory-client.test serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:agentmemory-client-test-879a2d28",
+    "language": "typescript",
+    "moduleName": "tests/services/agentmemory-client.test",
+    "imports": [
+      {
+        "specifier": "vitest",
+        "importedSymbols": [
+          "afterEach",
+          "describe",
+          "expect",
+          "it",
+          "vi"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/agentmemory-client",
+        "importedSymbols": [
+          "searchAgentMemoryEpisodes"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "vitest",
+      "@/lib/agentmemory-client"
+    ],
+    "symbols": [
+      {
+        "id": "symbol:agentmemory-client-test-879a2d28:previousenabled.variable",
+        "name": "previousEnabled",
+        "kind": "variable",
+        "signature": "const previousEnabled = process.env.AGENT_CONTEXT_AGENTMEMORY_ENABLED;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 4,
+        "endLine": 4
+      },
+      {
+        "id": "symbol:agentmemory-client-test-879a2d28:previousurl.variable",
+        "name": "previousUrl",
+        "kind": "variable",
+        "signature": "const previousUrl = process.env.AGENT_CONTEXT_AGENTMEMORY_URL;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 5,
+        "endLine": 5
+      },
+      {
+        "id": "symbol:agentmemory-client-test-879a2d28:previouslimit.variable",
+        "name": "previousLimit",
+        "kind": "variable",
+        "signature": "const previousLimit = process.env.AGENT_CONTEXT_AGENTMEMORY_LIMIT;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 6,
+        "endLine": 6
+      },
+      {
+        "id": "symbol:agentmemory-client-test-879a2d28:previoustimeout.variable",
+        "name": "previousTimeout",
+        "kind": "variable",
+        "signature": "const previousTimeout = process.env.AGENT_CONTEXT_AGENTMEMORY_TIMEOUT_MS;",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 7,
+        "endLine": 7
+      },
+      {
+        "id": "symbol:agentmemory-client-test-879a2d28:restoreenv.variable",
+        "name": "restoreEnv",
+        "kind": "variable",
+        "signature": "const restoreEnv = () => { if (previousEnabled === undefined) { delete process.env.AGENT_CONTEXT_AGENTMEMORY_ENABLED; } else { process.env.AGENT_CONTEXT_AGENTMEMORY_ENABLED = pr...",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 9,
+        "endLine": 33
+      }
+    ],
+    "exports": [],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.592Z"
+}

@@ -1,0 +1,396 @@
+{
+  "analysisVersion": 8,
+  "sourceId": "agent-tasks-223f8c2b",
+  "sourceHash": "223f8c2b8c4d64a532e639b87f4e140c7d6c6f404e67ef84a2d5ac3d08f9ac89",
+  "semanticHash": "223f8c2b8c4d64a532e639b87f4e140c7d6c6f404e67ef84a2d5ac3d08f9ac89",
+  "extractionHash": "b48310c22587e3b74b972302f9eaefdb43d8eab157433a7fcb3a8bdc80f290ba",
+  "schemaHash": "874431dbbfdec0b254a4aa1bf002900574c9b485735a883690c2becb5f717720",
+  "title": "agent-tasks",
+  "summary": "agent-tasks is a typescript module, defining 22 top-level symbol(s), exporting 7 symbol(s), depending on 3 external package import(s).",
+  "concepts": [],
+  "entities": [],
+  "claims": [
+    {
+      "id": "claim:agent-tasks-223f8c2b:1",
+      "text": "agent-tasks exports listAgentInboxTasks, claimNextTask, claimTask, heartbeatTask, and more.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agent-tasks-223f8c2b"
+    },
+    {
+      "id": "claim:agent-tasks-223f8c2b:2",
+      "text": "agent-tasks defines AgentTaskDb, TaskRecord, AgentProfileRecord, riskRank, agentTaskInclude, and more.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agent-tasks-223f8c2b"
+    },
+    {
+      "id": "claim:agent-tasks-223f8c2b:3",
+      "text": "agent-tasks imports @/lib/activity, @/lib/http, @/lib/validation.",
+      "confidence": 1,
+      "status": "extracted",
+      "polarity": "neutral",
+      "citation": "agent-tasks-223f8c2b"
+    }
+  ],
+  "questions": [
+    "Which downstream pages should explain how agent-tasks exports are consumed?",
+    "Why does agent-tasks depend on @/lib/activity?",
+    "What broader responsibility does agent-tasks serve in the codebase?"
+  ],
+  "tags": [],
+  "rationales": [],
+  "code": {
+    "moduleId": "module:agent-tasks-223f8c2b",
+    "language": "typescript",
+    "moduleName": "src/lib/agent-tasks",
+    "imports": [
+      {
+        "specifier": "@/lib/activity",
+        "importedSymbols": [
+          "recordActivity"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/http",
+        "importedSymbols": [
+          "HttpError"
+        ],
+        "isTypeOnly": false,
+        "isExternal": true,
+        "reExport": false
+      },
+      {
+        "specifier": "@/lib/validation",
+        "importedSymbols": [
+          "AgentInboxClaimNextInput",
+          "AgentInboxQueryInput",
+          "TaskClaimInput",
+          "TaskContributionInput",
+          "TaskHeartbeatInput",
+          "TaskReviewInput",
+          "TaskSubmitInput"
+        ],
+        "isTypeOnly": true,
+        "isExternal": true,
+        "reExport": false
+      }
+    ],
+    "dependencies": [
+      "@/lib/activity",
+      "@/lib/http",
+      "@/lib/validation"
+    ],
+    "symbols": [
+      {
+        "id": "symbol:agent-tasks-223f8c2b:agenttaskdb.type_alias",
+        "name": "AgentTaskDb",
+        "kind": "type_alias",
+        "signature": "type AgentTaskDb = { task: unknown; agentProfile?: unknown; taskClaim: unknown; taskContribution: unknown; taskArtifact: unknown; taskReview: unknown; activityLog: unknown; };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:taskrecord.type_alias",
+        "name": "TaskRecord",
+        "kind": "type_alias",
+        "signature": "type TaskRecord = { id: string; title: string; status: string; riskLevel?: string; executionMode?: string; agentTags?: string[]; ownerAgent?: string | null; leaseUntil?: Date | ...",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:agentprofilerecord.type_alias",
+        "name": "AgentProfileRecord",
+        "kind": "type_alias",
+        "signature": "type AgentProfileRecord = { id: string; tags?: string[]; allowedRiskLevel?: string; canWriteTasks?: boolean; enabled?: boolean; };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": []
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:riskrank.variable",
+        "name": "riskRank",
+        "kind": "variable",
+        "signature": "const riskRank: Record<string, number> = { low: 1, medium: 2, high: 3, };",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 42,
+        "endLine": 46
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:agenttaskinclude.variable",
+        "name": "agentTaskInclude",
+        "kind": "variable",
+        "signature": "const agentTaskInclude = { project: true, sourceInboxItem: true, sourceAgentRun: true, wikiLinks: true, contributions: { orderBy: { createdAt: \"desc\" }, take: 5 }, artifacts: { ...",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 48,
+        "endLine": 56
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:addminutes.function",
+        "name": "addMinutes",
+        "kind": "function",
+        "signature": "function addMinutes(date: Date, minutes: number)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 58,
+        "endLine": 60
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:isactivelease.function",
+        "name": "isActiveLease",
+        "kind": "function",
+        "signature": "function isActiveLease(task: TaskRecord, now: Date)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 62,
+        "endLine": 67
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:asserttaskcanbeworked.function",
+        "name": "assertTaskCanBeWorked",
+        "kind": "function",
+        "signature": "function assertTaskCanBeWorked(task: TaskRecord)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 69,
+        "endLine": 73
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:asserttaskcanbeclaimed.function",
+        "name": "assertTaskCanBeClaimed",
+        "kind": "function",
+        "signature": "function assertTaskCanBeClaimed(task: TaskRecord)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 75,
+        "endLine": 82
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:asserttaskpolicyallowsagentwork.function",
+        "name": "assertTaskPolicyAllowsAgentWork",
+        "kind": "function",
+        "signature": "function assertTaskPolicyAllowsAgentWork(task: TaskRecord)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 84,
+        "endLine": 97
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:getagentprofile.function",
+        "name": "getAgentProfile",
+        "kind": "function",
+        "signature": "async function getAgentProfile<TDb extends AgentTaskDb>( db: TDb, agentId: string, )",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 99,
+        "endLine": 110
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:assertagentcanworktask.function",
+        "name": "assertAgentCanWorkTask",
+        "kind": "function",
+        "signature": "function assertAgentCanWorkTask( profile: AgentProfileRecord | null, task: TaskRecord, )",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 112,
+        "endLine": 140
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:assertownedbyagent.function",
+        "name": "assertOwnedByAgent",
+        "kind": "function",
+        "signature": "function assertOwnedByAgent(task: TaskRecord, agentId: string)",
+        "exported": false,
+        "calls": [],
+        "extends": [],
+        "implements": [],
+        "startLine": 142,
+        "endLine": 149
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:assertactiveleaseforagent.function",
+        "name": "assertActiveLeaseForAgent",
+        "kind": "function",
+        "signature": "function assertActiveLeaseForAgent( task: TaskRecord, agentId: string, now: Date, )",
+        "exported": false,
+        "calls": [
+          "assertOwnedByAgent"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 151,
+        "endLine": 163
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:assertagentstillallowedtowork.function",
+        "name": "assertAgentStillAllowedToWork",
+        "kind": "function",
+        "signature": "async function assertAgentStillAllowedToWork<TDb extends AgentTaskDb>( db: TDb, task: TaskRecord, agentId: string, now: Date, )",
+        "exported": false,
+        "calls": [
+          "assertActiveLeaseForAgent",
+          "assertTaskPolicyAllowsAgentWork",
+          "getAgentProfile",
+          "assertAgentCanWorkTask"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 165,
+        "endLine": 175
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:listagentinboxtasks.function",
+        "name": "listAgentInboxTasks",
+        "kind": "function",
+        "signature": "export async function listAgentInboxTasks<TDb extends AgentTaskDb>( db: TDb, input: AgentInboxQueryInput, )",
+        "exported": true,
+        "calls": [
+          "getAgentProfile"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 177,
+        "endLine": 226
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:claimnexttask.variable",
+        "name": "claimNextTask",
+        "kind": "variable",
+        "signature": "export const claimNextTask = async <TDb extends AgentTaskDb>( db: TDb, input: AgentInboxClaimNextInput, ) => { const candidates = await listAgentInboxTasks(db, input); for (cons...",
+        "exported": true,
+        "calls": [
+          "listAgentInboxTasks",
+          "claimTask"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 228,
+        "endLine": 255
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:claimtask.function",
+        "name": "claimTask",
+        "kind": "function",
+        "signature": "export async function claimTask<TDb extends AgentTaskDb>( db: TDb, taskId: string, input: TaskClaimInput, )",
+        "exported": true,
+        "calls": [
+          "addMinutes",
+          "assertTaskCanBeWorked",
+          "assertTaskCanBeClaimed",
+          "assertTaskPolicyAllowsAgentWork",
+          "getAgentProfile",
+          "assertAgentCanWorkTask",
+          "isActiveLease",
+          "recordActivity"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 257,
+        "endLine": 338
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:heartbeattask.function",
+        "name": "heartbeatTask",
+        "kind": "function",
+        "signature": "export async function heartbeatTask<TDb extends AgentTaskDb>( db: TDb, taskId: string, input: TaskHeartbeatInput, )",
+        "exported": true,
+        "calls": [
+          "addMinutes",
+          "assertTaskCanBeWorked",
+          "assertAgentStillAllowedToWork",
+          "recordActivity"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 340,
+        "endLine": 379
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:addtaskcontribution.function",
+        "name": "addTaskContribution",
+        "kind": "function",
+        "signature": "export async function addTaskContribution<TDb extends AgentTaskDb>( db: TDb, taskId: string, input: TaskContributionInput, )",
+        "exported": true,
+        "calls": [
+          "assertTaskCanBeWorked",
+          "assertAgentStillAllowedToWork",
+          "recordActivity"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 381,
+        "endLine": 440
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:submittask.function",
+        "name": "submitTask",
+        "kind": "function",
+        "signature": "export async function submitTask<TDb extends AgentTaskDb>( db: TDb, taskId: string, input: TaskSubmitInput, )",
+        "exported": true,
+        "calls": [
+          "addTaskContribution",
+          "recordActivity"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 442,
+        "endLine": 480
+      },
+      {
+        "id": "symbol:agent-tasks-223f8c2b:reviewtask.function",
+        "name": "reviewTask",
+        "kind": "function",
+        "signature": "export async function reviewTask<TDb extends AgentTaskDb>( db: TDb, taskId: string, input: TaskReviewInput, )",
+        "exported": true,
+        "calls": [
+          "recordActivity"
+        ],
+        "extends": [],
+        "implements": [],
+        "startLine": 482,
+        "endLine": 564
+      }
+    ],
+    "exports": [
+      "listAgentInboxTasks",
+      "claimNextTask",
+      "claimTask",
+      "heartbeatTask",
+      "addTaskContribution",
+      "submitTask",
+      "reviewTask"
+    ],
+    "diagnostics": []
+  },
+  "producedAt": "2026-07-04T19:03:03.589Z"
+}

@@ -1,0 +1,19 @@
+{
+  "sourceId": "reminders-37ac5d76",
+  "title": "reminders",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/lib/reminders.ts",
+  "repoRelativePath": "src/lib/reminders.ts",
+  "storedPath": "raw/sources/reminders-37ac5d76.ts",
+  "extractedTextPath": "state/extracts/reminders-37ac5d76.md",
+  "extractedMetadataPath": "state/extracts/reminders-37ac5d76.json",
+  "extractionHash": "cd906b9808e35f9ba17047ca7966d30d90f68723e265e89771beef32d75caab8",
+  "mimeType": "text/typescript",
+  "contentHash": "37ac5d7665678a7a7e90fc6333f335bc2aef21c09337efea6effd70007ba7cc0",
+  "semanticHash": "37ac5d7665678a7a7e90fc6333f335bc2aef21c09337efea6effd70007ba7cc0",
+  "createdAt": "2026-07-04T19:02:58.736Z",
+  "updatedAt": "2026-07-04T19:02:58.736Z"
+}

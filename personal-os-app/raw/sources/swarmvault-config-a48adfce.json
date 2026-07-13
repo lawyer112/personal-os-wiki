@@ -1,0 +1,65 @@
+{
+  "workspace": {
+    "rawDir": "raw",
+    "wikiDir": "wiki",
+    "stateDir": "state",
+    "agentDir": "agent",
+    "inboxDir": "inbox"
+  },
+  "providers": {
+    "local": {
+      "type": "heuristic",
+      "model": "heuristic-v1",
+      "capabilities": [
+        "chat",
+        "structured",
+        "vision",
+        "local"
+      ]
+    }
+  },
+  "tasks": {
+    "compileProvider": "local",
+    "queryProvider": "local",
+    "lintProvider": "local",
+    "visionProvider": "local",
+    "imageProvider": "local"
+  },
+  "viewer": {
+    "port": 4123
+  },
+  "profile": {
+    "presets": [],
+    "dashboardPack": "default",
+    "guidedSessionMode": "insights_only",
+    "dataviewBlocks": false,
+    "guidedIngestDefault": false,
+    "deepLintDefault": false
+  },
+  "projects": {},
+  "agents": [],
+  "schedules": {},
+  "orchestration": {
+    "maxParallelRoles": 2,
+    "compilePostPass": false,
+    "roles": {}
+  },
+  "benchmark": {
+    "enabled": true,
+    "questions": [],
+    "maxQuestions": 3
+  },
+  "repoAnalysis": {
+    "classifyGlobs": {},
+    "extractClasses": [
+      "first_party"
+    ]
+  },
+  "graphSinks": {},
+  "retrieval": {
+    "backend": "sqlite",
+    "shardSize": 25000,
+    "hybrid": true,
+    "rerank": false
+  }
+}

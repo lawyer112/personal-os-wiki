@@ -1,0 +1,19 @@
+{
+  "sourceId": "agentcontextpanel-8e6237a9",
+  "title": "AgentContextPanel",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "tsx",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/components/AgentContextPanel.tsx",
+  "repoRelativePath": "src/components/AgentContextPanel.tsx",
+  "storedPath": "raw/sources/agentcontextpanel-8e6237a9.tsx",
+  "extractedTextPath": "state/extracts/agentcontextpanel-8e6237a9.md",
+  "extractedMetadataPath": "state/extracts/agentcontextpanel-8e6237a9.json",
+  "extractionHash": "8a0cb7657cb1d5d6b03746c112c113f8fc09eca53a4ff8ed16d88a248f4d1f02",
+  "mimeType": "text/typescript",
+  "contentHash": "8e6237a9a90ebeb782f677c4a7131b45ee20ea7e96d7544ba4da2be07be8b9f7",
+  "semanticHash": "8e6237a9a90ebeb782f677c4a7131b45ee20ea7e96d7544ba4da2be07be8b9f7",
+  "createdAt": "2026-07-04T19:02:56.078Z",
+  "updatedAt": "2026-07-04T19:02:56.078Z"
+}

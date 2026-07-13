@@ -1,0 +1,19 @@
+{
+  "sourceId": "route-dd9abdd1",
+  "title": "route",
+  "originType": "file",
+  "sourceKind": "code",
+  "sourceClass": "first_party",
+  "language": "typescript",
+  "originalPath": "/Users/xingqiwu/Documents/New project 5/personal-os-wiki/personal-os-app/src/app/api/notifications/telegram/route.ts",
+  "repoRelativePath": "src/app/api/notifications/telegram/route.ts",
+  "storedPath": "raw/sources/route-dd9abdd1.ts",
+  "extractedTextPath": "state/extracts/route-dd9abdd1.md",
+  "extractedMetadataPath": "state/extracts/route-dd9abdd1.json",
+  "extractionHash": "b7f81b8367b929da68bf5908400f26038d485c6526142f8fc229ec471b3cd55c",
+  "mimeType": "text/typescript",
+  "contentHash": "dd9abdd1b1a1a7497bd598885d76bd8b90141de16831baf9eee514fda90af8b7",
+  "semanticHash": "dd9abdd1b1a1a7497bd598885d76bd8b90141de16831baf9eee514fda90af8b7",
+  "createdAt": "2026-07-04T19:02:53.286Z",
+  "updatedAt": "2026-07-04T19:02:53.286Z"
+}
