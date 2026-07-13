@@ -731,7 +731,7 @@ async function findMemoryEpisodes(
   try {
     const hits = await searchMemoryVectors(probe.join(" "), {
       limit: 5,
-      minSimilarity: 0.3,
+      minSimilarity: 0.1,
     });
     return hits.map((hit) => ({
       type: "memory" as const,

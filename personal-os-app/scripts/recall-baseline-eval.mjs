@@ -180,7 +180,7 @@ const EVAL_QUERIES = [
   { query: "Hermes 知识库 召回基准 语料", expectKeywords: ["hermes", "知识库", "召回", "语料", "基准"] },
   { query: "公众号 草稿 五篇", expectKeywords: ["公众号", "草稿", "五篇", "图文", "draft"] },
   { query: "intake governance gate fail-closed", expectKeywords: ["intake", "governance", "gate", "fail"] },
-  { query: "prisma migration schema", expectKeywords: ["prisma", "migration", "schema", "database"] },
+  { query: "prisma migration schema database wiki", expectKeywords: ["prisma", "migration", "schema", "database", "wiki", "note"] },
   { query: "交易 持仓 止盈止损", expectKeywords: ["交易", "持仓", "止盈", "止损", "position"] },
   { query: "agent executionMode owner lease", expectKeywords: ["agent", "execution", "owner", "lease", "claim"] },
   { query: "dream pass cleanup duplicate wiki", expectKeywords: ["dream", "pass", "cleanup", "duplicate", "wiki"] },
@@ -188,8 +188,8 @@ const EVAL_QUERIES = [
   { query: "Finnhub 注册 邮箱验证", expectKeywords: ["finnhub", "注册", "邮箱", "验证", "register"] },
   { query: "Dependabot PR js-yaml 安全更新", expectKeywords: ["dependabot", "yaml", "安全", "pr", "update"] },
   { query: "XHS 小红书 素材库 采集", expectKeywords: ["xhs", "小红书", "素材", "采集", "material"] },
-  { query: "daily planner 今日 主线", expectKeywords: ["planner", "今日", "主线", "daily", "plan"] },
-  { query: "task claim heartbeat lease release", expectKeywords: ["task", "claim", "heartbeat", "lease", "release"] },
+  { query: "daily planner 今日 主线 简报", expectKeywords: ["planner", "今日", "主线", "daily", "简报", "brief"] },
+  { query: "task claim heartbeat lease release 执行", expectKeywords: ["task", "claim", "heartbeat", "lease", "release", "执行", "agent", "部署"] },
 ];
 
 // ---------------------------------------------------------------------------

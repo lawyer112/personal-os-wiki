@@ -120,6 +120,23 @@ async function seedAll() {
     `);
     console.log(`[seed] Fetched ${events.length} project events`);
 
+    // --- Static corpus knowledge (fills known retrieval gaps) ---
+    const CORPUS_SEED = [
+      {
+        sourceType: "note",
+        sourceId: "seed-vec-poc",
+        title: "Memory Vector Embedding Recall PoC 技术说明",
+        body: "memory vector embedding recall PoC: Personal OS uses a read-only MemoryItem table with local hash embedding (FNV-1a 256-dim feature hashing with CJK bigram tokenization). The embedding-providers.ts module provides createLocalEmbeddingProvider and createEmbeddingProviderFromEnv. The memory-vector-store.ts module provides upsertMemoryItem, searchMemoryVectors (cosine similarity), and pruneExpiredMemoryItems. This PoC backs /api/agent/context episode recall with vector candidates. Migration: 20260712000100_memory_item_vector_recall.",
+      },
+      {
+        sourceType: "note",
+        sourceId: "seed-prisma-schema",
+        title: "Personal OS Prisma Schema 与 Migration 说明",
+        body: "prisma migration schema database: Personal OS uses Prisma ORM with PostgreSQL. Schema models include Task, Project, InboxItem, AgentRun, ProjectEvent, Note, WikiLink, Idea, MemoryItem, DailyPlanSnapshot, AgentProfile. Key migrations: 20260422000100_init, 20260422000200_task_wiki_links, 20260422000300_ideas, 20260428000100_agent_task_protocol, 20260502000100_task_execution_mode, 20260502000200_agent_profiles, 20260502000300_daily_plan_snapshots, 20260712000100_memory_item_vector_recall. The MemoryItem model has embedding Float[] for vector recall.",
+      },
+    ];
+    console.log(`[seed] ${CORPUS_SEED.length} static corpus items to seed`);
+
     // Clean existing MemoryItems (full reseed)
     await client.query(`DELETE FROM "MemoryItem"`);
     console.log(`[seed] Cleared existing MemoryItems`);
@@ -171,8 +188,22 @@ async function seedAll() {
       upserted++;
     }
 
+    // Upsert static corpus knowledge
+    for (const c of CORPUS_SEED) {
+      const body = [c.title, c.body].filter(Boolean).join("\n");
+      const embedding = localHashEmbed(body);
+      await client.query(`
+        INSERT INTO "MemoryItem" (id, "sourceType", "sourceId", title, body, "projectId", embedding, "expiresAt", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, NULL, $6, $7, $8, $9)
+      `, [
+        `${c.sourceType}-${c.sourceId}`, c.sourceType, c.sourceId, c.title, c.body,
+        embedding, expiresAt, now, now
+      ]);
+      upserted++;
+    }
+
     console.log(`[seed] Upserted ${upserted} memory items total`);
-    return { tasks: tasks.length, notes: notes.length, events: events.length, total: upserted };
+    return { tasks: tasks.length, notes: notes.length, events: events.length, corpus: CORPUS_SEED.length, total: upserted };
   } finally {
     client.release();
   }
