@@ -88,10 +88,15 @@ This project uses semantic versioning for public release packages. The root
   heartbeat, contribution, and submit mutations.
 - Changing a leased task's execution mode, risk level, or Agent tags now
   releases the stale claim and task run immediately.
+- Browser write actions can use the write token's existing HttpOnly access
+  cookie without exposing that credential to client-side JavaScript.
+- Production builds defer Prisma initialization until runtime data access, so
+  compiling the application does not require a database connection string.
 
 ### Security
 
-- Web app dependency security updates from Dependabot are included.
+- Web app dependency security updates, including a patched `esbuild` toolchain,
+  are included.
 - Release and data-safety docs reaffirm that real `.env` files, tokens, cookies,
   private vaults, Personal OS databases, logs, screenshots, server inventories,
   and generated runtime artifacts are excluded from Git.
