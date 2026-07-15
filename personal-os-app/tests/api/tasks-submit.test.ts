@@ -41,6 +41,7 @@ const taskResult = {
   task: {
     id: "task_1",
     title: "东京旅游规划",
+    status: "review",
     agentTags: ["tokyo", "travel"],
     project: { name: "2026-05 东京行" },
   },
