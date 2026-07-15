@@ -102,6 +102,10 @@ PUBLIC_NOTE_EXTRA_FIELDS = (
     "source_domain",
     "text_hash",
     "collected_at",
+    "personal_os_inbox_id",
+    "personal_os_agent_run_id",
+    "personal_os_project_id",
+    "personal_os_task_id",
 )
 INGEST_LOGGER = logging.getLogger("personal_wiki.ingest")
 SOURCE_LOGGER = logging.getLogger("personal_wiki.sources")

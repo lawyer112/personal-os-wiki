@@ -54,6 +54,7 @@ describe("wiki ingest payload adapter", () => {
       title: "旧入口",
       content: "Body",
       source_type: "agent-output",
+      source_url: "https://example.com/source",
       tags: ["legacy"],
       metadata: {
         type: "project",
@@ -61,6 +62,10 @@ describe("wiki ingest payload adapter", () => {
         task_id: "task_1",
         agent_id: "agent_1",
         project: "旧项目",
+        canonical_url: "https://example.com/canonical",
+        text_hash: "text-hash-1",
+        source_domain: "example.com",
+        personal_os_inbox_id: "inbox_1",
       },
     });
 
@@ -69,6 +74,11 @@ describe("wiki ingest payload adapter", () => {
       type: "project",
       created_by: "hermes:worker",
       source_type: "agent-output",
+      source_url: "https://example.com/source",
+      canonical_url: "https://example.com/canonical",
+      text_hash: "text-hash-1",
+      source_domain: "example.com",
+      personal_os_inbox_id: "inbox_1",
       tags: ["legacy"],
       project: "旧项目",
     });
@@ -80,12 +90,31 @@ describe("wiki ingest payload adapter", () => {
     ["source_type", { source_type: undefined }],
     ["tags", { tags: undefined }],
   ])("throws before HTTP when %s is missing", (_field, override) => {
-    expect(() =>
-      buildWikiIngestPayload({
-        frontmatter: { ...frontmatter, ...override },
-        content: "Body",
-      }),
-    ).toThrow(/required/);
+    const malformedInput = {
+      frontmatter: { ...frontmatter, ...override },
+      content: "Body",
+    } as unknown as Parameters<typeof buildWikiIngestPayload>[0];
+
+    expect(() => buildWikiIngestPayload(malformedInput)).toThrow(/required/);
+    expect(mockedIngestWiki).not.toHaveBeenCalled();
+  });
+
+  it("returns a failed result instead of throwing on local payload errors", async () => {
+    const result = await ingestWikiNote({
+      title: "缺少元数据",
+      content: "Body",
+      source_type: "agent-output",
+      tags: ["legacy"],
+      metadata: {
+        type: "project",
+      },
+    });
+
+    expect(result).toMatchObject({
+      ok: false,
+      title: "缺少元数据",
+      error: "created_by is required",
+    });
     expect(mockedIngestWiki).not.toHaveBeenCalled();
   });
 

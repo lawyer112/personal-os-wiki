@@ -79,6 +79,7 @@ describe("Tokyo trip wiki handoff", () => {
       task: {
         id: "task_1",
         title: "东京三天行程规划",
+        status: "review",
         project: { name: "2026-05 东京行" },
         agentTags: ["tokyo", "travel"],
       },
@@ -147,5 +148,53 @@ describe("Tokyo trip wiki handoff", () => {
         }),
       }),
     );
+  });
+
+  it("preserves wiki frontmatter provenance through intake", async () => {
+    const intakeRoute = await import("@/app/api/intake/route");
+    const intakeResponse = await intakeRoute.POST(
+      postJson("http://os.local/api/intake", {
+        source: {
+          sourceType: "x-like",
+          rawText: "收藏了一条 X Like",
+          createdBy: "hermes",
+        },
+        wikiNotes: [
+          {
+            frontmatter: {
+              title: "X Like - demo",
+              type: "source",
+              created_by: "user",
+              source_type: "x-like",
+              tags: ["x-likes"],
+              created_at: "2026-05-13T10:00:00+08:00",
+              source_url: "https://x.com/demo/status/1",
+              canonical_url: "https://x.com/demo/status/1",
+              tweet_id: "1",
+              author_handle: "demo",
+              summary: "demo summary",
+              text_hash: "text-hash-1",
+            },
+            content: "Body",
+          },
+        ],
+      }),
+    );
+
+    expect(intakeResponse.status).toBe(201);
+    expect(mockedIngestWikiNote).toHaveBeenCalledWith({
+      frontmatter: expect.objectContaining({
+        source_url: "https://x.com/demo/status/1",
+        canonical_url: "https://x.com/demo/status/1",
+        tweet_id: "1",
+        author_handle: "demo",
+        summary: "demo summary",
+        text_hash: "text-hash-1",
+        personal_os_inbox_id: "inbox_1",
+        personal_os_agent_run_id: "run_1",
+        personal_os_project_id: undefined,
+      }),
+      content: "Body",
+    });
   });
 });

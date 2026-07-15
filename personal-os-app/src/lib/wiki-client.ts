@@ -39,6 +39,24 @@ export type WikiIngestFrontmatter = {
   project?: string;
   last_reviewed?: string;
   migration?: string;
+  source_url?: string;
+  canonical_url?: string;
+  source_hash?: string;
+  text_hash?: string;
+  source_domain?: string;
+  tweet_id?: string;
+  tweet_thread_id?: string;
+  author_handle?: string;
+  author_name?: string;
+  collected_at?: string;
+  summary?: string;
+  risk_level?: string;
+  external_urls?: string[];
+  media?: Record<string, unknown>[];
+  personal_os_inbox_id?: string;
+  personal_os_agent_run_id?: string;
+  personal_os_project_id?: string;
+  personal_os_task_id?: string;
 };
 
 export type WikiIngestPayload = {

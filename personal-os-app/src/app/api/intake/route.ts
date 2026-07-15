@@ -216,7 +216,10 @@ const withPersonalOsWikiMetadata = (
 ): WikiIngestInput => {
   if (note.frontmatter) {
     return {
-      frontmatter: note.frontmatter,
+      frontmatter: {
+        ...note.frontmatter,
+        ...metadata,
+      },
       content: note.content,
     };
   }

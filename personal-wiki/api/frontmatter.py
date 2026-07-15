@@ -59,6 +59,10 @@ class Frontmatter(BaseModel):
     risk_level: str | None = None
     external_urls: list[str] | None = None
     media: list[dict[str, Any]] | None = None
+    personal_os_inbox_id: str | None = None
+    personal_os_agent_run_id: str | None = None
+    personal_os_project_id: str | None = None
+    personal_os_task_id: str | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -82,6 +86,10 @@ class Frontmatter(BaseModel):
             "collected_at",
             "summary",
             "risk_level",
+            "personal_os_inbox_id",
+            "personal_os_agent_run_id",
+            "personal_os_project_id",
+            "personal_os_task_id",
         ):
             value = normalized.get(key)
             if isinstance(value, str):

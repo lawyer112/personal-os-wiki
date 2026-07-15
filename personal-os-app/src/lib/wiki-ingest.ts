@@ -15,6 +15,24 @@ export interface WikiIngestFrontmatter {
   project?: string;
   last_reviewed?: string;
   migration?: string;
+  source_url?: string;
+  canonical_url?: string;
+  source_hash?: string;
+  text_hash?: string;
+  source_domain?: string;
+  tweet_id?: string;
+  tweet_thread_id?: string;
+  author_handle?: string;
+  author_name?: string;
+  collected_at?: string;
+  summary?: string;
+  risk_level?: string;
+  external_urls?: string[];
+  media?: Record<string, unknown>[];
+  personal_os_inbox_id?: string;
+  personal_os_agent_run_id?: string;
+  personal_os_project_id?: string;
+  personal_os_task_id?: string;
 }
 
 export interface WikiIngestPayload {
@@ -63,8 +81,8 @@ export const buildWikiIngestPayload = (
 export const ingestWikiNote = async (
   input: WikiIngestInput,
 ): Promise<WikiIngestResult> => {
-  const payload = buildWikiIngestPayload(input);
   try {
+    const payload = buildWikiIngestPayload(input);
     const result = await ingestWiki(payload as WikiClientIngestPayload);
     return {
       ok: true,
@@ -79,7 +97,7 @@ export const ingestWikiNote = async (
   } catch (error) {
     return {
       ok: false,
-      title: payload.frontmatter.title,
+      title: ingestInputTitle(input),
       error: error instanceof Error ? error.message : "Personal Wiki ingest failed",
     };
   }
@@ -87,6 +105,9 @@ export const ingestWikiNote = async (
 
 const hasFrontmatter = (input: WikiIngestInput): input is WikiIngestPayload =>
   "frontmatter" in input && typeof input.frontmatter === "object" && input.frontmatter !== null;
+
+const ingestInputTitle = (input: WikiIngestInput) =>
+  hasFrontmatter(input) ? input.frontmatter.title : input.title;
 
 const legacyToPayload = (input: LegacyWikiIngestInput): WikiIngestPayload => {
   const metadata = input.metadata ?? {};
@@ -100,6 +121,24 @@ const legacyToPayload = (input: LegacyWikiIngestInput): WikiIngestPayload => {
       project: optionalMetadataString(metadata, "project"),
       created_at: optionalMetadataString(metadata, "created_at"),
       source_type: input.source_type ?? requiredMetadataString(metadata, "source_type"),
+      source_url: input.source_url ?? optionalMetadataString(metadata, "source_url"),
+      canonical_url: optionalMetadataString(metadata, "canonical_url"),
+      source_hash: optionalMetadataString(metadata, "source_hash"),
+      text_hash: optionalMetadataString(metadata, "text_hash"),
+      source_domain: optionalMetadataString(metadata, "source_domain"),
+      tweet_id: optionalMetadataString(metadata, "tweet_id"),
+      tweet_thread_id: optionalMetadataString(metadata, "tweet_thread_id"),
+      author_handle: optionalMetadataString(metadata, "author_handle"),
+      author_name: optionalMetadataString(metadata, "author_name"),
+      collected_at: optionalMetadataString(metadata, "collected_at"),
+      summary: optionalMetadataString(metadata, "summary"),
+      risk_level: optionalMetadataString(metadata, "risk_level"),
+      external_urls: optionalMetadataStringArray(metadata, "external_urls"),
+      media: optionalMetadataRecordArray(metadata, "media"),
+      personal_os_inbox_id: optionalMetadataString(metadata, "personal_os_inbox_id"),
+      personal_os_agent_run_id: optionalMetadataString(metadata, "personal_os_agent_run_id"),
+      personal_os_project_id: optionalMetadataString(metadata, "personal_os_project_id"),
+      personal_os_task_id: optionalMetadataString(metadata, "personal_os_task_id"),
       tags: input.tags ?? metadataStringArray(metadata, "tags"),
     },
     content: input.content,
@@ -144,4 +183,23 @@ const metadataStringArray = (metadata: LegacyMetadata, field: string) => {
     throw new Error(`${field} is required`);
   }
   return value.map((item) => String(item));
+};
+
+const optionalMetadataStringArray = (metadata: LegacyMetadata, field: string) => {
+  const value = metadata[field];
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+  return value.map((item) => String(item));
+};
+
+const optionalMetadataRecordArray = (metadata: LegacyMetadata, field: string) => {
+  const value = metadata[field];
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+  return value.filter(
+    (item): item is Record<string, unknown> =>
+      typeof item === "object" && item !== null && !Array.isArray(item),
+  );
 };

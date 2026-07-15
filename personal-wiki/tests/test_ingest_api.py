@@ -104,6 +104,27 @@ def test_201_project_happy_path(tmp_path: Path) -> None:
     assert (tmp_path / data["path"]).exists()
 
 
+def test_personal_os_provenance_is_indexed(tmp_path: Path) -> None:
+    status, data = call_ingest(
+        tmp_path,
+        payload(
+            {
+                "personal_os_inbox_id": "inbox_1",
+                "personal_os_agent_run_id": "run_1",
+                "personal_os_project_id": "project_1",
+                "personal_os_task_id": "task_1",
+            }
+        ),
+    )
+
+    assert status.value == 201
+    note_text = (tmp_path / data["path"]).read_text(encoding="utf-8")
+    assert "personal_os_inbox_id: inbox_1" in note_text
+    assert "personal_os_agent_run_id: run_1" in note_text
+    assert "personal_os_project_id: project_1" in note_text
+    assert "personal_os_task_id: task_1" in note_text
+
+
 def test_201_journal_happy_path(tmp_path: Path) -> None:
     status, data = call_ingest(
         tmp_path,
