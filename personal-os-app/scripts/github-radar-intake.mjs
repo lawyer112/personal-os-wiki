@@ -466,12 +466,15 @@ async function main() {
   await saveRegistry(args.registry, mergedRegistry);
 
   let intake = null;
-  if (args.intake) {
+  const hasNewContent = filteredRepos.length > 0 || tasks.length > 0;
+  if (args.intake && hasNewContent) {
     intake = await postIntake(payload);
     await writeFile(path.join(args.out, "intake-result.json"), `${JSON.stringify(intake, null, 2)}\n`);
+  } else if (args.intake && !hasNewContent) {
+    console.log("[skip-intake] 0 new repos and 0 new tasks; skipping intake to avoid duplicate wiki notes");
   }
 
-  console.log(JSON.stringify({ out: args.out, repos: filteredRepos.length, tasks: tasks.length, registry: registryStats, intake: intake ? { ok: intake.ok, agentRunId: intake.agentRunId, wiki_write_status: intake.wiki_write_status } : null }, null, 2));
+  console.log(JSON.stringify({ out: args.out, repos: filteredRepos.length, tasks: tasks.length, registry: registryStats, intake: intake ? { ok: intake.ok, agentRunId: intake.agentRunId, wiki_write_status: intake.wiki_write_status } : null, skippedIntake: !hasNewContent }, null, 2));
 }
 
 main().catch((error) => {
