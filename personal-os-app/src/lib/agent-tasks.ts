@@ -150,6 +150,13 @@ function assertAgentCanWorkTask(
   }
 }
 
+function allowedAgentRiskLevels(profile: AgentProfileRecord | null) {
+  return profile?.allowedRiskLevel === "medium" ||
+    profile?.allowedRiskLevel === "high"
+    ? ["low", "medium"]
+    : ["low"];
+}
+
 function agentPolicyWhere(profile: AgentProfileRecord | null) {
   const profileTags = profile?.tags ?? [];
   const tagFilter =
@@ -162,15 +169,9 @@ function agentPolicyWhere(profile: AgentProfileRecord | null) {
         }
       : { agentTags: { isEmpty: true } };
 
-  const allowedRiskLevels =
-    profile?.allowedRiskLevel === "medium" ||
-    profile?.allowedRiskLevel === "high"
-      ? ["low", "medium"]
-      : ["low"];
-
   return {
     executionMode: "agent_allowed",
-    riskLevel: { in: allowedRiskLevels },
+    riskLevel: { in: allowedAgentRiskLevels(profile) },
     ...tagFilter,
   };
 }
@@ -503,10 +504,7 @@ export async function listAgentInboxTasks<TDb extends AgentTaskDb>(
   const effectiveTags = input.tags.length > 0 ? input.tags : (profile.tags ?? []);
   const claimablePolicyFilter = {
     executionMode: "agent_allowed",
-    riskLevel:
-      profile.allowedRiskLevel === "medium"
-        ? { in: ["low", "medium"] }
-        : { in: ["low"] },
+    riskLevel: { in: allowedAgentRiskLevels(profile) },
   };
   const tagFilter =
     effectiveTags.length > 0

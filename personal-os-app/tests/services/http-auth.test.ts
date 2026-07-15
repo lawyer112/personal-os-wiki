@@ -72,7 +72,7 @@ describe("API token guards", () => {
     ).toThrow(HttpError);
   });
 
-  it("rate limits repeated production write attempts by client address", () => {
+  it("does not trust forwarded addresses for rate-limit buckets by default", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");
     vi.stubEnv("PERSONAL_OS_WRITE_RATE_LIMIT", "1");
@@ -85,9 +85,28 @@ describe("API token guards", () => {
     ).toThrow("Missing or invalid API token");
     expect(() =>
       requireWriteAccess(
-        request("wrong-token-000000", { "x-forwarded-for": "203.0.113.10" }),
+        request("wrong-token-000000", { "x-forwarded-for": "203.0.113.11" }),
       ),
     ).toThrow("Too many write requests");
+  });
+
+  it("uses forwarded addresses only behind an explicitly trusted proxy", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");
+    vi.stubEnv("PERSONAL_OS_WRITE_RATE_LIMIT", "1");
+    vi.stubEnv("PERSONAL_OS_WRITE_RATE_WINDOW_MS", "60000");
+    vi.stubEnv("PERSONAL_OS_TRUST_PROXY_HEADERS", "true");
+
+    expect(() =>
+      requireWriteAccess(
+        request("wrong-token-000000", { "x-forwarded-for": "203.0.113.10" }),
+      ),
+    ).toThrow("Missing or invalid API token");
+    expect(() =>
+      requireWriteAccess(
+        request("wrong-token-000000", { "x-forwarded-for": "203.0.113.11" }),
+      ),
+    ).toThrow("Missing or invalid API token");
   });
 
   it("compares tokens without length-sensitive equality failures", () => {

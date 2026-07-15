@@ -58,6 +58,10 @@ function configuredPositiveInt(name: string, fallback: number) {
 }
 
 function clientAddress(request: Request) {
+  if (process.env.PERSONAL_OS_TRUST_PROXY_HEADERS?.trim().toLowerCase() !== "true") {
+    return "shared";
+  }
+
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     return forwardedFor.split(",")[0]?.trim() || "unknown";

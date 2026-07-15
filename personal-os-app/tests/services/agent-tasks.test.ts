@@ -123,6 +123,43 @@ describe("agent task protocol", () => {
     );
   });
 
+  it("keeps medium-risk owned work visible to high-capability agents", async () => {
+    const db = createDb({
+      agentProfile: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "agent_1",
+          tags: ["demo", "review"],
+          allowedRiskLevel: "high",
+          canWriteTasks: true,
+          enabled: true,
+        }),
+      },
+    });
+
+    await listAgentInboxTasks(db, {
+      agentId: "agent_1",
+      tags: [],
+      limit: 5,
+    });
+
+    expect(db.task.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              OR: expect.arrayContaining([
+                expect.objectContaining({
+                  ownerAgent: "agent_1",
+                  riskLevel: { in: ["low", "medium"] },
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      }),
+    );
+  });
+
   it("claims a task with a lease and records activity", async () => {
     const db = createDb({
       task: {

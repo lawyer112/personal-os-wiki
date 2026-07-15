@@ -85,7 +85,7 @@ This project uses semantic versioning for public release packages. The root
 - Developer experience walkthrough layout and neutral reviewer paths were
   cleaned up.
 - High-capability Agent profiles can continue medium-risk work through
-  heartbeat, contribution, and submit mutations.
+  inbox polling, heartbeat, contribution, and submit mutations.
 - Changing a leased task's execution mode, risk level, or Agent tags now
   releases the stale claim and task run immediately.
 - Browser write actions can use the write token's existing HttpOnly access
@@ -103,6 +103,8 @@ This project uses semantic versioning for public release packages. The root
 - Personal OS configured data paths are constrained to the app `data`
   directory.
 - Personal OS read/write token checks use timing-safe digest comparison.
+- Write rate limiting ignores client-controlled forwarding headers unless a
+  sanitizing reverse proxy is explicitly trusted.
 - Daily planner timezone input now rejects invalid IANA timezone names.
 - Personal Wiki inline JSON escaping now escapes `<`, `>`, `&`, U+2028, and
   U+2029 for script contexts.
