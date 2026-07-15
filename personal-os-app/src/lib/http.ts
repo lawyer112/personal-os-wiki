@@ -1,10 +1,9 @@
 import { Prisma } from "@prisma/client";
 import { ZodError, type ZodType } from "zod";
 import {
-  bearerToken,
   configuredReadTokens,
   requestHasReadAccess,
-  tokenAllowed,
+  requestHasTokenAccess,
 } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -62,7 +61,7 @@ export function requireWriteAccess(request: Request) {
     );
   }
 
-  if (!tokenAllowed(bearerToken(request.headers), [token])) {
+  if (!requestHasTokenAccess(request.headers, [token])) {
     throw new HttpError(401, "Missing or invalid API token");
   }
 }

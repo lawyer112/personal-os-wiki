@@ -48,6 +48,30 @@ describe("API token guards", () => {
     );
   });
 
+  it("allows write access with the write token stored in the read cookie", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_READ_TOKEN", "read-token-000000");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");
+
+    expect(() =>
+      requireWriteAccess(
+        request(undefined, { cookie: "personal_os_read=write-token-000000" }),
+      ),
+    ).not.toThrow();
+  });
+
+  it("rejects write access with the read token stored in the read cookie", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("PERSONAL_OS_READ_TOKEN", "read-token-000000");
+    vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");
+
+    expect(() =>
+      requireWriteAccess(
+        request(undefined, { cookie: "personal_os_read=read-token-000000" }),
+      ),
+    ).toThrow(HttpError);
+  });
+
   it("rate limits repeated production write attempts by client address", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("PERSONAL_OS_API_TOKEN", "write-token-000000");

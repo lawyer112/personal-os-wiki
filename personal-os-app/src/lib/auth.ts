@@ -45,9 +45,16 @@ function digestToken(token: string) {
   return createHash("sha256").update(token, "utf8").digest();
 }
 
-export function requestHasReadAccess(headers: Headers, allowedTokens = configuredReadTokens()) {
+export function requestHasTokenAccess(headers: Headers, allowedTokens: string[]) {
   return (
     tokenAllowed(bearerToken(headers), allowedTokens) ||
     tokenAllowed(cookieToken(headers.get("cookie")), allowedTokens)
   );
+}
+
+export function requestHasReadAccess(
+  headers: Headers,
+  allowedTokens = configuredReadTokens(),
+) {
+  return requestHasTokenAccess(headers, allowedTokens);
 }
