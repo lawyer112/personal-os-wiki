@@ -84,6 +84,10 @@ This project uses semantic versioning for public release packages. The root
 - CI no longer runs a raw-manifest ingest test without its script dependency.
 - Developer experience walkthrough layout and neutral reviewer paths were
   cleaned up.
+- High-capability Agent profiles can continue medium-risk work through
+  heartbeat, contribution, and submit mutations.
+- Changing a leased task's execution mode, risk level, or Agent tags now
+  releases the stale claim and task run immediately.
 
 ### Security
 

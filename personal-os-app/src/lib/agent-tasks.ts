@@ -162,12 +162,15 @@ function agentPolicyWhere(profile: AgentProfileRecord | null) {
         }
       : { agentTags: { isEmpty: true } };
 
+  const allowedRiskLevels =
+    profile?.allowedRiskLevel === "medium" ||
+    profile?.allowedRiskLevel === "high"
+      ? ["low", "medium"]
+      : ["low"];
+
   return {
     executionMode: "agent_allowed",
-    riskLevel:
-      profile?.allowedRiskLevel === "medium"
-        ? { in: ["low", "medium"] }
-        : { in: ["low"] },
+    riskLevel: { in: allowedRiskLevels },
     ...tagFilter,
   };
 }

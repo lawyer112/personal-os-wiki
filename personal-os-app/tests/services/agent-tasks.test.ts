@@ -285,6 +285,38 @@ describe("agent task protocol", () => {
     );
   });
 
+  it("allows a high-capability profile to heartbeat a medium-risk task", async () => {
+    const db = createDb({
+      agentProfile: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "agent_1",
+          tags: ["demo", "review"],
+          allowedRiskLevel: "high",
+          canWriteTasks: true,
+          enabled: true,
+        }),
+      },
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValue(ownedTask({ riskLevel: "medium" })),
+      },
+    });
+
+    await heartbeatTask(db, "task_1", {
+      agentId: "agent_1",
+      leaseMinutes: 30,
+    });
+
+    expect(db.task.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          riskLevel: { in: ["low", "medium"] },
+        }),
+      }),
+    );
+  });
+
   it("rejects heartbeats if task policy changed after claim", async () => {
     const db = createDb({
       task: {

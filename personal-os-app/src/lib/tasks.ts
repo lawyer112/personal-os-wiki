@@ -21,6 +21,9 @@ type TaskRecord = {
   id: string;
   ownerAgent?: string | null;
   leaseUntil?: Date | string | null;
+  executionMode?: string | null;
+  riskLevel?: string | null;
+  agentTags?: string[] | null;
 };
 
 const taskInclude = {
@@ -35,6 +38,13 @@ const taskInclude = {
   agentActionLogs: { orderBy: { createdAt: "desc" }, take: 8 },
   reviews: { orderBy: { createdAt: "desc" }, take: 3 },
 };
+
+function sameStringSet(left: string[], right: string[]) {
+  return (
+    left.length === right.length &&
+    left.every((value) => right.includes(value))
+  );
+}
 
 export async function listTasks<TDb extends TaskDb>(db: TDb) {
   const taskDelegate = db.task as { findMany(args: unknown): Promise<unknown[]> };
@@ -102,10 +112,17 @@ export async function updateTask<TDb extends TaskDb>(
   };
   const before = await taskDelegate.findUnique({ where: { id } });
   const now = new Date();
+  const executionModeChanged =
+    taskInput.executionMode !== undefined &&
+    taskInput.executionMode !== before?.executionMode;
+  const riskLevelChanged =
+    taskInput.riskLevel !== undefined &&
+    taskInput.riskLevel !== before?.riskLevel;
+  const agentTagsChanged =
+    taskInput.agentTags !== undefined &&
+    !sameStringSet(taskInput.agentTags, before?.agentTags ?? []);
   const shouldRevokeLease =
-    (taskInput.executionMode !== undefined &&
-      taskInput.executionMode !== "agent_allowed") ||
-    taskInput.riskLevel === "high";
+    executionModeChanged || riskLevelChanged || agentTagsChanged;
   const data = {
     ...taskInput,
     ...(taskInput.status === "done"
