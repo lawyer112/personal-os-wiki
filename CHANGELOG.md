@@ -7,7 +7,7 @@ This project uses semantic versioning for public release packages. The root
 
 ## Unreleased
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-07-15
 
 ### Added
 
@@ -64,6 +64,14 @@ This project uses semantic versioning for public release packages. The root
 - Documentation now emphasizes that GitHub contains the reusable engine only;
   populated vaults, task history, logs, server inventories, and private UI files
   stay local.
+- Agent heartbeat, contribution, and submit mutations now use conditional
+  policy/lease writes instead of relying only on a prior read.
+- Submitting work clears `ownerAgent`/`leaseUntil`, releases active claims, and
+  moves the active task run to `submitted`.
+- Review decisions write back to submitted task runs as `approved`,
+  `changes_requested`, `rejected`, `blocked`, or `archived`.
+- The capture bookmarklet now uses `NEXT_PUBLIC_APP_URL` instead of hard-coded
+  localhost.
 
 ### Fixed
 
@@ -83,20 +91,6 @@ This project uses semantic versioning for public release packages. The root
 - Release and data-safety docs reaffirm that real `.env` files, tokens, cookies,
   private vaults, Personal OS databases, logs, screenshots, server inventories,
   and generated runtime artifacts are excluded from Git.
-
-### Changed
-
-- Agent heartbeat, contribution, and submit mutations now use conditional
-  policy/lease writes instead of relying only on a prior read.
-- Submitting work clears `ownerAgent`/`leaseUntil`, releases active claims, and
-  moves the active task run to `submitted`.
-- Review decisions write back to submitted task runs as `approved`,
-  `changes_requested`, `rejected`, `blocked`, or `archived`.
-- The capture bookmarklet now uses `NEXT_PUBLIC_APP_URL` instead of hard-coded
-  localhost.
-
-### Security
-
 - Personal OS configured data paths are constrained to the app `data`
   directory.
 - Personal OS read/write token checks use timing-safe digest comparison.
