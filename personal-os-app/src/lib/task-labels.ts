@@ -4,7 +4,7 @@ const taskStatusLabels: Record<string, string> = {
   todo: "今日要做",
   doing: "进行中",
   waiting: "等待中",
-  blocked: "卡住了",
+  blocked: "受阻",
   paused: "暂停",
   done: "已完成",
   archived: "已忽略",

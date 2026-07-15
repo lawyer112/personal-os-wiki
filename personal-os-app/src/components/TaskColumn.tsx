@@ -28,13 +28,13 @@ export function TaskColumn({
       : `${tasks.length}`;
 
   return (
-    <section className="rounded-lg border border-zinc-200 bg-white p-4">
-      <div className="mb-3 flex items-start justify-between gap-3">
+    <section className="rounded-[1.75rem] border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-[var(--shadow-card)]">
+      <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-zinc-950">{title}</h2>
-          <p className="mt-1 text-xs leading-5 text-zinc-500">{subtitle}</p>
+          <h2 className="text-base font-bold text-[var(--ink)]">{title}</h2>
+          <p className="mt-1 text-xs leading-5 text-[var(--ink-muted)]">{subtitle}</p>
         </div>
-        <span className="rounded-lg border border-zinc-200 px-2 py-1 text-xs font-semibold text-zinc-600">
+        <span className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-muted)] px-2.5 py-1 text-xs font-bold text-[var(--ink-muted)]">
           {countLabel}
         </span>
       </div>
@@ -52,7 +52,7 @@ export function TaskColumn({
           ))}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-zinc-300 px-3 py-6 text-sm text-zinc-500">
+        <div className="rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-muted)] px-3 py-6 text-sm text-[var(--ink-muted)]">
           {emptyText}
         </div>
       )}

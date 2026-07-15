@@ -71,7 +71,7 @@ export function IdeaActionControls({
 
   if (status === "promoted") {
     return (
-      <div className="text-xs font-semibold text-emerald-700">
+      <div className="text-xs font-bold text-[var(--brand-strong)]">
         已经转成任务
       </div>
     );
@@ -83,7 +83,7 @@ export function IdeaActionControls({
         type="button"
         disabled={pending !== null}
         onClick={promote}
-        className="rounded-lg bg-zinc-950 px-2.5 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+        className="rounded-full bg-[var(--brand-strong)] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
       >
         转成任务
       </button>
@@ -93,12 +93,12 @@ export function IdeaActionControls({
           type="button"
           disabled={pending !== null || status === action.status}
           onClick={() => patchStatus(action.status)}
-          className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-zinc-700 disabled:opacity-50"
+          className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-3 py-1.5 text-xs font-semibold text-[var(--ink-muted)] disabled:opacity-50"
         >
           {action.label}
         </button>
       ))}
-      {error ? <span className="text-xs text-rose-600">{error}</span> : null}
+      {error ? <span className="text-xs text-[var(--blocked)]">{error}</span> : null}
     </div>
   );
 }

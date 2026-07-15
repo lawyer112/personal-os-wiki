@@ -2,6 +2,7 @@ type TodayDb = {
   task: unknown;
   project: unknown;
   activityLog: unknown;
+  dailyPlan?: unknown;
 };
 
 const taskInclude = {
@@ -32,6 +33,9 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
   const activityLog = db.activityLog as {
     findMany(args: unknown): Promise<unknown[]>;
   };
+  const dailyPlan = db.dailyPlan as
+    | { findFirst(args: unknown): Promise<unknown | null> }
+    | undefined;
 
   const intakeReviewWhere = { status: "review", submittedAt: null };
   const executionReviewWhere = { status: "review", submittedAt: { not: null } };
@@ -51,6 +55,7 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
     doneTasks,
     projects,
     activity,
+    latestPlan,
   ] =
     await Promise.all([
       task.count({ where: { status: { in: ["doing", "todo"] } } }),
@@ -119,6 +124,11 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
         orderBy: { createdAt: "desc" },
         take: 12,
       }),
+      dailyPlan
+        ? dailyPlan.findFirst({
+            orderBy: { createdAt: "desc" },
+          })
+        : Promise.resolve(null),
     ]);
 
   return {
@@ -139,5 +149,6 @@ export async function getToday<TDb extends TodayDb>(db: TDb) {
     doneTasks,
     projects,
     activity,
+    latestPlan,
   };
 }

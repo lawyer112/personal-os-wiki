@@ -36,34 +36,34 @@ export function CaptureForm({ initialValues }: CaptureFormProps) {
   return (
     <form action={formAction} className="grid gap-5">
       {state.ok ? (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
-          Saved to Inbox
+        <div className="rounded-2xl border border-[var(--brand)] bg-[var(--brand-soft)] px-4 py-3 text-sm font-semibold text-[var(--brand-strong)]">
+          已保存到输入箱
           {state.itemId ? (
-            <span className="ml-2 font-mono text-xs text-emerald-700">
+            <span className="ml-2 font-mono text-xs text-[var(--ink-muted)]">
               {state.itemId}
             </span>
           ) : null}
           <Link href="/inbox" className="ml-3 underline">
-            Open Inbox
+            打开输入箱
           </Link>
         </div>
       ) : null}
 
       {state.error ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+        <div className="rounded-2xl border border-[var(--blocked)] bg-[var(--blocked-soft)] px-4 py-3 text-sm font-semibold text-[var(--blocked)]">
           {state.error}
         </div>
       ) : null}
 
-      <label className="grid gap-2 text-sm font-semibold text-zinc-800">
-        Link or raw thought
+      <label className="grid gap-2 text-sm font-bold text-[var(--ink)]">
+        链接、片段或临时想法
         <textarea
           name="content"
           defaultValue={values.content}
           rows={9}
           onDrop={onDrop}
-          placeholder="https://example.com/article"
-          className="rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm font-normal leading-6 text-zinc-950 outline-none focus:border-emerald-500"
+          placeholder="粘贴链接、想法、聊天片段或待整理材料"
+          className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface)] px-3 py-2 text-sm font-normal leading-6 text-[var(--ink)] outline-none focus:border-[var(--brand)]"
         />
       </label>
 
@@ -71,15 +71,15 @@ export function CaptureForm({ initialValues }: CaptureFormProps) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-lg bg-zinc-950 px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
+          className="rounded-full bg-[var(--brand-strong)] px-4 py-2 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "Saving..." : "Save"}
+          {pending ? "保存中..." : "收进输入箱"}
         </button>
         <Link
           href="/inbox"
-          className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-bold text-zinc-700"
+          className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-4 py-2 text-sm font-bold text-[var(--ink-muted)] hover:border-[var(--border-strong)]"
         >
-          Inbox
+          查看输入箱
         </Link>
       </div>
     </form>

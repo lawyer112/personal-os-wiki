@@ -68,54 +68,54 @@ export function TaskEditForm({ task }: { task: TaskView }) {
   return (
     <form
       onSubmit={submit}
-      className="mt-4 rounded-lg border border-zinc-200 bg-white p-3"
+      className="mt-4 rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] p-3"
     >
-      <h3 className="text-sm font-semibold text-zinc-950">人工修正</h3>
+      <h3 className="text-sm font-bold text-[var(--ink)]">调整内容</h3>
       <div className="mt-3 grid gap-3 text-sm">
         <label className="grid gap-1">
-          <span className="text-xs font-semibold text-zinc-500">标题</span>
+          <span className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">标题</span>
           <input
             value={form.title}
             onChange={(event) => updateField("title", event.target.value)}
-            className="rounded-lg border border-zinc-200 px-2 py-1.5"
+            className="rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink)] outline-none focus:border-[var(--brand)] px-2 py-1.5"
             required
           />
         </label>
         <label className="grid gap-1">
-          <span className="text-xs font-semibold text-zinc-500">今日目标</span>
+          <span className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">今日目标</span>
           <textarea
             value={form.description}
             onChange={(event) => updateField("description", event.target.value)}
-            className="min-h-20 rounded-lg border border-zinc-200 px-2 py-1.5"
+            className="min-h-20 rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink)] outline-none focus:border-[var(--brand)] px-2 py-1.5"
           />
         </label>
         <label className="grid gap-1">
-          <span className="text-xs font-semibold text-zinc-500">下一步</span>
+          <span className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">下一步</span>
           <textarea
             value={form.nextAction}
             onChange={(event) => updateField("nextAction", event.target.value)}
-            className="min-h-16 rounded-lg border border-zinc-200 px-2 py-1.5"
+            className="min-h-16 rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink)] outline-none focus:border-[var(--brand)] px-2 py-1.5"
             required
           />
         </label>
         <label className="grid gap-1">
-          <span className="text-xs font-semibold text-zinc-500">完成标准</span>
+          <span className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">完成标准</span>
           <textarea
             value={form.definitionOfDone}
             onChange={(event) =>
               updateField("definitionOfDone", event.target.value)
             }
-            className="min-h-16 rounded-lg border border-zinc-200 px-2 py-1.5"
+            className="min-h-16 rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink)] outline-none focus:border-[var(--brand)] px-2 py-1.5"
             required
           />
         </label>
         <div className="grid grid-cols-2 gap-2">
           <label className="grid gap-1">
-            <span className="text-xs font-semibold text-zinc-500">优先级</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">优先级</span>
             <select
               value={form.priority}
               onChange={(event) => updateField("priority", event.target.value)}
-              className="rounded-lg border border-zinc-200 px-2 py-1.5"
+              className="rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink)] outline-none focus:border-[var(--brand)] px-2 py-1.5"
             >
               <option value="P0">最高优先</option>
               <option value="P1">重要</option>
@@ -124,13 +124,13 @@ export function TaskEditForm({ task }: { task: TaskView }) {
             </select>
           </label>
           <label className="grid gap-1">
-            <span className="text-xs font-semibold text-zinc-500">预计分钟</span>
+            <span className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">预计分钟</span>
             <input
               value={form.estimateMinutes}
               onChange={(event) =>
                 updateField("estimateMinutes", event.target.value)
               }
-              className="rounded-lg border border-zinc-200 px-2 py-1.5"
+              className="rounded-lg border border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink)] outline-none focus:border-[var(--brand)] px-2 py-1.5"
               inputMode="numeric"
               pattern="[0-9]*"
             />
@@ -141,11 +141,11 @@ export function TaskEditForm({ task }: { task: TaskView }) {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-lg bg-zinc-950 px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
+          className="rounded-full bg-[var(--brand-strong)] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-50"
         >
           保存修改
         </button>
-        {message ? <span className="text-xs text-zinc-500">{message}</span> : null}
+        {message ? <span className="text-xs text-[var(--ink-muted)]">{message}</span> : null}
       </div>
     </form>
   );

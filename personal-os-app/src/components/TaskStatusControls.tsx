@@ -12,10 +12,10 @@ type TaskStatusControlsProps = {
 };
 
 const statusActions = [
-  { status: "todo", label: "标回今日" },
+  { status: "todo", label: "移回今日" },
   { status: "waiting", label: "等待" },
-  { status: "blocked", label: "卡住" },
-  { status: "archived", label: "忽略" },
+  { status: "blocked", label: "受阻" },
+  { status: "archived", label: "归档" },
 ] as const;
 
 export function TaskStatusControls({
@@ -61,38 +61,38 @@ export function TaskStatusControls({
           disabled={pending !== null}
           onClick={() => patchStatus(isDone ? "todo" : "done")}
           className={clsx(
-            "inline-flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs font-semibold disabled:opacity-50",
+            "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold disabled:opacity-50",
             isDone
-              ? "border-zinc-200 bg-white text-zinc-600"
-              : "border-emerald-700 bg-emerald-700 text-white",
+              ? "border-[var(--border-soft)] bg-[var(--surface)] text-[var(--ink-muted)]"
+              : "border-[var(--brand-strong)] bg-[var(--brand-strong)] text-white",
           )}
         >
           <span
             className={clsx(
               "grid size-3 place-items-center rounded border text-[9px] leading-none",
               isDone
-                ? "border-emerald-700 bg-emerald-700 text-white"
+                ? "border-[var(--brand-strong)] bg-[var(--brand-strong)] text-white"
                 : "border-white",
             )}
           >
             {isDone ? "✓" : ""}
           </span>
-          {isDone ? "标回今日" : "完成"}
+          {isDone ? "移回今日" : "完成"}
         </button>
-        {error ? <span className="text-xs text-rose-600">{error}</span> : null}
+        {error ? <span className="text-xs text-[var(--blocked)]">{error}</span> : null}
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-3">
-      <div className="text-xs font-semibold text-zinc-500">人工改状态</div>
+    <div className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] p-3">
+      <div className="text-xs font-bold uppercase tracking-wide text-[var(--ink-soft)]">调整状态</div>
       <div className="mt-2 flex flex-wrap gap-2 text-xs font-semibold">
         <button
           type="button"
           disabled={pending !== null || isDone}
           onClick={() => patchStatus("done")}
-          className="rounded-lg bg-emerald-700 px-2.5 py-1.5 text-white disabled:opacity-50"
+          className="rounded-full bg-[var(--brand-strong)] px-3 py-1.5 text-white disabled:opacity-50"
         >
           勾选完成
         </button>
@@ -102,16 +102,16 @@ export function TaskStatusControls({
             type="button"
             disabled={pending !== null || status === action.status}
             onClick={() => patchStatus(action.status)}
-            className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-zinc-700 disabled:opacity-50"
+            className="rounded-full border border-[var(--border-soft)] bg-[var(--surface)] px-3 py-1.5 text-[var(--ink-muted)] disabled:opacity-50"
           >
             {action.label}
           </button>
         ))}
       </div>
-      <div className="mt-2 text-xs text-zinc-500">
+      <div className="mt-2 text-xs text-[var(--ink-muted)]">
         当前：{formatTaskStatus(status)}
       </div>
-      {error ? <p className="mt-2 text-xs text-rose-600">{error}</p> : null}
+      {error ? <p className="mt-2 text-xs text-[var(--blocked)]">{error}</p> : null}
     </div>
   );
 }

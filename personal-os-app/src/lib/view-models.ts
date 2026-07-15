@@ -132,6 +132,19 @@ export type ActivityItem = {
   createdAt?: Date | string;
 };
 
+export type DailyPlanView = {
+  id: string;
+  date: string;
+  timezone: string;
+  mode: string;
+  mainLine: string;
+  firstAction: string;
+  blocked: string[];
+  needsDecision: string[];
+  deliveredTo: string[];
+  createdAt?: Date | string;
+};
+
 export type TodayView = {
   metrics: {
     now: number;
@@ -150,4 +163,5 @@ export type TodayView = {
   doneTasks: TaskView[];
   projects: ProjectRadarItem[];
   activity: ActivityItem[];
+  latestPlan: DailyPlanView | null;
 };

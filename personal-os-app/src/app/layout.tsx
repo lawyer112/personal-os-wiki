@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Personal OS",
-  description: "Private Hermes-driven work and knowledge operating system",
+  description: "本地优先的个人工作与知识系统",
 };
 
 export default function RootLayout({

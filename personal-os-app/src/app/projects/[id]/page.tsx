@@ -5,6 +5,35 @@ import type { TaskView } from "@/lib/view-models";
 
 export const dynamic = "force-dynamic";
 
+function formatDateTime(value?: Date | string | null) {
+  if (!value) {
+    return "";
+  }
+
+  return new Date(value).toLocaleString("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function taskTone(status: string) {
+  if (["todo", "doing", "active"].includes(status)) {
+    return "active" as const;
+  }
+  if (["waiting", "paused"].includes(status)) {
+    return "waiting" as const;
+  }
+  if (status === "blocked") {
+    return "blocked" as const;
+  }
+  if (["done", "archived"].includes(status)) {
+    return "done" as const;
+  }
+  return "review" as const;
+}
+
 export default async function ProjectPage({
   params,
 }: {
@@ -34,34 +63,116 @@ export default async function ProjectPage({
     },
   });
 
-  return (
-    <section>
-      <p className="text-sm font-semibold text-emerald-700">
-        {formatTaskStatus(project.status)} / {formatPriority(project.priority)}
-      </p>
-      <h1 className="mt-1 text-3xl font-bold tracking-tight">
-        {project.name}
-      </h1>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-600">
-        {project.goal}
-      </p>
+  const tasks = project.tasks as TaskView[];
+  const openTasks = tasks.filter((task) => !["done", "archived"].includes(task.status));
+  const blockedTasks = openTasks.filter((task) => task.status === "blocked");
+  const waitingTasks = openTasks.filter((task) => ["waiting", "paused"].includes(task.status));
+  const latestEvent = project.events[0];
 
-      <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="grid gap-3">
-          {(project.tasks as TaskView[]).map((task) => (
-            <TaskCard key={task.id} task={task} tone="review" />
-          ))}
+  return (
+    <section className="grid gap-5">
+      <div className="rounded-[2rem] border border-[var(--border-soft)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)]">
+        <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
+          <div>
+            <p className="ui-eyebrow">项目档案</p>
+            <h1 className="mt-2 text-4xl font-bold tracking-tight text-[var(--ink)]">
+              {project.name}
+            </h1>
+            <p className="mt-3 max-w-4xl text-sm leading-7 text-[var(--ink-muted)]">
+              {project.goal ?? "这个项目还没有写长期目标。"}
+            </p>
+          </div>
+          <div className="grid min-w-72 grid-cols-2 gap-2 text-xs">
+            <div className="rounded-2xl bg-[var(--surface-muted)] p-3">
+              <div className="text-[var(--ink-soft)]">状态</div>
+              <div className="mt-1 font-bold text-[var(--ink)]">
+                {formatTaskStatus(project.status)}
+              </div>
+            </div>
+            <div className="rounded-2xl bg-[var(--surface-muted)] p-3">
+              <div className="text-[var(--ink-soft)]">优先级</div>
+              <div className="mt-1 font-bold text-[var(--ink)]">
+                {formatPriority(project.priority)}
+              </div>
+            </div>
+            <div className="rounded-2xl bg-[var(--blocked-soft)] p-3">
+              <div className="text-[var(--blocked)]">卡点</div>
+              <div className="mt-1 font-bold text-[var(--blocked)]">
+                {blockedTasks.length}
+              </div>
+            </div>
+            <div className="rounded-2xl bg-[var(--waiting-soft)] p-3">
+              <div className="text-[var(--waiting)]">等待</div>
+              <div className="mt-1 font-bold text-[var(--waiting)]">
+                {waitingTasks.length}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-3 lg:grid-cols-2">
+          <div className="rounded-2xl bg-[var(--brand-soft)] p-4">
+            <div className="text-xs font-bold uppercase tracking-wide text-[var(--brand-strong)]">
+              当前焦点
+            </div>
+            <p className="mt-2 text-sm leading-6 text-[var(--ink)]">
+              {project.currentFocus ?? "还没有写当前焦点。"}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[var(--surface-muted)] p-4">
+            <div className="text-xs font-bold uppercase tracking-wide text-[var(--brand-strong)]">
+              最近推进
+            </div>
+            <p className="mt-2 text-sm leading-6 text-[var(--ink-muted)]">
+              {latestEvent
+                ? `${latestEvent.title} · ${formatDateTime(latestEvent.createdAt)}`
+                : "还没有项目事件。"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="grid gap-4">
+          <section className="rounded-[1.75rem] border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-[var(--shadow-card)]">
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-[var(--ink)]">未完成任务</h2>
+                <p className="mt-1 text-xs leading-5 text-[var(--ink-muted)]">
+                  项目是否在动，先看这些任务是否能继续推进。
+                </p>
+              </div>
+              <span className="rounded-full border border-[var(--border-soft)] bg-[var(--surface-muted)] px-2.5 py-1 text-xs font-bold text-[var(--ink-muted)]">
+                {openTasks.length}
+              </span>
+            </div>
+
+            {openTasks.length > 0 ? (
+              <div className="grid gap-3 lg:grid-cols-2">
+                {openTasks.map((task) => (
+                  <TaskCard key={task.id} task={task} tone={taskTone(task.status)} />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-[var(--border-strong)] bg-[var(--surface-muted)] px-3 py-6 text-sm text-[var(--ink-muted)]">
+                这个项目暂时没有未完成任务。
+              </div>
+            )}
+          </section>
         </div>
 
         <aside className="grid gap-4">
-          <section className="rounded-lg border border-zinc-200 bg-white p-4">
-            <h2 className="font-semibold">项目进展</h2>
-            <div className="mt-3 grid gap-2 text-sm leading-6 text-zinc-600">
+          <section className="rounded-[1.75rem] border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-[var(--shadow-card)]">
+            <h2 className="text-base font-bold text-[var(--ink)]">项目进展</h2>
+            <div className="mt-3 grid gap-2 text-sm leading-6 text-[var(--ink-muted)]">
               {project.events.length > 0 ? (
                 project.events.map((event) => (
-                  <div key={event.id} className="rounded-lg bg-zinc-50 p-3">
-                    <div className="font-semibold text-zinc-900">{event.title}</div>
-                    <p className="mt-1 line-clamp-3">{event.body}</p>
+                  <div key={event.id} className="rounded-2xl bg-[var(--surface-muted)] p-3">
+                    <div className="font-bold text-[var(--ink)]">{event.title}</div>
+                    <div className="mt-1 text-xs text-[var(--ink-soft)]">
+                      {event.eventType} · {formatDateTime(event.createdAt)}
+                    </div>
+                    <p className="mt-2 line-clamp-4">{event.body}</p>
                   </div>
                 ))
               ) : (
@@ -70,15 +181,15 @@ export default async function ProjectPage({
             </div>
           </section>
 
-          <section className="rounded-lg border border-zinc-200 bg-white p-4">
-            <h2 className="font-semibold">项目记录</h2>
-            <div className="mt-3 grid gap-2 text-sm leading-6 text-zinc-600">
+          <section className="rounded-[1.75rem] border border-[var(--border-soft)] bg-[var(--surface)] p-4 shadow-[var(--shadow-card)]">
+            <h2 className="text-base font-bold text-[var(--ink)]">项目记录</h2>
+            <div className="mt-3 grid gap-2 text-sm leading-6 text-[var(--ink-muted)]">
               {project.notes.length > 0 ? (
                 project.notes.map((item) => (
                   <a
                     key={item.noteId}
                     href={`/notes/${item.noteId}`}
-                    className="rounded-lg bg-zinc-50 p-3 font-medium text-zinc-900 hover:bg-zinc-100"
+                    className="rounded-2xl border border-[var(--border-soft)] bg-[var(--surface-muted)] p-3 font-medium text-[var(--ink)] hover:bg-[var(--app-bg-soft)]"
                   >
                     {item.note.title}
                   </a>

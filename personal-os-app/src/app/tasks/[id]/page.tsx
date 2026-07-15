@@ -27,7 +27,16 @@ export default async function TaskPage({
   })) as TaskView;
 
   return (
-    <section className="mx-auto max-w-3xl">
+    <section className="mx-auto grid max-w-4xl gap-5">
+      <div>
+        <p className="ui-eyebrow">任务档案</p>
+        <h1 className="mt-2 text-4xl font-bold tracking-tight text-[var(--ink)]">
+          任务档案
+        </h1>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--ink-muted)]">
+          先判断目标、下一步、责任方、证据和复核状态。执行轨迹保留在下方，需要时再展开。
+        </p>
+      </div>
       <TaskInspector task={task} />
     </section>
   );
