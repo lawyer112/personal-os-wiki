@@ -68,6 +68,9 @@ Personal OS must use runtime storage outside Git:
 ```text
 personal-os-app/.env
 personal-os-app/data/
+personal-os-app/raw/
+personal-os-app/state/
+personal-os-app/wiki/log.md
 personal-os-app/.next/
 personal-os-app/node_modules/
 ```

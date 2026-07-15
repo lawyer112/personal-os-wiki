@@ -79,6 +79,15 @@ jobs:
         shell: pwsh
         run: ./scripts/package-release.ps1 -Version (Get-Content VERSION -Raw).Trim()
 
+      - name: Enforce public repository boundary
+        shell: bash
+        run: |
+          tracked_runtime="$(git ls-files 'personal-os-app/raw/**' 'personal-os-app/state/**' 'personal-os-app/wiki/log.md')"
+          if [[ -n "$tracked_runtime" ]]; then
+            printf '%s\n' "Runtime capture or derived state is tracked:" "$tracked_runtime"
+            exit 1
+          fi
+
       - name: Secret and private-data scan
         run: |
           ! rg -n --hidden -S "(AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_\-]{35}|sk-[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|ghp_[A-Za-z0-9_]{30,}|github_pat_[A-Za-z0-9_]{40,}|BEGIN (RSA|OPENSSH|EC|DSA|PRIVATE) KEY|mongodb(\+srv)?://|postgres(ql)?://[^\s]*:[^\s]*@[^/]*(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])))" .

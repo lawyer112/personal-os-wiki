@@ -20,6 +20,11 @@
 # production
 /build
 
+# runtime capture and derived state
+/raw/
+/state/
+/wiki/log.md
+
 # misc
 .DS_Store
 *.pem
