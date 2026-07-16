@@ -743,6 +743,7 @@ export async function submitTask<TDb extends AgentTaskDb>(
       now,
     );
     const taskDelegate = tx.task as {
+      findUnique(args: unknown): Promise<unknown | null>;
       update(args: unknown): Promise<unknown>;
     };
     const contributionResult = await createContributionWithArtifacts(
@@ -752,7 +753,7 @@ export async function submitTask<TDb extends AgentTaskDb>(
       taskRun,
     );
 
-    const task = await taskDelegate.update({
+    await taskDelegate.update({
       where: { id: taskId },
       data: {
         status: "review",
@@ -761,7 +762,6 @@ export async function submitTask<TDb extends AgentTaskDb>(
         leaseUntil: null,
         lastHeartbeatAt: now,
       },
-      include: agentTaskInclude,
     });
     await updateTaskRun(tx, taskRun?.id, {
       status: "submitted",
@@ -802,6 +802,14 @@ export async function submitTask<TDb extends AgentTaskDb>(
         submittedAt: now,
       },
     });
+
+    const task = await taskDelegate.findUnique({
+      where: { id: taskId },
+      include: agentTaskInclude,
+    });
+    if (!task) {
+      throw new HttpError(404, "Task not found");
+    }
 
     return { task, ...contributionResult };
   });

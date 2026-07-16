@@ -88,6 +88,8 @@ This project uses semantic versioning for public release packages. The root
   inbox polling, heartbeat, contribution, and submit mutations.
 - Changing a leased task's execution mode, risk level, or Agent tags now
   releases the stale claim and task run immediately.
+- Task submission responses return the final submitted task-run audit state
+  instead of the pre-update running snapshot.
 - Browser write actions can use the write token's existing HttpOnly access
   cookie without exposing that credential to client-side JavaScript.
 - Production builds defer Prisma initialization until runtime data access, so

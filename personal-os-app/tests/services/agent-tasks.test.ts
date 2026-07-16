@@ -524,7 +524,14 @@ describe("agent task protocol", () => {
   it("submits work for review instead of marking it done", async () => {
     const db = createDb({
       task: {
-        findUnique: vi.fn().mockResolvedValue(ownedTask()),
+        findUnique: vi
+          .fn()
+          .mockResolvedValueOnce(ownedTask())
+          .mockResolvedValueOnce({
+            id: "task_1",
+            status: "review",
+            runs: [{ id: "run_1", status: "submitted" }],
+          }),
         update: vi.fn().mockResolvedValue({ id: "task_1", status: "review" }),
       },
     });
@@ -539,7 +546,11 @@ describe("agent task protocol", () => {
       needsHumanDecision: false,
     });
 
-    expect(result.task).toEqual({ id: "task_1", status: "review" });
+    expect(result.task).toEqual({
+      id: "task_1",
+      status: "review",
+      runs: [{ id: "run_1", status: "submitted" }],
+    });
     expect(db.task.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
