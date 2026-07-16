@@ -38,4 +38,6 @@ For user-mode Python deployment instead of Docker, see
 - Replace placeholder tokens before binding the service to a LAN or public host.
 - Keep `WIKI_TRUST_LOCALHOST_READ_AUTH=0` unless every same-host caller is
   trusted; reverse proxies also reach the Wiki service from localhost.
+- Leave `WIKI_CORS_ALLOW_ORIGIN` empty unless a browser client must call the
+  Wiki API directly from another origin. Prefer an exact origin over `*`.
 - Do not publish a populated vault unless it has been explicitly scrubbed.

@@ -969,6 +969,8 @@ export async function getAgentContext<TDb extends ContextDb>(
       wikiLinks: true,
       contributions: { orderBy: { createdAt: "desc" }, take: 10 },
       artifacts: { orderBy: { createdAt: "desc" }, take: 10 },
+      runs: { orderBy: { startedAt: "desc" }, take: 5 },
+      agentActionLogs: { orderBy: { createdAt: "desc" }, take: 12 },
       reviews: { orderBy: { createdAt: "desc" }, take: 5 },
     },
   });

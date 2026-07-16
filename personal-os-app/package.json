@@ -1,6 +1,6 @@
 {
   "name": "personal-os-app",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -45,6 +45,7 @@
   },
   "overrides": {
     "@hono/node-server": "1.19.13",
+    "esbuild": "0.28.1",
     "postcss": "8.5.10"
   }
 }

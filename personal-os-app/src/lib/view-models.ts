@@ -33,6 +33,7 @@ export type TaskView = {
   estimateMinutes?: number | null;
   dueDate?: Date | string | null;
   completedAt?: Date | string | null;
+  submittedAt?: Date | string | null;
   project?: RelatedProject | null;
   sourceInboxItem?: RelatedInboxItem | null;
   sourceAgentRun?: RelatedAgentRun | null;
@@ -53,6 +54,7 @@ export type TaskView = {
   }>;
   contributions?: Array<{
     id: string;
+    taskRunId?: string | null;
     agentId: string;
     summary: string;
     evidenceLinks?: string[];
@@ -73,6 +75,25 @@ export type TaskView = {
     reviewer: string;
     decision: string;
     comment?: string | null;
+    createdAt?: Date | string;
+  }>;
+  runs?: Array<{
+    id: string;
+    agentId: string;
+    status: string;
+    resultSummary?: string | null;
+    startedAt?: Date | string;
+    lastHeartbeatAt?: Date | string | null;
+    submittedAt?: Date | string | null;
+    endedAt?: Date | string | null;
+  }>;
+  agentActionLogs?: Array<{
+    id: string;
+    taskRunId?: string | null;
+    agentId: string;
+    action: string;
+    summary?: string | null;
+    metadata?: unknown;
     createdAt?: Date | string;
   }>;
 };
@@ -117,12 +138,15 @@ export type TodayView = {
   metrics: {
     now: number;
     review: number;
+    intakeReview: number;
+    executionReview: number;
     waiting: number;
     blocked: number;
     done: number;
   };
   nowTasks: TaskView[];
   reviewTasks: TaskView[];
+  executionReviewTasks: TaskView[];
   waitingTasks: TaskView[];
   blockedTasks: TaskView[];
   doneTasks: TaskView[];

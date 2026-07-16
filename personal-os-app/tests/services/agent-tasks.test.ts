@@ -31,7 +31,7 @@ function ownedTask(overrides: Record<string, unknown> = {}) {
 }
 
 function createDb(overrides: Record<string, unknown> = {}) {
-  return {
+  const defaults = {
     task: {
       findMany: vi.fn().mockResolvedValue([]),
       findUnique: vi.fn().mockResolvedValue(claimableTask()),
@@ -49,6 +49,16 @@ function createDb(overrides: Record<string, unknown> = {}) {
     },
     taskClaim: {
       create: vi.fn().mockResolvedValue({ id: "claim_1", taskId: "task_1" }),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+    },
+    taskRun: {
+      findFirst: vi.fn().mockResolvedValue({ id: "run_1", taskId: "task_1" }),
+      create: vi.fn().mockResolvedValue({ id: "run_1", taskId: "task_1" }),
+      update: vi.fn().mockResolvedValue({ id: "run_1", taskId: "task_1" }),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
+    },
+    agentActionLog: {
+      create: vi.fn().mockResolvedValue({ id: "action_1" }),
     },
     taskContribution: {
       create: vi.fn().mockResolvedValue({ id: "contribution_1" }),
@@ -62,7 +72,29 @@ function createDb(overrides: Record<string, unknown> = {}) {
     activityLog: {
       create: vi.fn().mockResolvedValue({ id: "activity_1" }),
     },
+  };
+
+  return {
+    ...defaults,
     ...overrides,
+    task: {
+      ...defaults.task,
+      ...((overrides.task as Record<string, unknown> | undefined) ?? {}),
+    },
+    agentProfile: {
+      ...defaults.agentProfile,
+      ...((overrides.agentProfile as Record<string, unknown> | undefined) ??
+        {}),
+    },
+    taskRun: {
+      ...defaults.taskRun,
+      ...((overrides.taskRun as Record<string, unknown> | undefined) ?? {}),
+    },
+    agentActionLog: {
+      ...defaults.agentActionLog,
+      ...((overrides.agentActionLog as Record<string, unknown> | undefined) ??
+        {}),
+    },
   };
 }
 
@@ -86,6 +118,43 @@ describe("agent task protocol", () => {
         take: 5,
         where: expect.objectContaining({
           AND: expect.any(Array),
+        }),
+      }),
+    );
+  });
+
+  it("keeps medium-risk owned work visible to high-capability agents", async () => {
+    const db = createDb({
+      agentProfile: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "agent_1",
+          tags: ["demo", "review"],
+          allowedRiskLevel: "high",
+          canWriteTasks: true,
+          enabled: true,
+        }),
+      },
+    });
+
+    await listAgentInboxTasks(db, {
+      agentId: "agent_1",
+      tags: [],
+      limit: 5,
+    });
+
+    expect(db.task.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              OR: expect.arrayContaining([
+                expect.objectContaining({
+                  ownerAgent: "agent_1",
+                  riskLevel: { in: ["low", "medium"] },
+                }),
+              ]),
+            }),
+          ]),
         }),
       }),
     );
@@ -119,7 +188,43 @@ describe("agent task protocol", () => {
         }),
       }),
     );
+    expect(db.task.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              executionMode: "agent_allowed",
+              riskLevel: { in: ["low", "medium"] },
+              OR: expect.arrayContaining([
+                { agentTags: { hasSome: ["demo", "review"] } },
+                { agentTags: { isEmpty: true } },
+              ]),
+            }),
+          ]),
+        }),
+      }),
+    );
     expect(db.taskClaim.create).toHaveBeenCalled();
+    expect(db.taskRun.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          taskId: "task_1",
+          agentId: "agent_1",
+          status: "running",
+          policySnapshot: expect.objectContaining({
+            task: expect.objectContaining({ executionMode: "agent_allowed" }),
+          }),
+        }),
+      }),
+    );
+    expect(db.agentActionLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "task.claimed",
+          taskRunId: "run_1",
+        }),
+      }),
+    );
     expect(db.activityLog.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ action: "task.claimed" }),
@@ -199,9 +304,52 @@ describe("agent task protocol", () => {
       leaseMinutes: 30,
     });
 
-    expect(db.task.update).toHaveBeenCalledWith(
+    expect(db.task.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ ownerAgent: "agent_1" }),
+      }),
+    );
+    expect(db.taskRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "run_1" },
+        data: expect.objectContaining({ lastHeartbeatAt: expect.any(Date) }),
+      }),
+    );
+    expect(db.agentActionLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ action: "task.heartbeat" }),
+      }),
+    );
+  });
+
+  it("allows a high-capability profile to heartbeat a medium-risk task", async () => {
+    const db = createDb({
+      agentProfile: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "agent_1",
+          tags: ["demo", "review"],
+          allowedRiskLevel: "high",
+          canWriteTasks: true,
+          enabled: true,
+        }),
+      },
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValue(ownedTask({ riskLevel: "medium" })),
+      },
+    });
+
+    await heartbeatTask(db, "task_1", {
+      agentId: "agent_1",
+      leaseMinutes: 30,
+    });
+
+    expect(db.task.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          riskLevel: { in: ["low", "medium"] },
+        }),
       }),
     );
   });
@@ -257,10 +405,31 @@ describe("agent task protocol", () => {
     });
 
     expect(result.contribution.id).toBe("contribution_1");
+    expect(db.task.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: "task_1",
+          ownerAgent: "agent_1",
+        }),
+      }),
+    );
+    expect(db.taskContribution.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ taskRunId: "run_1" }),
+      }),
+    );
     expect(db.taskArtifact.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
           url: "https://example.com/artifact",
+        }),
+      }),
+    );
+    expect(db.agentActionLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "task.contribution.created",
+          taskRunId: "run_1",
         }),
       }),
     );
@@ -333,10 +502,36 @@ describe("agent task protocol", () => {
     expect(db.taskContribution.create).not.toHaveBeenCalled();
   });
 
-  it("submits work for review instead of marking it done", async () => {
+  it("rejects contributions when the conditional mutation lock loses", async () => {
     const db = createDb({
       task: {
         findUnique: vi.fn().mockResolvedValue(ownedTask()),
+        updateMany: vi.fn().mockResolvedValue({ count: 0 }),
+      },
+    });
+
+    await expect(
+      addTaskContribution(db, "task_1", {
+        agentId: "agent_1",
+        summary: "Race against policy change.",
+        evidenceLinks: [],
+        artifactUrls: [],
+      }),
+    ).rejects.toThrow("Policy or lease changed before mutation completed");
+    expect(db.taskContribution.create).not.toHaveBeenCalled();
+  });
+
+  it("submits work for review instead of marking it done", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi
+          .fn()
+          .mockResolvedValueOnce(ownedTask())
+          .mockResolvedValueOnce({
+            id: "task_1",
+            status: "review",
+            runs: [{ id: "run_1", status: "submitted" }],
+          }),
         update: vi.fn().mockResolvedValue({ id: "task_1", status: "review" }),
       },
     });
@@ -351,7 +546,11 @@ describe("agent task protocol", () => {
       needsHumanDecision: false,
     });
 
-    expect(result.task).toEqual({ id: "task_1", status: "review" });
+    expect(result.task).toEqual({
+      id: "task_1",
+      status: "review",
+      runs: [{ id: "run_1", status: "submitted" }],
+    });
     expect(db.task.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -359,6 +558,32 @@ describe("agent task protocol", () => {
           ownerAgent: null,
           leaseUntil: null,
         }),
+      }),
+    );
+    expect(db.taskRun.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "run_1" },
+        data: expect.objectContaining({
+          status: "submitted",
+          resultSummary: "Ready for review.",
+        }),
+      }),
+    );
+    expect(db.taskClaim.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          taskId: "task_1",
+          agentId: "agent_1",
+          releasedAt: null,
+        },
+        data: expect.objectContaining({
+          releaseReason: "submitted_for_review",
+        }),
+      }),
+    );
+    expect(db.agentActionLog.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ action: "task.submitted" }),
       }),
     );
   });
@@ -381,6 +606,28 @@ describe("agent task protocol", () => {
     expect(db.task.update).not.toHaveBeenCalled();
   });
 
+  it("rejects intake review tasks that have not been submitted", async () => {
+    const db = createDb({
+      task: {
+        findUnique: vi.fn().mockResolvedValue({
+          id: "task_1",
+          status: "review",
+          submittedAt: null,
+        }),
+        update: vi.fn(),
+      },
+    });
+
+    await expect(
+      reviewTask(db, "task_1", {
+        reviewer: "user",
+        decision: "approve",
+      }),
+    ).rejects.toThrow("Only submitted review tasks can be reviewed");
+    expect(db.taskReview.create).not.toHaveBeenCalled();
+    expect(db.task.update).not.toHaveBeenCalled();
+  });
+
   it("approves a reviewed task into done", async () => {
     const db = createDb({
       task: {
@@ -388,6 +635,7 @@ describe("agent task protocol", () => {
           id: "task_1",
           status: "review",
           ownerAgent: "agent_1",
+          submittedAt: new Date(),
         }),
         update: vi.fn().mockResolvedValue({ id: "task_1", status: "done" }),
       },
@@ -405,6 +653,12 @@ describe("agent task protocol", () => {
         data: expect.objectContaining({ decision: "approve" }),
       }),
     );
+    expect(db.taskRun.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { taskId: "task_1", status: "submitted" },
+        data: { status: "approved" },
+      }),
+    );
   });
 
   it("rejects reviewed work back to todo instead of archiving it", async () => {
@@ -414,6 +668,7 @@ describe("agent task protocol", () => {
           id: "task_1",
           status: "review",
           ownerAgent: "agent_1",
+          submittedAt: new Date(),
         }),
         update: vi.fn().mockResolvedValue({ id: "task_1", status: "todo" }),
       },

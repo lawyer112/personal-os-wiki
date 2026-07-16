@@ -1,9 +1,0 @@
-{
-  "status": "pass",
-  "checks": {
-    "unitTests": "pass",
-    "contextEndpoint": "pass",
-    "noTokenLeak": "pass"
-  },
-  "timestamp": "2026-07-04T01:01:58Z"
-}

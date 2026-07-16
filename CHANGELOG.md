@@ -7,14 +7,28 @@ This project uses semantic versioning for public release packages. The root
 
 ## Unreleased
 
-## 0.1.2 - 2026-06-29
-
-Release hygiene and agent execution update. This release collects the public-safe
-work that landed after `v0.1.1` and keeps the private Personal OS/Wiki data
-outside the GitHub package.
+## 0.2.0 - 2026-07-15
 
 ### Added
 
+- First-class agent execution audit records with `TaskRun`,
+  `AgentActionLog`, policy snapshots, claim release reasons, and visible task
+  execution trails.
+- Separate Today lanes for intake task confirmation and submitted execution
+  review, so `review` no longer mixes "new candidate task" with "agent result
+  awaiting approval".
+- Configurable write API rate limiting for Personal OS.
+- Personal Wiki `source_hash` reverse index for faster ingest deduplication.
+- Optional Personal Wiki CORS configuration for protected cross-service calls.
+- Configurable Docker port bind addresses for Personal OS and Personal Wiki,
+  so public defaults can stay localhost-only while a private LAN deployment can
+  opt in to LAN binding from `.env`.
+- Chinese API overview and agent job orchestration docs, plus a bilingual
+  release rule for public documentation surfaces.
+- Bilingual Obsidian bridge plan that defines the plugin as a thin read/capture
+  adapter rather than a second task database or private-vault sync source.
+- Folder Inbox mode for the Obsidian bridge direction: paste links/text into a
+  dedicated vault folder, scan new blocks, and deduplicate before ingestion.
 - macOS/Linux demo helper script: `sh ./scripts/demo.sh`.
 - README, Getting Started, and Releases now document platform-specific demo
   helpers before the raw Docker Compose command.
@@ -50,6 +64,14 @@ outside the GitHub package.
 - Documentation now emphasizes that GitHub contains the reusable engine only;
   populated vaults, task history, logs, server inventories, and private UI files
   stay local.
+- Agent heartbeat, contribution, and submit mutations now use conditional
+  policy/lease writes instead of relying only on a prior read.
+- Submitting work clears `ownerAgent`/`leaseUntil`, releases active claims, and
+  moves the active task run to `submitted`.
+- Review decisions write back to submitted task runs as `approved`,
+  `changes_requested`, `rejected`, `blocked`, or `archived`.
+- The capture bookmarklet now uses `NEXT_PUBLIC_APP_URL` instead of hard-coded
+  localhost.
 
 ### Fixed
 
@@ -62,13 +84,33 @@ outside the GitHub package.
 - CI no longer runs a raw-manifest ingest test without its script dependency.
 - Developer experience walkthrough layout and neutral reviewer paths were
   cleaned up.
+- High-capability Agent profiles can continue medium-risk work through
+  inbox polling, heartbeat, contribution, and submit mutations.
+- Changing a leased task's execution mode, risk level, or Agent tags now
+  releases the stale claim and task run immediately.
+- Task submission responses return the final submitted task-run audit state
+  instead of the pre-update running snapshot.
+- Browser write actions can use the write token's existing HttpOnly access
+  cookie without exposing that credential to client-side JavaScript.
+- Production builds defer Prisma initialization until runtime data access, so
+  compiling the application does not require a database connection string.
 
 ### Security
 
-- Web app dependency security updates from Dependabot are included.
+- Web app dependency security updates, including a patched `esbuild` toolchain,
+  are included.
 - Release and data-safety docs reaffirm that real `.env` files, tokens, cookies,
   private vaults, Personal OS databases, logs, screenshots, server inventories,
   and generated runtime artifacts are excluded from Git.
+- Personal OS configured data paths are constrained to the app `data`
+  directory.
+- Personal OS read/write token checks use timing-safe digest comparison.
+- Write rate limiting ignores client-controlled forwarding headers unless a
+  sanitizing reverse proxy is explicitly trusted.
+- Daily planner timezone input now rejects invalid IANA timezone names.
+- Personal Wiki inline JSON escaping now escapes `<`, `>`, `&`, U+2028, and
+  U+2029 for script contexts.
+- Personal Wiki write authorization uses constant-time token comparison.
 
 ## 0.1.1 - 2026-04-29
 

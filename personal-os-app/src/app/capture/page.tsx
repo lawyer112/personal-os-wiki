@@ -1,4 +1,5 @@
 import { CaptureForm } from "@/components/CaptureForm";
+import { captureBookmarklet } from "@/lib/bookmarklet";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ export default async function CapturePage({ searchParams }: CapturePageProps) {
         <aside className="rounded-lg border border-zinc-200 bg-white p-5">
           <div className="text-sm font-bold text-zinc-950">Bookmarklet</div>
           <code className="mt-3 block overflow-x-auto rounded-lg bg-zinc-950 p-3 text-xs leading-5 text-zinc-50">
-            {bookmarklet()}
+            {captureBookmarklet()}
           </code>
         </aside>
       </div>
@@ -39,8 +40,4 @@ export default async function CapturePage({ searchParams }: CapturePageProps) {
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
-}
-
-function bookmarklet() {
-  return `javascript:(()=>{const b="http://localhost:3000/capture";const q=new URLSearchParams({content:location.href});open(b+"?"+q.toString(),"_blank","noopener,noreferrer");})();`;
 }

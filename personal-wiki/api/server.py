@@ -40,6 +40,7 @@ PUBLIC_DIR = DATA_DIR / "public"
 MANUAL_PATH = APP_DIR / "docs" / "USAGE.md"
 GRAPH_PATH = PUBLIC_DIR / "graph-data.json"
 NOTE_INDEX_PATH = PUBLIC_DIR / "note-index.json"
+SOURCE_INDEX_PATH = PUBLIC_DIR / "source-index.json"
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
 INTERNAL_NOTE_FIELDS = {"search_text"}
@@ -81,6 +82,7 @@ REQUIRE_PAGE_READ_AUTH = env_flag("WIKI_REQUIRE_PAGE_READ_AUTH", bool(API_TOKEN 
 TRUST_LOCALHOST_READ_AUTH = env_flag("WIKI_TRUST_LOCALHOST_READ_AUTH", False)
 ALLOW_UNAUTHENTICATED_WRITE = env_flag("WIKI_ALLOW_UNAUTHENTICATED_WRITE", False)
 READ_AUTH_COOKIE = "personal_wiki_read"
+WIKI_CORS_ALLOW_ORIGIN = os.environ.get("WIKI_CORS_ALLOW_ORIGIN", "").strip()
 
 
 def now_utc() -> dt.datetime:
@@ -254,14 +256,11 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def find_note_by_source_hash(source_hash: str) -> Path | None:
-    marker = f"source_hash: {source_hash}"
-    for path in NOTES_DIR.rglob("*.md"):
-        try:
-            if marker in path.read_text(encoding="utf-8"):
-                return path
-        except UnicodeDecodeError:
-                continue
-    return None
+    relative_path = str(load_source_hash_index().get("sources", {}).get(source_hash, "") or "")
+    if not relative_path:
+        return None
+    path = safe_data_path(relative_path)
+    return path if path.exists() and path.is_file() else None
 
 
 def find_source_by_hash(source_hash: str) -> Path | None:
@@ -457,6 +456,20 @@ def build_note_index(records: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def build_source_hash_index(records: list[dict[str, Any]]) -> dict[str, Any]:
+    sources: dict[str, str] = {}
+    for record in records:
+        source_hash = str(record.get("source_hash", "") or "").strip()
+        path = str(record.get("path", "") or "").strip()
+        if source_hash and path:
+            sources[source_hash] = path
+    return {
+        "generated_at": now_utc().isoformat(),
+        "vault_signature": vault_signature(),
+        "sources": sources,
+    }
+
+
 def build_note_lookup(index: dict[str, Any]) -> dict[str, str]:
     lookup: dict[str, str] = {}
 
@@ -499,15 +512,17 @@ def vault_signature() -> str:
 def refresh_public_indexes() -> dict[str, Any]:
     records = read_note_records(include_body=True)
     index = build_note_index(records)
+    source_index = build_source_hash_index(records)
     graph = build_graph_from_records(records)
     write_json(NOTE_INDEX_PATH, index)
+    write_json(SOURCE_INDEX_PATH, source_index)
     write_json(GRAPH_PATH, graph)
-    return {"index": index, "graph": graph}
+    return {"index": index, "source_index": source_index, "graph": graph}
 
 
 def load_note_index() -> dict[str, Any]:
     ensure_dirs_no_git()
-    if not NOTE_INDEX_PATH.exists() or not GRAPH_PATH.exists():
+    if not NOTE_INDEX_PATH.exists() or not GRAPH_PATH.exists() or not SOURCE_INDEX_PATH.exists():
         return refresh_public_indexes()["index"]
     try:
         index = json.loads(NOTE_INDEX_PATH.read_text(encoding="utf-8"))
@@ -515,6 +530,19 @@ def load_note_index() -> dict[str, Any]:
         return refresh_public_indexes()["index"]
     if index.get("vault_signature") != vault_signature():
         return refresh_public_indexes()["index"]
+    return index
+
+
+def load_source_hash_index() -> dict[str, Any]:
+    ensure_dirs_no_git()
+    if not SOURCE_INDEX_PATH.exists() or not NOTE_INDEX_PATH.exists():
+        return refresh_public_indexes()["source_index"]
+    try:
+        index = json.loads(SOURCE_INDEX_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return refresh_public_indexes()["source_index"]
+    if index.get("vault_signature") != vault_signature():
+        return refresh_public_indexes()["source_index"]
     return index
 
 
@@ -802,6 +830,17 @@ def safe_data_path(relative: str) -> Path:
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def json_for_script(data: Any) -> str:
+    return (
+        json.dumps(data, ensure_ascii=False)
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+        .replace("\u2028", "\\u2028")
+        .replace("\u2029", "\\u2029")
+    )
 
 
 def public_note(note: dict[str, Any]) -> dict[str, Any]:
@@ -1194,7 +1233,7 @@ def render_home() -> bytes:
     note_count = sum(1 for node in nodes if node.get("kind") == "note")
     concept_count = sum(1 for node in nodes if node.get("kind") == "concept")
     tag_count = sum(1 for node in nodes if node.get("kind") == "tag")
-    graph_json = json.dumps(graph, ensure_ascii=False).replace("</", "<\\/")
+    graph_json = json_for_script(graph)
 
     note_blocks: list[str] = []
     for note in notes[:6]:
@@ -2046,6 +2085,12 @@ def render_note(relative_path: str) -> bytes:
 class Handler(BaseHTTPRequestHandler):
     server_version = "PersonalWiki/0.1"
 
+    def do_OPTIONS(self) -> None:
+        self.send_response(HTTPStatus.NO_CONTENT.value)
+        self.send_cors_headers()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
+
     def do_GET(self) -> None:
         try:
             parsed = urlparse(self.path)
@@ -2148,7 +2193,7 @@ class Handler(BaseHTTPRequestHandler):
         if not API_TOKEN:
             return ALLOW_UNAUTHENTICATED_WRITE
         header = self.headers.get("Authorization", "")
-        return header == f"Bearer {API_TOKEN}"
+        return header.startswith("Bearer ") and self.token_allowed(header[7:], [API_TOKEN])
 
     def authorized_read(self, required: bool) -> bool:
         if not required:
@@ -2195,6 +2240,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
             return
         self.send_response(HTTPStatus.FOUND.value)
+        self.send_cors_headers()
         self.send_header("Location", next_url)
         self.send_header(
             "Set-Cookie",
@@ -2248,10 +2294,25 @@ class Handler(BaseHTTPRequestHandler):
 
     def send_bytes(self, status: HTTPStatus, content_type: str, body: bytes) -> None:
         self.send_response(status.value)
+        self.send_cors_headers()
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def send_cors_headers(self) -> None:
+        if not WIKI_CORS_ALLOW_ORIGIN:
+            return
+        request_origin = self.headers.get("Origin", "")
+        if WIKI_CORS_ALLOW_ORIGIN != "*" and request_origin != WIKI_CORS_ALLOW_ORIGIN:
+            return
+        response_origin = "*" if WIKI_CORS_ALLOW_ORIGIN == "*" else request_origin
+        self.send_header("Access-Control-Allow-Origin", response_origin)
+        self.send_header("Vary", "Origin")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
+        if response_origin != "*":
+            self.send_header("Access-Control-Allow-Credentials", "true")
 
     def send_error_json(self, exc: Exception) -> None:
         if isinstance(exc, FileNotFoundError):

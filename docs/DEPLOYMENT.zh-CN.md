@@ -115,14 +115,14 @@ NEXT_PUBLIC_WIKI_URL="http://localhost:3422"
 下载并解压：
 
 ```text
-personal-os-wiki-v0.1.2.zip
-personal-os-wiki-v0.1.2.tar.gz
+personal-os-wiki-v0.2.0.zip
+personal-os-wiki-v0.2.0.tar.gz
 ```
 
 或者按固定 tag 克隆：
 
 ```bash
-git clone --branch v0.1.2 https://github.com/lawyer112/personal-os-wiki.git
+git clone --branch v0.2.0 https://github.com/lawyer112/personal-os-wiki.git
 cd personal-os-wiki
 ```
 

@@ -68,6 +68,9 @@ Personal OS must use runtime storage outside Git:
 ```text
 personal-os-app/.env
 personal-os-app/data/
+personal-os-app/raw/
+personal-os-app/state/
+personal-os-app/wiki/log.md
 personal-os-app/.next/
 personal-os-app/node_modules/
 ```
@@ -235,6 +238,30 @@ Documentation that must be present before public release:
 - `docs/ARCHITECTURE.md` and `docs/ARCHITECTURE.zh-CN.md`: component boundary
 - `docs/AGENT_GUIDE.md` and `docs/AGENT_GUIDE.zh-CN.md`: agent operating manual
 - `docs/REPOSITORY_STRATEGY.md` and `docs/REPOSITORY_STRATEGY.zh-CN.md`: monorepo/split-repo strategy
+
+## Bilingual Release Rule
+
+The repository is English-first for international users, but it must also have
+a complete Chinese path for the maintainer and Chinese users.
+
+Every public release should keep these surfaces paired:
+
+- root README: `README.md` and `README.zh-CN.md`;
+- install path: `docs/GETTING_STARTED.md` and `docs/GETTING_STARTED.zh-CN.md`;
+- deployment path: `docs/DEPLOYMENT.md` and `docs/DEPLOYMENT.zh-CN.md`;
+- release path: `docs/RELEASES.md` and `docs/RELEASES.zh-CN.md`;
+- architecture path: `docs/ARCHITECTURE.md` and `docs/ARCHITECTURE.zh-CN.md`;
+- agent path: `docs/AGENT_GUIDE.md`, `docs/AGENT_GUIDE.zh-CN.md`,
+  `docs/AGENT_PROMPT.md`, `docs/AGENT_PROMPT.zh-CN.md`,
+  `docs/AGENT_JOB_ORCHESTRATION.md`, and
+  `docs/AGENT_JOB_ORCHESTRATION.zh-CN.md`;
+- API path: `docs/API_OVERVIEW.md` and `docs/API_OVERVIEW.zh-CN.md`;
+- data-safety path: `docs/DATA_SAFETY.md` and `docs/DATA_SAFETY.zh-CN.md`.
+
+It is acceptable for low-level maintainer notes, repository permissions, and
+future roadmap notes to be English-only when they are not required for install,
+agent integration, or safe operation. If a document becomes part of the normal
+user path, add the Chinese pair before the next release.
 
 ## Branch and Release Flow
 

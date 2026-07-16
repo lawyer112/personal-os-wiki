@@ -141,4 +141,147 @@ describe("task services", () => {
       }),
     );
   });
+
+  it.each([
+    {
+      policy: "risk level",
+      beforePolicy: {
+        executionMode: "agent_allowed",
+        riskLevel: "low",
+        agentTags: ["demo"],
+      },
+      update: { riskLevel: "medium" as const },
+    },
+    {
+      policy: "agent tags",
+      beforePolicy: {
+        executionMode: "agent_allowed",
+        riskLevel: "low",
+        agentTags: ["demo"],
+      },
+      update: { agentTags: ["review"] },
+    },
+  ])("revokes an active lease when $policy changes", async ({ beforePolicy, update }) => {
+    const before = {
+      id: "task_1",
+      status: "doing",
+      ownerAgent: "agent_1",
+      leaseUntil: new Date("2026-04-22T01:00:00Z"),
+      ...beforePolicy,
+    };
+    const taskUpdate = vi
+      .fn()
+      .mockResolvedValue({ id: "task_1", title: "Demo task", status: "doing" });
+    const claimUpdateMany = vi.fn().mockResolvedValue({ count: 1 });
+    const runUpdateMany = vi.fn().mockResolvedValue({ count: 1 });
+    const db = {
+      task: {
+        findUnique: vi.fn().mockResolvedValue(before),
+        update: taskUpdate,
+      },
+      taskClaim: { updateMany: claimUpdateMany },
+      taskRun: { updateMany: runUpdateMany },
+      agentActionLog: { create: vi.fn().mockResolvedValue({ id: "action_1" }) },
+      activityLog: { create: vi.fn().mockResolvedValue({ id: "activity_1" }) },
+    };
+
+    await updateTask(db, "task_1", update);
+
+    expect(taskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          ...update,
+          ownerAgent: null,
+          leaseUntil: null,
+          lastHeartbeatAt: null,
+        }),
+      }),
+    );
+    expect(claimUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ releaseReason: "policy_change" }),
+      }),
+    );
+    expect(runUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ status: "policy_revoked" }),
+      }),
+    );
+  });
+
+  it("revokes an active agent lease when policy no longer allows agent work", async () => {
+    const before = {
+      id: "task_1",
+      status: "doing",
+      ownerAgent: "agent_1",
+      leaseUntil: new Date("2026-04-22T01:00:00Z"),
+    };
+    const taskUpdate = vi
+      .fn()
+      .mockResolvedValue({ id: "task_1", title: "鍋氬伐浣滃彴", status: "doing" });
+    const activityCreate = vi.fn().mockResolvedValue({ id: "activity_1" });
+    const claimUpdateMany = vi.fn().mockResolvedValue({ count: 1 });
+    const runUpdateMany = vi.fn().mockResolvedValue({ count: 1 });
+    const actionCreate = vi.fn().mockResolvedValue({ id: "action_1" });
+    const db = {
+      task: {
+        create: vi.fn(),
+        findUnique: vi.fn().mockResolvedValue(before),
+        findMany: vi.fn(),
+        update: taskUpdate,
+      },
+      taskClaim: { updateMany: claimUpdateMany },
+      taskRun: { updateMany: runUpdateMany },
+      agentActionLog: { create: actionCreate },
+      activityLog: { create: activityCreate },
+    };
+
+    await updateTask(db, "task_1", { executionMode: "approval_required" });
+
+    expect(taskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          executionMode: "approval_required",
+          ownerAgent: null,
+          leaseUntil: null,
+          lastHeartbeatAt: null,
+        }),
+      }),
+    );
+    expect(activityCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "task.lease.revoked_by_policy_change",
+        }),
+      }),
+    );
+    expect(claimUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          taskId: "task_1",
+          agentId: "agent_1",
+          releasedAt: null,
+        },
+        data: expect.objectContaining({ releaseReason: "policy_change" }),
+      }),
+    );
+    expect(runUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          taskId: "task_1",
+          agentId: "agent_1",
+          status: "running",
+        },
+        data: expect.objectContaining({ status: "policy_revoked" }),
+      }),
+    );
+    expect(actionCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "task.lease.revoked_by_policy_change",
+          agentId: "agent_1",
+        }),
+      }),
+    );
+  });
 });

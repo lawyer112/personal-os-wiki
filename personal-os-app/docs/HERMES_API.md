@@ -636,9 +636,9 @@ Authorization: Bearer <PERSONAL_OS_READ_TOKEN>
 ```
 
 The context pack includes the task, project, source inbox item, previous
-contributions, artifacts, reviews, related tasks, related ideas, and Personal
-Wiki candidates. Agents should not scrape the whole Wiki when this endpoint is
-available.
+task runs, agent action logs, contributions, artifacts, reviews, related tasks,
+related ideas, and Personal Wiki candidates. Agents should not scrape the whole
+Wiki when this endpoint is available.
 
 ### Write progress
 
@@ -673,6 +673,11 @@ Authorization: Bearer <PERSONAL_OS_API_TOKEN>
 Submit moves the task into `review`. Agents should not mark their own work
 `done`.
 
+Submitting also closes the active lease from the user's point of view: the task
+clears `ownerAgent` and `leaseUntil`, the active claim is released with
+`releaseReason=submitted_for_review`, and the current `TaskRun` moves from
+`running` to `submitted`.
+
 ### Review
 
 ```http
@@ -699,6 +704,34 @@ archive -> archived
 Review is only valid for submitted tasks in `review`. Use `archive` for work
 that should be discarded; use `reject` when the result failed review and should
 return to the work queue.
+
+`review` is not enough by itself: the task must also have `submittedAt`. Intake
+candidate tasks can still use `status=review`, but they are not executable
+submissions and cannot be approved through this endpoint.
+
+`request_changes` and `reject` both return the task to `todo` in this release.
+Use `request_changes` when the submission is directionally right but incomplete.
+Use `reject` when the submitted result is not valid work and needs a fresh pass.
+
+The review decision is also written back to submitted task runs:
+`approve -> approved`, `request_changes -> changes_requested`,
+`reject -> rejected`, `block -> blocked`, and `archive -> archived`.
+
+### Execution audit objects
+
+The execution protocol now has three layers:
+
+- `TaskClaim`: short lease record used to prevent concurrent ownership.
+- `TaskRun`: one execution attempt with `agentId`, `startedAt`,
+  `lastHeartbeatAt`, `submittedAt`, `endedAt`, `status`, `policySnapshot`, and
+  `resultSummary`.
+- `AgentActionLog`: append-only action trace for claim, heartbeat,
+  contribution, submit, and policy revocation events.
+
+If a user changes a task so that agent work is no longer allowed, Personal OS
+clears the lease, releases active claims with `releaseReason=policy_change`,
+marks running task runs as `policy_revoked`, and records
+`task.lease.revoked_by_policy_change`.
 
 ### Agent loop
 
