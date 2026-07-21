@@ -73,7 +73,7 @@ WIKI_READ_TOKEN=replace-with-runtime-token
 整理 Wiki
 优化项目
 研究一下这个方向
-推进赚钱项目
+推进重要项目
 ```
 
 好任务：
