@@ -50,6 +50,9 @@ QUERIES: list[tuple[str, str]] = [
 
 def get(url: str) -> tuple[int | None, str, float]:
     req = urllib.request.Request(url)
+    read_token = os.environ.get("PERSONAL_OS_READ_TOKEN", "")
+    if read_token:
+        req.add_header("Authorization", f"Bearer {read_token}")
     t0 = time.perf_counter()
     try:
         with urllib.request.urlopen(req, timeout=45) as resp:
