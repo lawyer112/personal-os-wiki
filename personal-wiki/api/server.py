@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 from __future__ import annotations
 
 import datetime as dt
@@ -6,29 +6,32 @@ import hashlib
 import hmac
 import html
 import json
-import logging
 import os
 import re
 import shutil
+import sqlite3
 import subprocess
-import sys
 import threading
 import time
+import sys
 import traceback
-from contextlib import nullcontext
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, quote, urlencode, urlparse
 
-from frontmatter import Frontmatter, IngestError, validate as validate_frontmatter
-from locks import journal_lock, project_lock
-from moc import rebuild_moc
-from router import resolve_target
-from sources_check import Mutation, build_baseline, diff_against_baseline
-from tag_registry import append_pending, ensure_registry_template, load_registry
-from writer import append_journal, write_note
+from retrieval import (
+    build_structured_chunks,
+    estimate_tokens,
+    fts_index_text,
+    fts_or_query,
+    fts_required_query,
+    make_context_text,
+    matched_snippet,
+    query_tokens,
+)
+from wiki_time import WIKI_TIME_ZONE as DISPLAY_TZ
 
 try:
     import yaml
@@ -47,18 +50,19 @@ APP_DIR = Path(__file__).resolve().parents[1]
 VAULT_DIR = DATA_DIR / "vault"
 SOURCES_DIR = VAULT_DIR / "10_sources"
 NOTES_DIR = VAULT_DIR / "20_notes"
-PROJECTS_DIR = VAULT_DIR / "30_projects"
-JOURNALS_DIR = VAULT_DIR / "40_journals"
+ATOMS_DIR = VAULT_DIR / "20_atoms"
+NOTE_CONTENT_DIRS = (NOTES_DIR, ATOMS_DIR)
 ARCHIVE_DIR = VAULT_DIR / "90_archive"
-PENDING_HARDEN_DIR = ARCHIVE_DIR / "pending-harden"
 PUBLIC_DIR = DATA_DIR / "public"
 MANUAL_PATH = APP_DIR / "docs" / "USAGE.md"
 GRAPH_PATH = PUBLIC_DIR / "graph-data.json"
 NOTE_INDEX_PATH = PUBLIC_DIR / "note-index.json"
-SOURCE_INDEX_PATH = PUBLIC_DIR / "source-index.json"
 DEFAULT_PAGE_SIZE = 20
 MAX_PAGE_SIZE = 100
-INTERNAL_NOTE_FIELDS = {"search_text"}
+INTERNAL_NOTE_FIELDS = {"search_text", "wikilinks", "graph_tags"}
+PUBLIC_INDEX_SCHEMA_VERSION = 2
+SEARCH_CHUNK_SCHEMA_VERSION = 7
+EXACT_HEADING_FAST_PATH_MIN_CHARS = 5
 
 SLUG_RE = re.compile(r"[^a-zA-Z0-9\u4e00-\u9fff]+")
 WIKILINK_RE = re.compile(r"\[\[([^\]\|#]+)(?:[|#][^\]]*)?\]\]")
@@ -68,6 +72,8 @@ TAG_RE = re.compile(r"(?<!\w)#([\w\u4e00-\u9fff-]+)")
 SAFE_MARKDOWN_SCHEMES = {"http", "https", "mailto"}
 NOTE_RELATION_LINK_THRESHOLD = 0.50
 MAX_RELATED_LINKS_PER_NOTE = 8
+MAX_RELATION_CONCEPT_FANOUT = max(8, int(os.environ.get("WIKI_MAX_RELATION_CONCEPT_FANOUT", "256")))
+MAX_RELATION_CANDIDATES_PER_NOTE = max(8, int(os.environ.get("WIKI_MAX_RELATION_CANDIDATES_PER_NOTE", "128")))
 GENERIC_RELATION_TAGS = {
     "auto-ingested",
     "demo",
@@ -83,35 +89,6 @@ GENERIC_RELATION_TAGS = {
     "web",
     "web-capture",
 }
-X_LIKES_SOURCE_TYPES = {"x-like", "x-likes-theme", "x-likes-knowledge-map"}
-DEDUP_FRONTMATTER_FIELDS = (
-    "tweet_id",
-    "canonical_url",
-    "source_url",
-    "source_hash",
-    "text_hash",
-)
-PUBLIC_NOTE_EXTRA_FIELDS = (
-    "summary",
-    "canonical_url",
-    "tweet_id",
-    "tweet_thread_id",
-    "author_handle",
-    "author_name",
-    "risk_level",
-    "source_domain",
-    "text_hash",
-    "collected_at",
-    "personal_os_inbox_id",
-    "personal_os_agent_run_id",
-    "personal_os_project_id",
-    "personal_os_task_id",
-)
-INGEST_LOGGER = logging.getLogger("personal_wiki.ingest")
-SOURCE_LOGGER = logging.getLogger("personal_wiki.sources")
-SOURCE_BASELINE: dict[str, str] = {}
-SOURCE_CHECK_TIMER: threading.Timer | None = None
-MOC_TIMER: threading.Timer | None = None
 
 
 def env_flag(name: str, default: bool = False) -> bool:
@@ -121,161 +98,75 @@ def env_flag(name: str, default: bool = False) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
-def normalize_locale(value: str) -> str | None:
-    tag = value.strip().replace("_", "-").lower()
-    if not tag:
-        return None
-    if tag in {"zh", "zh-cn", "zh-hans"}:
-        return "zh-CN"
-    if tag in {"zh-tw", "zh-hk", "zh-hant"}:
-        return "zh-TW"
-    for prefix, locale in (
-        ("ja", "ja"),
-        ("ko", "ko"),
-        ("es", "es"),
-        ("fr", "fr"),
-        ("de", "de"),
-        ("en", "en"),
-    ):
-        if tag.startswith(prefix):
-            return locale
-    return None
-
-
-def preferred_locale(accept_language: str, explicit: str = "") -> str:
-    locale = normalize_locale(explicit)
-    if locale:
-        return locale
-    for part in accept_language.split(","):
-        locale = normalize_locale(part.split(";", 1)[0])
-        if locale:
-            return locale
-    return DEFAULT_LOCALE
-
-
-def login_copy(locale: str) -> dict[str, str]:
-    return LOGIN_COPY.get(locale, LOGIN_COPY[DEFAULT_LOCALE])
-
-
 REQUIRE_API_READ_AUTH = env_flag("WIKI_REQUIRE_API_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
 REQUIRE_PAGE_READ_AUTH = env_flag("WIKI_REQUIRE_PAGE_READ_AUTH", bool(API_TOKEN or READ_TOKEN))
 TRUST_LOCALHOST_READ_AUTH = env_flag("WIKI_TRUST_LOCALHOST_READ_AUTH", False)
 ALLOW_UNAUTHENTICATED_WRITE = env_flag("WIKI_ALLOW_UNAUTHENTICATED_WRITE", False)
+PUBLIC_PAGE_READ = env_flag("WIKI_PUBLIC_PAGE_READ", False)
 READ_AUTH_COOKIE = "personal_wiki_read"
-WIKI_CORS_ALLOW_ORIGIN = os.environ.get("WIKI_CORS_ALLOW_ORIGIN", "").strip()
-READ_ACCESS_HINT = os.environ.get("WIKI_READ_ACCESS_HINT", "").strip()
-
-DEFAULT_LOCALE = "en"
-LOGIN_COPY = {
-    "en": {
-        "title": "Personal Wiki access",
-        "heading": "Personal Wiki access",
-        "intro": "This is not an account/password login. Paste the read access token for this private preview.",
-        "label": "Access token",
-        "placeholder": "read access token",
-        "button": "Open Wiki",
-        "hint_label": "Preview token",
-        "invalid": "Invalid access token.",
-    },
-    "zh-CN": {
-        "title": "Personal Wiki 访问",
-        "heading": "Personal Wiki 访问",
-        "intro": "这里不是账号密码登录。当前私有预览只需要输入只读访问口令。",
-        "label": "访问口令",
-        "placeholder": "输入只读访问口令",
-        "button": "打开 Wiki",
-        "hint_label": "预览口令",
-        "invalid": "访问口令不正确。",
-    },
-    "zh-TW": {
-        "title": "Personal Wiki 存取",
-        "heading": "Personal Wiki 存取",
-        "intro": "這裡不是帳號密碼登入。當前私有預覽只需要輸入唯讀存取口令。",
-        "label": "存取口令",
-        "placeholder": "輸入唯讀存取口令",
-        "button": "開啟 Wiki",
-        "hint_label": "預覽口令",
-        "invalid": "存取口令不正確。",
-    },
-    "ja": {
-        "title": "Personal Wiki アクセス",
-        "heading": "Personal Wiki アクセス",
-        "intro": "これはアカウント/パスワードのログインではありません。この非公開プレビューの読み取り用アクセス token を入力してください。",
-        "label": "アクセス token",
-        "placeholder": "読み取り用アクセス token",
-        "button": "Wiki を開く",
-        "hint_label": "プレビュー token",
-        "invalid": "アクセス token が正しくありません。",
-    },
-    "ko": {
-        "title": "Personal Wiki 접근",
-        "heading": "Personal Wiki 접근",
-        "intro": "계정/비밀번호 로그인이 아닙니다. 이 비공개 프리뷰의 읽기 접근 토큰을 입력하세요.",
-        "label": "접근 토큰",
-        "placeholder": "읽기 접근 토큰",
-        "button": "Wiki 열기",
-        "hint_label": "프리뷰 토큰",
-        "invalid": "접근 토큰이 올바르지 않습니다.",
-    },
-    "es": {
-        "title": "Acceso a Personal Wiki",
-        "heading": "Acceso a Personal Wiki",
-        "intro": "No es un inicio de sesión con usuario y contraseña. Pega el token de lectura de esta vista previa privada.",
-        "label": "Token de acceso",
-        "placeholder": "token de lectura",
-        "button": "Abrir Wiki",
-        "hint_label": "Token de vista previa",
-        "invalid": "Token de acceso no válido.",
-    },
-    "fr": {
-        "title": "Accès Personal Wiki",
-        "heading": "Accès Personal Wiki",
-        "intro": "Ce n'est pas une connexion par compte et mot de passe. Collez le token de lecture de cet aperçu privé.",
-        "label": "Token d'accès",
-        "placeholder": "token de lecture",
-        "button": "Ouvrir Wiki",
-        "hint_label": "Token de prévisualisation",
-        "invalid": "Token d'accès invalide.",
-    },
-    "de": {
-        "title": "Personal Wiki Zugriff",
-        "heading": "Personal Wiki Zugriff",
-        "intro": "Dies ist kein Konto/Passwort-Login. Füge das Lesezugriffs-Token für diese private Vorschau ein.",
-        "label": "Zugriffs-Token",
-        "placeholder": "Lesezugriffs-Token",
-        "button": "Wiki öffnen",
-        "hint_label": "Vorschau-Token",
-        "invalid": "Ungültiges Zugriffstoken.",
-    },
+WIKI_WRITE_LOCK = threading.Lock()
+GIT_LOCK = threading.Lock()
+PUBLIC_INDEX_REFRESH_LOCK = threading.Lock()
+NOTE_INDEX_CACHE_LOCK = threading.Lock()
+GRAPH_CACHE_LOCK = threading.Lock()
+FILTERED_NOTES_CACHE_LOCK = threading.Lock()
+INDEX_REFRESH_CONDITION = threading.Condition()
+NOTE_INDEX_CACHE_TTL_SECONDS = float(os.environ.get("WIKI_NOTE_INDEX_CACHE_TTL_SECONDS", "300"))
+GRAPH_CACHE_TTL_SECONDS = float(os.environ.get("WIKI_GRAPH_CACHE_TTL_SECONDS", "300"))
+FILTERED_NOTES_CACHE_TTL_SECONDS = float(os.environ.get("WIKI_FILTERED_NOTES_CACHE_TTL_SECONDS", "30"))
+FILTERED_NOTES_CACHE_MAX_ENTRIES = int(os.environ.get("WIKI_FILTERED_NOTES_CACHE_MAX_ENTRIES", "256"))
+WIKI_SEARCH_MAX_CONCURRENCY = int(os.environ.get("WIKI_SEARCH_MAX_CONCURRENCY", "12"))
+WIKI_SEARCH_SEMAPHORE = threading.BoundedSemaphore(WIKI_SEARCH_MAX_CONCURRENCY)
+INDEX_REFRESH_DEBOUNCE_SECONDS = max(0.05, float(os.environ.get("WIKI_INDEX_REFRESH_DEBOUNCE_SECONDS", "0.35")))
+INDEX_REFRESH_POLL_SECONDS = max(10.0, float(os.environ.get("WIKI_INDEX_REFRESH_POLL_SECONDS", "60")))
+INDEX_REFRESH_RETRY_SECONDS = max(1.0, float(os.environ.get("WIKI_INDEX_REFRESH_RETRY_SECONDS", "15")))
+INDEX_SCAN_YIELD_EVERY = max(1, int(os.environ.get("WIKI_INDEX_SCAN_YIELD_EVERY", "8")))
+INDEX_SCAN_YIELD_SECONDS = max(0.0, float(os.environ.get("WIKI_INDEX_SCAN_YIELD_SECONDS", "0.02")))
+INDEX_GRAPH_YIELD_EVERY = max(1, int(os.environ.get("WIKI_INDEX_GRAPH_YIELD_EVERY", "32")))
+INDEX_GRAPH_YIELD_SECONDS = max(0.0, float(os.environ.get("WIKI_INDEX_GRAPH_YIELD_SECONDS", "0.012")))
+INDEX_FTS_YIELD_EVERY = max(1, int(os.environ.get("WIKI_INDEX_FTS_YIELD_EVERY", "1")))
+INDEX_FTS_YIELD_SECONDS = max(0.0, float(os.environ.get("WIKI_INDEX_FTS_YIELD_SECONDS", "0.02")))
+_NOTE_INDEX_CACHE: dict[str, Any] = {"expires_at": 0.0, "index": None}
+_GRAPH_CACHE: dict[str, Any] = {"expires_at": 0.0, "graph": None}
+_FILTERED_NOTES_CACHE: dict[tuple[str, str, str, str], tuple[float, list[dict[str, Any]]]] = {}
+_INDEX_REFRESH_STATE: dict[str, Any] = {
+    "status": "idle",
+    "requested_generation": 0,
+    "completed_generation": 0,
+    "requested_at": "",
+    "started_at": "",
+    "completed_at": "",
+    "reason": "",
+    "pending_paths": set(),
+    "last_error": "",
+    "last_result": {},
+    "worker_started": False,
 }
+_INDEX_REFRESH_THREAD: threading.Thread | None = None
+INGESTION_DIR = Path(os.environ.get("WIKI_INGESTION_DIR", str(PUBLIC_DIR / "ingestion"))).resolve()
+INGESTION_MANIFEST_PATH = Path(os.environ.get("WIKI_INGEST_MANIFEST_PATH", str(INGESTION_DIR / "wiki_ingest_manifest.jsonl"))).resolve()
+INGESTION_AUDIT_PATH = Path(os.environ.get("WIKI_INGEST_AUDIT_PATH", str(INGESTION_DIR / "knowledge_contract_audit_latest.json"))).resolve()
+INGESTION_SYNC_PATH = Path(os.environ.get("WIKI_INGEST_SYNC_PATH", str(INGESTION_DIR / "sync-meta.json"))).resolve()
+VECTOR_DOCTOR_PATH = Path(os.environ.get("WIKI_VECTOR_DOCTOR_PATH", str(INGESTION_DIR / "wiki_vector_doctor_latest.json"))).resolve()
+SEARCH_DB_PATH = Path(
+    os.environ.get("WIKI_SEARCH_DB_PATH", str(PUBLIC_DIR / "search" / "wiki_fts_v2.sqlite"))
+).resolve()
+INDEX_STATE_PATH = Path(os.environ.get("WIKI_INDEX_STATE_PATH", str(PUBLIC_DIR / "index-state.json"))).resolve()
 
 
 def now_utc() -> dt.datetime:
     return dt.datetime.now(dt.timezone.utc)
 
 
+def cooperative_index_yield(index: int, every: int, seconds: float) -> None:
+    if index > 0 and index % every == 0 and seconds > 0:
+        time.sleep(seconds)
+
+
 def ensure_dirs() -> None:
-    for path in (
-        DATA_DIR,
-        VAULT_DIR,
-        PUBLIC_DIR,
-        *read_vault_dirs(),
-        VAULT_DIR / "90_archive" / "pending-harden" / "atom",
-        VAULT_DIR / "90_archive" / "pending-harden" / "skill",
-    ):
+    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ATOMS_DIR, ARCHIVE_DIR, PUBLIC_DIR):
         path.mkdir(parents=True, exist_ok=True)
-    ensure_registry_template(VAULT_DIR)
     init_git()
-
-
-def max_body_bytes() -> int:
-    raw = os.environ.get("WIKI_MAX_BODY_BYTES", "").strip()
-    if not raw:
-        return 2 * 1024 * 1024
-    try:
-        return int(raw)
-    except ValueError:
-        return 2 * 1024 * 1024
 
 
 def run(cmd: list[str], cwd: Path = DATA_DIR, check: bool = False) -> subprocess.CompletedProcess[str]:
@@ -294,23 +185,40 @@ def run(cmd: list[str], cwd: Path = DATA_DIR, check: bool = False) -> subprocess
 def init_git() -> None:
     if not shutil.which("git"):
         return
+    ensure_git_safe_directory()
     if not (DATA_DIR / ".git").exists():
         run(["git", "init"])
-        run(["git", "config", "user.name", "Hermes Wiki Bot"])
-        run(["git", "config", "user.email", "hermes-wiki@local"])
+    run(["git", "config", "user.name", "Hermes Wiki Bot"])
+    run(["git", "config", "user.email", "hermes-wiki@local"])
 
 
-def git_commit(message: str) -> str:
+def ensure_git_safe_directory() -> None:
+    safe_dir = str(DATA_DIR)
+    current = run(["git", "config", "--global", "--get-all", "safe.directory"])
+    safe_dirs = {line.strip() for line in current.stdout.splitlines() if line.strip()}
+    if safe_dir not in safe_dirs and "*" not in safe_dirs:
+        run(["git", "config", "--global", "--add", "safe.directory", safe_dir])
+
+
+def git_commit(message: str, include_public: bool = False) -> str:
     if not shutil.which("git") or not (DATA_DIR / ".git").exists():
         return "git unavailable"
-    run(["git", "add", "vault", "public"])
-    diff = run(["git", "diff", "--cached", "--quiet"])
-    if diff.returncode == 0:
-        return "no changes"
-    result = run(["git", "commit", "-m", message])
-    if result.returncode != 0:
-        return result.stderr.strip() or "git commit failed"
-    return result.stdout.strip()
+    with GIT_LOCK:
+        paths = ["vault"]
+        if include_public:
+            paths.extend(
+                str(path.relative_to(DATA_DIR))
+                for path in (NOTE_INDEX_PATH, GRAPH_PATH, INDEX_STATE_PATH)
+                if path.is_relative_to(DATA_DIR)
+            )
+        run(["git", "add", *paths])
+        diff = run(["git", "diff", "--cached", "--quiet"])
+        if diff.returncode == 0:
+            return "no changes"
+        result = run(["git", "commit", "-m", message])
+        if result.returncode != 0:
+            return result.stderr.strip() or "git commit failed"
+        return result.stdout.strip()
 
 
 def slugify(value: str, fallback: str) -> str:
@@ -342,6 +250,27 @@ def normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
     metadata = payload.get("metadata") or {}
     if not isinstance(metadata, dict):
         metadata = {"raw": metadata}
+    requested_frontmatter = payload.get("frontmatter") or {}
+    if not isinstance(requested_frontmatter, dict):
+        requested_frontmatter = {}
+    allowed_frontmatter_fields = {
+        "title",
+        "type",
+        "created_by",
+        "source_type",
+        "tags",
+        "created_at",
+        "task_id",
+        "agent_id",
+        "project",
+        "last_reviewed",
+        "migration",
+    }
+    frontmatter = {
+        key: value
+        for key, value in requested_frontmatter.items()
+        if key in allowed_frontmatter_fields and value not in (None, "")
+    }
 
     if not content and source_url:
         content = source_url
@@ -355,6 +284,7 @@ def normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "source_type": source_type[:80] or "inbox",
         "tags": sorted({str(tag).strip().lstrip("#") for tag in tags if str(tag).strip()}),
         "metadata": metadata,
+        "frontmatter": frontmatter,
     }
 
 
@@ -369,6 +299,11 @@ def first_heading(content: str) -> str:
 
 
 def ingest(payload: dict[str, Any]) -> dict[str, Any]:
+    with WIKI_WRITE_LOCK:
+        return ingest_locked(payload)
+
+
+def ingest_locked(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     item = normalize_payload(payload)
     created = now_utc()
@@ -419,10 +354,8 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
     source_record["last_ingested_at"] = created.isoformat()
     write_json(source_path, source_record)
     note = render_markdown(item, source_hash, created)
-    note_path.write_text(note, encoding="utf-8")
-
-    public = refresh_public_indexes()
-    commit_status = git_commit(f"ingest: {item['title'][:60]}")
+    write_text_atomic(note_path, note)
+    index_status = schedule_public_index_refresh("ingest", [rel(note_path)])
 
     return {
         "status": status,
@@ -432,290 +365,39 @@ def ingest(payload: dict[str, Any]) -> dict[str, Any]:
         "source_path": rel(source_path),
         "note_path": rel(note_path),
         "url": f"/note?path={quote(rel(note_path), safe='/')}",
-        "graph_nodes": len(public["graph"]["nodes"]),
-        "graph_links": len(public["graph"]["links"]),
-        "git": commit_status,
+        "index_status": index_status["status"],
+        "index_generation": index_status["requested_generation"],
+        "git": "queued-with-index-refresh",
     }
-
-
-def ingest_http_request(
-    raw_body: bytes,
-    headers: dict[str, str],
-    *,
-    vault_root: Path = VAULT_DIR,
-    api_token: str | None = None,
-    base_url: str = "",
-    content_length: int | None = None,
-    lock_timeout: float = 5,
-) -> tuple[HTTPStatus, dict[str, Any]]:
-    started = time.monotonic()
-    api_token = API_TOKEN if api_token is None else api_token
-    task_id = None
-    created_by = None
-    note_type = None
-    path = None
-    outcome = "rejected"
-    reason = None
-
-    try:
-        if not _authorized_ingest(headers, api_token):
-            raise IngestError(401, "missing-or-invalid-token")
-        if content_length is not None and content_length > max_body_bytes():
-            raise IngestError(413, "body-too-large", {"max_body_bytes": max_body_bytes()})
-        if len(raw_body) > max_body_bytes():
-            raise IngestError(413, "body-too-large", {"max_body_bytes": max_body_bytes()})
-
-        try:
-            payload = json.loads(raw_body.decode("utf-8-sig"))
-        except (json.JSONDecodeError, UnicodeDecodeError) as error:
-            raise IngestError(400, "invalid-json") from error
-        if not isinstance(payload, dict):
-            raise IngestError(400, "invalid-json")
-
-        frontmatter = payload.get("frontmatter")
-        if isinstance(frontmatter, dict):
-            task_id = frontmatter.get("task_id")
-            created_by = frontmatter.get("created_by")
-            note_type = frontmatter.get("type")
-
-        result = ingest_payload(payload, vault_root=vault_root, base_url=base_url, lock_timeout=lock_timeout)
-        task_id = result.get("task_id", task_id)
-        path = result.get("path")
-        outcome = "accepted"
-        status = HTTPStatus.OK if result.get("status") == "duplicate" else HTTPStatus.CREATED
-        return status, result
-    except IngestError as error:
-        reason = error.code
-        return HTTPStatus(error.status_code), error_response(error)
-    finally:
-        INGEST_LOGGER.info(
-            json.dumps(
-                {
-                    "ts": now_utc().isoformat(),
-                    "event": "ingest",
-                    "outcome": outcome,
-                    "task_id": task_id,
-                    "created_by": created_by,
-                    "type": note_type,
-                    "path": path,
-                    "duration_ms": int((time.monotonic() - started) * 1000),
-                    **({"reason": reason} if reason else {}),
-                },
-                ensure_ascii=False,
-            )
-        )
-
-
-def ingest_payload(
-    payload: dict[str, Any],
-    *,
-    vault_root: Path = VAULT_DIR,
-    base_url: str = "",
-    lock_timeout: float = 5,
-) -> dict[str, Any]:
-    raw_frontmatter = payload.get("frontmatter")
-    if not isinstance(raw_frontmatter, dict):
-        raise IngestError(400, "frontmatter-parse-error", {"excerpt": "frontmatter must be an object"})
-
-    frontmatter_payload = dict(raw_frontmatter)
-    if not str(frontmatter_payload.get("created_at") or "").strip():
-        frontmatter_payload["created_at"] = now_utc().isoformat()
-
-    try:
-        fm = Frontmatter.model_validate(frontmatter_payload)
-    except Exception as error:
-        raise IngestError(400, "frontmatter-parse-error", {"excerpt": str(error)[:200]}) from error
-
-    validate_frontmatter(fm)
-    body = str(payload.get("content") or payload.get("body") or "")
-    duplicate = find_duplicate_ingest(fm, body, vault_root)
-    if duplicate:
-        note_path = duplicate.relative_to(vault_root).as_posix()
-        return {
-            "status": "duplicate",
-            "path": note_path,
-            "directory": duplicate.parent.relative_to(vault_root).as_posix(),
-            "task_id": fm.task_id,
-            "url": f"{base_url.rstrip('/')}/note?path={quote(note_path, safe='')}" if base_url else f"/note?path={quote(note_path, safe='')}",
-        }
-    if fm.type == "atom" and len(body) > 5000:
-        INGEST_LOGGER.warning(
-            json.dumps(
-                {
-                    "event": "atom-oversized",
-                    "title": fm.title,
-                    "length": len(body),
-                },
-                ensure_ascii=False,
-            )
-        )
-
-    target = resolve_target(fm, vault_root)
-    if fm.type == "journal":
-        result = append_journal(vault_root, fm, body, lock_timeout=lock_timeout)
-    else:
-        lock_context = _write_lock(fm, target, vault_root, lock_timeout)
-        with lock_context:
-            result = write_note(target, fm, body)
-
-    note_path = result.path.relative_to(vault_root).as_posix()
-    directory = result.directory.relative_to(vault_root).as_posix()
-    trigger_tag_registry_update(vault_root, fm)
-    trigger_moc_rebuild(vault_root)
-    return {
-        "status": result.status,
-        "path": note_path,
-        "directory": directory,
-        "task_id": fm.task_id,
-        "url": f"{base_url.rstrip('/')}/note?path={quote(note_path, safe='')}" if base_url else f"/note?path={quote(note_path, safe='')}",
-        **({"rolled_to": result.rolled_to.relative_to(vault_root).as_posix()} if result.rolled_to else {}),
-    }
-
-
-def _authorized_ingest(headers: dict[str, str], api_token: str | None) -> bool:
-    if not api_token:
-        return False
-    header = ""
-    for key, value in headers.items():
-        if key.lower() == "authorization":
-            header = value
-            break
-    return header.startswith("Bearer ") and hmac.compare_digest(header[7:], api_token)
-
-
-def _write_lock(fm: Frontmatter, target: Path, vault_root: Path, timeout: float):
-    if fm.type == "project":
-        return project_lock(vault_root, target.parent.name, timeout=timeout)
-    if fm.type == "journal":
-        return journal_lock(vault_root, target.stem, timeout=timeout)
-    return nullcontext()
-
-
-def find_duplicate_ingest(fm: Frontmatter, body: str, vault_root: Path) -> Path | None:
-    keys = dedupe_keys_from_frontmatter(fm.model_dump(exclude_none=True), body)
-    if not keys:
-        return None
-    for path in iter_vault_markdown_paths(vault_root):
-        try:
-            existing_fm, existing_body = parse_note_document_at(path)
-        except (OSError, UnicodeDecodeError):
-            continue
-        existing_keys = dedupe_keys_from_frontmatter(existing_fm, existing_body)
-        if keys & existing_keys:
-            return path
-    return None
-
-
-def dedupe_keys_from_frontmatter(fm: dict[str, Any], body: str = "") -> set[str]:
-    keys: set[str] = set()
-    tweet_id = str(fm.get("tweet_id") or "").strip()
-    if tweet_id:
-        keys.add(f"tweet_id:{tweet_id}")
-    for field in ("canonical_url", "source_url"):
-        canonical = canonicalize_dedupe_url(str(fm.get(field) or ""))
-        if canonical:
-            keys.add(f"url:{canonical}")
-    for field in ("source_hash", "text_hash"):
-        value = str(fm.get(field) or "").strip().lower()
-        if value:
-            keys.add(f"{field}:{value}")
-    if is_x_likes_frontmatter(fm) and body.strip():
-        keys.add(f"text_hash:{hash_normalized_text(body)}")
-    return keys
-
-
-def is_x_likes_frontmatter(fm: dict[str, Any]) -> bool:
-    source_type = str(fm.get("source_type") or "").strip()
-    if source_type in X_LIKES_SOURCE_TYPES:
-        return True
-    tags = normalize_tags(fm.get("tags", []))
-    return "x-likes" in tags
-
-
-def canonicalize_dedupe_url(value: str) -> str:
-    raw = value.strip()
-    if not raw:
-        return ""
-    parsed = urlparse(raw)
-    if not parsed.scheme and not parsed.netloc:
-        return raw.casefold()
-    scheme = parsed.scheme.lower()
-    netloc = parsed.netloc.lower()
-    path = re.sub(r"/+$", "", parsed.path or "/")
-    query = urlencode(sorted(parse_qs(parsed.query, keep_blank_values=True).items()), doseq=True)
-    return parsed._replace(scheme=scheme, netloc=netloc, path=path, query=query, fragment="").geturl()
-
-
-def source_domain_from_url(value: str) -> str:
-    parsed = urlparse(value.strip())
-    return parsed.netloc.lower()
-
-
-def hash_normalized_text(value: str) -> str:
-    text = WIKILINK_RE.sub(r"\1", value)
-    text = TAG_RE.sub("", text)
-    text = re.sub(r"(?is)```.*?```", "", text)
-    text = re.sub(r"(?m)^#+\s*", "", text)
-    text = re.sub(r"\s+", " ", text).strip().casefold()
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
-
-
-def iter_vault_markdown_paths(vault_root: Path) -> list[Path]:
-    roots = [
-        vault_root / "00_meta",
-        vault_root / "10_sources",
-        vault_root / "20_notes",
-        vault_root / "20_atoms",
-        vault_root / "30_projects",
-        vault_root / "40_journals",
-        vault_root / "50_skills",
-        vault_root / "90_archive",
-        vault_root / "Personal OS Inbox",
-        vault_root / "Personal Wiki Mirror",
-    ]
-    paths: list[Path] = []
-    seen: set[Path] = set()
-    for root in roots:
-        if not root.exists():
-            continue
-        for path in sorted(root.rglob("*.md")):
-            if not path.is_file():
-                continue
-            resolved = path.resolve()
-            if resolved in seen:
-                continue
-            seen.add(resolved)
-            paths.append(path)
-    return paths
-
-
-def parse_note_document_at(path: Path) -> tuple[dict[str, Any], str]:
-    text = path.read_text(encoding="utf-8")
-    fm, body = parse_frontmatter(text)
-    if not fm:
-        fm = {
-            "created_by": "unknown",
-            "type": "legacy",
-            "source_type": "user-note",
-            "tags": [],
-            "created_at": dt.datetime.fromtimestamp(path.stat().st_mtime, dt.timezone.utc).isoformat(),
-        }
-    return fm, body
-
-
-def error_response(error: IngestError) -> dict[str, Any]:
-    body: dict[str, Any] = {"error": error.code, "code": error.code}
-    if error.details is not None:
-        body["details"] = error.details
-    return body
 
 
 def find_note_by_source_hash(source_hash: str) -> Path | None:
-    relative_path = str(load_source_hash_index().get("sources", {}).get(source_hash, "") or "")
-    if not relative_path:
-        return None
-    path = safe_data_path(relative_path)
-    return path if path.exists() and path.is_file() else None
+    source_path = find_source_by_hash(source_hash)
+    if source_path is not None:
+        try:
+            source_record = json.loads(source_path.read_text(encoding="utf-8"))
+            note_path = safe_data_path(str(source_record.get("note_path") or ""))
+            if note_path.exists() and note_path.suffix == ".md" and note_path_is_active(note_path):
+                return note_path
+        except (OSError, json.JSONDecodeError, ValueError):
+            pass
+    index = get_cached_note_index()
+    if index is None and NOTE_INDEX_PATH.exists():
+        try:
+            loaded = json.loads(NOTE_INDEX_PATH.read_text(encoding="utf-8"))
+            index = loaded if isinstance(loaded, dict) else None
+        except (OSError, json.JSONDecodeError):
+            index = None
+    for note in (index or {}).get("notes", []):
+        if str(note.get("source_hash") or "") != source_hash:
+            continue
+        try:
+            note_path = safe_data_path(str(note.get("path") or ""))
+        except ValueError:
+            continue
+        if note_path.exists() and note_path.suffix == ".md" and note_path_is_active(note_path):
+            return note_path
+    return None
 
 
 def find_source_by_hash(source_hash: str) -> Path | None:
@@ -737,7 +419,9 @@ def unique_path(path: Path) -> Path:
 
 
 def render_markdown(item: dict[str, Any], source_hash: str, created: dt.datetime) -> str:
-    tags = sorted(set(item["tags"] + [item["source_type"], "auto-ingested"]))
+    requested_frontmatter = item.get("frontmatter") if isinstance(item.get("frontmatter"), dict) else {}
+    requested_tags = normalize_tags(requested_frontmatter.get("tags", []))
+    tags = sorted(set(item["tags"] + requested_tags + [item["source_type"], "auto-ingested"]))
     fm = {
         "title": item["title"],
         "created": created.isoformat(),
@@ -747,6 +431,22 @@ def render_markdown(item: dict[str, Any], source_hash: str, created: dt.datetime
         "tags": tags,
         "status": "auto",
     }
+    for key in (
+        "title",
+        "type",
+        "created_by",
+        "source_type",
+        "created_at",
+        "task_id",
+        "agent_id",
+        "project",
+        "last_reviewed",
+        "migration",
+    ):
+        value = requested_frontmatter.get(key)
+        if value not in (None, ""):
+            fm[key] = value
+    fm["tags"] = tags
     content = item["content"].strip()
     if not content:
         content = "_No body content was provided._"
@@ -853,42 +553,101 @@ def extract_concepts(body: str) -> list[str]:
     return sorted({concept.strip() for concept in WIKILINK_RE.findall(body) if concept.strip()})
 
 
-def read_note_records(include_body: bool = False) -> list[dict[str, Any]]:
+def normalize_concepts(value: Any) -> list[str]:
+    if isinstance(value, str):
+        value = [part.strip() for part in re.split(r"[,，]", value) if part.strip()]
+    if not isinstance(value, list):
+        return []
+    return sorted({str(item).strip() for item in value if str(item).strip()})
+
+
+def normalize_concept_scores(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        return []
+    rows: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in value:
+        if isinstance(item, dict):
+            label = str(item.get("label") or item.get("name") or item.get("concept") or "").strip()
+            raw_score = item.get("score", item.get("relevance", 0))
+            concept_id = str(item.get("id") or "").strip()
+        else:
+            label = str(item).strip()
+            raw_score = 0
+            concept_id = ""
+        if not label or label in seen:
+            continue
+        try:
+            score = float(raw_score)
+        except (TypeError, ValueError):
+            score = 0.0
+        score = max(0.0, min(1.0, score))
+        row: dict[str, Any] = {"label": label, "score": round(score, 3)}
+        if concept_id:
+            row["id"] = concept_id
+        rows.append(row)
+        seen.add(label)
+    return rows
+
+
+def concept_score_lookup(rows: list[dict[str, Any]]) -> dict[str, float]:
+    return {str(row.get("label") or "").strip(): float(row.get("score") or 0) for row in rows if str(row.get("label") or "").strip()}
+
+
+def read_note_record(path: Path, include_body: bool = False) -> dict[str, Any]:
+    text = path.read_text(encoding="utf-8")
+    fm, body = parse_frontmatter(text)
+    title = note_title(path, body, fm)
+    tags = normalize_tags(fm.get("tags", []))
+    created_value = note_created_value(fm)
+    body_concepts = extract_concepts(body)
+    body_tags = sorted({str(tag).strip().lstrip("#") for tag in TAG_RE.findall(body) if str(tag).strip()})
+    fm_concepts = normalize_concepts(fm.get("concepts", []))
+    concept_scores = normalize_concept_scores(fm.get("concept_scores", []))
+    score_labels = {
+        str(row.get("label") or "").strip()
+        for row in concept_scores
+        if str(row.get("label") or "").strip()
+    }
+    if concept_scores:
+        # v3 controlled taxonomy: public concept facets and AI retrieval use scored
+        # controlled concepts only. Body wikilinks still become graph wikilink
+        # edges, but they must not pollute /api/concepts counts.
+        concepts = sorted(score_labels)
+    else:
+        concepts = sorted(set(body_concepts) | set(fm_concepts))
+    record = {
+        "title": title,
+        "path": rel(path),
+        "created": format_date(created_value),
+        "created_sort": note_sort_value(created_value),
+        "quality_status": str(fm.get("quality_status", "") or fm.get("status", "") or ""),
+        "agent_id": str(fm.get("agent_id", "") or ""),
+        "task_id": str(fm.get("task_id", "") or ""),
+        "source_type": str(fm.get("source_type", "") or ""),
+        "source_url": str(fm.get("source_url", "") or ""),
+        "source_hash": str(fm.get("source_hash", "") or ""),
+        "status": str(fm.get("status", "") or ""),
+        "tags": tags,
+        "concepts": concepts,
+        "concept_scores": concept_scores,
+        "wikilinks": body_concepts,
+        "graph_tags": body_tags,
+        "excerpt": plain_excerpt(body),
+        "search_text": plain_search_text(body),
+    }
+    if include_body:
+        record["body"] = body
+    return record
+
+
+def read_note_records(include_body: bool = False, throttle: bool = False) -> list[dict[str, Any]]:
     ensure_dirs_no_git()
     records: list[dict[str, Any]] = []
-    for path in iter_note_paths():
-        fm, body = parse_note_document(path)
-        title = note_title(path, body, fm)
-        tags = normalize_tags(fm.get("tags", []))
-        created_value = note_created_value(fm)
-        record = {
-            "title": title,
-            "path": rel(path),
-            "created": format_date(created_value),
-            "created_at": str(fm.get("created_at", "") or ""),
-            "created_sort": note_sort_value(created_value),
-            "created_by": str(fm.get("created_by", "") or ""),
-            "type": str(fm.get("type", "") or ""),
-            "source_type": str(fm.get("source_type", "") or ""),
-            "source_url": str(fm.get("source_url", "") or ""),
-            "source_hash": str(fm.get("source_hash", "") or ""),
-            "status": str(fm.get("status", "") or ""),
-            "tags": tags,
-            "concepts": extract_concepts(body),
-            "excerpt": plain_excerpt(body),
-            "search_text": plain_search_text(body),
-        }
-        for field in PUBLIC_NOTE_EXTRA_FIELDS:
-            value = fm.get(field)
-            if value not in (None, ""):
-                record[field] = value
-        if not record.get("source_domain"):
-            record["source_domain"] = source_domain_from_url(
-                str(record.get("canonical_url") or record.get("source_url") or "")
-            )
-        if include_body:
-            record["body"] = body
-        records.append(record)
+    for index, path in enumerate(iter_note_paths()):
+        records.append(read_note_record(path, include_body=include_body))
+        if throttle:
+            cooperative_index_yield(index, INDEX_SCAN_YIELD_EVERY, INDEX_SCAN_YIELD_SECONDS)
     records.sort(key=lambda item: item.get("created_sort", 0), reverse=True)
     return records
 
@@ -909,30 +668,22 @@ def build_facets(records: list[dict[str, Any]], key: str) -> list[dict[str, Any]
     ]
 
 
-def build_note_index(records: list[dict[str, Any]]) -> dict[str, Any]:
+def build_note_index(
+    records: list[dict[str, Any]],
+    signature: str | None = None,
+    generation: str = "",
+) -> dict[str, Any]:
     public_notes = [{key: value for key, value in record.items() if key != "body"} for record in records]
     return {
+        "schema_version": PUBLIC_INDEX_SCHEMA_VERSION,
+        "index_generation": generation,
         "generated_at": now_utc().isoformat(),
-        "vault_signature": vault_signature(),
+        "vault_signature": signature if signature is not None else vault_signature(),
         "count": len(public_notes),
         "notes": public_notes,
         "tags": build_facets(public_notes, "tags"),
         "concepts": build_facets(public_notes, "concepts"),
         "source_types": build_facets(public_notes, "source_type"),
-    }
-
-
-def build_source_hash_index(records: list[dict[str, Any]]) -> dict[str, Any]:
-    sources: dict[str, str] = {}
-    for record in records:
-        source_hash = str(record.get("source_hash", "") or "").strip()
-        path = str(record.get("path", "") or "").strip()
-        if source_hash and path:
-            sources[source_hash] = path
-    return {
-        "generated_at": now_utc().isoformat(),
-        "vault_signature": vault_signature(),
-        "sources": sources,
     }
 
 
@@ -960,156 +711,246 @@ def build_note_lookup(index: dict[str, Any]) -> dict[str, str]:
     return lookup
 
 
+def clear_note_caches() -> None:
+    with NOTE_INDEX_CACHE_LOCK:
+        _NOTE_INDEX_CACHE["expires_at"] = 0.0
+        _NOTE_INDEX_CACHE["index"] = None
+    with GRAPH_CACHE_LOCK:
+        _GRAPH_CACHE["expires_at"] = 0.0
+        _GRAPH_CACHE["graph"] = None
+    with FILTERED_NOTES_CACHE_LOCK:
+        _FILTERED_NOTES_CACHE.clear()
+
+
+def get_cached_note_index() -> dict[str, Any] | None:
+    now = time.monotonic()
+    with NOTE_INDEX_CACHE_LOCK:
+        cached = _NOTE_INDEX_CACHE.get("index")
+        expires_at = float(_NOTE_INDEX_CACHE.get("expires_at") or 0.0)
+        if isinstance(cached, dict) and expires_at > now:
+            return cached
+    return None
+
+
+def set_cached_note_index(index: dict[str, Any]) -> None:
+    with NOTE_INDEX_CACHE_LOCK:
+        _NOTE_INDEX_CACHE["index"] = index
+        _NOTE_INDEX_CACHE["expires_at"] = time.monotonic() + NOTE_INDEX_CACHE_TTL_SECONDS
+
+
+def get_cached_graph() -> dict[str, Any] | None:
+    now = time.monotonic()
+    with GRAPH_CACHE_LOCK:
+        cached = _GRAPH_CACHE.get("graph")
+        expires_at = float(_GRAPH_CACHE.get("expires_at") or 0.0)
+        if isinstance(cached, dict) and expires_at > now:
+            return cached
+    return None
+
+
+def set_cached_graph(graph: dict[str, Any]) -> None:
+    with GRAPH_CACHE_LOCK:
+        _GRAPH_CACHE["graph"] = graph
+        _GRAPH_CACHE["expires_at"] = time.monotonic() + GRAPH_CACHE_TTL_SECONDS
+
+
+def get_cached_filtered_notes(key: tuple[str, str, str, str]) -> list[dict[str, Any]] | None:
+    now = time.monotonic()
+    with FILTERED_NOTES_CACHE_LOCK:
+        cached = _FILTERED_NOTES_CACHE.get(key)
+        if not cached:
+            return None
+        expires_at, notes = cached
+        if expires_at <= now:
+            _FILTERED_NOTES_CACHE.pop(key, None)
+            return None
+        return notes
+
+
+def set_cached_filtered_notes(key: tuple[str, str, str, str], notes: list[dict[str, Any]]) -> None:
+    with FILTERED_NOTES_CACHE_LOCK:
+        _FILTERED_NOTES_CACHE[key] = (time.monotonic() + FILTERED_NOTES_CACHE_TTL_SECONDS, notes)
+        while len(_FILTERED_NOTES_CACHE) > FILTERED_NOTES_CACHE_MAX_ENTRIES:
+            oldest = next(iter(_FILTERED_NOTES_CACHE), None)
+            if oldest is None:
+                break
+            _FILTERED_NOTES_CACHE.pop(oldest, None)
+
+
 def vault_signature() -> str:
     digest = hashlib.sha256()
-    roots = [root for root in read_vault_dirs() if root.exists()]
-    if not roots:
+    if not any(root.exists() for root in NOTE_CONTENT_DIRS):
         return digest.hexdigest()
-    for root in roots:
-        for path in sorted(root.rglob("*.md")):
-            if not path.is_file():
-                continue
-            try:
-                stat = path.stat()
-            except OSError:
-                continue
-            digest.update(rel(path).encode("utf-8", errors="replace"))
-            digest.update(str(stat.st_mtime_ns).encode("ascii"))
-            digest.update(str(stat.st_size).encode("ascii"))
+    for path in sorted(iter_note_paths()):
+        try:
+            stat = path.stat()
+        except OSError:
+            continue
+        digest.update(rel(path).encode("utf-8", errors="replace"))
+        digest.update(str(stat.st_mtime_ns).encode("ascii"))
+        digest.update(str(stat.st_size).encode("ascii"))
     return digest.hexdigest()
 
 
-def update_source_baseline(vault_root: Path = VAULT_DIR) -> dict[str, str]:
-    global SOURCE_BASELINE
-    SOURCE_BASELINE = build_baseline(vault_root)
-    return SOURCE_BASELINE
+def fresh_public_indexes() -> dict[str, Any] | None:
+    if not NOTE_INDEX_PATH.exists() or not GRAPH_PATH.exists():
+        return None
+    try:
+        index = json.loads(NOTE_INDEX_PATH.read_text(encoding="utf-8"))
+        graph = json.loads(GRAPH_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    index_generation = str(index.get("index_generation") or "")
+    graph_generation = str(graph.get("index_generation") or "")
+    if int(index.get("schema_version") or 0) != PUBLIC_INDEX_SCHEMA_VERSION:
+        return None
+    if int(graph.get("schema_version") or 0) != PUBLIC_INDEX_SCHEMA_VERSION:
+        return None
+    if not index_generation or index_generation != graph_generation:
+        return None
+    if str(index.get("vault_signature") or "") != str(graph.get("vault_signature") or ""):
+        return None
+    return {"index": index, "graph": graph}
 
 
-def log_source_mutations(mutations: list[Mutation]) -> None:
-    for mutation in mutations:
-        SOURCE_LOGGER.warning(
-            json.dumps(
-                {
-                    "event": "source-mutation-detected",
-                    "path": mutation.path,
-                    "old_sha": mutation.old_sha,
-                    "new_sha": mutation.new_sha,
-                },
-                ensure_ascii=False,
-            )
-        )
+def note_path_is_active(path: Path) -> bool:
+    resolved = path.resolve()
+    return any(
+        resolved == root.resolve() or root.resolve() in resolved.parents
+        for root in NOTE_CONTENT_DIRS
+    )
 
 
-def run_source_check(vault_root: Path = VAULT_DIR) -> list[Mutation]:
-    mutations = diff_against_baseline(vault_root, SOURCE_BASELINE)
-    if mutations:
-        log_source_mutations(mutations)
-    return mutations
-
-
-def start_source_monitor(interval_seconds: int = 3600) -> None:
-    global SOURCE_CHECK_TIMER
-    update_source_baseline(VAULT_DIR)
-
-    def tick() -> None:
-        try:
-            run_source_check(VAULT_DIR)
-        finally:
-            start_source_monitor(interval_seconds)
-
-    SOURCE_CHECK_TIMER = threading.Timer(interval_seconds, tick)
-    SOURCE_CHECK_TIMER.daemon = True
-    SOURCE_CHECK_TIMER.start()
-
-
-def trigger_moc_rebuild(vault_root: Path = VAULT_DIR) -> None:
-    thread = threading.Thread(target=rebuild_moc, args=(vault_root,), daemon=True)
-    thread.start()
-
-
-def trigger_tag_registry_update(vault_root: Path, fm: Frontmatter) -> None:
-    update_tag_registry(vault_root, fm)
-
-
-def update_tag_registry(vault_root: Path, fm: Frontmatter) -> None:
-    registry = load_registry(vault_root)
-    known = registry.approved | registry.pending
-    for tag in fm.tags or []:
-        if tag not in known:
-            append_pending(vault_root, tag, fm.created_by or "unknown", fm.task_id, fm.created_at)
-            known.add(tag)
-
-
-def handle_admin_moc_rebuild(vault_root: Path = VAULT_DIR) -> tuple[HTTPStatus, dict[str, Any]]:
-    content = rebuild_moc(vault_root)
-    return HTTPStatus.OK, {
-        "status": "rebuilt",
-        "path": "00_meta/index.md",
-        "bytes": len(content.encode("utf-8")),
+def incremental_note_records(
+    existing_index: dict[str, Any],
+    changed_paths: list[str],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[str], list[dict[str, Any]]]:
+    records_by_path = {
+        str(record.get("path") or ""): dict(record)
+        for record in existing_index.get("notes", [])
+        if str(record.get("path") or "")
     }
+    changed_records: list[dict[str, Any]] = []
+    removed_paths: list[str] = []
+    prior_records: list[dict[str, Any]] = []
+    for relative_path in sorted(set(changed_paths)):
+        path = safe_data_path(relative_path)
+        normalized_path = rel(path)
+        prior = records_by_path.get(normalized_path)
+        if prior is not None:
+            prior_records.append(dict(prior))
+        if path.exists() and path.suffix == ".md" and note_path_is_active(path):
+            record = read_note_record(path, include_body=True)
+            records_by_path[normalized_path] = record
+            changed_records.append(record)
+        else:
+            records_by_path.pop(normalized_path, None)
+            removed_paths.append(normalized_path)
+    records = list(records_by_path.values())
+    records.sort(key=lambda item: item.get("created_sort", 0), reverse=True)
+    return records, changed_records, removed_paths, prior_records
 
 
-def start_moc_monitor(interval_seconds: int = 300) -> None:
-    global MOC_TIMER
+def refresh_public_indexes(
+    force: bool = False,
+    changed_paths: list[str] | None = None,
+) -> dict[str, Any]:
+    with PUBLIC_INDEX_REFRESH_LOCK:
+        existing = fresh_public_indexes()
+        if not force:
+            if existing is not None:
+                set_cached_note_index(existing["index"])
+                set_cached_graph(existing["graph"])
+                return existing
 
-    def tick() -> None:
-        try:
-            rebuild_moc(VAULT_DIR)
-        finally:
-            start_moc_monitor(interval_seconds)
-
-    MOC_TIMER = threading.Timer(interval_seconds, tick)
-    MOC_TIMER.daemon = True
-    MOC_TIMER.start()
-
-
-def refresh_public_indexes() -> dict[str, Any]:
-    records = read_note_records(include_body=True)
-    index = build_note_index(records)
-    source_index = build_source_hash_index(records)
-    graph = build_graph_from_records(records)
-    write_json(NOTE_INDEX_PATH, index)
-    write_json(SOURCE_INDEX_PATH, source_index)
-    write_json(GRAPH_PATH, graph)
-    return {"index": index, "source_index": source_index, "graph": graph}
+        with WIKI_WRITE_LOCK:
+            if existing is not None and changed_paths:
+                records, changed_records, removed_paths, prior_records = incremental_note_records(
+                    existing["index"],
+                    changed_paths,
+                )
+                refresh_mode = "incremental"
+            else:
+                records = read_note_records(include_body=True, throttle=True)
+                changed_records = records
+                removed_paths = []
+                prior_records = []
+                refresh_mode = "full"
+            signature = vault_signature()
+        generation = f"{time.time_ns()}-{signature[:12]}"
+        index = build_note_index(records, signature=signature, generation=generation)
+        if refresh_mode == "incremental":
+            graph = build_graph_incremental(
+                records,
+                existing["graph"],
+                changed_records,
+                prior_records,
+                removed_paths,
+                signature=signature,
+                generation=generation,
+            )
+        else:
+            graph = build_graph_from_records(
+                records,
+                signature=signature,
+                generation=generation,
+                throttle=True,
+            )
+        fts = sync_search_index(
+            changed_records,
+            removed_paths=removed_paths,
+            delete_missing=refresh_mode == "full",
+            force_repair=refresh_mode == "full",
+        )
+        write_json(NOTE_INDEX_PATH, index)
+        write_json(GRAPH_PATH, graph)
+        set_cached_note_index(index)
+        set_cached_graph(graph)
+        with FILTERED_NOTES_CACHE_LOCK:
+            _FILTERED_NOTES_CACHE.clear()
+        return {"index": index, "graph": graph, "fts": fts, "refresh_mode": refresh_mode}
 
 
 def load_note_index() -> dict[str, Any]:
     ensure_dirs_no_git()
-    if not NOTE_INDEX_PATH.exists() or not GRAPH_PATH.exists() or not SOURCE_INDEX_PATH.exists():
-        return refresh_public_indexes()["index"]
+    cached = get_cached_note_index()
+    if cached is not None:
+        return cached
+    if not NOTE_INDEX_PATH.exists() or not GRAPH_PATH.exists():
+        schedule_public_index_refresh("missing-note-index")
+        return {"generated_at": "", "vault_signature": "", "count": 0, "notes": [], "tags": [], "concepts": [], "source_types": []}
     try:
         index = json.loads(NOTE_INDEX_PATH.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return refresh_public_indexes()["index"]
-    if index.get("vault_signature") != vault_signature():
-        return refresh_public_indexes()["index"]
-    return index
-
-
-def load_source_hash_index() -> dict[str, Any]:
-    ensure_dirs_no_git()
-    if not SOURCE_INDEX_PATH.exists() or not NOTE_INDEX_PATH.exists():
-        return refresh_public_indexes()["source_index"]
-    try:
-        index = json.loads(SOURCE_INDEX_PATH.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return refresh_public_indexes()["source_index"]
-    if index.get("vault_signature") != vault_signature():
-        return refresh_public_indexes()["source_index"]
+    except (OSError, json.JSONDecodeError):
+        schedule_public_index_refresh("invalid-note-index")
+        return {"generated_at": "", "vault_signature": "", "count": 0, "notes": [], "tags": [], "concepts": [], "source_types": []}
+    if int(index.get("schema_version") or 0) != PUBLIC_INDEX_SCHEMA_VERSION:
+        schedule_public_index_refresh("stale-note-index-schema")
+    set_cached_note_index(index)
     return index
 
 
 def load_graph() -> dict[str, Any]:
     ensure_dirs_no_git()
+    cached = get_cached_graph()
+    if cached is not None:
+        return cached
     if not GRAPH_PATH.exists() or not NOTE_INDEX_PATH.exists():
-        return refresh_public_indexes()["graph"]
+        schedule_public_index_refresh("missing-graph-index")
+        return {"generated_at": "", "vault_signature": "", "nodes": [], "links": []}
     try:
         graph = json.loads(GRAPH_PATH.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return refresh_public_indexes()["graph"]
-    if graph.get("vault_signature") != vault_signature():
-        return refresh_public_indexes()["graph"]
+    except (OSError, json.JSONDecodeError):
+        schedule_public_index_refresh("invalid-graph-index")
+        return {"generated_at": "", "vault_signature": "", "nodes": [], "links": []}
+    index = load_note_index()
+    if (
+        int(graph.get("schema_version") or 0) != PUBLIC_INDEX_SCHEMA_VERSION
+        or str(graph.get("index_generation") or "") != str(index.get("index_generation") or "")
+        or str(graph.get("vault_signature") or "") != str(index.get("vault_signature") or "")
+    ):
+        schedule_public_index_refresh("public-index-generation-mismatch")
+    set_cached_graph(graph)
     return graph
 
 
@@ -1119,77 +960,48 @@ def filtered_notes(
     concept: str = "",
     source_type: str = "",
 ) -> list[dict[str, Any]]:
-    index = load_note_index()
-    notes = list(index.get("notes", []))
     q = query.strip().lower()
-    tag = tag.strip().lstrip("#").lower()
+    tag = tag.strip().lstrip("#")
     concept = concept.strip()
     source_type = source_type.strip()
+    cache_key = (q, tag, concept, source_type)
+    cached = get_cached_filtered_notes(cache_key)
+    if cached is not None:
+        return cached
 
-    def matches(note: dict[str, Any]) -> bool:
-        note_tags = [str(item).lower() for item in note.get("tags", [])]
-        if tag and tag not in note_tags:
-            return False
-        if concept and concept not in [str(item) for item in note.get("concepts", [])]:
-            return False
-        if source_type and source_type != str(note.get("source_type", "")):
-            return False
-        if q:
-            haystack = " ".join(
-                [
-                    str(note.get("title", "")),
-                    str(note.get("excerpt", "")),
-                    str(note.get("search_text", "")),
-                    " ".join(str(item) for item in note.get("tags", [])),
-                    " ".join(str(item) for item in note.get("concepts", [])),
-                    str(note.get("source_type", "")),
-                    str(note.get("summary", "")),
-                    str(note.get("source_url", "")),
-                    str(note.get("canonical_url", "")),
-                    str(note.get("author_handle", "")),
-                    str(note.get("author_name", "")),
-                    str(note.get("source_domain", "")),
-                ]
-            ).lower()
-            return q in haystack
-        return True
+    acquired = WIKI_SEARCH_SEMAPHORE.acquire(timeout=5)
+    if not acquired:
+        raise TimeoutError("wiki search concurrency limit reached")
+    try:
+        index = load_note_index()
+        notes = list(index.get("notes", []))
 
-    results: list[dict[str, Any]] = []
-    for note in notes:
-        if not matches(note):
-            continue
-        public = public_note(note)
-        if q:
-            public["hit_snippet"] = hit_snippet(note, q)
-        results.append(public)
-    return results
+        def matches(note: dict[str, Any]) -> bool:
+            if tag and tag not in [str(item) for item in note.get("tags", [])]:
+                return False
+            if concept and concept not in [str(item) for item in note.get("concepts", [])]:
+                return False
+            if source_type and source_type != str(note.get("source_type", "")):
+                return False
+            if q:
+                haystack = " ".join(
+                    [
+                        str(note.get("title", "")),
+                        str(note.get("excerpt", "")),
+                        str(note.get("search_text", "")),
+                        " ".join(str(item) for item in note.get("tags", [])),
+                        " ".join(str(item) for item in note.get("concepts", [])),
+                        str(note.get("source_type", "")),
+                    ]
+                ).lower()
+                return q in haystack
+            return True
 
-
-def hit_snippet(note: dict[str, Any], query: str, radius: int = 80) -> str:
-    haystack = " ".join(
-        str(note.get(key, ""))
-        for key in (
-            "title",
-            "summary",
-            "excerpt",
-            "search_text",
-            "source_url",
-            "canonical_url",
-            "author_handle",
-            "author_name",
-            "source_domain",
-        )
-        if note.get(key)
-    )
-    folded = haystack.lower()
-    index = folded.find(query)
-    if index == -1:
-        return str(note.get("excerpt", ""))[: radius * 2]
-    start = max(0, index - radius)
-    end = min(len(haystack), index + len(query) + radius)
-    prefix = "..." if start else ""
-    suffix = "..." if end < len(haystack) else ""
-    return prefix + haystack[start:end].strip() + suffix
+        result = [public_note(note) for note in notes if matches(note)]
+        set_cached_filtered_notes(cache_key, result)
+        return result
+    finally:
+        WIKI_SEARCH_SEMAPHORE.release()
 
 
 def parse_positive_int(value: str, default: int, maximum: int | None = None) -> int:
@@ -1221,7 +1033,12 @@ def build_graph() -> dict[str, Any]:
     return build_graph_from_records(read_note_records(include_body=True))
 
 
-def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
+def build_graph_from_records(
+    records: list[dict[str, Any]],
+    signature: str | None = None,
+    generation: str = "",
+    throttle: bool = False,
+) -> dict[str, Any]:
     nodes: dict[str, dict[str, Any]] = {}
     link_keys: set[tuple[str, str, str]] = set()
     links: list[dict[str, Any]] = []
@@ -1238,10 +1055,11 @@ def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
             return
         title_to_id[key] = node_id
 
-    for record in records:
+    for record_index, record in enumerate(records):
         title = str(record.get("title", ""))
         node_id = str(record.get("path", ""))
         body = str(record.get("body", ""))
+        wikilinks = list(record.get("wikilinks") or WIKILINK_RE.findall(body))
         tags = list(record.get("tags", []))
         nodes[node_id] = {
             "id": node_id,
@@ -1252,34 +1070,50 @@ def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
             "tags": tags,
             "source_type": record.get("source_type", ""),
             "kind": "note",
-            "weight": max(1, len(WIKILINK_RE.findall(body)) + len(tags)),
+            "weight": max(1, len(wikilinks) + len(tags)),
         }
         remember_title(title, node_id)
         remember_title(Path(node_id).stem, node_id)
+        if throttle:
+            cooperative_index_yield(record_index, INDEX_GRAPH_YIELD_EVERY, INDEX_GRAPH_YIELD_SECONDS)
 
-    for record in records:
+    def ensure_concept_node(concept: str) -> str:
+        target_id = title_to_id.get(concept)
+        if not target_id:
+            target_id = f"concept:{concept}"
+        if target_id not in nodes:
+            nodes[target_id] = {
+                "id": target_id,
+                "label": concept,
+                "title": concept,
+                "path": "",
+                "url": f"/notes?concept={quote(concept)}",
+                "tags": ["concept"],
+                "source_type": "concept",
+                "kind": "concept",
+                "weight": 3,
+            }
+        return target_id
+
+    for record_index, record in enumerate(records):
         body = str(record.get("body", ""))
         source_id = str(record.get("path", ""))
-        for target_title in WIKILINK_RE.findall(body):
-            concept = target_title.strip()
-            target_id = title_to_id.get(concept)
-            if not target_id:
-                target_id = f"concept:{concept}"
-            if target_id not in nodes:
-                nodes[target_id] = {
-                    "id": target_id,
-                    "label": concept,
-                    "title": concept,
-                    "path": "",
-                    "url": f"/notes?concept={quote(concept)}",
-                    "tags": ["concept"],
-                    "source_type": "concept",
-                    "kind": "concept",
-                    "weight": 3,
-                }
+        body_wikilinks = {
+            str(target_title).strip()
+            for target_title in (record.get("wikilinks") or WIKILINK_RE.findall(body))
+            if str(target_title).strip()
+        }
+        for concept in sorted(body_wikilinks):
+            target_id = ensure_concept_node(concept)
             add_link(links, link_keys, source_id, target_id, "wikilink", 2, score=0.9)
+        score_map = concept_score_lookup(record.get("concept_scores", []) if isinstance(record.get("concept_scores"), list) else [])
+        record_concepts = {str(item).strip() for item in record.get("concepts", []) if str(item).strip()}
+        for concept in sorted(record_concepts):
+            target_id = ensure_concept_node(concept)
+            score = score_map.get(concept, 0.9 if concept in body_wikilinks else 0.6)
+            add_link(links, link_keys, source_id, target_id, "concept", max(1, round(score * 4)), score=score)
         fm_tags = record.get("tags") if isinstance(record.get("tags"), list) else []
-        body_tags = TAG_RE.findall(body)
+        body_tags = list(record.get("graph_tags") or TAG_RE.findall(body))
         for tag in sorted({str(tag).strip().lstrip("#") for tag in list(fm_tags) + body_tags if str(tag).strip()}):
             tag_id = f"tag:{tag}"
             if tag_id not in nodes:
@@ -1295,14 +1129,231 @@ def build_graph_from_records(records: list[dict[str, Any]]) -> dict[str, Any]:
                     "weight": 2,
                 }
             add_link(links, link_keys, source_id, tag_id, "tag", 1, score=0.25)
+        if throttle:
+            cooperative_index_yield(record_index, INDEX_GRAPH_YIELD_EVERY, INDEX_GRAPH_YIELD_SECONDS)
 
-    add_related_note_links(records, links, link_keys)
+    add_related_note_links(records, links, link_keys, throttle=throttle)
 
     return {
+        "schema_version": PUBLIC_INDEX_SCHEMA_VERSION,
+        "index_generation": generation,
         "generated_at": now_utc().isoformat(),
-        "vault_signature": vault_signature(),
+        "vault_signature": signature if signature is not None else vault_signature(),
         "nodes": list(nodes.values()),
         "links": links,
+    }
+
+
+def build_graph_incremental(
+    records: list[dict[str, Any]],
+    existing_graph: dict[str, Any],
+    changed_records: list[dict[str, Any]],
+    prior_records: list[dict[str, Any]],
+    removed_paths: list[str],
+    signature: str,
+    generation: str,
+) -> dict[str, Any]:
+    record_by_id = {
+        str(record.get("path") or ""): record
+        for record in records
+        if str(record.get("path") or "")
+    }
+    changed_by_id = {
+        str(record.get("path") or ""): record
+        for record in changed_records
+        if str(record.get("path") or "")
+    }
+    prior_by_id = {
+        str(record.get("path") or ""): record
+        for record in prior_records
+        if str(record.get("path") or "")
+    }
+    changed_ids = set(changed_by_id) | set(prior_by_id) | set(removed_paths)
+
+    title_to_id: dict[str, str] = {}
+
+    def remember_title(key: str, node_id: str) -> None:
+        if not key:
+            return
+        existing = title_to_id.get(key)
+        if existing and existing != node_id:
+            title_to_id[key] = ""
+            return
+        if existing == "":
+            return
+        title_to_id[key] = node_id
+
+    for note_id, record in record_by_id.items():
+        remember_title(str(record.get("title") or ""), note_id)
+        remember_title(Path(note_id).stem, note_id)
+
+    changed_titles: set[str] = set()
+    for record in list(changed_by_id.values()) + list(prior_by_id.values()):
+        title = str(record.get("title") or "").strip()
+        path = str(record.get("path") or "").strip()
+        if title:
+            changed_titles.add(title)
+        if path:
+            changed_titles.add(Path(path).stem)
+
+    content_affected = set(changed_ids)
+    if changed_titles:
+        for note_id, record in record_by_id.items():
+            targets = {
+                str(value).strip()
+                for value in list(record.get("wikilinks") or []) + list(record.get("concepts") or [])
+                if str(value).strip()
+            }
+            if targets & changed_titles:
+                content_affected.add(note_id)
+
+    terms = {note_id: relation_terms(record) for note_id, record in record_by_id.items()}
+    concept_postings: dict[str, list[str]] = {}
+    for note_id, note_terms in terms.items():
+        for concept in note_terms.get("concepts", set()):
+            concept_postings.setdefault(concept, []).append(note_id)
+    eligible_postings = {
+        concept: note_ids
+        for concept, note_ids in concept_postings.items()
+        if len(note_ids) <= MAX_RELATION_CONCEPT_FANOUT
+    }
+    seed_concepts: set[str] = set()
+    for record in list(changed_by_id.values()) + list(prior_by_id.values()):
+        seed_concepts.update(relation_terms(record).get("concepts", set()))
+    relation_component = {note_id for note_id in changed_ids if note_id in record_by_id}
+    frontier = [note_id for concept in seed_concepts for note_id in eligible_postings.get(concept, [])]
+    while frontier:
+        note_id = frontier.pop()
+        if note_id in relation_component:
+            continue
+        relation_component.add(note_id)
+        for concept in terms.get(note_id, {}).get("concepts", set()):
+            frontier.extend(eligible_postings.get(concept, []))
+    relation_filter_ids = relation_component | changed_ids
+
+    nodes = {
+        str(node.get("id") or ""): dict(node)
+        for node in existing_graph.get("nodes", [])
+        if str(node.get("id") or "")
+    }
+    for node_id, node in list(nodes.items()):
+        if node.get("kind") == "note" and node_id not in record_by_id:
+            nodes.pop(node_id, None)
+
+    links: list[dict[str, Any]] = []
+    for link in existing_graph.get("links", []):
+        source = str(link.get("source") or "")
+        target = str(link.get("target") or "")
+        link_type = str(link.get("type") or "")
+        if source in changed_ids or target in changed_ids:
+            continue
+        if link_type == "related" and (source in relation_filter_ids or target in relation_filter_ids):
+            continue
+        if link_type != "related" and source in content_affected:
+            continue
+        links.append(dict(link))
+    link_keys = {
+        (str(link.get("source") or ""), str(link.get("target") or ""), str(link.get("type") or ""))
+        for link in links
+    }
+
+    def ensure_concept_node(concept: str) -> str:
+        target_id = title_to_id.get(concept) or f"concept:{concept}"
+        if target_id not in nodes:
+            nodes[target_id] = {
+                "id": target_id,
+                "label": concept,
+                "title": concept,
+                "path": "",
+                "url": f"/notes?concept={quote(concept)}",
+                "tags": ["concept"],
+                "source_type": "concept",
+                "kind": "concept",
+                "weight": 3,
+            }
+        return target_id
+
+    throttle_incremental = len(content_affected) > MAX_RELATION_CONCEPT_FANOUT
+    for note_index, note_id in enumerate(sorted(content_affected)):
+        record = record_by_id.get(note_id)
+        if record is None:
+            continue
+        title = str(record.get("title") or "")
+        wikilinks = [str(value).strip() for value in record.get("wikilinks", []) if str(value).strip()]
+        tags = list(record.get("tags") or [])
+        nodes[note_id] = {
+            "id": note_id,
+            "label": title,
+            "title": title,
+            "path": note_id,
+            "url": f"/note?path={quote(note_id, safe='/')}",
+            "tags": tags,
+            "source_type": record.get("source_type", ""),
+            "kind": "note",
+            "weight": max(1, len(wikilinks) + len(tags)),
+        }
+        for concept in sorted(set(wikilinks)):
+            add_link(links, link_keys, note_id, ensure_concept_node(concept), "wikilink", 2, score=0.9)
+        score_map = concept_score_lookup(
+            record.get("concept_scores", []) if isinstance(record.get("concept_scores"), list) else []
+        )
+        for concept in sorted({str(value).strip() for value in record.get("concepts", []) if str(value).strip()}):
+            target_id = ensure_concept_node(concept)
+            score = score_map.get(concept, 0.9 if concept in wikilinks else 0.6)
+            add_link(links, link_keys, note_id, target_id, "concept", max(1, round(score * 4)), score=score)
+        graph_tags = {
+            str(tag).strip().lstrip("#")
+            for tag in list(record.get("tags") or []) + list(record.get("graph_tags") or [])
+            if str(tag).strip()
+        }
+        for tag in sorted(graph_tags):
+            tag_id = f"tag:{tag}"
+            if tag_id not in nodes:
+                nodes[tag_id] = {
+                    "id": tag_id,
+                    "label": f"#{tag}",
+                    "title": f"#{tag}",
+                    "path": "",
+                    "url": f"/notes?tag={quote(tag)}",
+                    "tags": ["tag"],
+                    "source_type": "tag",
+                    "kind": "tag",
+                    "weight": 2,
+                }
+            add_link(links, link_keys, note_id, tag_id, "tag", 1, score=0.25)
+        if throttle_incremental:
+            cooperative_index_yield(note_index, INDEX_GRAPH_YIELD_EVERY, INDEX_GRAPH_YIELD_SECONDS)
+
+    component_records = [record_by_id[note_id] for note_id in sorted(relation_component) if note_id in record_by_id]
+    add_related_note_links(
+        component_records,
+        links,
+        link_keys,
+        throttle=len(component_records) > MAX_RELATION_CONCEPT_FANOUT,
+    )
+
+    referenced_nodes = {
+        str(link.get(field) or "")
+        for link in links
+        for field in ("source", "target")
+        if str(link.get(field) or "")
+    }
+    for node_id, node in list(nodes.items()):
+        if node.get("kind") != "note" and node_id not in referenced_nodes:
+            nodes.pop(node_id, None)
+
+    return {
+        "schema_version": PUBLIC_INDEX_SCHEMA_VERSION,
+        "index_generation": generation,
+        "generated_at": now_utc().isoformat(),
+        "vault_signature": signature,
+        "nodes": list(nodes.values()),
+        "links": links,
+        "incremental": {
+            "changed_notes": len(changed_ids),
+            "content_notes": len(content_affected & set(record_by_id)),
+            "relation_notes": len(relation_component),
+        },
     }
 
 
@@ -1310,18 +1361,47 @@ def add_related_note_links(
     records: list[dict[str, Any]],
     links: list[dict[str, Any]],
     link_keys: set[tuple[str, str, str]],
+    throttle: bool = False,
 ) -> None:
-    notes = [record for record in records if str(record.get("path", "")).strip()]
+    notes = sorted(
+        (record for record in records if str(record.get("path", "")).strip()),
+        key=lambda record: str(record.get("path", "")),
+    )
     terms = {str(record.get("path", "")): relation_terms(record) for record in notes}
+    concept_postings: dict[str, list[str]] = {}
+    for note_id, note_terms in terms.items():
+        for concept in note_terms.get("concepts", set()):
+            concept_postings.setdefault(concept, []).append(note_id)
+
     candidates: list[tuple[float, str, str, dict[str, Any]]] = []
-    for index, left in enumerate(notes):
+    for note_index, left in enumerate(notes):
         left_id = str(left.get("path", ""))
-        for right in notes[index + 1 :]:
-            right_id = str(right.get("path", ""))
+        left_terms = terms.get(left_id, {})
+        candidate_shared_concepts: dict[str, int] = {}
+        for concept in left_terms.get("concepts", set()):
+            posting = concept_postings.get(concept, [])
+            if len(posting) > MAX_RELATION_CONCEPT_FANOUT:
+                continue
+            for right_id in posting:
+                if right_id <= left_id:
+                    continue
+                candidate_shared_concepts[right_id] = candidate_shared_concepts.get(right_id, 0) + 1
+
+        ranked_ids = sorted(
+            candidate_shared_concepts,
+            key=lambda right_id: (
+                -candidate_shared_concepts[right_id],
+                -len((left_terms.get("tags") or set()) & (terms.get(right_id, {}).get("tags") or set())),
+                right_id,
+            ),
+        )[:MAX_RELATION_CANDIDATES_PER_NOTE]
+        for right_id in ranked_ids:
             score, reason = note_relation_score(terms.get(left_id, {}), terms.get(right_id, {}))
             if score < NOTE_RELATION_LINK_THRESHOLD:
                 continue
             candidates.append((score, left_id, right_id, reason))
+        if throttle:
+            cooperative_index_yield(note_index, INDEX_GRAPH_YIELD_EVERY, INDEX_GRAPH_YIELD_SECONDS)
 
     related_counts: dict[str, int] = {}
     for score, left_id, right_id, reason in sorted(candidates, key=lambda item: (-item[0], item[1], item[2])):
@@ -1354,19 +1434,7 @@ def relation_terms(record: dict[str, Any]) -> dict[str, set[str]]:
         for item in record.get("tags", [])
         if normalize_relation_term(item) and normalize_relation_term(item) not in GENERIC_RELATION_TAGS
     }
-    authors = {normalize_relation_term(record.get("author_handle"))} - {""}
-    domains = {normalize_relation_term(record.get("source_domain"))} - {""}
-    source_type = str(record.get("source_type") or "").strip()
-    source_types = {normalize_relation_term(source_type)} if source_type in X_LIKES_SOURCE_TYPES else set()
-    threads = {normalize_relation_term(record.get("tweet_thread_id"))} - {""}
-    return {
-        "concepts": concepts,
-        "tags": tags,
-        "authors": authors,
-        "domains": domains,
-        "source_types": source_types,
-        "threads": threads,
-    }
+    return {"concepts": concepts, "tags": tags}
 
 
 def normalize_relation_term(value: Any) -> str:
@@ -1379,28 +1447,16 @@ def note_relation_score(
 ) -> tuple[float, dict[str, Any]]:
     shared_concepts = sorted((left.get("concepts") or set()) & (right.get("concepts") or set()))
     shared_tags = sorted((left.get("tags") or set()) & (right.get("tags") or set()))
-    shared_authors = sorted((left.get("authors") or set()) & (right.get("authors") or set()))
-    shared_domains = sorted((left.get("domains") or set()) & (right.get("domains") or set()))
-    shared_source_types = sorted((left.get("source_types") or set()) & (right.get("source_types") or set()))
-    shared_threads = sorted((left.get("threads") or set()) & (right.get("threads") or set()))
     score = min(0.72, len(shared_concepts) * 0.28)
     if len(shared_concepts) >= 2:
         score += 0.10
     score += min(0.30, len(shared_tags) * 0.12)
-    score += min(0.16, len(shared_authors) * 0.16)
-    score += min(0.12, len(shared_domains) * 0.08)
-    score += min(0.08, len(shared_source_types) * 0.04)
-    score += min(0.30, len(shared_threads) * 0.30)
     if shared_concepts and shared_tags:
         score += 0.12
     score = min(0.95, score)
     return round(score, 2), {
         "shared_concepts": shared_concepts[:8],
         "shared_tags": shared_tags[:8],
-        "shared_authors": shared_authors[:4],
-        "shared_domains": shared_domains[:4],
-        "shared_source_types": shared_source_types[:4],
-        "shared_threads": shared_threads[:4],
     }
 
 
@@ -1429,106 +1485,666 @@ def add_link(
 
 
 def ensure_dirs_no_git() -> None:
-    for path in (DATA_DIR, VAULT_DIR, PUBLIC_DIR, *read_vault_dirs()):
+    for path in (DATA_DIR, VAULT_DIR, SOURCES_DIR, NOTES_DIR, ATOMS_DIR, ARCHIVE_DIR, PUBLIC_DIR):
         path.mkdir(parents=True, exist_ok=True)
+
+
+def iter_note_paths() -> list[Path]:
+    paths: list[Path] = []
+    for root in NOTE_CONTENT_DIRS:
+        if root.exists():
+            paths.extend(p for p in root.rglob("*.md") if p.is_file())
+    return sorted(paths, reverse=True)
 
 
 def rel(path: Path) -> str:
     try:
-        return str(path.relative_to(DATA_DIR)).replace("\\", "/")
+        return str(path.resolve().relative_to(DATA_DIR.resolve())).replace("\\", "/")
     except ValueError:
         return str(path).replace("\\", "/")
 
 
 def safe_data_path(relative: str) -> Path:
-    candidate = (DATA_DIR / relative).resolve()
-    if DATA_DIR not in candidate.parents and candidate != DATA_DIR:
+    data_root = DATA_DIR.resolve()
+    candidate = (data_root / relative).resolve()
+    if data_root not in candidate.parents and candidate != data_root:
         raise ValueError("Path is outside data directory")
     return candidate
 
 
-def read_vault_dirs() -> tuple[Path, ...]:
-    return (
-        VAULT_DIR / "00_meta",
-        VAULT_DIR / "10_sources",
-        VAULT_DIR / "20_notes",
-        VAULT_DIR / "20_atoms",
-        VAULT_DIR / "30_projects",
-        VAULT_DIR / "40_journals",
-        VAULT_DIR / "50_skills",
-        VAULT_DIR / "90_archive",
-        VAULT_DIR / "Personal OS Inbox",
-        VAULT_DIR / "Personal Wiki Mirror",
-    )
-
-
-def iter_note_paths() -> list[Path]:
-    paths: list[Path] = []
-    seen: set[Path] = set()
-    for root in read_vault_dirs():
-        if not root.exists():
-            continue
-        for path in root.rglob("*.md"):
-            if not path.is_file():
-                continue
-            resolved = path.resolve()
-            if resolved in seen:
-                continue
-            seen.add(resolved)
-            paths.append(path)
-    return sorted(paths)
-
-
-def synthesize_legacy_frontmatter(path: Path) -> dict[str, Any]:
-    created_at = dt.datetime.fromtimestamp(path.stat().st_mtime, dt.timezone.utc).isoformat()
-    return {
-        "created_by": "unknown",
-        "type": "legacy",
-        "source_type": "user-note",
-        "tags": [],
-        "created_at": created_at,
-    }
-
-
-def parse_note_document(path: Path) -> tuple[dict[str, Any], str]:
-    return parse_note_document_at(path)
-
-
-def note_created_value(fm: dict[str, Any]) -> Any:
-    return fm.get("created_at") or fm.get("created") or ""
-
-
-def is_source_path(path: Path) -> bool:
-    source_dir = (VAULT_DIR / "10_sources").resolve()
-    resolved = path.resolve()
+def write_text_atomic(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
     try:
-        resolved.relative_to(source_dir)
-        return True
-    except ValueError:
-        return False
-
-
-def guard_source_write(relative_path: str) -> Path:
-    path = safe_data_path(relative_path)
-    if is_source_path(path):
-        raise IngestError(410, "source-immutable", {"path": rel(path)})
-    return path
+        temporary.write_text(text, encoding="utf-8")
+        os.replace(temporary, path)
+    finally:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
 
 
 def write_json(path: Path, data: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_text_atomic(path, json.dumps(data, ensure_ascii=False, indent=2) + "\n")
 
 
-def json_for_script(data: Any) -> str:
-    return (
-        json.dumps(data, ensure_ascii=False)
-        .replace("<", "\\u003c")
-        .replace(">", "\\u003e")
-        .replace("&", "\\u0026")
-        .replace("\u2028", "\\u2028")
-        .replace("\u2029", "\\u2029")
+def chunk_search_text(text: str, size: int = 900, overlap: int = 120) -> list[str]:
+    """Compatibility wrapper for callers that only need chunk text.
+
+    New indexing uses ``build_structured_chunks`` directly so it can retain
+    heading paths and exact source ranges. ``overlap`` is intentionally ignored:
+    parent/neighbor expansion now restores context without duplicating every
+    chunk in the index.
+    """
+
+    del overlap
+    return [
+        str(chunk["text"])
+        for chunk in build_structured_chunks(text, title="", path="", size=size)
+    ]
+
+
+def folded_heading_leaf(value: Any) -> str:
+    if isinstance(value, (list, tuple)):
+        parts = [str(item).strip() for item in value]
+    else:
+        try:
+            parsed = json.loads(str(value or "[]"))
+        except json.JSONDecodeError:
+            parsed = []
+        parts = [str(item).strip() for item in parsed] if isinstance(parsed, list) else []
+    return parts[-1].casefold() if parts and parts[-1] else ""
+
+
+def _ensure_search_schema_locked(connection: sqlite3.Connection) -> set[str]:
+    connection.execute(
+        "create table if not exists notes("
+        "path text primary key, title text, title_folded text, source_type text, quality_status text, chars integer, sha256 text)"
     )
+    connection.execute(
+        "create table if not exists chunks("
+        "id text primary key, path text, chunk_index integer, title text, text text, chars integer, sha256 text,"
+        "section_id text, parent_id text, heading_path text, heading_level integer,"
+        "start_char integer, end_char integer, context_text text)"
+    )
+    connection.execute(
+        "create virtual table if not exists chunks_fts using "
+        "fts5(title, text, path unindexed, chunk_id unindexed, tokenize='unicode61')"
+    )
+    connection.execute(
+        "create table if not exists heading_lookup("
+        "path text not null, section_id text not null, first_chunk_id text not null,"
+        "first_chunk_index integer not null, heading_leaf_folded text not null,"
+        "primary key(path,section_id)) without rowid"
+    )
+    columns = {str(row[1]) for row in connection.execute("pragma table_info(notes)").fetchall()}
+    additions = {
+        "title_folded": "text",
+        "status": "text",
+        "created": "text",
+        "source_url": "text",
+        "metadata_json": "text",
+        "content_sha256": "text",
+        "chunk_schema_version": "integer not null default 0",
+    }
+    for name, column_type in additions.items():
+        if name not in columns:
+            connection.execute(f"alter table notes add column {name} {column_type}")
+            columns.add(name)
+    chunk_columns = {str(row[1]) for row in connection.execute("pragma table_info(chunks)").fetchall()}
+    chunk_additions = {
+        "section_id": "text",
+        "parent_id": "text",
+        "heading_path": "text",
+        "heading_level": "integer",
+        "start_char": "integer",
+        "end_char": "integer",
+        "context_text": "text",
+        "title_folded": "text",
+        "heading_text_folded": "text",
+    }
+    for name, column_type in chunk_additions.items():
+        if name not in chunk_columns:
+            connection.execute(f"alter table chunks add column {name} {column_type}")
+            chunk_columns.add(name)
+    connection.execute(
+        "create index if not exists chunks_path_index on chunks(path,chunk_index)"
+    )
+    connection.execute(
+        "create index if not exists chunks_section_index on chunks(path,section_id,chunk_index)"
+    )
+    connection.execute(
+        "create index if not exists heading_lookup_leaf_index "
+        "on heading_lookup(heading_leaf_folded,path,first_chunk_index)"
+    )
+    return columns
+
+
+def ensure_search_schema(connection: sqlite3.Connection) -> set[str]:
+    """Migrate the SQLite schema under a cross-process database write lock."""
+
+    connection.execute("begin exclusive")
+    try:
+        columns = _ensure_search_schema_locked(connection)
+        connection.commit()
+        return columns
+    except Exception:
+        connection.rollback()
+        raise
+
+
+def sync_search_index(
+    records: list[dict[str, Any]],
+    removed_paths: list[str] | None = None,
+    delete_missing: bool = True,
+    force_repair: bool = False,
+) -> dict[str, Any]:
+    started = time.monotonic()
+    SEARCH_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(str(SEARCH_DB_PATH), timeout=10)
+    connection.execute("pragma busy_timeout=10000")
+    connection.execute("pragma journal_mode=WAL")
+    ensure_search_schema(connection)
+    existing = {
+        str(path): {
+            "note_hash": str(note_hash or ""),
+            "content_hash": str(content_hash or ""),
+            "chunk_schema_version": int(chunk_schema_version or 0),
+        }
+        for path, note_hash, content_hash, chunk_schema_version in connection.execute(
+            "select path,sha256,content_sha256,chunk_schema_version from notes"
+        ).fetchall()
+    }
+    chunk_counts = {
+        str(path): int(count)
+        for path, count in connection.execute("select path,count(*) from chunks group by path").fetchall()
+    }
+    fts_counts = {
+        str(path): int(count)
+        for path, count in connection.execute("select path,count(*) from chunks_fts group by path").fetchall()
+    }
+    active_paths: set[str] = set()
+    updated_notes = 0
+    metadata_updated_notes = 0
+    legacy_chunks_reused = 0
+    deleted_notes = 0
+    written_chunks = 0
+    try:
+        connection.execute("begin immediate")
+        for record_index, record in enumerate(records):
+            path = str(record.get("path") or "").strip()
+            if not path:
+                continue
+            active_paths.add(path)
+            title = str(record.get("title") or Path(path).stem).strip()
+            body = str(record.get("body") or record.get("search_text") or "")
+            if not body.strip():
+                body = title
+            metadata = {
+                "created": str(record.get("created") or ""),
+                "source_type": str(record.get("source_type") or ""),
+                "source_url": str(record.get("source_url") or ""),
+                "status": str(record.get("status") or ""),
+                "quality_status": str(record.get("quality_status") or ""),
+                "tags": list(record.get("tags") or []),
+                "concepts": list(record.get("concepts") or []),
+            }
+            metadata_json = json.dumps(metadata, ensure_ascii=False, sort_keys=True)
+            content_hash = hashlib.sha256(
+                f"{title}\n{body}\n{metadata_json}".encode("utf-8")
+            ).hexdigest()
+            body_hash = hashlib.sha256(f"{path}\n{title}\n{body}".encode("utf-8")).hexdigest()
+            note_payload = f"{path}\n{title}\n{body}\n{metadata_json}"
+            note_hash = hashlib.sha256(note_payload.encode("utf-8")).hexdigest()
+            connection.execute(
+                "insert into notes(path,title,title_folded,source_type,quality_status,chars,sha256,status,created,source_url,metadata_json,content_sha256,chunk_schema_version) "
+                "values(?,?,?,?,?,?,?,?,?,?,?,?,?) on conflict(path) do update set "
+                "title=excluded.title,title_folded=excluded.title_folded,source_type=excluded.source_type,quality_status=excluded.quality_status,"
+                "chars=excluded.chars,sha256=excluded.sha256,status=excluded.status,created=excluded.created,"
+                "source_url=excluded.source_url,metadata_json=excluded.metadata_json,content_sha256=excluded.content_sha256,"
+                "chunk_schema_version=excluded.chunk_schema_version",
+                (
+                    path,
+                    title,
+                    title.casefold(),
+                    metadata["source_type"],
+                    metadata["quality_status"],
+                    len(body),
+                    note_hash,
+                    metadata["status"],
+                    metadata["created"],
+                    metadata["source_url"],
+                    metadata_json,
+                    content_hash,
+                    SEARCH_CHUNK_SCHEMA_VERSION,
+                ),
+            )
+            chunks_intact = chunk_counts.get(path, 0) > 0 and chunk_counts.get(path) == fts_counts.get(path)
+            existing_row = existing.get(path) or {}
+            existing_content_hash = str(existing_row.get("content_hash") or "")
+            existing_chunk_schema = int(existing_row.get("chunk_schema_version") or 0)
+            legacy_chunks = (
+                bool(existing_row)
+                and not existing_content_hash
+                and chunks_intact
+                and existing_chunk_schema == SEARCH_CHUNK_SCHEMA_VERSION
+            )
+            chunks_current = (
+                bool(existing_content_hash)
+                and existing_content_hash == content_hash
+                and chunks_intact
+                and existing_chunk_schema == SEARCH_CHUNK_SCHEMA_VERSION
+            )
+            if force_repair:
+                legacy_chunks = False
+                chunks_current = False
+            if legacy_chunks or chunks_current:
+                if legacy_chunks:
+                    legacy_chunks_reused += 1
+                if str(existing_row.get("note_hash") or "") != note_hash:
+                    metadata_updated_notes += 1
+                continue
+            connection.execute("delete from heading_lookup where path = ?", (path,))
+            connection.execute("delete from chunks_fts where path = ?", (path,))
+            connection.execute("delete from chunks where path = ?", (path,))
+            chunks = build_structured_chunks(body or title, title=title, path=path)
+            indexed_sections: set[str] = set()
+            for chunk_index, chunk in enumerate(chunks):
+                chunk_text = str(chunk.get("text") or "")
+                heading_path = list(chunk.get("heading_path") or [])
+                heading_text = " > ".join(str(item) for item in heading_path)
+                context_text = make_context_text(title, heading_path, metadata)
+                chunk_hash = hashlib.sha256(
+                    f"{SEARCH_CHUNK_SCHEMA_VERSION}:{body_hash}:{chunk_index}:{chunk_text}".encode("utf-8")
+                ).hexdigest()
+                chunk_id = f"{body_hash[:12]}:{chunk_index}"
+                connection.execute(
+                    "insert into chunks("
+                    "id,path,chunk_index,title,text,chars,sha256,section_id,parent_id,heading_path,heading_level,"
+                    "start_char,end_char,context_text,title_folded,heading_text_folded) "
+                    "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    (
+                        chunk_id,
+                        path,
+                        chunk_index,
+                        title,
+                        chunk_text,
+                        len(chunk_text),
+                        chunk_hash,
+                        str(chunk.get("section_id") or ""),
+                        str(chunk.get("parent_id") or ""),
+                        json.dumps(heading_path, ensure_ascii=False),
+                        int(chunk.get("heading_level") or 0),
+                        int(chunk.get("start_char") or 0),
+                        int(chunk.get("end_char") or 0),
+                        context_text,
+                        title.casefold(),
+                        heading_text.casefold(),
+                    ),
+                )
+                connection.execute(
+                    "insert into chunks_fts(title,text,path,chunk_id) values(?,?,?,?)",
+                    (
+                        fts_index_text(
+                            " ".join(part for part in [title, " ".join(heading_path)] if part)
+                        ),
+                        fts_index_text(
+                            "\n".join(part for part in [context_text, chunk_text] if part)
+                        ),
+                        path,
+                        chunk_id,
+                    ),
+                )
+                section_id = str(chunk.get("section_id") or "")
+                heading_leaf_folded = folded_heading_leaf(heading_path)
+                if heading_leaf_folded and section_id and section_id not in indexed_sections:
+                    connection.execute(
+                        "insert into heading_lookup("
+                        "path,section_id,first_chunk_id,first_chunk_index,heading_leaf_folded) "
+                        "values(?,?,?,?,?)",
+                        (
+                            path,
+                            section_id,
+                            chunk_id,
+                            chunk_index,
+                            heading_leaf_folded,
+                        ),
+                    )
+                    indexed_sections.add(section_id)
+                written_chunks += 1
+            updated_notes += 1
+            cooperative_index_yield(updated_notes, INDEX_FTS_YIELD_EVERY, INDEX_FTS_YIELD_SECONDS)
+
+        stale_paths = set(removed_paths or [])
+        if delete_missing:
+            stale_paths.update(set(existing) - active_paths)
+        stale_paths.difference_update(active_paths)
+        stale_paths = sorted(stale_paths)
+        for stale_index, path in enumerate(stale_paths):
+            connection.execute("delete from heading_lookup where path = ?", (path,))
+            connection.execute("delete from chunks_fts where path = ?", (path,))
+            connection.execute("delete from chunks where path = ?", (path,))
+            connection.execute("delete from notes where path = ?", (path,))
+            deleted_notes += 1
+            cooperative_index_yield(stale_index, INDEX_FTS_YIELD_EVERY, INDEX_FTS_YIELD_SECONDS)
+        connection.commit()
+        total_notes = int(connection.execute("select count(*) from notes").fetchone()[0])
+        total_chunks = int(connection.execute("select count(*) from chunks").fetchone()[0])
+        total_headings = int(connection.execute("select count(*) from heading_lookup").fetchone()[0])
+    except Exception:
+        connection.rollback()
+        raise
+    finally:
+        connection.close()
+    return {
+        "status": "ok",
+        "notes": total_notes,
+        "chunks": total_chunks,
+        "headings": total_headings,
+        "updated_notes": updated_notes,
+        "metadata_updated_notes": metadata_updated_notes,
+        "legacy_chunks_reused": legacy_chunks_reused,
+        "deleted_notes": deleted_notes,
+        "written_chunks": written_chunks,
+        "duration_ms": round((time.monotonic() - started) * 1000, 1),
+    }
+
+
+def index_state_snapshot_locked() -> dict[str, Any]:
+    worker_alive = bool(_INDEX_REFRESH_THREAD and _INDEX_REFRESH_THREAD.is_alive())
+    return {
+        "status": str(_INDEX_REFRESH_STATE.get("status") or "idle"),
+        "worker_started": bool(_INDEX_REFRESH_STATE.get("worker_started")),
+        "worker_alive": worker_alive,
+        "requested_generation": int(_INDEX_REFRESH_STATE.get("requested_generation") or 0),
+        "completed_generation": int(_INDEX_REFRESH_STATE.get("completed_generation") or 0),
+        "requested_at": str(_INDEX_REFRESH_STATE.get("requested_at") or ""),
+        "started_at": str(_INDEX_REFRESH_STATE.get("started_at") or ""),
+        "completed_at": str(_INDEX_REFRESH_STATE.get("completed_at") or ""),
+        "reason": str(_INDEX_REFRESH_STATE.get("reason") or ""),
+        "pending_paths": sorted(str(path) for path in (_INDEX_REFRESH_STATE.get("pending_paths") or set())),
+        "last_error": str(_INDEX_REFRESH_STATE.get("last_error") or ""),
+        "last_signature": str(_INDEX_REFRESH_STATE.get("last_signature") or ""),
+        "last_result": dict(_INDEX_REFRESH_STATE.get("last_result") or {}),
+    }
+
+
+def get_index_status() -> dict[str, Any]:
+    with INDEX_REFRESH_CONDITION:
+        should_restart = bool(_INDEX_REFRESH_STATE.get("worker_started")) and not bool(
+            _INDEX_REFRESH_THREAD and _INDEX_REFRESH_THREAD.is_alive()
+        )
+    if should_restart:
+        start_index_worker()
+    with INDEX_REFRESH_CONDITION:
+        return index_state_snapshot_locked()
+
+
+def persist_index_state_locked() -> bool:
+    try:
+        write_json(INDEX_STATE_PATH, index_state_snapshot_locked())
+        return True
+    except OSError as exc:
+        _INDEX_REFRESH_STATE["last_error"] = f"index-state-write: {type(exc).__name__}: {exc}"
+        return False
+
+
+def schedule_public_index_refresh(reason: str, changed_paths: list[str] | tuple[str, ...] | None = None) -> dict[str, Any]:
+    normalized_paths = {str(path).strip() for path in (changed_paths or []) if str(path).strip()}
+    with INDEX_REFRESH_CONDITION:
+        _INDEX_REFRESH_STATE["requested_generation"] = int(_INDEX_REFRESH_STATE.get("requested_generation") or 0) + 1
+        pending_paths = _INDEX_REFRESH_STATE.setdefault("pending_paths", set())
+        if not isinstance(pending_paths, set):
+            pending_paths = set(pending_paths)
+            _INDEX_REFRESH_STATE["pending_paths"] = pending_paths
+        pending_paths.update(normalized_paths)
+        _INDEX_REFRESH_STATE["status"] = "queued"
+        _INDEX_REFRESH_STATE["requested_at"] = now_utc().isoformat()
+        _INDEX_REFRESH_STATE["reason"] = reason
+        _INDEX_REFRESH_STATE["last_error"] = ""
+        persist_index_state_locked()
+        snapshot = index_state_snapshot_locked()
+        INDEX_REFRESH_CONDITION.notify_all()
+        return snapshot
+
+
+def read_index_signature() -> str:
+    cached = get_cached_note_index()
+    if cached is not None:
+        return str(cached.get("vault_signature") or "")
+    try:
+        index = json.loads(NOTE_INDEX_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return ""
+    return str(index.get("vault_signature") or "")
+
+
+def search_index_note_count() -> int:
+    if not SEARCH_DB_PATH.exists():
+        return 0
+    try:
+        connection = sqlite3.connect(str(SEARCH_DB_PATH), timeout=2)
+        count = int(connection.execute("select count(*) from notes").fetchone()[0])
+        connection.close()
+        return count
+    except (OSError, sqlite3.Error, TypeError, ValueError):
+        return 0
+
+
+def search_index_schema_ready(connection: sqlite3.Connection) -> bool:
+    note_columns = {
+        str(row[1]) for row in connection.execute("pragma table_info(notes)").fetchall()
+    }
+    chunk_columns = {
+        str(row[1]) for row in connection.execute("pragma table_info(chunks)").fetchall()
+    }
+    heading_lookup_columns = {
+        str(row[1])
+        for row in connection.execute("pragma table_info(heading_lookup)").fetchall()
+    }
+    heading_lookup_indexes = {
+        str(row[1])
+        for row in connection.execute("pragma index_list(heading_lookup)").fetchall()
+    }
+    required_chunk_columns = {
+        "section_id",
+        "parent_id",
+        "heading_path",
+        "heading_level",
+        "start_char",
+        "end_char",
+        "context_text",
+        "title_folded",
+        "heading_text_folded",
+    }
+    return {
+        "chunk_schema_version",
+        "title_folded",
+    }.issubset(note_columns) and required_chunk_columns.issubset(chunk_columns) and {
+        "path",
+        "section_id",
+        "first_chunk_id",
+        "first_chunk_index",
+        "heading_leaf_folded",
+    }.issubset(heading_lookup_columns) and "heading_lookup_leaf_index" in heading_lookup_indexes
+
+
+def search_index_healthy(expected_notes: int) -> bool:
+    if not SEARCH_DB_PATH.exists():
+        return expected_notes == 0
+    connection: sqlite3.Connection | None = None
+    try:
+        connection = sqlite3.connect(str(SEARCH_DB_PATH), timeout=2)
+        connection.execute("pragma busy_timeout=2000")
+        connection.create_function(
+            "folded_heading_leaf",
+            1,
+            folded_heading_leaf,
+            deterministic=True,
+        )
+        if not search_index_schema_ready(connection):
+            return False
+        notes = int(connection.execute("select count(*) from notes").fetchone()[0])
+        chunks = int(connection.execute("select count(*) from chunks").fetchone()[0])
+        fts_chunks = int(connection.execute("select count(*) from chunks_fts").fetchone()[0])
+        headings = int(connection.execute("select count(*) from heading_lookup").fetchone()[0])
+        expected_headings = int(
+            connection.execute(
+                "select count(*) from ("
+                "select path,section_id from chunks "
+                "where folded_heading_leaf(heading_path) <> '' group by path,section_id)"
+            ).fetchone()[0]
+        )
+        stale_notes = int(
+            connection.execute(
+                "select count(*) from notes where coalesce(chunk_schema_version,0) != ?",
+                (SEARCH_CHUNK_SCHEMA_VERSION,),
+            ).fetchone()[0]
+        )
+        notes_without_chunks = int(
+            connection.execute(
+                "select count(*) from notes n left join chunks c on c.path=n.path where c.id is null"
+            ).fetchone()[0]
+        )
+        orphan_chunks = int(
+            connection.execute(
+                "select count(*) from chunks c left join notes n on n.path=c.path where n.path is null"
+            ).fetchone()[0]
+        )
+        invalid_headings = int(
+            connection.execute(
+                "select count(*) from heading_lookup h "
+                "left join chunks c on c.id=h.first_chunk_id "
+                "left join ("
+                "select path,section_id,min(chunk_index) as first_chunk_index from chunks "
+                "where folded_heading_leaf(heading_path) <> '' group by path,section_id"
+                ") expected on expected.path=h.path and expected.section_id=h.section_id "
+                "where c.id is null or c.path <> h.path or c.section_id <> h.section_id "
+                "or c.chunk_index <> h.first_chunk_index or expected.path is null "
+                "or expected.first_chunk_index <> h.first_chunk_index "
+                "or h.heading_leaf_folded <> folded_heading_leaf(c.heading_path)"
+            ).fetchone()[0]
+        )
+        chunk_ids = {
+            str(row[0]) for row in connection.execute("select id from chunks").fetchall()
+        }
+        fts_chunk_ids = {
+            str(row[0])
+            for row in connection.execute("select chunk_id from chunks_fts").fetchall()
+        }
+        return (
+            notes == expected_notes
+            and chunks == fts_chunks
+            and headings == expected_headings
+            and (notes == 0 or chunks >= notes)
+            and stale_notes == 0
+            and notes_without_chunks == 0
+            and orphan_chunks == 0
+            and invalid_headings == 0
+            and chunk_ids == fts_chunk_ids
+        )
+    except (OSError, sqlite3.Error, TypeError, ValueError):
+        return False
+    finally:
+        if connection is not None:
+            connection.close()
+
+
+def index_worker_loop() -> None:
+    while True:
+        pending_paths: list[str] = []
+        try:
+            with INDEX_REFRESH_CONDITION:
+                requested = int(_INDEX_REFRESH_STATE.get("requested_generation") or 0)
+                completed = int(_INDEX_REFRESH_STATE.get("completed_generation") or 0)
+                if requested <= completed:
+                    INDEX_REFRESH_CONDITION.wait(timeout=INDEX_REFRESH_POLL_SECONDS)
+                    requested = int(_INDEX_REFRESH_STATE.get("requested_generation") or 0)
+                    completed = int(_INDEX_REFRESH_STATE.get("completed_generation") or 0)
+
+            if requested <= completed:
+                current_signature = vault_signature()
+                indexed_signature = str(_INDEX_REFRESH_STATE.get("last_signature") or "") or read_index_signature()
+                if current_signature != indexed_signature:
+                    schedule_public_index_refresh("external-vault-change")
+                continue
+
+            while True:
+                with INDEX_REFRESH_CONDITION:
+                    observed_generation = int(_INDEX_REFRESH_STATE.get("requested_generation") or 0)
+                    INDEX_REFRESH_CONDITION.wait(timeout=INDEX_REFRESH_DEBOUNCE_SECONDS)
+                    latest_generation = int(_INDEX_REFRESH_STATE.get("requested_generation") or 0)
+                    if latest_generation != observed_generation:
+                        continue
+                    target_generation = latest_generation
+                    pending_paths = sorted(str(path) for path in (_INDEX_REFRESH_STATE.get("pending_paths") or set()))
+                    _INDEX_REFRESH_STATE["pending_paths"] = set()
+                    _INDEX_REFRESH_STATE["status"] = "running"
+                    _INDEX_REFRESH_STATE["started_at"] = now_utc().isoformat()
+                    persist_index_state_locked()
+                    break
+
+            public = refresh_public_indexes(force=True, changed_paths=pending_paths)
+            full_repair = False
+            expected_notes = int(public["index"].get("count") or 0)
+            if not search_index_healthy(expected_notes):
+                public = refresh_public_indexes(force=True, changed_paths=None)
+                full_repair = True
+                expected_notes = int(public["index"].get("count") or 0)
+            if not search_index_healthy(expected_notes):
+                raise RuntimeError("search index remained unhealthy after full repair")
+            result = {
+                "notes": int(public["index"].get("count") or 0),
+                "graph_nodes": len(public["graph"].get("nodes") or []),
+                "graph_links": len(public["graph"].get("links") or []),
+                "fts": dict(public.get("fts") or {}),
+                "changed_paths": len(pending_paths),
+                "refresh_mode": str(public.get("refresh_mode") or "full"),
+                "full_repair": full_repair,
+                "graph_incremental": dict(public["graph"].get("incremental") or {}),
+            }
+            with INDEX_REFRESH_CONDITION:
+                _INDEX_REFRESH_STATE["completed_generation"] = target_generation
+                _INDEX_REFRESH_STATE["completed_at"] = now_utc().isoformat()
+                _INDEX_REFRESH_STATE["last_signature"] = str(public["index"].get("vault_signature") or "")
+                _INDEX_REFRESH_STATE["last_result"] = result
+                _INDEX_REFRESH_STATE["last_error"] = ""
+                if int(_INDEX_REFRESH_STATE.get("requested_generation") or 0) > target_generation:
+                    _INDEX_REFRESH_STATE["status"] = "queued"
+                else:
+                    _INDEX_REFRESH_STATE["status"] = "idle"
+                persist_index_state_locked()
+            git_commit("index: background refresh", include_public=True)
+        except Exception as exc:
+            with INDEX_REFRESH_CONDITION:
+                _INDEX_REFRESH_STATE["status"] = "failed"
+                _INDEX_REFRESH_STATE["last_error"] = f"{type(exc).__name__}: {exc}"
+                persist_index_state_locked()
+            time.sleep(INDEX_REFRESH_RETRY_SECONDS)
+            schedule_public_index_refresh("retry-after-failure", pending_paths)
+
+
+def start_index_worker() -> None:
+    global _INDEX_REFRESH_THREAD
+    public_pair = fresh_public_indexes()
+    indexed_signature = str((public_pair or {}).get("index", {}).get("vault_signature") or "")
+    with INDEX_REFRESH_CONDITION:
+        if _INDEX_REFRESH_THREAD is not None and _INDEX_REFRESH_THREAD.is_alive():
+            return
+        _INDEX_REFRESH_STATE["worker_started"] = True
+        _INDEX_REFRESH_STATE["last_signature"] = indexed_signature
+        thread = threading.Thread(target=index_worker_loop, name="wiki-index-worker", daemon=True)
+        _INDEX_REFRESH_THREAD = thread
+        thread.start()
+
+    note_count = int(load_note_index().get("count") or 0)
+    if public_pair is None:
+        schedule_public_index_refresh("startup-public-index-mismatch")
+    elif vault_signature() != indexed_signature:
+        schedule_public_index_refresh("startup-vault-signature-mismatch")
+    elif not search_index_healthy(note_count):
+        schedule_public_index_refresh("search-index-coverage-mismatch")
 
 
 def public_note(note: dict[str, Any]) -> dict[str, Any]:
@@ -1539,15 +2155,29 @@ def list_notes() -> list[dict[str, Any]]:
     return [public_note(note) for note in load_note_index().get("notes", [])]
 
 
-def format_date(value: Any) -> str:
+def parse_datetime_value(value: Any) -> dt.datetime | None:
     raw = str(value or "").strip()
     if not raw:
-        return ""
+        return None
     try:
         parsed = dt.datetime.fromisoformat(raw.replace("Z", "+00:00"))
-        return parsed.strftime("%Y-%m-%d %H:%M")
     except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=dt.timezone.utc)
+    return parsed
+
+
+def format_date(value: Any) -> str:
+    parsed = parse_datetime_value(value)
+    if parsed is None:
+        raw = str(value or "").strip()
         return raw[:16]
+    return parsed.astimezone(DISPLAY_TZ).strftime("%Y-%m-%d %H:%M CST")
+
+
+def note_created_value(fm: dict[str, Any]) -> Any:
+    return fm.get("created_at") or fm.get("created") or fm.get("updated") or ""
 
 
 def notes_section(body: str) -> str:
@@ -1580,73 +2210,48 @@ def plain_search_text(body: str) -> str:
 
 def rebuild() -> dict[str, Any]:
     ensure_dirs()
-    public = refresh_public_indexes()
-    commit_status = git_commit("rebuild: graph data")
-    graph = public["graph"]
-    index = public["index"]
+    index_status = schedule_public_index_refresh("manual-rebuild")
     return {
-        "status": "rebuilt",
-        "notes": index["count"],
-        "graph_nodes": len(graph["nodes"]),
-        "graph_links": len(graph["links"]),
-        "git": commit_status,
+        "status": "queued",
+        "index_status": index_status["status"],
+        "index_generation": index_status["requested_generation"],
+        "git": "queued-with-index-refresh",
     }
 
 
+def resolve_note_path(relative_path: str) -> Path:
+    raw = str(relative_path or "").strip().lstrip("/")
+    candidates = [raw]
+    if raw and not raw.startswith("vault/"):
+        candidates.append("vault/" + raw)
+    for candidate in candidates:
+        path = safe_data_path(candidate)
+        if path.exists() and path.suffix == ".md":
+            return path
+    return safe_data_path(raw)
+
+
 def read_note(relative_path: str) -> dict[str, Any]:
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
-    fm, body = parse_note_document(path)
-    rel_path = rel(path)
+    text = path.read_text(encoding="utf-8")
+    fm, body = parse_frontmatter(text)
     return {
-        "path": rel_path,
+        "path": rel(path),
         "frontmatter": fm,
         "title": note_title(path, body, fm),
         "content": notes_section(body),
         "raw_body": body,
-        "related_notes": related_notes_for(rel_path),
     }
-
-
-def related_notes_for(relative_path: str, limit: int = 8) -> list[dict[str, Any]]:
-    index = load_note_index()
-    notes = list(index.get("notes", []))
-    current = next((note for note in notes if str(note.get("path", "")) == relative_path), None)
-    if not current:
-        return []
-    current_terms = relation_terms(current)
-    scored: list[tuple[float, dict[str, Any], dict[str, Any]]] = []
-    for note in notes:
-        if str(note.get("path", "")) == relative_path:
-            continue
-        score, reason = note_relation_score(current_terms, relation_terms(note))
-        if score < 0.25:
-            continue
-        scored.append((score, reason, public_note(note)))
-    related = []
-    for score, reason, note in sorted(scored, key=lambda item: (-item[0], str(item[2].get("title", ""))))[:limit]:
-        related.append(
-            {
-                "title": note.get("title", ""),
-                "path": note.get("path", ""),
-                "url": note_url(str(note.get("path", ""))),
-                "source_type": note.get("source_type", ""),
-                "tags": note.get("tags", []),
-                "excerpt": note.get("excerpt", ""),
-                "score": score,
-                "reason": reason,
-            }
-        )
-    return related
 
 
 def normalize_tags(value: Any) -> list[str]:
     if isinstance(value, str):
-        value = [part.strip().lstrip("#").lower() for part in value.split(",") if part.strip()]
+        value = [part.strip().lstrip("#") for part in value.split(",") if part.strip()]
     if not isinstance(value, list):
         return []
-    return sorted({str(tag).strip().lstrip("#").lower() for tag in value if str(tag).strip()})
+    return sorted({str(tag).strip().lstrip("#") for tag in value if str(tag).strip()})
 
 
 def payload_text(payload: dict[str, Any], keys: tuple[str, ...], default: str) -> str:
@@ -1659,8 +2264,8 @@ def payload_text(payload: dict[str, Any], keys: tuple[str, ...], default: str) -
 def update_note(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
-    path = guard_source_write(relative_path)
     note = read_note(relative_path)
+    path = resolve_note_path(relative_path)
     fm = dict(note["frontmatter"])
     title = str(payload.get("title") or note["title"]).strip() or "Untitled source"
     has_body_update = "content" in payload or "body" in payload
@@ -1669,23 +2274,23 @@ def update_note(payload: dict[str, Any]) -> dict[str, Any]:
     fm["title"] = title
     fm["tags"] = normalize_tags(tags)
     fm["updated"] = now_utc().isoformat()
-    path.write_text(render_note_document(title, content, fm), encoding="utf-8")
-    public = refresh_public_indexes()
-    commit_status = git_commit(f"update: {title[:60]}")
+    write_text_atomic(path, render_note_document(title, content, fm))
+    index_status = schedule_public_index_refresh("update-note", [rel(path)])
     return {
         "status": "updated",
         "path": rel(path),
         "url": f"/note?path={quote(rel(path), safe='/')}",
-        "notes": public["index"]["count"],
-        "git": commit_status,
+        "index_status": index_status["status"],
+        "index_generation": index_status["requested_generation"],
+        "git": "queued-with-index-refresh",
     }
 
 
 def tag_note(payload: dict[str, Any]) -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
-    path = guard_source_write(relative_path)
     note = read_note(relative_path)
+    path = resolve_note_path(relative_path)
     fm = dict(note["frontmatter"])
     current = set(normalize_tags(fm.get("tags", [])))
     if "tags" in payload or "set" in payload:
@@ -1697,15 +2302,15 @@ def tag_note(payload: dict[str, Any]) -> dict[str, Any]:
     fm["tags"] = sorted(current)
     fm["updated"] = now_utc().isoformat()
     title = str(fm.get("title") or note["title"]).strip() or "Untitled source"
-    path.write_text(render_note_document(title, str(note["raw_body"]).strip(), fm), encoding="utf-8")
-    public = refresh_public_indexes()
-    commit_status = git_commit(f"tag: {title[:60]}")
+    write_text_atomic(path, render_note_document(title, str(note["raw_body"]).strip(), fm))
+    index_status = schedule_public_index_refresh("tag-note", [rel(path)])
     return {
         "status": "tagged",
         "path": rel(path),
         "tags": fm["tags"],
-        "notes": public["index"]["count"],
-        "git": commit_status,
+        "index_status": index_status["status"],
+        "index_generation": index_status["requested_generation"],
+        "git": "queued-with-index-refresh",
     }
 
 
@@ -1750,47 +2355,50 @@ def relink_notes(payload: dict[str, Any]) -> dict[str, Any]:
         next_body, count = replace_wikilink_target(body, old, new)
         if count <= 0:
             continue
-        path.write_text(prefix + next_body, encoding="utf-8")
+        write_text_atomic(path, prefix + next_body)
         replacements += count
         changed.append({"path": rel(path), "replacements": count})
 
-    public = refresh_public_indexes()
-    commit_status = git_commit(f"relink: {old[:30]} -> {new[:30]}")
+    index_status = schedule_public_index_refresh(
+        "relink-notes",
+        [str(item["path"]) for item in changed],
+    )
     return {
         "status": "relinked",
         "from": old,
         "to": new,
         "changed": changed,
         "replacements": replacements,
-        "notes": public["index"]["count"],
-        "git": commit_status,
+        "index_status": index_status["status"],
+        "index_generation": index_status["requested_generation"],
+        "git": "queued-with-index-refresh",
     }
 
 
 def archive_note(payload: dict[str, Any], action: str = "archived") -> dict[str, Any]:
     ensure_dirs()
     relative_path = str(payload.get("path") or "").strip()
-    path = guard_source_write(relative_path)
+    path = resolve_note_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
     archive_dir = ARCHIVE_DIR / now_utc().strftime("%Y-%m-%d")
     archive_dir.mkdir(parents=True, exist_ok=True)
     target = unique_path(archive_dir / path.name)
     path.replace(target)
-    public = refresh_public_indexes()
-    commit_status = git_commit(f"{action}: {target.stem[:60]}")
+    index_status = schedule_public_index_refresh(action, [relative_path])
     return {
         "status": action,
         "from": relative_path,
         "archive_path": rel(target),
-        "notes": public["index"]["count"],
-        "git": commit_status,
+        "index_status": index_status["status"],
+        "index_generation": index_status["requested_generation"],
+        "git": "queued-with-index-refresh",
     }
 
 
-def html_page(title: str, body: str, locale: str = "zh-CN") -> bytes:
+def html_page(title: str, body: str) -> bytes:
     return f"""<!doctype html>
-<html lang="{html.escape(locale, quote=True)}">
+<html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1807,6 +2415,7 @@ def html_page(title: str, body: str, locale: str = "zh-CN") -> bytes:
     p {{ margin:0; }}
     .topbar {{ display:flex; justify-content:space-between; gap:18px; align-items:flex-end; margin-bottom:22px; }}
     .top-actions {{ min-width:344px; display:grid; gap:10px; justify-items:end; }}
+    .nav-links {{ display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end; }}
     .search {{ width:100%; padding:4px; border:1px solid var(--line); border-radius:8px; background:#fff; }}
     .search input {{ width:100%; height:38px; border:1px solid var(--line); border-radius:8px; padding:0 12px; background:#fff; color:var(--text); font:14px "Microsoft YaHei","Segoe UI",Arial,sans-serif; }}
     .search input:focus {{ outline:2px solid #b8d4ff; border-color:#8fb9ef; }}
@@ -1888,12 +2497,23 @@ def html_page(title: str, body: str, locale: str = "zh-CN") -> bytes:
     .source-details {{ margin-top:8px; }}
     .source-details summary {{ display:inline-flex; align-items:center; gap:6px; cursor:pointer; color:#1457a8; padding:4px 8px; border-radius:6px; }}
     .source-details summary:hover {{ background:#eef4ff; }}
+    .dashboard-grid {{ display:grid; grid-template-columns:repeat(4,minmax(150px,1fr)); gap:12px; margin:14px 0 18px; }}
+    .metric {{ border:1px solid var(--line); border-radius:8px; background:#fff; padding:14px; }}
+    .metric strong {{ display:block; font-size:26px; line-height:1.1; color:#101828; }}
+    .metric span {{ color:var(--muted); font-size:13px; }}
+    .table-wrap {{ overflow:auto; border:1px solid var(--line); border-radius:8px; background:#fff; }}
+    table.data-table {{ width:100%; border-collapse:collapse; min-width:920px; }}
+    .data-table th, .data-table td {{ border-bottom:1px solid #e8edf4; padding:10px 11px; text-align:left; vertical-align:top; font-size:13px; }}
+    .data-table th {{ background:#f6f8fb; color:#344054; font-weight:800; position:sticky; top:0; z-index:1; }}
+    .data-table code {{ background:#eef2f7; padding:2px 4px; border-radius:4px; font-size:12px; overflow-wrap:anywhere; }}
+    .pill {{ display:inline-flex; align-items:center; min-height:24px; padding:2px 7px; border-radius:999px; font-size:12px; font-weight:800; border:1px solid #dbe4f0; background:#f8fafc; color:#344054; }}
+    .pill-pass, .pill-true {{ border-color:#b8e3cc; background:#ecfdf3; color:#087443; }}
+    .pill-review {{ border-color:#fedf89; background:#fffaeb; color:#93370d; }}
+    .pill-fail, .pill-false {{ border-color:#fecaca; background:#fff1f2; color:#b42318; }}
+    .warning-list {{ display:grid; gap:8px; margin-top:12px; }}
+    .warning-item {{ border:1px solid #fedf89; background:#fffcf5; border-radius:8px; padding:10px 12px; }}
     .reading-shell {{ max-width:760px; margin:0 auto; }}
     .reading-shell .panel {{ padding:26px 28px; }}
-    .reading-shell input {{ width:100%; margin-top:8px; border:1px solid var(--line); border-radius:8px; padding:10px 12px; font:14px "Microsoft YaHei","Segoe UI",Arial,sans-serif; }}
-    .reading-shell button {{ border:0; border-radius:8px; background:#1666d8; color:#fff; padding:10px 14px; font-weight:750; cursor:pointer; }}
-    .reading-shell .callout {{ margin-top:14px; padding:10px 12px; border:1px solid #bbf7d0; border-radius:8px; background:#f0fdf4; color:#166534; }}
-    .reading-shell .error {{ margin-top:14px; color:#b91c1c; font-weight:750; }}
     @media (max-width:960px) {{ main {{ padding:22px 14px 42px; }} .topbar {{ display:block; }} .top-actions {{ min-width:0; justify-items:stretch; margin-top:14px; }} .stats {{ justify-content:flex-start; }} .layout, .collection-layout {{ grid-template-columns:1fr; }} .filterbar {{ grid-template-columns:1fr; }} .map-shell {{ height:560px; }} }}
     @media (max-width:720px) {{ h1 {{ font-size:30px; }} .panel {{ padding:14px; }} .map-head {{ display:block; }} .legend {{ margin-top:10px; }} .map-shell {{ height:500px; min-height:460px; }} .map-toolbar {{ left:12px; right:12px; justify-content:flex-start; }} .map-notice {{ max-width:calc(100% - 24px); }} .map-inspector {{ display:none; }} }}
   </style>
@@ -1925,14 +2545,10 @@ def render_note_card(note: dict[str, Any]) -> str:
         if len(concepts) > 4:
             concept_html += f" +{len(concepts) - 4}"
         concept_html += "</div>"
-    source_url = str(note.get("source_url") or note.get("canonical_url") or "").strip()
-    source_html = f'<div class="note-meta">来源：{html.escape(source_url)}</div>' if source_url else ""
-    snippet = str(note.get("hit_snippet") or note.get("summary") or note.get("excerpt", ""))
     return f"""<a class="note" href="{html.escape(note_url(str(note.get("path", ""))))}">
   <div class="note-title">{html.escape(str(note.get("title", "")))}</div>
   <div class="note-meta">{html.escape(meta)}</div>
-  <p class="note-excerpt">{html.escape(snippet)}</p>
-  {source_html}
+  <p class="note-excerpt">{html.escape(str(note.get("excerpt", "")))}</p>
   {concept_html}
   <div>{render_tags(tags)}</div>
 </a>"""
@@ -1962,7 +2578,7 @@ def render_home() -> bytes:
     note_count = sum(1 for node in nodes if node.get("kind") == "note")
     concept_count = sum(1 for node in nodes if node.get("kind") == "concept")
     tag_count = sum(1 for node in nodes if node.get("kind") == "tag")
-    graph_json = json_for_script(graph)
+    graph_json = json.dumps(graph, ensure_ascii=False).replace("</", "<\\/")
 
     note_blocks: list[str] = []
     for note in notes[:6]:
@@ -1970,8 +2586,8 @@ def render_home() -> bytes:
     note_items = "\n".join(note_blocks) or '<div class="empty">还没有笔记。Hermes 调用 <code>/api/ingest</code> 后会自动出现在这里。</div>'
     if 0 < len(notes) < 3:
         note_items += '<div class="note-hint">继续把链接、文件或语音文字发给 Hermes。这里会补齐最近入库，不再像测试样例列表。</div>'
-    top_tags = render_facet_links("常用标签", index.get("tags", []), "tag", 10)
-    top_concepts = render_facet_links("概念入口", index.get("concepts", []), "concept", 10)
+    top_tags = render_facet_links("常用标签", index.get("tags", []), "tag", 10) + '<p class="muted"><a href="/tags">查看全部标签</a></p>'
+    top_concepts = render_facet_links("概念入口", index.get("concepts", []), "concept", 10) + '<p class="muted"><a href="/concepts">查看全部概念</a></p>'
 
     body = f"""
 <div class="topbar">
@@ -1982,6 +2598,7 @@ def render_home() -> bytes:
   </div>
   <div class="top-actions">
     <form class="search" action="/notes" method="get"><input name="q" type="search" placeholder="搜索全部笔记、标签、概念" aria-label="搜索全部笔记、标签、概念"></form>
+    <div class="nav-links"><a class="button-link" href="/ingestion">入库面板</a><a class="button-link" href="/notes">全部笔记</a><a class="button-link" href="/tags">全部标签</a><a class="button-link" href="/concepts">全部概念</a></div>
     <div class="stats">
       <div class="stat"><strong>{note_count}</strong><span>笔记</span></div>
       <div class="stat"><strong>{concept_count}</strong><span>概念</span></div>
@@ -2620,6 +3237,969 @@ const GRAPH = {graph_json};
     return html_page(SITE_TITLE, body)
 
 
+def safe_public_path(path: Path) -> Path:
+    candidate = path.resolve()
+    allowed_roots = [PUBLIC_DIR.resolve(), INGESTION_DIR.resolve()]
+    for root in allowed_roots:
+        if candidate == root or root in candidate.parents:
+            return candidate
+    raise ValueError("ingestion path is outside public directory")
+
+
+def read_json_file(path: Path) -> Any:
+    try:
+        safe = safe_public_path(path)
+        if not safe.exists():
+            return None
+        return json.loads(safe.read_text(encoding="utf-8-sig"))
+    except Exception:
+        return None
+
+
+def parse_jsonl_lines(lines: list[str]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for line in lines:
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
+
+
+def read_jsonl_tail(path: Path, limit: int = 200) -> list[dict[str, Any]]:
+    try:
+        safe = safe_public_path(path)
+        if not safe.exists():
+            return []
+        lines = safe.read_text(encoding="utf-8-sig", errors="ignore").splitlines()[-limit:]
+    except Exception:
+        return []
+    return parse_jsonl_lines(lines)
+
+
+def read_jsonl_stats(path: Path) -> dict[str, Any]:
+    try:
+        safe = safe_public_path(path)
+        if not safe.exists():
+            return {"count": 0, "ok_count": 0, "fail_count": 0, "latest_ts": ""}
+        rows = parse_jsonl_lines(safe.read_text(encoding="utf-8-sig", errors="ignore").splitlines())
+    except Exception:
+        return {"count": 0, "ok_count": 0, "fail_count": 0, "latest_ts": ""}
+    return {
+        "count": len(rows),
+        "ok_count": sum(1 for item in rows if item.get("ok") is True),
+        "fail_count": sum(1 for item in rows if item.get("ok") is False),
+        "latest_ts": max((str(item.get("ts") or "") for item in rows), default=""),
+    }
+
+
+def load_ingestion_dashboard() -> dict[str, Any]:
+    # Load only recent rows for table rendering, but compute headline metrics from
+    # the full manifest so the dashboard does not under-report once records exceed 300.
+    manifest_items = read_jsonl_tail(INGESTION_MANIFEST_PATH, 300)
+    manifest_stats = read_jsonl_stats(INGESTION_MANIFEST_PATH)
+    audit = read_json_file(INGESTION_AUDIT_PATH) or {}
+    sync_meta = read_json_file(INGESTION_SYNC_PATH) or {}
+    vector_doctor = read_json_file(VECTOR_DOCTOR_PATH) or {}
+    notes = list_notes()
+    by_quality: dict[str, int] = {}
+    by_agent: dict[str, int] = {}
+    by_source: dict[str, int] = {}
+    for note in notes:
+        quality = str(note.get("quality_status") or "unknown")
+        by_quality[quality] = by_quality.get(quality, 0) + 1
+        agent = str(note.get("agent_id") or "unknown")
+        by_agent[agent] = by_agent.get(agent, 0) + 1
+        source = str(note.get("source_type") or "unknown")
+        by_source[source] = by_source.get(source, 0) + 1
+    ok_count = sum(1 for item in manifest_items if item.get("ok") is True)
+    fail_count = sum(1 for item in manifest_items if item.get("ok") is False)
+    latest_ts = max((str(item.get("ts") or "") for item in manifest_items), default="")
+    return {
+        "manifest_items": manifest_items,
+        "audit": audit,
+        "sync_meta": sync_meta,
+        "vector_doctor": vector_doctor,
+        "note_count": len(notes),
+        "manifest_count": manifest_stats.get("count", len(manifest_items)),
+        "manifest_loaded_count": len(manifest_items),
+        "ok_count": manifest_stats.get("ok_count", ok_count),
+        "fail_count": manifest_stats.get("fail_count", fail_count),
+        "latest_ts": manifest_stats.get("latest_ts") or latest_ts,
+        "by_quality": by_quality,
+        "by_agent": by_agent,
+        "by_source": by_source,
+    }
+
+
+def pill(value: Any) -> str:
+    text = str(value)
+    cls = re.sub(r"[^a-z0-9-]+", "-", text.lower()).strip("-") or "unknown"
+    return f'<span class="pill pill-{html.escape(cls)}">{html.escape(text)}</span>'
+
+
+def render_count_facets(title: str, data: dict[str, int], limit: int = 12) -> str:
+    if not data:
+        return ""
+    items = sorted(data.items(), key=lambda item: (-item[1], item[0]))[:limit]
+    links = "".join(f'<span class="facet">{html.escape(key)} <strong>{count}</strong></span>' for key, count in items)
+    return f'<h3>{html.escape(title)}</h3><div class="facet-list">{links}</div>'
+
+
+def render_ingestion_page(query: dict[str, list[str]] | None = None) -> bytes:
+    data = load_ingestion_dashboard()
+    manifest_items = list(reversed(data["manifest_items"]))
+    audit = data.get("audit") or {}
+    audit_summary = audit.get("summary") or {}
+    sync_meta = data.get("sync_meta") or {}
+    vector_doctor = data.get("vector_doctor") or {}
+    vector_status = vector_doctor.get("status") or {}
+    rows: list[str] = []
+    for item in manifest_items[:160]:
+        response = item.get("response") if isinstance(item.get("response"), dict) else {}
+        wiki_path = str(response.get("note_path") or response.get("path") or "")
+        if wiki_path and not wiki_path.startswith("vault/") and not wiki_path.startswith("/"):
+            wiki_path = "vault/" + wiki_path.lstrip("/")
+        note_url = str(response.get("url") or "")
+        if wiki_path:
+            note_link = f"/note?path={quote(wiki_path, safe='/')}"
+        elif note_url.startswith("/note?"):
+            note_link = note_url
+        else:
+            note_link = "/notes"
+        rows.append(
+            "<tr>"
+            f"<td>{html.escape(format_date(item.get('ts', '')))}</td>"
+            f"<td><a href=\"{html.escape(note_link)}\">{html.escape(str(item.get('title') or ''))}</a></td>"
+            f"<td>{pill(item.get('ok'))}</td>"
+            f"<td><code>{html.escape(wiki_path)}</code></td>"
+            f"<td><code>{html.escape(str(item.get('source_file') or ''))}</code></td>"
+            "</tr>"
+        )
+    if not rows:
+        rows.append('<tr><td colspan="5" class="muted">还没有同步入库 manifest。运行 sync 脚本后这里会显示正式记录。</td></tr>')
+
+    warning_rows: list[str] = []
+    for item in audit.get("results", []) if isinstance(audit.get("results"), list) else []:
+        issues = item.get("issues") or []
+        warnings = item.get("warnings") or []
+        if not issues and not warnings:
+            continue
+        warning_rows.append(
+            "<tr>"
+            f"<td>{html.escape(str(item.get('kind') or ''))}</td>"
+            f"<td>{pill(item.get('status'))}</td>"
+            f"<td><code>{html.escape(str(item.get('path') or ''))}</code></td>"
+            f"<td>{html.escape(', '.join(str(x) for x in issues[:6]))}</td>"
+            f"<td>{html.escape(', '.join(str(x) for x in warnings[:8]))}</td>"
+            "</tr>"
+        )
+    if not warning_rows:
+        warning_rows.append('<tr><td colspan="5" class="muted">当前审计无问题或未同步审计报告。</td></tr>')
+
+    summary_json = html.escape(json.dumps(audit_summary, ensure_ascii=False, indent=2)) if audit_summary else "未同步审计摘要"
+    body = f"""
+<div class="topbar">
+  <div>
+    <div class="eyebrow">正式库面板 · 北京时间</div>
+    <h1>入库与质量面板</h1>
+    <p class="muted">这里读取 Personal Wiki 正式数据，不是临时 3425 页面。时间统一显示为中国时区 CST。</p>
+  </div>
+  <div class="top-actions">
+    <div class="nav-links"><a class="button-link" href="/">知识地图</a><a class="button-link" href="/notes">全部笔记</a></div>
+  </div>
+</div>
+<div class="dashboard-grid">
+  <div class="metric"><strong>{data['note_count']}</strong><span>正式 Wiki 笔记</span></div>
+  <div class="metric"><strong>{data['manifest_count']}</strong><span>同步入库记录</span></div>
+  <div class="metric"><strong>{data['ok_count']}</strong><span>成功入库</span></div>
+  <div class="metric"><strong>{vector_status.get('fts_chunk_count', 0)}</strong><span>FTS 检索 chunk</span></div>
+  <div class="metric"><strong>{html.escape(str(vector_status.get('semantic_status', 'unknown')))}</strong><span>Embedding 状态</span></div>
+</div>
+<div class="collection-layout">
+  <section class="panel">
+    <div class="section-actions"><div><h2>最近入库</h2><p class="muted">最新记录：{html.escape(format_date(data.get('latest_ts', '')))}；同步时间：{html.escape(format_date(sync_meta.get('synced_at', '')))}</p></div></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>入库时间</th><th>标题</th><th>状态</th><th>Wiki 路径</th><th>源文件</th></tr></thead><tbody>{''.join(rows)}</tbody></table></div>
+  </section>
+  <aside class="panel">
+    <h2>质量摘要</h2>
+    <pre>{summary_json}</pre>
+    <h2 style="margin-top:14px">检索 / 向量</h2>
+    <div class="facet-list">
+      <span class="facet">FTS <strong>{html.escape(str(vector_status.get('fts_status', 'unknown')))}</strong></span>
+      <span class="facet">chunks <strong>{int(vector_status.get('fts_chunk_count') or 0)}</strong></span>
+      <span class="facet">notes <strong>{int(vector_status.get('fts_note_count') or 0)}</strong></span>
+      <span class="facet">embedding <strong>{html.escape(str(vector_status.get('semantic_status', 'unknown')))}</strong></span>
+    </div>
+    <p class="muted" style="margin-top:8px">下一步：{html.escape(str(vector_status.get('next_action', '')))}</p>
+    {render_count_facets('质量状态', data.get('by_quality', {}))}
+    {render_count_facets('来源类型', data.get('by_source', {}))}
+    {render_count_facets('Agent', data.get('by_agent', {}), 8)}
+  </aside>
+</div>
+<section class="panel" style="margin-top:16px">
+  <div class="section-actions"><div><h2>审计警告 / 问题</h2><p class="muted">不合格内容不应进入主 Wiki；剩余 warning 用于驱动后续修复。</p></div></div>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>类型</th><th>状态</th><th>路径</th><th>问题</th><th>警告</th></tr></thead><tbody>{''.join(warning_rows)}</tbody></table></div>
+</section>
+"""
+    return html_page("入库与质量面板", body)
+
+
+def search_note_metadata(connection: sqlite3.Connection, paths: list[str]) -> dict[str, dict[str, Any]]:
+    unique_paths = sorted({path for path in paths if path})
+    if not unique_paths:
+        return {}
+    try:
+        columns = {str(row[1]) for row in connection.execute("pragma table_info(notes)").fetchall()}
+        if "metadata_json" not in columns:
+            return {}
+        placeholders = ",".join("?" for _ in unique_paths)
+        rows = connection.execute(
+            f"select path, metadata_json from notes where path in ({placeholders})",
+            unique_paths,
+        ).fetchall()
+    except sqlite3.Error:
+        return {}
+
+    metadata_by_path: dict[str, dict[str, Any]] = {}
+    for path, raw_metadata in rows:
+        if not raw_metadata:
+            continue
+        try:
+            metadata = json.loads(str(raw_metadata))
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(metadata, dict):
+            continue
+        metadata_by_path[str(path)] = {
+            "created": str(metadata.get("created") or ""),
+            "source_type": str(metadata.get("source_type") or ""),
+            "source_url": str(metadata.get("source_url") or ""),
+            "status": str(metadata.get("status") or ""),
+            "quality_status": str(metadata.get("quality_status") or ""),
+            "tags": list(metadata.get("tags") or []),
+            "concepts": list(metadata.get("concepts") or []),
+            "metadata": {"status_verified": True, "source_type_verified": True},
+        }
+    return metadata_by_path
+
+
+def decode_heading_path(value: Any) -> list[str]:
+    try:
+        parsed = json.loads(str(value or "[]"))
+    except json.JSONDecodeError:
+        parsed = []
+    if not isinstance(parsed, list):
+        return []
+    return [str(item).strip() for item in parsed if str(item).strip()]
+
+
+def casefold_contains(value: Any, query: Any) -> int:
+    folded_query = str(query or "").casefold()
+    return int(bool(folded_query and folded_query in str(value or "").casefold()))
+
+
+def heading_path_contains(value: Any, query: Any) -> int:
+    return casefold_contains(" > ".join(decode_heading_path(value)), query)
+
+
+def stable_folded_exact_title_rows(
+    connection: sqlite3.Connection,
+    query: str,
+    limit: int,
+    max_per_path: int,
+    *,
+    whole_title: bool = False,
+) -> list[tuple[Any, ...]]:
+    """Select exact-title supplements without entering or scanning the FTS index.
+
+    Title matches are discovered in the much smaller notes table first.  Chunk
+    lookup is then constrained by the ``chunks(path,chunk_index)`` index for
+    each stable path, so an exact title never causes a scan of every chunk.
+    Supplemental rows receive a neutral BM25 value before merging with the
+    general candidate window.
+    """
+
+    folded_query = query.casefold()
+    if not folded_query:
+        return []
+    title_predicate = "title_folded=?" if whole_title else "instr(title_folded,?) > 0"
+    matching_paths = connection.execute(
+        f"select path from notes where {title_predicate} order by path limit ?",
+        (folded_query, limit),
+    ).fetchall()
+    selected_rows: list[tuple[Any, ...]] = []
+    for (path,) in matching_paths:
+        path_rows = connection.execute(
+            "select c.title,c.path,c.id,c.chunk_index,c.text,c.section_id,c.parent_id,"
+            "c.heading_path,c.heading_level,c.start_char,c.end_char,c.chars,c.context_text,"
+            "0.0 as bm25_rank "
+            "from chunks c where c.path=? order by c.chunk_index limit ?",
+            (str(path or ""), max_per_path),
+        ).fetchall()
+        selected_rows.extend(path_rows[: max(0, limit - len(selected_rows))])
+        if len(selected_rows) >= limit:
+            break
+    return selected_rows
+
+
+def stable_folded_exact_heading_rows(
+    connection: sqlite3.Connection,
+    query: str,
+    limit: int,
+    max_per_path: int,
+) -> tuple[list[tuple[Any, ...]], bool]:
+    """Select strict leaf-heading matches through the dedicated B-tree lookup.
+
+    A globally unique leaf heading is strong enough to return without entering
+    the FTS index. Ambiguous headings are returned as supplements and still go
+    through the general BM25 candidate pool so common labels such as "Summary"
+    are not ordered by path alone.
+    """
+
+    folded_query = query.casefold()
+    if not folded_query:
+        return [], False
+    fetch_limit = min(5000, max(limit * 8, 40))
+    while True:
+        lookup_rows = connection.execute(
+            "select c.title,c.path,c.id,c.chunk_index,c.text,c.section_id,c.parent_id,"
+            "c.heading_path,c.heading_level,c.start_char,c.end_char,c.chars,c.context_text,"
+            "0.0 as bm25_rank "
+            "from heading_lookup h join chunks c on c.id=h.first_chunk_id "
+            "where h.heading_leaf_folded=? "
+            "order by h.path,h.first_chunk_index limit ?",
+            (folded_query, fetch_limit + 1),
+        ).fetchall()
+        exhausted = len(lookup_rows) <= fetch_limit
+        unique_match = exhausted and len(lookup_rows) == 1
+        selected_rows: list[tuple[Any, ...]] = []
+        per_path: dict[str, int] = {}
+        for row in lookup_rows[:fetch_limit]:
+            path = str(row[1] or "")
+            if per_path.get(path, 0) >= max_per_path:
+                continue
+            per_path[path] = per_path.get(path, 0) + 1
+            selected_rows.append(row)
+            if len(selected_rows) >= limit:
+                break
+        if len(selected_rows) >= limit or exhausted or fetch_limit >= 5000:
+            return selected_rows, unique_match
+        fetch_limit = min(5000, fetch_limit * 4)
+
+
+def search_chunk_row(row: tuple[Any, ...], query: str) -> dict[str, Any]:
+    heading_path = decode_heading_path(row[7])
+    title = str(row[0] or "")
+    text = str(row[4] or "")
+    folded_query = query.casefold()
+    folded_title = title.casefold()
+    whole_title = bool(folded_query and folded_title == folded_query)
+    title_contains = bool(casefold_contains(title, query))
+    exact_heading_leaf = bool(
+        folded_query
+        and heading_path
+        and heading_path[-1].casefold() == folded_query
+    )
+    heading_contains = bool(heading_path_contains(row[7], query))
+    exact_text = bool(folded_query and folded_query in text.casefold())
+    bm25_rank = float(row[13] or 0.0)
+    # Structural equality is more precise than a substring appearing anywhere
+    # in a document title.  Keep whole-title lookup strongest, but make an
+    # exact leaf heading win the per-path cap over an earlier chunk whose title
+    # merely contains the query.
+    exact_boost = (
+        6.0
+        if whole_title
+        else 5.0
+        if exact_heading_leaf
+        else 4.0
+        if title_contains
+        else 2.0
+        if heading_contains
+        else 0.0
+    )
+    match_priority = (
+        4
+        if whole_title
+        else 3
+        if exact_heading_leaf
+        else 2
+        if title_contains
+        else 0
+    )
+    snippet = matched_snippet(text, query)
+    return {
+        "title": title,
+        "path": str(row[1] or ""),
+        "chunk_id": str(row[2] or ""),
+        "chunk_index": int(row[3] or 0),
+        "snippet": snippet,
+        "section_id": str(row[5] or ""),
+        "heading_path": heading_path,
+        "heading_level": int(row[8] or 0),
+        "start_char": int(row[9] or 0),
+        "end_char": int(row[10] or 0),
+        "chars": int(row[11] or len(text)),
+        "estimated_tokens": estimate_tokens(snippet),
+        "available_estimated_tokens": estimate_tokens(text),
+        "context": str(row[12] or ""),
+        "bm25_rank": round(bm25_rank, 8),
+        "score": round(-bm25_rank + exact_boost, 8),
+        "_match_priority": match_priority,
+        "match_type": (
+            "exact-title"
+            if whole_title
+            else "exact-heading"
+            if exact_heading_leaf
+            else "exact-title"
+            if title_contains
+            else "exact-heading"
+            if heading_contains
+            else "exact-text"
+            if exact_text
+            else "bm25"
+        ),
+        "expand": {
+            "neighbor": f"/api/search/chunks/expand?id={quote(str(row[2] or ''))}&level=neighbor&q={quote(query)}",
+            "section": f"/api/search/chunks/expand?id={quote(str(row[2] or ''))}&level=section&q={quote(query)}",
+            "document": f"/api/search/chunks/expand?id={quote(str(row[2] or ''))}&level=document&q={quote(query)}",
+        },
+    }
+
+
+def select_search_candidates(
+    rows: list[tuple[Any, ...]],
+    query: str,
+    limit: int,
+    max_per_path: int,
+) -> list[dict[str, Any]]:
+    candidates = [search_chunk_row(row, query) for row in rows]
+    candidates.sort(
+        key=lambda item: (
+            -int(item["_match_priority"]),
+            float(item["bm25_rank"]),
+            str(item["path"]),
+            int(item["chunk_index"]),
+        )
+    )
+    selected: list[dict[str, Any]] = []
+    per_path: dict[str, int] = {}
+    seen_chunks: set[str] = set()
+    for candidate in candidates:
+        path = str(candidate["path"])
+        chunk_id = str(candidate["chunk_id"])
+        if chunk_id in seen_chunks or per_path.get(path, 0) >= max_per_path:
+            continue
+        seen_chunks.add(chunk_id)
+        per_path[path] = per_path.get(path, 0) + 1
+        candidate.pop("_match_priority", None)
+        selected.append(candidate)
+        if len(selected) >= limit:
+            break
+    return selected
+
+
+def search_chunks(query: str, limit: int = 10, max_per_path: int = 2) -> dict[str, Any]:
+    q = query.strip()
+    limit = max(1, min(int(limit or 10), 50))
+    max_per_path = max(1, min(int(max_per_path or 2), 8))
+    if not q:
+        return {"query": q, "count": 0, "results": [], "status": "empty-query"}
+    safe_db = safe_public_path(SEARCH_DB_PATH)
+    if not safe_db.exists():
+        return {"query": q, "count": 0, "results": [], "status": "missing-index"}
+    fts_query = fts_or_query(q)
+    if not fts_query:
+        return {"query": q, "count": 0, "results": [], "status": "empty-query"}
+
+    con = sqlite3.connect(str(safe_db), timeout=2)
+    con.execute("pragma busy_timeout=2000")
+    rows: list[tuple[Any, ...]] = []
+    exact_rows: list[tuple[Any, ...]] = []
+    selected: list[dict[str, Any]] = []
+    metadata_by_path: dict[str, dict[str, Any]] = {}
+    last_error = ""
+    ranking = "fts5-rank-tie-safe"
+    rank_tie_fallbacks = 0
+    try:
+        expected_notes = (
+            int(load_note_index().get("count") or 0) if NOTE_INDEX_PATH.exists() else None
+        )
+        if not search_index_schema_ready(con):
+            return {
+                "query": q,
+                "count": 0,
+                "results": [],
+                "status": "rebuilding-index",
+            }
+        indexed_notes = int(con.execute("select count(*) from notes").fetchone()[0])
+        stale_notes = int(
+            con.execute(
+                "select count(*) from notes where coalesce(chunk_schema_version,0) != ?",
+                (SEARCH_CHUNK_SCHEMA_VERSION,),
+            ).fetchone()[0]
+        )
+        if (expected_notes is not None and indexed_notes != expected_notes) or stale_notes:
+            return {
+                "query": q,
+                "count": 0,
+                "results": [],
+                "status": "rebuilding-index",
+            }
+
+        whole_title_rows = stable_folded_exact_title_rows(
+            con, q, limit, max_per_path, whole_title=True
+        )
+        if whole_title_rows:
+            rows = whole_title_rows
+            exact_rows = whole_title_rows
+            selected = select_search_candidates(rows, q, limit, max_per_path)
+            ranking = "folded-exact-title-fast-path"
+        else:
+            exact_title_rows = stable_folded_exact_title_rows(
+                con, q, limit, max_per_path
+            )
+            exact_heading_rows, unique_exact_heading = stable_folded_exact_heading_rows(
+                con, q, limit, max_per_path
+            )
+            if (
+                unique_exact_heading
+                and len(q) >= EXACT_HEADING_FAST_PATH_MIN_CHARS
+                and not exact_title_rows
+            ):
+                rows = exact_heading_rows
+                exact_rows = exact_heading_rows
+                selected = select_search_candidates(rows, q, limit, max_per_path)
+                ranking = "folded-exact-heading-fast-path"
+            else:
+                exact_rows = [*exact_title_rows, *exact_heading_rows]
+
+                fetch_limit = min(5000, max(limit * 8, 40))
+                while True:
+                    fast_rows = con.execute(
+                        "select c.title,c.path,c.id,c.chunk_index,c.text,c.section_id,c.parent_id,"
+                        "c.heading_path,c.heading_level,c.start_char,c.end_char,c.chars,c.context_text,"
+                        "rank as bm25_rank "
+                        "from chunks_fts join chunks c on c.id = chunks_fts.chunk_id "
+                        "where chunks_fts match ? and rank match 'bm25(8.0,1.0,0.0,0.0)' "
+                        "order by rank limit ?",
+                        (fts_query, fetch_limit + 1),
+                    ).fetchall()
+                    fast_exhausted = len(fast_rows) <= fetch_limit
+                    boundary_tied = (
+                        len(fast_rows) > fetch_limit
+                        and float(fast_rows[fetch_limit - 1][13] or 0.0)
+                        == float(fast_rows[fetch_limit][13] or 0.0)
+                    )
+                    if boundary_tied:
+                        rank_tie_fallbacks += 1
+                        rows = con.execute(
+                            "select c.title,c.path,c.id,c.chunk_index,c.text,c.section_id,c.parent_id,"
+                            "c.heading_path,c.heading_level,c.start_char,c.end_char,c.chars,c.context_text,"
+                            "bm25(chunks_fts,8.0,1.0,0.0,0.0) as bm25_rank "
+                            "from chunks_fts join chunks c on c.id = chunks_fts.chunk_id "
+                            "where chunks_fts match ? order by bm25_rank,c.path,c.chunk_index limit ?",
+                            (fts_query, fetch_limit),
+                        ).fetchall()
+                    else:
+                        rows = fast_rows[:fetch_limit]
+                    general_selected = select_search_candidates(rows, q, limit, max_per_path)
+                    if (
+                        len(general_selected) >= limit
+                        or fast_exhausted
+                        or fetch_limit >= 5000
+                    ):
+                        break
+                    fetch_limit = min(5000, fetch_limit * 4)
+                rows_by_id = {str(row[2] or ""): row for row in rows}
+                for exact_row in exact_rows:
+                    rows_by_id.setdefault(str(exact_row[2] or ""), exact_row)
+                rows = list(rows_by_id.values())
+                selected = select_search_candidates(rows, q, limit, max_per_path)
+        metadata_by_path = search_note_metadata(con, [str(row["path"]) for row in selected])
+    except sqlite3.Error as exc:
+        last_error = str(exc)
+    finally:
+        con.close()
+
+    for result in selected:
+        result.update(metadata_by_path.get(str(result["path"]), {}))
+    return {
+        "query": q,
+        "fts_query": fts_query,
+        "retrieval": "fts5-bm25-structured-v2",
+        "status": "ok" if not last_error else "query-error",
+        "error": last_error,
+        "ranking": ranking,
+        "rank_tie_fallbacks": rank_tie_fallbacks,
+        "exact_probe_candidates": len(exact_rows),
+        "candidate_count": len(rows),
+        "count": len(selected),
+        "results": selected,
+    }
+
+
+def truncate_to_token_budget(
+    text: str,
+    max_tokens: int,
+    anchor_at: int = 0,
+) -> tuple[str, bool, int, int]:
+    if estimate_tokens(text) <= max_tokens:
+        return text, False, 0, len(text)
+    anchor_at = max(0, min(int(anchor_at or 0), len(text)))
+    low, high = 0, len(text)
+    while low < high:
+        middle = (low + high + 1) // 2
+        start = max(0, anchor_at - middle // 2)
+        end = min(len(text), start + middle)
+        start = max(0, end - middle)
+        if estimate_tokens(text[start:end]) <= max_tokens:
+            low = middle
+        else:
+            high = middle - 1
+    start = max(0, anchor_at - low // 2)
+    end = min(len(text), start + low)
+    start = max(0, end - low)
+    return text[start:end], True, start, end
+
+
+def expansion_anchor_in_chunk(text: str, query: str) -> int:
+    folded = text.casefold()
+    exact = query.strip().casefold()
+    if exact:
+        position = folded.find(exact)
+        if position >= 0:
+            return position + max(1, len(exact) // 2)
+    for token in sorted(query_tokens(query), key=len, reverse=True):
+        position = folded.find(token.casefold())
+        if position >= 0:
+            return position + max(1, len(token) // 2)
+    return len(text) // 2
+
+
+def expand_search_chunk(
+    chunk_id: str,
+    level: str = "neighbor",
+    radius: int = 1,
+    max_tokens: int = 1600,
+    query: str = "",
+) -> dict[str, Any]:
+    requested_id = str(chunk_id or "").strip()
+    requested_level = str(level or "neighbor").strip().lower()
+    radius = max(1, min(int(radius or 1), 3))
+    max_tokens = max(128, min(int(max_tokens or 1600), 12000))
+    if not requested_id:
+        raise ValueError("chunk id is required")
+    if requested_level not in {"chunk", "neighbor", "section", "document"}:
+        raise ValueError("level must be chunk, neighbor, section, or document")
+    safe_db = safe_public_path(SEARCH_DB_PATH)
+    if not safe_db.exists():
+        raise FileNotFoundError(requested_id)
+
+    con = sqlite3.connect(str(safe_db), timeout=2)
+    con.execute("pragma busy_timeout=2000")
+    try:
+        if not search_index_schema_ready(con):
+            return {
+                "status": "rebuilding-index",
+                "chunk_id": requested_id,
+                "level": requested_level,
+            }
+        stale_notes = int(
+            con.execute(
+                "select count(*) from notes where coalesce(chunk_schema_version,0) != ?",
+                (SEARCH_CHUNK_SCHEMA_VERSION,),
+            ).fetchone()[0]
+        )
+        if stale_notes:
+            return {
+                "status": "rebuilding-index",
+                "chunk_id": requested_id,
+                "level": requested_level,
+            }
+        base = con.execute(
+            "select id,path,chunk_index,title,text,section_id,heading_path,start_char,end_char "
+            "from chunks where id = ?",
+            (requested_id,),
+        ).fetchone()
+        if base is None:
+            raise FileNotFoundError(requested_id)
+        path = str(base[1] or "")
+        chunk_index = int(base[2] or 0)
+        section_id = str(base[5] or "")
+        if requested_level == "document":
+            rows = con.execute(
+                "select id,path,chunk_index,title,text,section_id,heading_path,start_char,end_char "
+                "from chunks where path = ? order by chunk_index",
+                (path,),
+            ).fetchall()
+        elif requested_level == "section" and section_id:
+            document_rows = con.execute(
+                "select id,path,chunk_index,title,text,section_id,heading_path,start_char,end_char "
+                "from chunks where path = ? order by chunk_index",
+                (path,),
+            ).fetchall()
+            base_heading_path = decode_heading_path(base[6])
+            section_start = next(
+                (
+                    index
+                    for index, row in enumerate(document_rows)
+                    if str(row[5] or "") == section_id
+                ),
+                -1,
+            )
+            rows = []
+            if section_start >= 0:
+                for row in document_rows[section_start:]:
+                    row_section_id = str(row[5] or "")
+                    row_heading_path = decode_heading_path(row[6])
+                    same_section = row_section_id == section_id
+                    descendant = bool(base_heading_path) and row_heading_path[
+                        : len(base_heading_path)
+                    ] == base_heading_path
+                    if not same_section and not descendant:
+                        break
+                    rows.append(row)
+            if not rows:
+                rows = [base]
+        elif requested_level == "neighbor":
+            rows = con.execute(
+                "select id,path,chunk_index,title,text,section_id,heading_path,start_char,end_char "
+                "from chunks where path = ? and chunk_index between ? and ? order by chunk_index",
+                (path, chunk_index - radius, chunk_index + radius),
+            ).fetchall()
+        else:
+            rows = [base]
+    finally:
+        con.close()
+
+    content_parts: list[str] = []
+    part_ranges: list[tuple[tuple[Any, ...], int, int]] = []
+    cursor = 0
+    for row in rows:
+        if content_parts:
+            content_parts.append("\n\n")
+            cursor += 2
+        part = str(row[4] or "")
+        part_start = cursor
+        content_parts.append(part)
+        cursor += len(part)
+        part_ranges.append((row, part_start, cursor))
+    available_content = "".join(content_parts)
+    available_tokens = estimate_tokens(available_content)
+    base_range = next(
+        (
+            (row, part_start, part_end)
+            for row, part_start, part_end in part_ranges
+            if str(row[0] or "") == requested_id
+        ),
+        part_ranges[0],
+    )
+    base_text = str(base_range[0][4] or "")
+    anchor_at = base_range[1] + expansion_anchor_in_chunk(base_text, query)
+    content, truncated, window_start, window_end = truncate_to_token_budget(
+        available_content,
+        max_tokens,
+        anchor_at,
+    )
+    included_ranges = [
+        (row, part_start, part_end)
+        for row, part_start, part_end in part_ranges
+        if part_start < window_end and part_end > window_start
+    ]
+    if not included_ranges:
+        included_ranges = [base_range]
+    source_starts: list[int] = []
+    source_ends: list[int] = []
+    for row, part_start, part_end in included_ranges:
+        overlap_start = max(window_start, part_start)
+        overlap_end = min(window_end, part_end)
+        row_source_start = int(row[7] or 0)
+        source_starts.append(row_source_start + max(0, overlap_start - part_start))
+        source_ends.append(row_source_start + max(0, overlap_end - part_start))
+    start_char = min(source_starts)
+    end_char = max(source_ends)
+
+    return {
+        "status": "ok",
+        "chunk_id": requested_id,
+        "level": requested_level,
+        "path": path,
+        "title": str(base[3] or ""),
+        "heading_path": decode_heading_path(base[6]),
+        "content": content,
+        "start_char": start_char,
+        "end_char": end_char,
+        "range_basis": "indexed-snapshot",
+        "chars": len(content),
+        "estimated_tokens": estimate_tokens(content),
+        "max_tokens": max_tokens,
+        "truncated": truncated,
+        "available_chars": len(available_content),
+        "available_estimated_tokens": available_tokens,
+        "content_window_start": window_start,
+        "content_window_end": window_end,
+        "anchor_chunk_id": requested_id,
+        "included_chunk_ids": [str(row[0] or "") for row, _, _ in included_ranges],
+        "available_chunk_count": len(rows),
+    }
+
+
+def search_agent_notes(query: str, limit: int = 10, concept: str = "") -> dict[str, Any]:
+    """Fast AI-facing retrieval over note-index metadata.
+
+    This is intentionally lightweight: it uses in-memory note-index data,
+    concept_scores, title/excerpt/search_text hits, and the vector doctor status.
+    It is not a semantic embedding search unless doctor reports semantic_status=ready.
+    """
+    q = query.strip()
+    limit = max(1, min(int(limit or 10), 50))
+    requested_concept = concept.strip()
+    index = load_note_index()
+    concepts = [str(item.get("name") or "") for item in index.get("concepts", []) if str(item.get("name") or "")]
+    query_concepts = [name for name in concepts if name and name in q]
+    tokens = [tok.casefold() for tok in re.findall(r"[\w\u4e00-\u9fff]+", q) if tok.strip()]
+    rows: list[dict[str, Any]] = []
+    for note in index.get("notes", []):
+        score = 0.0
+        reasons: dict[str, Any] = {}
+        concept_rows = note.get("concept_scores", []) if isinstance(note.get("concept_scores"), list) else []
+        concept_lookup = concept_score_lookup(concept_rows)
+        if requested_concept:
+            cscore = concept_lookup.get(requested_concept, 0.0)
+            if cscore <= 0:
+                continue
+            score += cscore * 4.0
+            reasons["requested_concept"] = {"label": requested_concept, "score": round(cscore, 3)}
+        matched_query_concepts: list[dict[str, Any]] = []
+        for label in query_concepts:
+            cscore = concept_lookup.get(label, 0.0)
+            if cscore > 0:
+                score += cscore * 3.0
+                matched_query_concepts.append({"label": label, "score": round(cscore, 3)})
+        if matched_query_concepts:
+            reasons["query_concepts"] = matched_query_concepts
+        title = str(note.get("title", ""))
+        excerpt = str(note.get("excerpt", ""))
+        search_text = str(note.get("search_text", ""))
+        tags_text = " ".join(str(item) for item in note.get("tags", []))
+        concepts_text = " ".join(str(item) for item in note.get("concepts", []))
+        lower_fields = {
+            "title": title.casefold(),
+            "excerpt": excerpt.casefold(),
+            "search_text": search_text.casefold(),
+            "tags": tags_text.casefold(),
+            "concepts": concepts_text.casefold(),
+        }
+        token_hits: dict[str, int] = {}
+        for tok in tokens[:12]:
+            if not tok:
+                continue
+            if tok in lower_fields["title"]:
+                score += 0.9
+                token_hits["title"] = token_hits.get("title", 0) + 1
+            if tok in lower_fields["concepts"]:
+                score += 0.65
+                token_hits["concepts"] = token_hits.get("concepts", 0) + 1
+            if tok in lower_fields["tags"]:
+                score += 0.35
+                token_hits["tags"] = token_hits.get("tags", 0) + 1
+            if tok in lower_fields["excerpt"]:
+                score += 0.25
+                token_hits["excerpt"] = token_hits.get("excerpt", 0) + 1
+            if tok in lower_fields["search_text"]:
+                score += 0.08
+                token_hits["body"] = token_hits.get("body", 0) + 1
+        if token_hits:
+            reasons["token_hits"] = token_hits
+        if score <= 0:
+            continue
+        public = public_note(note)
+        public["retrieval_score"] = round(score, 3)
+        public["retrieval_reasons"] = reasons
+        public["top_concept_scores"] = concept_rows[:8]
+        rows.append(public)
+    rows.sort(key=lambda item: (-float(item.get("retrieval_score") or 0), -float(item.get("created_sort") or 0)))
+    vector_status = (read_json_file(VECTOR_DOCTOR_PATH) or {}).get("status", {})
+    return {
+        "query": q,
+        "concept": requested_concept,
+        "status": "ok",
+        "retrieval_layers": {
+            "concept_scores": True,
+            "metadata_index": True,
+            "fts_chunks": bool((vector_status or {}).get("fts_status") == "ready"),
+            "semantic_embedding": (vector_status or {}).get("semantic_status", "missing"),
+        },
+        "count": min(len(rows), limit),
+        "total_candidates": len(rows),
+        "results": rows[:limit],
+    }
+
+
+def render_taxonomy_page(kind: str) -> bytes:
+    index = load_note_index()
+    if kind == "concepts":
+        title = "全部概念"
+        subtitle = "概念是知识图谱节点，用来表示人能理解的主题、系统、项目和方法。"
+        items = index.get("concepts", [])
+        param = "concept"
+    else:
+        title = "全部标签"
+        subtitle = "标签是机器筛选用的稳定 slug：domain/type/asset/purpose/topic。"
+        items = index.get("tags", [])
+        param = "tag"
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for item in items:
+        name = str(item.get("name") or "")
+        if kind == "tags" and "-" in name:
+            group = name.split("-", 1)[0]
+        else:
+            group = "concept" if kind == "concepts" else "other"
+        grouped.setdefault(group, []).append(item)
+
+    order = ["domain", "type", "asset", "purpose", "topic", "quality", "other", "concept"]
+    sections: list[str] = []
+    for group in order:
+        group_items = grouped.get(group)
+        if not group_items:
+            continue
+        links = "\n".join(
+            f'<a class="facet" href="{html.escape(url_with_params("/notes", {param: item["name"]}))}">{html.escape(str(item["name"]))} <strong>{int(item["count"])}</strong></a>'
+            for item in group_items
+        )
+        group_title = {
+            "domain": "领域 domain",
+            "type": "内容类型 type",
+            "asset": "资产形态 asset",
+            "purpose": "用途 purpose",
+            "topic": "细分主题 topic",
+            "quality": "质量 quality",
+            "other": "其它",
+            "concept": "概念节点",
+        }.get(group, group)
+        sections.append(f'<section class="panel" style="margin-top:16px"><h2>{html.escape(group_title)}</h2><div class="facet-list">{links}</div></section>')
+
+    body = f"""
+<div class="topbar">
+  <div>
+    <div class="eyebrow">Personal Wiki 分类体系</div>
+    <h1>{html.escape(title)}</h1>
+    <p class="muted">{html.escape(subtitle)} 当前共 {len(items)} 个。</p>
+  </div>
+  <div class="top-actions"><div class="nav-links"><a class="button-link" href="/">知识地图</a><a class="button-link" href="/notes">全部笔记</a><a class="button-link" href="/ingestion">入库面板</a></div></div>
+</div>
+{''.join(sections) if sections else '<div class="empty">暂无分类。</div>'}
+"""
+    return html_page(title, body)
+
+
 def render_notes_page(query: dict[str, list[str]]) -> bytes:
     q = first_query(query, "q")
     tag = first_query(query, "tag")
@@ -2777,10 +4357,11 @@ def render_markdown_body(body: str, note_lookup: dict[str, str] | None = None) -
 
 
 def render_note(relative_path: str) -> bytes:
-    path = safe_data_path(relative_path)
+    path = resolve_note_path(relative_path)
     if not path.exists() or path.suffix != ".md":
         raise FileNotFoundError(relative_path)
-    fm, body = parse_note_document(path)
+    text = path.read_text(encoding="utf-8")
+    fm, body = parse_frontmatter(text)
     title = note_title(path, body, fm)
     note_lookup = build_note_lookup(load_note_index())
     tags_html = "".join(f'<span class="tag">#{html.escape(str(tag))}</span>' for tag in normalize_tags(fm.get("tags", [])))
@@ -2788,12 +4369,6 @@ def render_note(relative_path: str) -> bytes:
     source_url = str(fm.get("source_url", "") or "").strip() or "Telegram/Hermes input"
     source_hash = str(fm.get("source_hash", "") or "").strip()
     note_content = TAG_RE.sub("", notes_section(body)).strip()
-    related_items = related_notes_for(relative_path)
-    related_html = ""
-    if related_items:
-        related_html = "<section class=\"panel note-body\"><h2>相关笔记</h2><div class=\"note-list\">" + "\n".join(
-            render_note_card(item) for item in related_items
-        ) + "</div></section>"
     body_html = f"""
 <div class="reading-shell">
 <p><a href="/">&larr; 返回手册</a></p>
@@ -2811,7 +4386,6 @@ def render_note(relative_path: str) -> bytes:
     </details>
   </div>
 </section>
-{related_html}
 </div>
 """
     return html_page(title, body_html)
@@ -2820,25 +4394,30 @@ def render_note(relative_path: str) -> bytes:
 class Handler(BaseHTTPRequestHandler):
     server_version = "PersonalWiki/0.1"
 
-    def do_OPTIONS(self) -> None:
-        self.send_response(HTTPStatus.NO_CONTENT.value)
-        self.send_cors_headers()
-        self.send_header("Content-Length", "0")
-        self.end_headers()
-
     def do_GET(self) -> None:
         try:
             parsed = urlparse(self.path)
-            api_read_paths = {"/api/notes", "/api/note", "/api/tags", "/api/concepts", "/api/graph"}
-            page_read_paths = {"/", "/notes", "/note", "/manual", "/docs/USAGE.md"}
+            api_read_paths = {
+                "/api/notes",
+                "/api/note",
+                "/api/tags",
+                "/api/concepts",
+                "/api/graph",
+                "/api/ingestion",
+                "/api/index/status",
+                "/api/search/chunks",
+                "/api/search/chunks/expand",
+                "/api/search/agent",
+            }
+            page_read_paths = {"/", "/notes", "/note", "/tags", "/concepts", "/ingestion", "/manual", "/docs/USAGE.md"}
             if parsed.path == "/auth/read":
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", self.render_read_login(parsed))
                 return
             if parsed.path in api_read_paths and not self.authorized_read(REQUIRE_API_READ_AUTH):
                 self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
                 return
-            if parsed.path in page_read_paths and not self.authorized_read(REQUIRE_PAGE_READ_AUTH):
-                self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
+            if parsed.path in page_read_paths and not PUBLIC_PAGE_READ and not self.authorized_read(REQUIRE_PAGE_READ_AUTH):
+                self.redirect_to_read_login(parsed)
                 return
             if parsed.path == "/":
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_home())
@@ -2849,12 +4428,34 @@ class Handler(BaseHTTPRequestHandler):
             elif parsed.path == "/notes":
                 query = parse_qs(parsed.query)
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_notes_page(query))
+            elif parsed.path == "/tags":
+                self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_taxonomy_page("tags"))
+            elif parsed.path == "/concepts":
+                self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_taxonomy_page("concepts"))
+            elif parsed.path == "/ingestion":
+                query = parse_qs(parsed.query)
+                self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_ingestion_page(query))
             elif parsed.path == "/note":
                 query = parse_qs(parsed.query)
                 relative_path = query.get("path", [""])[0]
                 self.send_bytes(HTTPStatus.OK, "text/html; charset=utf-8", render_note(relative_path))
             elif parsed.path == "/api/health":
-                self.send_json(HTTPStatus.OK, {"status": "ok", "notes": len(list_notes()), "data_dir": str(DATA_DIR)})
+                index_status = get_index_status()
+                self.send_json(
+                    HTTPStatus.OK,
+                    {
+                        "status": "ok",
+                        "notes": len(list_notes()),
+                        "data_dir": str(DATA_DIR),
+                        "index": {
+                            "status": index_status["status"],
+                            "requested_generation": index_status["requested_generation"],
+                            "completed_generation": index_status["completed_generation"],
+                            "last_error": index_status["last_error"],
+                            "last_result": index_status["last_result"],
+                        },
+                    },
+                )
             elif parsed.path == "/api/notes":
                 query = parse_qs(parsed.query)
                 page = parse_positive_int(first_query(query, "page", "1"), 1)
@@ -2875,6 +4476,41 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(HTTPStatus.OK, {"concepts": load_note_index().get("concepts", [])})
             elif parsed.path == "/api/graph":
                 self.send_json(HTTPStatus.OK, load_graph())
+            elif parsed.path == "/api/ingestion":
+                self.send_json(HTTPStatus.OK, load_ingestion_dashboard())
+            elif parsed.path == "/api/index/status":
+                self.send_json(HTTPStatus.OK, get_index_status())
+            elif parsed.path == "/api/search/chunks":
+                query = parse_qs(parsed.query)
+                q = first_query(query, "q")
+                limit = parse_positive_int(first_query(query, "limit", "10"), 10, 50)
+                max_per_path = parse_positive_int(first_query(query, "max_per_path", "2"), 2, 8)
+                self.send_json(HTTPStatus.OK, search_chunks(q, limit, max_per_path))
+            elif parsed.path == "/api/search/chunks/expand":
+                query = parse_qs(parsed.query)
+                chunk_id = first_query(query, "id")
+                level = first_query(query, "level", "neighbor")
+                expansion_query = first_query(query, "q")
+                radius = parse_positive_int(first_query(query, "radius", "1"), 1, 3)
+                max_tokens = parse_positive_int(
+                    first_query(query, "max_tokens", "1600"), 1600, 12000
+                )
+                self.send_json(
+                    HTTPStatus.OK,
+                    expand_search_chunk(
+                        chunk_id,
+                        level,
+                        radius,
+                        max_tokens,
+                        expansion_query,
+                    ),
+                )
+            elif parsed.path == "/api/search/agent":
+                query = parse_qs(parsed.query)
+                q = first_query(query, "q")
+                concept = first_query(query, "concept")
+                limit = parse_positive_int(first_query(query, "limit", "10"), 10, 50)
+                self.send_json(HTTPStatus.OK, search_agent_notes(q, limit, concept))
             else:
                 self.send_json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
         except Exception as exc:
@@ -2886,12 +4522,9 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/auth/read":
                 self.handle_read_login(parsed)
                 return
-            if parsed.path == "/api/ingest":
-                self.handle_ingest()
-                return
             writable_paths = {
+                "/api/ingest",
                 "/api/rebuild",
-                "/api/admin/moc/rebuild",
                 "/api/note/update",
                 "/api/note/tag",
                 "/api/note/archive",
@@ -2907,48 +4540,41 @@ class Handler(BaseHTTPRequestHandler):
             if parsed.path == "/api/rebuild":
                 self.send_json(HTTPStatus.OK, rebuild())
                 return
-            if parsed.path == "/api/admin/moc/rebuild":
-                status, data = handle_admin_moc_rebuild(VAULT_DIR)
-                self.send_json(status, data)
-                return
             if parsed.path == "/api/note/update":
-                self.send_json(HTTPStatus.OK, update_note(self.read_json()))
+                with WIKI_WRITE_LOCK:
+                    response = update_note(self.read_json())
+                self.send_json(HTTPStatus.OK, response)
                 return
             if parsed.path == "/api/note/tag":
-                self.send_json(HTTPStatus.OK, tag_note(self.read_json()))
+                with WIKI_WRITE_LOCK:
+                    response = tag_note(self.read_json())
+                self.send_json(HTTPStatus.OK, response)
                 return
             if parsed.path == "/api/note/archive":
-                self.send_json(HTTPStatus.OK, archive_note(self.read_json(), "archived"))
+                with WIKI_WRITE_LOCK:
+                    response = archive_note(self.read_json(), "archived")
+                self.send_json(HTTPStatus.OK, response)
                 return
             if parsed.path == "/api/note/delete":
-                self.send_json(HTTPStatus.OK, archive_note(self.read_json(), "deleted"))
+                with WIKI_WRITE_LOCK:
+                    response = archive_note(self.read_json(), "deleted")
+                self.send_json(HTTPStatus.OK, response)
                 return
             if parsed.path == "/api/relink":
-                self.send_json(HTTPStatus.OK, relink_notes(self.read_json()))
+                with WIKI_WRITE_LOCK:
+                    response = relink_notes(self.read_json())
+                self.send_json(HTTPStatus.OK, response)
                 return
+            payload = self.read_json()
+            self.send_json(HTTPStatus.OK, ingest(payload))
         except Exception as exc:
             self.send_error_json(exc)
-
-    def handle_ingest(self) -> None:
-        content_length = int(self.headers.get("Content-Length", "0"))
-        if content_length > max_body_bytes():
-            raw_body = b""
-        else:
-            raw_body = self.rfile.read(content_length)
-        host = self.headers.get("Host") or f"{HOST}:{PORT}"
-        status, data = ingest_http_request(
-            raw_body,
-            {key: value for key, value in self.headers.items()},
-            content_length=content_length,
-            base_url=f"http://{host}",
-        )
-        self.send_json(status, data)
 
     def authorized(self) -> bool:
         if not API_TOKEN:
             return ALLOW_UNAUTHENTICATED_WRITE
         header = self.headers.get("Authorization", "")
-        return header.startswith("Bearer ") and self.token_allowed(header[7:], [API_TOKEN])
+        return header == f"Bearer {API_TOKEN}"
 
     def authorized_read(self, required: bool) -> bool:
         if not required:
@@ -2992,14 +4618,9 @@ class Handler(BaseHTTPRequestHandler):
         if not next_url.startswith("/") or next_url.startswith("//"):
             next_url = "/"
         if not self.token_allowed(token, allowed_tokens):
-            self.send_bytes(
-                HTTPStatus.UNAUTHORIZED,
-                "text/html; charset=utf-8",
-                self.render_read_login(parsed, error_key="invalid"),
-            )
+            self.send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
             return
         self.send_response(HTTPStatus.FOUND.value)
-        self.send_cors_headers()
         self.send_header("Location", next_url)
         self.send_header(
             "Set-Cookie",
@@ -3011,34 +4632,35 @@ class Handler(BaseHTTPRequestHandler):
         secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "").lower() == "https" else ""
         return f"{READ_AUTH_COOKIE}={token}; Path=/; HttpOnly; SameSite=Lax{secure}"
 
-    def render_read_login(self, parsed: Any, error_key: str = "") -> bytes:
+    def redirect_to_read_login(self, parsed: Any) -> None:
+        next_url = parsed.path
+        if parsed.query:
+            next_url += "?" + parsed.query
+        if not next_url.startswith("/") or next_url.startswith("//"):
+            next_url = "/"
+        self.send_response(HTTPStatus.FOUND.value)
+        self.send_header("Location", f"/auth/read?next={quote(next_url, safe='')}")
+        self.end_headers()
+
+    def render_read_login(self, parsed: Any) -> bytes:
         query = parse_qs(parsed.query)
         next_url = query.get("next", ["/"])[0] or "/"
         if not next_url.startswith("/") or next_url.startswith("//"):
             next_url = "/"
-        locale = preferred_locale(
-            self.headers.get("Accept-Language", ""),
-            query.get("lang", [""])[0],
-        )
-        text = login_copy(locale)
-        error = text["invalid"] if error_key == "invalid" else ""
-        hint = READ_ACCESS_HINT
         body = f"""
 <div class="reading-shell">
   <section class="panel">
-    <h1>{html.escape(text["heading"])}</h1>
-    <p>{html.escape(text["intro"])}</p>
-    {f'<p class="callout">{html.escape(text["hint_label"])}: <code>{html.escape(hint)}</code></p>' if hint else ''}
-    {f'<p class="error">{html.escape(error)}</p>' if error else ''}
+    <h1>Personal Wiki 访问</h1>
+    <p>这里不是账号密码登录。当前私有预览只需要输入只读访问口令。</p>
     <form method="post" action="/auth/read">
       <input type="hidden" name="next" value="{html.escape(next_url, quote=True)}" />
-      <label>{html.escape(text["label"])}<br /><input name="token" type="password" autocomplete="current-password" placeholder="{html.escape(text["placeholder"], quote=True)}" /></label>
-      <p><button type="submit">{html.escape(text["button"])}</button></p>
+      <label>访问口令<br /><input name="token" type="password" autocomplete="current-password" /></label>
+      <p><button type="submit">打开 Wiki</button></p>
     </form>
   </section>
 </div>
 """
-        return html_page(text["title"], body, locale)
+        return html_page("Personal Wiki 访问", body)
 
     def read_form(self) -> dict[str, list[str]]:
         length = int(self.headers.get("Content-Length", "0"))
@@ -3062,30 +4684,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def send_bytes(self, status: HTTPStatus, content_type: str, body: bytes) -> None:
         self.send_response(status.value)
-        self.send_cors_headers()
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
 
-    def send_cors_headers(self) -> None:
-        if not WIKI_CORS_ALLOW_ORIGIN:
-            return
-        request_origin = self.headers.get("Origin", "")
-        if WIKI_CORS_ALLOW_ORIGIN != "*" and request_origin != WIKI_CORS_ALLOW_ORIGIN:
-            return
-        response_origin = "*" if WIKI_CORS_ALLOW_ORIGIN == "*" else request_origin
-        self.send_header("Access-Control-Allow-Origin", response_origin)
-        self.send_header("Vary", "Origin")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type")
-        if response_origin != "*":
-            self.send_header("Access-Control-Allow-Credentials", "true")
-
     def send_error_json(self, exc: Exception) -> None:
-        if isinstance(exc, IngestError):
-            self.send_json(HTTPStatus(exc.status_code), error_response(exc))
-            return
         if isinstance(exc, FileNotFoundError):
             self.send_json(HTTPStatus.NOT_FOUND, {"error": "not_found", "message": str(exc)})
             return
@@ -3105,9 +4709,8 @@ class Handler(BaseHTTPRequestHandler):
 def main() -> None:
     ensure_dirs()
     if not GRAPH_PATH.exists() or not NOTE_INDEX_PATH.exists():
-        refresh_public_indexes()
-    start_source_monitor()
-    start_moc_monitor()
+        refresh_public_indexes(force=True)
+    start_index_worker()
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     print(f"Personal wiki serving on http://{HOST}:{PORT} data={DATA_DIR}", flush=True)
     server.serve_forever()

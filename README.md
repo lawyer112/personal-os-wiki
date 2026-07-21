@@ -248,16 +248,34 @@ Colima, backups, launchd-safe token handling, and Mac adapter wiring.
   Apple Reminders, email, or desktop notifications.
 - Next.js app backed by PostgreSQL and Prisma.
 
+### Memory Recall (Agent Context)
+
+The `/api/agent/context?q=` endpoint returns a structured context pack for
+agents, built from multiple retrieval sources:
+
+- **Intent routing**: queries are classified (`deploy_sop`, `review_protocol`,
+  `concept`, `ops`, `fact`, `noise`, `general`) and scored with field boosts
+  (title / path / tags / concepts / excerpt) plus intent-aware penalties.
+- **FTS chunk search**: Wiki candidates come from BM25-ranked FTS chunks, not
+  just note-level substring matches. Each candidate carries heading path, char
+  range, and chunk-level expand handles.
+- **Evidence cards**: `evidence.cards` — path-deduped, capped at 8 cards and a
+  ~1500-token budget. Each card includes heading path, original text, chunk ID,
+  score, and expand handles (`neighbor` / `section` / `document`).
+- **Tiered memory**: `memoryItems` classified into `hot` / `warm` / `cold` with
+  token budgets; `tiers` built from the same items to keep consistency.
+- **No sticky pollution**: pure `?q=` queries do not inject unrelated global P0
+  tasks or failed agent runs into `nextAction`.
+- **Expand on demand**: explicit "展开全文/上下文" triggers document/section/neighbor
+  expansion; how-to deploy queries auto-expand to section level.
+
+The evaluation script and B0 baseline are in
+[`scripts/eval_b0_memory_baseline.py`](./scripts/eval_b0_memory_baseline.py)
+and [`docs/eval_b0_memory_baseline_2026-07-21.md`](./docs/eval_b0_memory_baseline_2026-07-21.md).
+The ongoing improvement roadmap is tracked in
+[`docs/MEMORY_RECALL_ROADMAP.zh-CN.md`](./docs/MEMORY_RECALL_ROADMAP.zh-CN.md).
+
 ### Personal Wiki
-
-- Markdown vault with browser pages.
-- Ingest API for writing notes from agents or local tools.
-- Search, tags, concepts, graph data, backlinks, and wiki-style navigation.
-- Separate read and write token defaults.
-- Docker-friendly Python service.
-- Compatible with the "Markdown as durable memory" workflow.
-
-### Agent Workflow
 
 Agents use a predictable loop:
 
@@ -544,6 +562,7 @@ Read the full release checklist:
 | Publish safely | [Open source release process](./OPEN_SOURCE_RELEASE.md) |
 | Decide monorepo vs split repos | [Repository strategy](./docs/REPOSITORY_STRATEGY.md) |
 | Follow the long-term object-knowledge rebuild | [Object Knowledge Rebuild Manual](./docs/OBJECT_KNOWLEDGE_REBUILD_MANUAL.md) |
+| Understand agent memory recall | [Memory Recall Roadmap](./docs/MEMORY_RECALL_ROADMAP.zh-CN.md), [B0 Baseline](./docs/eval_b0_memory_baseline_2026-07-21.md), and [Retrieval Research](./docs/AGENT_MEMORY_RETRIEVAL_RESEARCH_2026-07-19.zh-CN.md) |
 | See what is next | [Roadmap](./docs/ROADMAP.md) |
 
 ## Roadmap

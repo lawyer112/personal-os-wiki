@@ -182,6 +182,23 @@ Mac 侧提醒同步的具体操作见：[Mac Agent Adapter 操作手册](./docs/
 - 提醒/规划 API，可由外部 adapter 投递到 Telegram、飞书、Apple 提醒事项、邮件或桌面通知。
 - Next.js + PostgreSQL + Prisma。
 
+### 记忆召回（Agent Context）
+
+\/api/agent/context?q=\ 接口返回结构化上下文包，从多个检索源融合而成：
+
+- **意图路由**：查询分类为 \deploy_sop\u3001eview_protocol\u3001\concept\u3001\ops\u3001\act\u3001oise\u3001\general\uff0c按字段加权（title / path / tags / concepts / excerpt）和意图奖惩打分。
+- **FTS chunk 检索**：Wiki 候选来自 BM25 排序的 FTS chunk，不是笔记级 substring。候选带 heading path、字符区间和 chunk 级 expand handles。
+- **证据卡**：\evidence.cards\ - path 去重，硬顶 8 卡 + ~1500 token 预算。每张卡含 heading path、原文、chunkId、score 和 expand handles（eighbor\ / \section\ / \document\uff09。
+- **分层记忆**：\memoryItems\ 分 \hot\ / \warm\ / \cold\uff0c带 token 预算；\	iers\ 从同一批 item 构建，保持一致性。
+- **无 sticky 污染**：纯 \?q=\ 查询不注入无关全局 P0 任务或失败 agent run 到 extAction\u3002
+- **按需展开**：显式“展开全文/上下文”触发 document/section/neighbor 展开；how-to 部署类查询自动展开到 section 级。
+
+评测脚本和 B0 基线见
+[\scripts/eval_b0_memory_baseline.py\](./scripts/eval_b0_memory_baseline.py)
+和 [\docs/eval_b0_memory_baseline_2026-07-21.md\](./docs/eval_b0_memory_baseline_2026-07-21.md)。
+持续改进路线图见
+[\docs/MEMORY_RECALL_ROADMAP.zh-CN.md\](./docs/MEMORY_RECALL_ROADMAP.zh-CN.md)。
+
 ### Personal Wiki
 
 - Markdown vault 和浏览器页面。
@@ -447,6 +464,7 @@ curl -X POST \
 | 安全发布 | [Open source release process](./OPEN_SOURCE_RELEASE.md) |
 | 判断是否拆仓 | [仓库拆分与开源策略](./docs/REPOSITORY_STRATEGY.zh-CN.md) |
 | 按长期大改方向推进对象化知识库 | [对象化知识库长期大改手册](./docs/OBJECT_KNOWLEDGE_REBUILD_MANUAL.zh-CN.md) |
+| 理解 Agent 记忆召回 | [记忆召回路线图](./docs/MEMORY_RECALL_ROADMAP.zh-CN.md)、[B0 基线](./docs/eval_b0_memory_baseline_2026-07-21.md)、[检索研究](./docs/AGENT_MEMORY_RETRIEVAL_RESEARCH_2026-07-19.zh-CN.md) |
 
 ## 路线图
 

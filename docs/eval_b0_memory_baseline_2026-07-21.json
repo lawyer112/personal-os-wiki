@@ -1,0 +1,5027 @@
+{
+  "summary": {
+    "base": "<PERSONAL_OS_BASE_URL>",
+    "query_count": 28,
+    "latency_ms_p50": 51.55,
+    "latency_ms_p95": 101.3,
+    "mean_candidates": 4.5,
+    "mean_evidence_tokens": 486.2,
+    "mean_thin_ratio": 0.0,
+    "mean_empty_evidence_ratio": 0.0,
+    "mean_auto_or_blank_status_ratio": 0.893,
+    "mean_no_concepts_ratio": 0.041,
+    "mean_title_keyword_hit_rate": 0.041,
+    "mean_memory_items": 6.96,
+    "by_cat": {
+      "concept": {
+        "nq": 6,
+        "mean_cand": 4.5,
+        "mean_tok": 507.0,
+        "mean_title_hit_rate": 0.0,
+        "p50_ms": 60.15,
+        "zero_result_n": 0
+      },
+      "exact": {
+        "nq": 5,
+        "mean_cand": 4.4,
+        "mean_tok": 442.0,
+        "mean_title_hit_rate": 0.08,
+        "p50_ms": 55.2,
+        "zero_result_n": 0
+      },
+      "multi": {
+        "nq": 4,
+        "mean_cand": 5.5,
+        "mean_tok": 556.0,
+        "mean_title_hit_rate": 0.0,
+        "p50_ms": 47.25,
+        "zero_result_n": 0
+      },
+      "noise": {
+        "nq": 2,
+        "mean_cand": 0.0,
+        "mean_tok": 0.0,
+        "mean_title_hit_rate": 0.0,
+        "p50_ms": 40.900000000000006,
+        "zero_result_n": 2
+      },
+      "ops": {
+        "nq": 4,
+        "mean_cand": 4.5,
+        "mean_tok": 312.0,
+        "mean_title_hit_rate": 0.04,
+        "p50_ms": 48.35,
+        "zero_result_n": 1
+      },
+      "zh": {
+        "nq": 7,
+        "mean_cand": 5.3,
+        "mean_tok": 699.0,
+        "mean_title_hit_rate": 0.09,
+        "p50_ms": 44.2,
+        "zero_result_n": 0
+      }
+    },
+    "noise": [
+      {
+        "q": "今天天气怎么样",
+        "n_cand": 0,
+        "tok": 0,
+        "top": []
+      },
+      {
+        "q": "完全不存在的专有名词XYZQWERTY999",
+        "n_cand": 0,
+        "tok": 0,
+        "top": []
+      }
+    ]
+  },
+  "results": [
+    {
+      "cat": "exact",
+      "q": "Hermes Agent",
+      "http": 200,
+      "latency_ms": 125.2,
+      "wiki_status": "ok",
+      "n_cand": 7,
+      "searched": [
+        "Hermes Agent",
+        "Hermes"
+      ],
+      "total_evidence_tokens": 590,
+      "total_evidence_chars": 1012,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 7,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 1,
+      "any_keyword_hits": 1,
+      "avg_score": 21.6,
+      "top": [
+        {
+          "title": "Hermes Agent",
+          "path": "vault/20_notes/2026-05-05/hermes-agent.md",
+          "score": 83,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 131,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 131,
+          "evidence_tokens": 59,
+          "matched": [
+            "Hermes Agent",
+            "Hermes"
+          ],
+          "evidence_preview": "[Hermes] [Agent] 定位 个人助理 / [agent] 调度层，连接 Personal OS、Personal Wiki 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 personal wiki、personal os…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        },
+        {
+          "title": "Hermes Image Station",
+          "path": "vault/20_notes/2026-05-05/hermes-image-station.md",
+          "score": 38,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 5,
+          "concepts_n": 1,
+          "excerpt_len": 134,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 134,
+          "evidence_tokens": 64,
+          "matched": [
+            "Hermes"
+          ],
+          "evidence_preview": "[Hermes] Image Station 定位 图片站 / 图像入口服务，和 [Hermes] 相关工作流有关。 关联服务器 服务器 192.168.6.28 业务台账：入口 53110，路径 /home/qihuo/[hermes] image station…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "purpose-reference",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        },
+        {
+          "title": "Agent 反抽象输出提示词",
+          "path": "vault/20_notes/2026-05-05/agent-反抽象输出提示词.md",
+          "score": 10,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 135,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 135,
+          "evidence_tokens": 89,
+          "matched": [
+            "Hermes",
+            "Hermes Agent"
+          ],
+          "evidence_preview": "[Agent] 反抽象输出提示词 用途 这份提示词用于约束 [Hermes] / Personal OS / Wiki 管理 [Agent] 的说话方式，避免输出“整理、优化、推进、收敛”这类抽象废话。 核心提示词 固定输出格式 日计划 晚复盘 任务审查 示例 坏输出…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "项目管理"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 20,
+        "tokens": 1296,
+        "chars": 4322,
+        "kinds": {
+          "wiki": 7,
+          "project_event": 6,
+          "activity": 6,
+          "inbox": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 113,
+            "len": 131,
+            "preview": "[Hermes] [Agent] 定位 个人助理 / [agent] 调度层，连接 Personal OS、Personal Wiki 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 personal wiki、personal os…",
+            "source": "Hermes Agent"
+          },
+          {
+            "kind": "wiki",
+            "score": 94,
+            "len": 134,
+            "preview": "[Hermes] Image Station 定位 图片站 / 图像入口服务，和 [Hermes] 相关工作流有关。 关联服务器 服务器 192.168.6.28 业务台账：入口 53110，路径 /home/qihuo/[hermes] image station…",
+            "source": "Hermes Image Station"
+          },
+          {
+            "kind": "wiki",
+            "score": 82,
+            "len": 135,
+            "preview": "[Agent] 反抽象输出提示词 用途 这份提示词用于约束 [Hermes] / Personal OS / Wiki 管理 [Agent] 的说话方式，避免输出“整理、优化、推进、收敛”这类抽象废话。 核心提示词 固定输出格式 日计划 晚复盘 任务审查 示例 坏输出…",
+            "source": "Agent 反抽象输出提示词"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1808,
+        "remainingTokens": 692,
+        "includedCount": 20,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "exact",
+      "q": "MCP",
+      "http": 200,
+      "latency_ms": 55.2,
+      "wiki_status": "ok",
+      "n_cand": 3,
+      "searched": [
+        "MCP"
+      ],
+      "total_evidence_tokens": 235,
+      "total_evidence_chars": 557,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 3,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 3,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选",
+          "path": "vault/20_notes/2026-06-25/github-知识雷达-2026-06-25-personal-os-wiki-自驱候选.md",
+          "score": 12,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 10,
+          "concepts_n": 2,
+          "excerpt_len": 168,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 168,
+          "evidence_tokens": 50,
+          "matched": [
+            "MCP"
+          ],
+          "evidence_preview": "…FTS/vector/community/PPR/episodic traces；Agent lifecycle hooks / [MCP] integration；Doctor / next command guidance Why: The local first LLM Wiki: open source knowledge…",
+          "tags": [
+            "domain-agent",
+            "domain-devops",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-agent-output",
+            "topic-github-radar",
+            "topic-idea",
+            "type-research-note"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "RAG"
+          ]
+        },
+        {
+          "title": "AI Agent记忆系统设计手册：面向多Agent调度者的提示词模板（任务分流）",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统设计手册-面向多agent调度者的提示词模板-任务分流.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 6,
+          "excerpt_len": 227,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 227,
+          "evidence_tokens": 131,
+          "matched": [
+            "MCP"
+          ],
+          "evidence_preview": "…分流准确率与执行者数量的关系曲线（当前为经验值3 8个） 待调研：Agent间上下文传递的最佳压缩算法（当前为规则式摘要，可探索向量化记忆检索方案） 建议追踪：Anthropic的Model Context Protocol([MCP])、OpenAI的Assistants API中关于多Agent调度的官方最佳实践更新 质检记录 主题ID：agent w",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "Playbook",
+            "决策支持",
+            "模板资产",
+            "自动化执行",
+            "项目管理"
+          ]
+        },
+        {
+          "title": "Hermes config-assistant 8 个项目安装排查 2026-06-28",
+          "path": "vault/20_notes/2026-06-28/hermes-config-assistant-8-个项目安装排查-2026-06-28.md",
+          "score": 12,
+          "source_type": "telegram",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 1,
+          "excerpt_len": 162,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 162,
+          "evidence_tokens": 54,
+          "matched": [
+            "MCP"
+          ],
+          "evidence_preview": "…agent reach、daily stock analysis、openmontage、penpot。 [MCP] 二进制：/Users/xingqiwu/.local/bin/codebase memory [mcp]。 profile local skills 总量约 999 个，其中 cybersecurity…",
+          "tags": [
+            "auto-ingested",
+            "telegram"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 8,
+        "tokens": 886,
+        "chars": 2956,
+        "kinds": {
+          "wiki": 3,
+          "project_event": 4,
+          "inbox": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 64,
+            "len": 162,
+            "preview": "…agent reach、daily stock analysis、openmontage、penpot。 [MCP] 二进制：/Users/xingqiwu/.local/bin/codebase memory [mcp]。 profile local skills 总量约 999 个，其中 cybersecurit",
+            "source": "Hermes config-assistant 8 个项目安装排查 2026-06-28"
+          },
+          {
+            "kind": "wiki",
+            "score": 56,
+            "len": 168,
+            "preview": "…FTS/vector/community/PPR/episodic traces；Agent lifecycle hooks / [MCP] integration；Doctor / next command guidance Why: The local first LLM Wiki: open source kn",
+            "source": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选"
+          },
+          {
+            "kind": "wiki",
+            "score": 46,
+            "len": 227,
+            "preview": "…分流准确率与执行者数量的关系曲线（当前为经验值3 8个） 待调研：Agent间上下文传递的最佳压缩算法（当前为规则式摘要，可探索向量化记忆检索方案） 建议追踪：Anthropic的Model Context Protocol([MCP])、OpenAI的Assistants API中关于多Agent调度的官方最佳实践",
+            "source": "AI Agent记忆系统设计手册：面向多Agent调度者的提示词模板（任务分流）"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1327,
+        "remainingTokens": 1173,
+        "includedCount": 8,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "exact",
+      "q": "wechat-publish-template",
+      "http": 200,
+      "latency_ms": 105.4,
+      "wiki_status": "ok",
+      "n_cand": 6,
+      "searched": [
+        "wechat-publish-template"
+      ],
+      "total_evidence_tokens": 805,
+      "total_evidence_chars": 1166,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 6,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 2.0,
+      "top": [
+        {
+          "title": "AI Agent记忆系统设计手册：面向知识库管理员的提示词模板（跨Agent交接）",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统设计手册-面向知识库管理员的提示词模板-跨agent交接.md",
+          "score": 2,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 4,
+          "excerpt_len": 195,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 195,
+          "evidence_tokens": 147,
+          "matched": [
+            "wechat-publish-template"
+          ],
+          "evidence_preview": "…元记忆（版本哈希、时间戳、权限声明）。四步协议为：提取→压缩→封装→验证。知识库管理员可直接调用以下提示词模板（Prompt [Template]）执行标准化交接。 模板A：记忆提取与压缩指令 模板B：跨Agent交接封装指令 模板调用示例（SOP片段） 管理员在流水线节点3触发交接时，依次注入模板A与模板B。系统输出交接简报后，自动将其追加至接收Agen",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "Playbook",
+            "模板资产",
+            "跨Agent交接"
+          ]
+        },
+        {
+          "title": "AI Agent记忆系统设计手册：面向自动化运维者的提示词模板（跨Agent交接）",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统设计手册-面向自动化运维者的提示词模板-跨agent交接.md",
+          "score": 2,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 5,
+          "excerpt_len": 208,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 208,
+          "evidence_tokens": 147,
+          "matched": [
+            "wechat-publish-template"
+          ],
+          "evidence_preview": "…Agent协作 任务状态锚点 上下文压缩 操作红线 交接校验 自动化运维SOP Agent Handoff Memory Design Prompt [Template] 后续补强来源 1. 内部实践数据 ：收集实际运维场景中Agent交接的成功率、失败模式、信息衰减测量数据，迭代优化压缩块字段设计。 2. 事件复盘记录 ：从真实故障处理的时间线中提取“哪",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "Playbook",
+            "模板资产",
+            "自动化执行",
+            "跨Agent交接",
+            "项目管理"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问销售页文案资产包：SaaS创业者朋友圈种草序列",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问销售页文案资产包-saas创业者朋友圈种草序列.md",
+          "score": 2,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 6,
+          "excerpt_len": 174,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 174,
+          "evidence_tokens": 92,
+          "matched": [
+            "wechat-publish-template"
+          ],
+          "evidence_preview": "…UTM追踪 ：所有跳转链接必须携带UTM参数，格式：?utm source=[wechat] moments&utm medium=sequence day{N}&utm campaign=ai consultant。 可直接复用的语料或清单 Day 1 示例语料 很多SaaS创始人还在用“堆砌API”的方式做AI功能，结果客户留存率不升反降…",
+          "tags": [
+            "asset-copy",
+            "domain-copywriting",
+            "domain-product",
+            "domain-sales",
+            "purpose-commercialization",
+            "purpose-content-production",
+            "type-copy-asset"
+          ],
+          "concepts": [
+            "SaaS创业者",
+            "产品化",
+            "文案资产",
+            "朋友圈种草",
+            "检查清单",
+            "落地页文案"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 6,
+        "tokens": 349,
+        "chars": 1166,
+        "kinds": {
+          "wiki": 6
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 59,
+            "len": 174,
+            "preview": "…UTM追踪 ：所有跳转链接必须携带UTM参数，格式：?utm source=[wechat] moments&utm medium=sequence day{N}&utm campaign=ai consultant。 可直接复用的语料或清单 Day 1 示例语料 很多SaaS创始人还在用“堆砌API”的方式做AI功",
+            "source": "AI工具落地顾问销售页文案资产包：SaaS创业者朋友圈种草序列"
+          },
+          {
+            "kind": "wiki",
+            "score": 58,
+            "len": 208,
+            "preview": "…Agent协作 任务状态锚点 上下文压缩 操作红线 交接校验 自动化运维SOP Agent Handoff Memory Design Prompt [Template] 后续补强来源 1. 内部实践数据 ：收集实际运维场景中Agent交接的成功率、失败模式、信息衰减测量数据，迭代优化压缩块字段设计。 2. 事件复盘",
+            "source": "AI Agent记忆系统设计手册：面向自动化运维者的提示词模板（跨Agent交接）"
+          },
+          {
+            "kind": "wiki",
+            "score": 58,
+            "len": 232,
+            "preview": "…The Definitive Guide》（待核验最新版章节与数据） 中国广告协会《互联网广告营销行为规范》（待核验具体条款号与处罚案例） HubSpot Sales Page [Template] Best Practices（待核验官方文档链接与更新日志） 实际A/B测试数据看板（需顾问团队自行积累转化漏斗数据，",
+            "source": "AI工具落地顾问销售页文案资产包：成交前跟进型落地页结构"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 945,
+        "remainingTokens": 1555,
+        "includedCount": 6,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "exact",
+      "q": "MultiPost",
+      "http": 200,
+      "latency_ms": 35.4,
+      "wiki_status": "ok",
+      "n_cand": 2,
+      "searched": [
+        "MultiPost"
+      ],
+      "total_evidence_tokens": 225,
+      "total_evidence_chars": 399,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 0,
+      "blank_status_n": 2,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 2,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "X Likes 主题整理 - 公众号运营与内容矩阵",
+          "path": "vault/20_atoms/X-Likes-主题整理-公众号运营与内容矩阵.md",
+          "score": 12,
+          "source_type": "x-likes-theme",
+          "status": "",
+          "quality_status": "",
+          "tags_n": 6,
+          "concepts_n": 1,
+          "excerpt_len": 194,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 194,
+          "evidence_tokens": 108,
+          "matched": [
+            "MultiPost"
+          ],
+          "evidence_preview": "…公众号批量运营的关键不是搬运，而是选题 改写 分发闭环》 《文章如何一键转成公众号、视频号、小红书内容》 《[MultiPost] 是否适合接入个人内容矩阵？》 相关工具 wechat publish template [MultiPost] Personal Wiki Obsidian 相关概念 公众号运营 内容矩阵 [MultiPost] wechat",
+          "tags": [
+            "domain-media",
+            "purpose-content-production",
+            "topic-content-matrix",
+            "topic-multi-platform-publishing",
+            "topic-wechat-official-account",
+            "type-article"
+          ],
+          "concepts": [
+            "Personal Wiki"
+          ]
+        },
+        {
+          "title": "X Likes 主题整理 - 多平台分发工具",
+          "path": "vault/20_atoms/X-Likes-主题整理-多平台分发工具.md",
+          "score": 12,
+          "source_type": "x-likes-theme",
+          "status": "",
+          "quality_status": "",
+          "tags_n": 8,
+          "concepts_n": 1,
+          "excerpt_len": 205,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 205,
+          "evidence_tokens": 117,
+          "matched": [
+            "MultiPost"
+          ],
+          "evidence_preview": "…补齐单条 Like 来源页。 可转化选题 《[MultiPost] 是否适合接入个人内容矩阵？》 《公众号排版工具如何接入自动化流水线》 《多平台发布最危险的不是技术，而是账号风控》 相关工具 [MultiPost] wechat publish template GitHub Actions 定时任务 相关概念 [MultiPost] wechat pu",
+          "tags": [
+            "domain-devops",
+            "domain-media",
+            "purpose-content-production",
+            "topic-automation",
+            "topic-github-tool",
+            "topic-multi-platform-publishing",
+            "topic-wechat-official-account",
+            "type-article"
+          ],
+          "concepts": [
+            "API 集成"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 2,
+        "tokens": 119,
+        "chars": 399,
+        "kinds": {
+          "wiki": 2
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 66,
+            "len": 205,
+            "preview": "…补齐单条 Like 来源页。 可转化选题 《[MultiPost] 是否适合接入个人内容矩阵？》 《公众号排版工具如何接入自动化流水线》 《多平台发布最危险的不是技术，而是账号风控》 相关工具 [MultiPost] wechat publish template GitHub Actions 定时任务 相关概念 [",
+            "source": "X Likes 主题整理 - 多平台分发工具"
+          },
+          {
+            "kind": "wiki",
+            "score": 64,
+            "len": 194,
+            "preview": "…公众号批量运营的关键不是搬运，而是选题 改写 分发闭环》 《文章如何一键转成公众号、视频号、小红书内容》 《[MultiPost] 是否适合接入个人内容矩阵？》 相关工具 wechat publish template [MultiPost] Personal Wiki Obsidian 相关概念 公众号运营 内容矩",
+            "source": "X Likes 主题整理 - 公众号运营与内容矩阵"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 246,
+        "remainingTokens": 2254,
+        "includedCount": 2,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "exact",
+      "q": "Personal OS",
+      "http": 200,
+      "latency_ms": 37.9,
+      "wiki_status": "ok",
+      "n_cand": 4,
+      "searched": [
+        "Personal OS"
+      ],
+      "total_evidence_tokens": 354,
+      "total_evidence_chars": 599,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 4,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 1,
+      "any_keyword_hits": 1,
+      "avg_score": 19.5,
+      "top": [
+        {
+          "title": "Personal OS Agent 写入凭据交接说明",
+          "path": "vault/20_notes/2026-05-05/personal-os-agent-写入凭据交接说明.md",
+          "score": 75,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 5,
+          "concepts_n": 3,
+          "excerpt_len": 175,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 175,
+          "evidence_tokens": 103,
+          "matched": [
+            "Personal OS"
+          ],
+          "evidence_preview": "[Personal] [OS] Agent 写入凭据交接说明 结论 [Personal] [OS] 的写入口已经通，问题不在服务端接口，而在调用方必须带写 token。 任何 Hermes / Codex / 其他 Agent 要写入 [Personal] [OS]，都必须先读取本机私有凭据文件： 然后所有写请求都要带： 当前验证结果 在 192…",
+          "tags": [
+            "domain-agent",
+            "domain-knowledge-os",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "Personal OS",
+            "跨Agent交接"
+          ]
+        },
+        {
+          "title": "Agent 使用手册：赚钱导向个人知识库",
+          "path": "vault/20_notes/2026-05-05/agent-使用手册-赚钱导向个人知识库.md",
+          "score": 1,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 4,
+          "excerpt_len": 154,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 154,
+          "evidence_tokens": 102,
+          "matched": [
+            "Personal OS"
+          ],
+          "evidence_preview": "Agent 使用手册：赚钱导向个人知识库 定位 [Personal] [OS] 不是大脑，也不是判断者。它只是保存任务、项目、Inbox、活动和状态的程序。 [Personal] Wiki 不是任务系统。它保存手册、证据、项目资料、复盘、部署记录和长期知识。 真正执行判断的是 Agent。任何 Agent…",
+          "tags": [
+            "domain-agent",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-codex-memory",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "Personal Wiki",
+            "Playbook",
+            "决策支持"
+          ]
+        },
+        {
+          "title": "Agent 反抽象输出提示词",
+          "path": "vault/20_notes/2026-05-05/agent-反抽象输出提示词.md",
+          "score": 1,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 133,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 133,
+          "evidence_tokens": 88,
+          "matched": [
+            "Personal OS"
+          ],
+          "evidence_preview": "Agent 反抽象输出提示词 用途 这份提示词用于约束 Hermes / [Personal] [OS] / Wiki 管理 Agent 的说话方式，避免输出“整理、优化、推进、收敛”这类抽象废话。 核心提示词 固定输出格式 日计划 晚复盘 任务审查 示例 坏输出…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "项目管理"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 13,
+        "tokens": 1384,
+        "chars": 4615,
+        "kinds": {
+          "wiki": 4,
+          "task": 2,
+          "project_event": 5,
+          "inbox": 2
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 41,
+            "len": 154,
+            "preview": "Agent 使用手册：赚钱导向个人知识库 定位 [Personal] [OS] 不是大脑，也不是判断者。它只是保存任务、项目、Inbox、活动和状态的程序。 [Personal] Wiki 不是任务系统。它保存手册、证据、项目资料、复盘、部署记录和长期知识。 真正执行判断的是 Agent。任何 Agent…",
+            "source": "Agent 使用手册：赚钱导向个人知识库"
+          },
+          {
+            "kind": "wiki",
+            "score": 41,
+            "len": 133,
+            "preview": "Agent 反抽象输出提示词 用途 这份提示词用于约束 Hermes / [Personal] [OS] / Wiki 管理 Agent 的说话方式，避免输出“整理、优化、推进、收敛”这类抽象废话。 核心提示词 固定输出格式 日计划 晚复盘 任务审查 示例 坏输出…",
+            "source": "Agent 反抽象输出提示词"
+          },
+          {
+            "kind": "wiki",
+            "score": 41,
+            "len": 137,
+            "preview": "Hermes Agent 定位 个人助理 / agent 调度层，连接 [Personal] [OS]、[Personal] Wiki 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 [personal] wiki、[personal] [os]…",
+            "source": "Hermes Agent"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1976,
+        "remainingTokens": 524,
+        "includedCount": 13,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "公众号",
+      "http": 200,
+      "latency_ms": 33.3,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "公众号"
+      ],
+      "total_evidence_tokens": 726,
+      "total_evidence_chars": 884,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 5,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 5,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "AI工具落地顾问B端销售朋友圈种草标题库",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问b端销售朋友圈种草标题库.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 4,
+          "excerpt_len": 169,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 169,
+          "evidence_tokens": 139,
+          "matched": [
+            "公众号"
+          ],
+          "evidence_preview": "…第一”“根治”等《广告法》禁用词；AI效果数据需标注“基于XX行业试点样本，实际效果因企业数字化基础而异”。 平台规则 ：微信朋友圈禁止直接外链跳转至第三方落地页，需引导至企业微信/[公众号]/小程序；避免频繁刷屏，建议单账号日更≤3条，间隔≥4小时，防限流。 预期管理 ：标题承诺需与交付SOP严格对齐，禁止“标题党”导致跳失率飙升…",
+          "tags": [
+            "domain-sales",
+            "purpose-commercialization",
+            "type-article"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "朋友圈种草",
+            "标题库",
+            "销售转化"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问冷启动销售页与报价文案模板",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问冷启动销售页与报价文案模板.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 9,
+          "concepts_n": 6,
+          "excerpt_len": 200,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 200,
+          "evidence_tokens": 167,
+          "matched": [
+            "公众号"
+          ],
+          "evidence_preview": "…独立AI顾问或小型AI咨询团队，无知名案例背书，需通过销售页完成冷启动获客。 目标客户为中小企业主、业务部门负责人，对AI有需求但认知模糊，预算敏感。 投放渠道：个人官网、LinkedIn、即刻、[公众号]、社群转发、线下活动物料。 服务形态：AI工具选型、工作流搭建、内部培训、轻量级落地陪跑。 核心方法：冷启动报价三要素模型 冷启动阶段报价的核心矛盾是：",
+          "tags": [
+            "asset-copy",
+            "asset-template",
+            "domain-copywriting",
+            "domain-product",
+            "domain-sales",
+            "purpose-commercialization",
+            "purpose-content-production",
+            "type-copy-asset",
+            "type-template"
+          ],
+          "concepts": [
+            "产品化",
+            "冷启动获客",
+            "报价说明",
+            "文案资产",
+            "模板资产",
+            "落地页文案"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问复购召回钩子清单",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问复购召回钩子清单.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 6,
+          "concepts_n": 4,
+          "excerpt_len": 188,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 188,
+          "evidence_tokens": 145,
+          "matched": [
+            "公众号"
+          ],
+          "evidence_preview": "…弹窗或悬浮组件文案 客户成功（Customer Success，负责客户留存与增购的职能）定期健康检查（Health Check，系统评估客户使用状态与满意度的流程）话术库 顾问个人IP内容矩阵（[公众号]/小红书/知乎）的引流钩子与私信承接语 目标客群：B2B中小企业、传统行业数字化转型团队、内容/电商/设计类工作室、已采购AI工具但使用率出现波动的客户",
+          "tags": [
+            "asset-checklist",
+            "asset-copy",
+            "domain-copywriting",
+            "purpose-reference",
+            "type-checklist",
+            "type-copy-asset"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "复购召回",
+            "检查清单",
+            "短视频钩子"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 12,
+        "tokens": 1294,
+        "chars": 4316,
+        "kinds": {
+          "wiki": 5,
+          "project_event": 4,
+          "inbox": 3
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 53,
+            "len": 188,
+            "preview": "…弹窗或悬浮组件文案 客户成功（Customer Success，负责客户留存与增购的职能）定期健康检查（Health Check，系统评估客户使用状态与满意度的流程）话术库 顾问个人IP内容矩阵（[公众号]/小红书/知乎）的引流钩子与私信承接语 目标客群：B2B中小企业、传统行业数字化转型团队、内容/电商/设计类工作",
+            "source": "AI工具落地顾问复购召回钩子清单"
+          },
+          {
+            "kind": "wiki",
+            "score": 52,
+            "len": 169,
+            "preview": "…第一”“根治”等《广告法》禁用词；AI效果数据需标注“基于XX行业试点样本，实际效果因企业数字化基础而异”。 平台规则 ：微信朋友圈禁止直接外链跳转至第三方落地页，需引导至企业微信/[公众号]/小程序；避免频繁刷屏，建议单账号日更≤3条，间隔≥4小时，防限流。 预期管理 ：标题承诺需与交付SOP严格对齐，禁止“标题党",
+            "source": "AI工具落地顾问B端销售朋友圈种草标题库"
+          },
+          {
+            "kind": "wiki",
+            "score": 50,
+            "len": 171,
+            "preview": "…无代码AI 后续补强来源 待核验：不同行业（电商/外贸/教培/律所）的“最小可行场景”标准化清单，需通过实际项目积累并验证客户满意度 待补充：冷启动阶段各渠道（LinkedIn/[公众号]/小红书）的文案长度与转化率A/B测试数据 待开发：配套的15分钟诊断问卷模板及评分逻辑，用于将文案流量转化为有效线索 待验证：7",
+            "source": "AI工具落地顾问销售页文案资产包：冷启动获客转化脚本"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 2314,
+        "remainingTokens": 186,
+        "includedCount": 12,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "内容矩阵",
+      "http": 200,
+      "latency_ms": 44.2,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "内容矩阵"
+      ],
+      "total_evidence_tokens": 719,
+      "total_evidence_chars": 915,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 4,
+      "blank_status_n": 1,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 1,
+      "any_keyword_hits": 5,
+      "avg_score": 21.0,
+      "top": [
+        {
+          "title": "X Likes 主题整理 - 公众号运营与内容矩阵",
+          "path": "vault/20_atoms/X-Likes-主题整理-公众号运营与内容矩阵.md",
+          "score": 57,
+          "source_type": "x-likes-theme",
+          "status": "",
+          "quality_status": "",
+          "tags_n": 6,
+          "concepts_n": 1,
+          "excerpt_len": 152,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 152,
+          "evidence_tokens": 120,
+          "matched": [
+            "内容矩阵"
+          ],
+          "evidence_preview": "X Likes 主题整理 公众号运营与内容矩阵 核心判断 现有 X Likes Digest 已经把公众号运营、[内容矩阵]、文章转视频和多平台分发放在同一条内容生产线上。首要价值不是收藏工具名，而是把选题、改写、排版、分发、复盘做成闭环。 主题地图 账号定位 流量来源 内容形态 变现方式 批量化方法…",
+          "tags": [
+            "domain-media",
+            "purpose-content-production",
+            "topic-content-matrix",
+            "topic-multi-platform-publishing",
+            "topic-wechat-official-account",
+            "type-article"
+          ],
+          "concepts": [
+            "Personal Wiki"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问销售页异议处理钩子清单",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问销售页异议处理钩子清单-2.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 5,
+          "excerpt_len": 149,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 149,
+          "evidence_tokens": 109,
+          "matched": [
+            "内容矩阵"
+          ],
+          "evidence_preview": "…行业}}：替换为IP垂直领域（如：跨境电商、知识付费、本地生活）。 {{交付物}}：替换为具体产出（如：提示词库、自动化工作流、[内容矩阵]）。 {{数字/百分比}}：必须填入真实业务数据，禁止使用模糊词。 {{低门槛动作}}：限制为≤3步操作（填表、扫码、预约15分钟演示）。 执行SOP 1…",
+          "tags": [
+            "asset-checklist",
+            "asset-copy",
+            "domain-copywriting",
+            "domain-sales",
+            "purpose-commercialization",
+            "type-checklist",
+            "type-copy-asset"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "异议处理",
+            "检查清单",
+            "短视频钩子",
+            "落地页文案"
+          ]
+        },
+        {
+          "title": "项目日报结构化模板：面向运营负责人的交接清单（会议转任务）",
+          "path": "vault/20_notes/2026-06-29/项目日报结构化模板-面向运营负责人的交接清单-会议转任务.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 4,
+          "excerpt_len": 202,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 202,
+          "evidence_tokens": 172,
+          "matched": [
+            "内容矩阵"
+          ],
+          "evidence_preview": "…适用场景 跨部门项目日会/站会后的运营侧任务派发与进度对齐 运营负责人与产品、研发、市场、客服团队的每日信息交接 敏捷项目中运营侧的每日站会记录与跟进 适用于高频迭代、强依赖协同的线上活动、用户增长、[内容矩阵]、商业化投放等运营场景 核心方法/模板 采用“MEETING2TASK”转化逻辑，日报结构强制包含以下模块。填写时需严格遵循字段约束，禁止留空或模",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "检查清单",
+            "模板资产",
+            "跨Agent交接",
+            "项目管理"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 5,
+        "tokens": 274,
+        "chars": 915,
+        "kinds": {
+          "wiki": 5
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 85,
+            "len": 152,
+            "preview": "X Likes 主题整理 公众号运营与内容矩阵 核心判断 现有 X Likes Digest 已经把公众号运营、[内容矩阵]、文章转视频和多平台分发放在同一条内容生产线上。首要价值不是收藏工具名，而是把选题、改写、排版、分发、复盘做成闭环。 主题地图 账号定位 流量来源 内容形态 变现方式 批量化方法…",
+            "source": "X Likes 主题整理 - 公众号运营与内容矩阵"
+          },
+          {
+            "kind": "wiki",
+            "score": 60,
+            "len": 193,
+            "preview": "…后续补强来源 《敏捷项目管理实践指南》（PMI，待核验具体章节） 企业级OKR与日报对齐方法论（待核验） 内部RACI权限矩阵配置规范（待核验） 建议结合具体业务线（如电商运营、SaaS客户成功、[内容矩阵]）补充行业阈值参数与自动化对接接口文档。 质检记录 主题ID：management auto 9de6c833",
+            "source": "项目日报结构化模板：面向运营负责人的升级机制（优先级排序）"
+          },
+          {
+            "kind": "wiki",
+            "score": 59,
+            "len": 149,
+            "preview": "…行业}}：替换为IP垂直领域（如：跨境电商、知识付费、本地生活）。 {{交付物}}：替换为具体产出（如：提示词库、自动化工作流、[内容矩阵]）。 {{数字/百分比}}：必须填入真实业务数据，禁止使用模糊词。 {{低门槛动作}}：限制为≤3步操作（填表、扫码、预约15分钟演示）。 执行SOP 1…",
+            "source": "AI工具落地顾问销售页异议处理钩子清单"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 823,
+        "remainingTokens": 1677,
+        "includedCount": 5,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "文章转视频",
+      "http": 200,
+      "latency_ms": 41.3,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "文章转视频"
+      ],
+      "total_evidence_tokens": 477,
+      "total_evidence_chars": 728,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 1,
+      "blank_status_n": 4,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 1,
+      "any_keyword_hits": 5,
+      "avg_score": 21.0,
+      "top": [
+        {
+          "title": "X Likes 主题整理 - 文章转视频与短视频",
+          "path": "vault/20_atoms/X-Likes-主题整理-文章转视频与短视频.md",
+          "score": 57,
+          "source_type": "x-likes-theme",
+          "status": "",
+          "quality_status": "",
+          "tags_n": 6,
+          "concepts_n": 1,
+          "excerpt_len": 142,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 142,
+          "evidence_tokens": 95,
+          "matched": [
+            "文章转视频"
+          ],
+          "evidence_preview": "…内容矩阵初稿：公众号运营 + [文章转视频] + X 内容雷达 摘要：来自现有 X Likes Digest / Wiki 来源页的聚合入口。 可用法：进入该主题的文章、工具评测或视频选题池。 风险：需要在原始 tweet id 级来源页补齐后复核。 后续动作：用 x likes…",
+          "tags": [
+            "domain-media",
+            "purpose-content-production",
+            "topic-article-to-video",
+            "topic-short-video",
+            "topic-xiaohongshu",
+            "type-article"
+          ],
+          "concepts": [
+            "短视频钩子"
+          ]
+        },
+        {
+          "title": "X Likes 2026-06-30：10 条高价值内容拆解",
+          "path": "vault/20_notes/2026-06-30/x-likes-2026-06-30-10-条高价值内容拆解.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 1,
+          "excerpt_len": 160,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 160,
+          "evidence_tokens": 97,
+          "matched": [
+            "文章转视频"
+          ],
+          "evidence_preview": "…交易接口”分层吸收 | 做一张量化工具选型矩阵 | | 5 | LanfAI：火宝短剧 | 从剧本到成片的 AI 短剧生成平台 | 适合进入“图文/[文章转视频]/短剧矩阵”项目雷达 | 跑通 demo，评估素材质量和人工介入点 | | 6 | MapleShaw：Palmier Pro | 面向 AI Agent…",
+          "tags": [
+            "agent-reach",
+            "auto-ingested",
+            "inbox",
+            "source-digest",
+            "tool-radar",
+            "twitter",
+            "xhs"
+          ],
+          "concepts": [
+            "API 集成"
+          ]
+        },
+        {
+          "title": "X Likes 主题整理 - 公众号运营与内容矩阵",
+          "path": "vault/20_atoms/X-Likes-主题整理-公众号运营与内容矩阵.md",
+          "score": 12,
+          "source_type": "x-likes-theme",
+          "status": "",
+          "quality_status": "",
+          "tags_n": 6,
+          "concepts_n": 1,
+          "excerpt_len": 142,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 142,
+          "evidence_tokens": 95,
+          "matched": [
+            "文章转视频"
+          ],
+          "evidence_preview": "…内容矩阵初稿：公众号运营 + [文章转视频] + X 内容雷达 摘要：来自现有 X Likes Digest / Wiki 来源页的聚合入口。 可用法：进入该主题的文章、工具评测或视频选题池。 风险：需要在原始 tweet id 级来源页补齐后复核。 后续动作：用 x likes…",
+          "tags": [
+            "domain-media",
+            "purpose-content-production",
+            "topic-content-matrix",
+            "topic-multi-platform-publishing",
+            "topic-wechat-official-account",
+            "type-article"
+          ],
+          "concepts": [
+            "Personal Wiki"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 6,
+        "tokens": 254,
+        "chars": 847,
+        "kinds": {
+          "wiki": 5,
+          "project_event": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 98,
+            "len": 142,
+            "preview": "…内容矩阵初稿：公众号运营 + [文章转视频] + X 内容雷达 摘要：来自现有 X Likes Digest / Wiki 来源页的聚合入口。 可用法：进入该主题的文章、工具评测或视频选题池。 风险：需要在原始 tweet id 级来源页补齐后复核。 后续动作：用 x likes…",
+            "source": "X Likes 主题整理 - 文章转视频与短视频"
+          },
+          {
+            "kind": "wiki",
+            "score": 74,
+            "len": 142,
+            "preview": "…内容矩阵初稿：公众号运营 + [文章转视频] + X 内容雷达 摘要：来自现有 X Likes Digest / Wiki 来源页的聚合入口。 可用法：进入该主题的文章、工具评测或视频选题池。 风险：需要在原始 tweet id 级来源页补齐后复核。 后续动作：用 x likes…",
+            "source": "X Likes 主题整理 - 多平台分发工具"
+          },
+          {
+            "kind": "wiki",
+            "score": 73,
+            "len": 142,
+            "preview": "…内容矩阵初稿：公众号运营 + [文章转视频] + X 内容雷达 摘要：来自现有 X Likes Digest / Wiki 来源页的聚合入口。 可用法：进入该主题的文章、工具评测或视频选题池。 风险：需要在原始 tweet id 级来源页补齐后复核。 后续动作：用 x likes…",
+            "source": "X Likes 主题整理 - 内容变现与副业案例"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 608,
+        "remainingTokens": 1892,
+        "includedCount": 6,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "小红书",
+      "http": 200,
+      "latency_ms": 101.3,
+      "wiki_status": "ok",
+      "n_cand": 6,
+      "searched": [
+        "小红书"
+      ],
+      "total_evidence_tokens": 949,
+      "total_evidence_chars": 1166,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 6,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 5,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "AI工具落地顾问B端短视频引流话术库与脚本模板",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问b端短视频引流话术库与脚本模板.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 9,
+          "concepts_n": 5,
+          "excerpt_len": 168,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 168,
+          "evidence_tokens": 141,
+          "matched": [
+            "小红书"
+          ],
+          "evidence_preview": "…适用场景 短视频平台（抖音、视频号、[小红书]）发布获客内容，受众为企业主/部门负责人/IT决策者。 销售/顾问在直播、拜访、社群中快速建立专业信任。 市场部批量生产标准化销售导向文案，用于投放或赋能。 售前工程师将技术能力转化为业务语言，完成初步价值论证。 3. 核心方法：B端短视频引流话术四步法 第一步：锚定“旧场景痛点”（0…",
+          "tags": [
+            "asset-copy",
+            "asset-template",
+            "domain-copywriting",
+            "domain-media",
+            "purpose-automation",
+            "purpose-content-production",
+            "type-copy-asset",
+            "type-technical-note",
+            "type-template"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "文案资产",
+            "模板资产",
+            "短视频引流",
+            "短视频钩子"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问个人IP朋友圈种草话术库",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问个人ip朋友圈种草话术库.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 4,
+          "excerpt_len": 186,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 186,
+          "evidence_tokens": 132,
+          "matched": [
+            "小红书"
+          ],
+          "evidence_preview": "…数据引用需交叉验证） 提示词工程最佳实践指南（需结合中文大模型特性本地化） 客户真实案例库（需脱敏处理，按行业/工具/ROI维度打标，定期更新转化漏斗数据） 平台算法更新日志（定期同步微信/[小红书]/视频号内容分发规则与合规红线） 质检记录 主题ID：copywriting auto d7fdc7552532 生成模型：Qwen3.5 397B A17B",
+          "tags": [
+            "asset-copy",
+            "domain-copywriting",
+            "purpose-reference",
+            "type-copy-asset"
+          ],
+          "concepts": [
+            "个人IP",
+            "文案资产",
+            "朋友圈种草",
+            "销售转化"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问复购召回钩子清单",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问复购召回钩子清单.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 6,
+          "concepts_n": 4,
+          "excerpt_len": 180,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 180,
+          "evidence_tokens": 136,
+          "matched": [
+            "小红书"
+          ],
+          "evidence_preview": "…客户成功（Customer Success，负责客户留存与增购的职能）定期健康检查（Health Check，系统评估客户使用状态与满意度的流程）话术库 顾问个人IP内容矩阵（公众号/[小红书]/知乎）的引流钩子与私信承接语 目标客群：B2B中小企业、传统行业数字化转型团队、内容/电商/设计类工作室、已采购AI工具但使用率出现波动的客户 核心方法：P A…",
+          "tags": [
+            "asset-checklist",
+            "asset-copy",
+            "domain-copywriting",
+            "purpose-reference",
+            "type-checklist",
+            "type-copy-asset"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "复购召回",
+            "检查清单",
+            "短视频钩子"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 6,
+        "tokens": 349,
+        "chars": 1166,
+        "kinds": {
+          "wiki": 6
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 54,
+            "len": 186,
+            "preview": "…数据引用需交叉验证） 提示词工程最佳实践指南（需结合中文大模型特性本地化） 客户真实案例库（需脱敏处理，按行业/工具/ROI维度打标，定期更新转化漏斗数据） 平台算法更新日志（定期同步微信/[小红书]/视频号内容分发规则与合规红线） 质检记录 主题ID：copywriting auto d7fdc7552532 生成",
+            "source": "AI工具落地顾问个人IP朋友圈种草话术库"
+          },
+          {
+            "kind": "wiki",
+            "score": 53,
+            "len": 180,
+            "preview": "…客户成功（Customer Success，负责客户留存与增购的职能）定期健康检查（Health Check，系统评估客户使用状态与满意度的流程）话术库 顾问个人IP内容矩阵（公众号/[小红书]/知乎）的引流钩子与私信承接语 目标客群：B2B中小企业、传统行业数字化转型团队、内容/电商/设计类工作室、已采购AI工具但",
+            "source": "AI工具落地顾问复购召回钩子清单"
+          },
+          {
+            "kind": "wiki",
+            "score": 50,
+            "len": 168,
+            "preview": "…适用场景 短视频平台（抖音、视频号、[小红书]）发布获客内容，受众为企业主/部门负责人/IT决策者。 销售/顾问在直播、拜访、社群中快速建立专业信任。 市场部批量生产标准化销售导向文案，用于投放或赋能。 售前工程师将技术能力转化为业务语言，完成初步价值论证。 3. 核心方法：B端短视频引流话术四步法 第一步：锚定“旧",
+            "source": "AI工具落地顾问B端短视频引流话术库与脚本模板"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1046,
+        "remainingTokens": 1454,
+        "includedCount": 6,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "视频号",
+      "http": 200,
+      "latency_ms": 52.5,
+      "wiki_status": "ok",
+      "n_cand": 6,
+      "searched": [
+        "视频号"
+      ],
+      "total_evidence_tokens": 1071,
+      "total_evidence_chars": 1274,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 6,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 4,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "AI工具落地顾问B端短视频引流话术库与脚本模板",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问b端短视频引流话术库与脚本模板.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 9,
+          "concepts_n": 5,
+          "excerpt_len": 168,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 168,
+          "evidence_tokens": 141,
+          "matched": [
+            "视频号"
+          ],
+          "evidence_preview": "…适用场景 短视频平台（抖音、[视频号]、小红书）发布获客内容，受众为企业主/部门负责人/IT决策者。 销售/顾问在直播、拜访、社群中快速建立专业信任。 市场部批量生产标准化销售导向文案，用于投放或赋能。 售前工程师将技术能力转化为业务语言，完成初步价值论证。 3. 核心方法：B端短视频引流话术四步法 第一步：锚定“旧场景痛点”（0…",
+          "tags": [
+            "asset-copy",
+            "asset-template",
+            "domain-copywriting",
+            "domain-media",
+            "purpose-automation",
+            "purpose-content-production",
+            "type-copy-asset",
+            "type-technical-note",
+            "type-template"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "文案资产",
+            "模板资产",
+            "短视频引流",
+            "短视频钩子"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问B端短视频引流转化脚本包",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问b端短视频引流转化脚本包.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 6,
+          "concepts_n": 4,
+          "excerpt_len": 163,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 163,
+          "evidence_tokens": 135,
+          "matched": [
+            "视频号"
+          ],
+          "evidence_preview": "AI工具落地顾问B端短视频引流转化脚本包 AI工具落地顾问B端短视频引流转化脚本包 核心逻辑 面向 B 端企业的 AI 工具落地顾问，短视频引流脚本的核心不是“讲功能”，而是用“业务痛点→可量化结果→低门槛行动”的钩子链，在 60 秒内完成从注意力捕获到留资的转化。 适用场景 短视频平台（抖音、[视频号]、快手、小红书视频…",
+          "tags": [
+            "domain-media",
+            "domain-sales",
+            "purpose-automation",
+            "purpose-commercialization",
+            "purpose-content-production",
+            "type-technical-note"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "短视频引流",
+            "短视频钩子",
+            "销售转化"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问短视频引流标题库资产包",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问短视频引流标题库资产包.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 6,
+          "excerpt_len": 217,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 217,
+          "evidence_tokens": 184,
+          "matched": [
+            "视频号"
+          ],
+          "evidence_preview": "AI工具落地顾问短视频引流标题库资产包 AI工具落地顾问短视频引流标题库资产包 一句话结论 本资产包提供一套结构化、可批量生成的短视频引流标题库，专为AI工具落地顾问设计。通过“场景痛点+工具解法+量化结果+留资钩子”公式，直接提升前3秒完播率与表单转化率，支持Agent按参数一键调用并适配多平台分发SOP。 适用场景 分发渠道 ：抖音、[视频号]、小红书、",
+          "tags": [
+            "domain-media",
+            "purpose-content-production",
+            "type-article"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "标题库",
+            "检查清单",
+            "模板资产",
+            "短视频引流",
+            "短视频钩子"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 6,
+        "tokens": 382,
+        "chars": 1274,
+        "kinds": {
+          "wiki": 6
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 67,
+            "len": 168,
+            "preview": "…适用场景 短视频平台（抖音、[视频号]、小红书）发布获客内容，受众为企业主/部门负责人/IT决策者。 销售/顾问在直播、拜访、社群中快速建立专业信任。 市场部批量生产标准化销售导向文案，用于投放或赋能。 售前工程师将技术能力转化为业务语言，完成初步价值论证。 3. 核心方法：B端短视频引流话术四步法 第一步：锚定“旧",
+            "source": "AI工具落地顾问B端短视频引流话术库与脚本模板"
+          },
+          {
+            "kind": "wiki",
+            "score": 65,
+            "len": 163,
+            "preview": "AI工具落地顾问B端短视频引流转化脚本包 AI工具落地顾问B端短视频引流转化脚本包 核心逻辑 面向 B 端企业的 AI 工具落地顾问，短视频引流脚本的核心不是“讲功能”，而是用“业务痛点→可量化结果→低门槛行动”的钩子链，在 60 秒内完成从注意力捕获到留资的转化。 适用场景 短视频平台（抖音、[视频号]、快手、小红书",
+            "source": "AI工具落地顾问B端短视频引流转化脚本包"
+          },
+          {
+            "kind": "wiki",
+            "score": 61,
+            "len": 217,
+            "preview": "AI工具落地顾问短视频引流标题库资产包 AI工具落地顾问短视频引流标题库资产包 一句话结论 本资产包提供一套结构化、可批量生成的短视频引流标题库，专为AI工具落地顾问设计。通过“场景痛点+工具解法+量化结果+留资钩子”公式，直接提升前3秒完播率与表单转化率，支持Agent按参数一键调用并适配多平台分发SOP。 适用场景",
+            "source": "AI工具落地顾问短视频引流标题库资产包"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1177,
+        "remainingTokens": 1323,
+        "includedCount": 6,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "变现",
+      "http": 200,
+      "latency_ms": 74.9,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "变现"
+      ],
+      "total_evidence_tokens": 616,
+      "total_evidence_chars": 827,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 5,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 5,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "AI工具落地顾问个人IP冷启动获客落地页结构",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问个人ip冷启动获客落地页结构.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 6,
+          "excerpt_len": 180,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 180,
+          "evidence_tokens": 121,
+          "matched": [
+            "变现"
+          ],
+          "evidence_preview": "…加入AI落地陪跑营（早鸟价99元，含3次复盘） 转化验收清单 [ ] 首屏是否3秒内传达“你是谁+解决什么问题+能得到什么”？ [ ] 是否避免使用“全网最强”“100%[变现]”“guaranteed收益”等绝对化用语？ [ ] 交付物是否具象化（如：Notion模板、Python脚本、SOP文档）而非抽象概念？ [ ] 是否设置“风险逆转”条款（退款…",
+          "tags": [
+            "domain-product",
+            "purpose-reference",
+            "type-article"
+          ],
+          "concepts": [
+            "个人IP",
+            "产品化",
+            "冷启动获客",
+            "标题库",
+            "检查清单",
+            "落地页文案"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问短视频引流案例改写模板",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问短视频引流案例改写模板.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 6,
+          "excerpt_len": 208,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 208,
+          "evidence_tokens": 148,
+          "matched": [
+            "变现"
+          ],
+          "evidence_preview": "…AI社群’，自动发送《5个高转化群SOP提示词模板》。” 体验诱饵 ：“点击主页链接，0元加入AI工具内测体验群，前50名送1v1诊断。” 互动诱饵 ：“你的社群目前卡在‘活跃度’还是‘[变现]’？留言区告诉我，抽3人免费改SOP。” 执行验收清单（Checklist） [ ] 前3秒是否包含明确人群标签+痛点/数据？ [ ] AI工具介入点是否具体到功能",
+          "tags": [
+            "asset-template",
+            "domain-media",
+            "purpose-content-production",
+            "type-template"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "检查清单",
+            "模板资产",
+            "用户见证",
+            "短视频引流",
+            "短视频钩子"
+          ]
+        },
+        {
+          "title": "AI工具落地顾问销售页异议处理话术库",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问销售页异议处理话术库.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 5,
+          "concepts_n": 4,
+          "excerpt_len": 154,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 154,
+          "evidence_tokens": 122,
+          "matched": [
+            "变现"
+          ],
+          "evidence_preview": "…清单A：高频异议标准应答库（销售页/私域直接复用） 异议1：“AI工具免费/很便宜，为什么要买你的顾问服务？” [共情] 工具确实便宜，但“会用”和“能提效/[变现]”是两回事。[重构] 您缺的不是软件，而是把AI嵌入您现有业务的工作流。[证据] 我们提供3步诊断：①梳理高频重复任务 ②匹配开源/付费工具",
+          "tags": [
+            "asset-copy",
+            "domain-copywriting",
+            "domain-sales",
+            "purpose-commercialization",
+            "type-copy-asset"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "异议处理",
+            "文案资产",
+            "落地页文案"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 5,
+        "tokens": 248,
+        "chars": 827,
+        "kinds": {
+          "wiki": 5
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 54,
+            "len": 180,
+            "preview": "…加入AI落地陪跑营（早鸟价99元，含3次复盘） 转化验收清单 [ ] 首屏是否3秒内传达“你是谁+解决什么问题+能得到什么”？ [ ] 是否避免使用“全网最强”“100%[变现]”“guaranteed收益”等绝对化用语？ [ ] 交付物是否具象化（如：Notion模板、Python脚本、SOP文档）而非抽象概念？ ",
+            "source": "AI工具落地顾问个人IP冷启动获客落地页结构"
+          },
+          {
+            "kind": "wiki",
+            "score": 54,
+            "len": 154,
+            "preview": "…清单A：高频异议标准应答库（销售页/私域直接复用） 异议1：“AI工具免费/很便宜，为什么要买你的顾问服务？” [共情] 工具确实便宜，但“会用”和“能提效/[变现]”是两回事。[重构] 您缺的不是软件，而是把AI嵌入您现有业务的工作流。[证据] 我们提供3步诊断：①梳理高频重复任务 ②匹配开源/付费工具",
+            "source": "AI工具落地顾问销售页异议处理话术库"
+          },
+          {
+            "kind": "wiki",
+            "score": 53,
+            "len": 208,
+            "preview": "…AI社群’，自动发送《5个高转化群SOP提示词模板》。” 体验诱饵 ：“点击主页链接，0元加入AI工具内测体验群，前50名送1v1诊断。” 互动诱饵 ：“你的社群目前卡在‘活跃度’还是‘[变现]’？留言区告诉我，抽3人免费改SOP。” 执行验收清单（Checklist） [ ] 前3秒是否包含明确人群标签+痛点/数据",
+            "source": "AI工具落地顾问短视频引流案例改写模板"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 709,
+        "remainingTokens": 1791,
+        "includedCount": 5,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "zh",
+      "q": "Skill",
+      "http": 200,
+      "latency_ms": 26.6,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "Skill"
+      ],
+      "total_evidence_tokens": 336,
+      "total_evidence_chars": 740,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 5,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 1,
+      "any_keyword_hits": 5,
+      "avg_score": 25.2,
+      "top": [
+        {
+          "title": "Hermes skills 跨 profile 分发建议 2026-06-28",
+          "path": "vault/20_notes/2026-06-28/hermes-skills-跨-profile-分发建议-2026-06-28.md",
+          "score": 57,
+          "source_type": "telegram",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 1,
+          "excerpt_len": 129,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 129,
+          "evidence_tokens": 50,
+          "matched": [
+            "Skill"
+          ],
+          "evidence_preview": "Hermes skills 跨 profile 分发建议 2026 06 28 总原则 已确认 config assistant 下约 999 个 [SKILL].md，其中 cybersecurity 817 个、openmontage video 76…",
+          "tags": [
+            "auto-ingested",
+            "telegram"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        },
+        {
+          "title": "公众号深拆文章纠偏：默认使用最新 X-like 真实素材",
+          "path": "vault/20_notes/2026-06-28/公众号深拆文章纠偏-默认使用最新-x-like-真实素材.md",
+          "score": 33,
+          "source_type": "telegram",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 1,
+          "excerpt_len": 207,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 207,
+          "evidence_tokens": 89,
+          "matched": [
+            "Skill"
+          ],
+          "evidence_preview": "…一个月 96 万曝光的方法，被做成了 Codex [Skill]：小红书图文开始进入“视觉导演”时代 source tweets: 2069826888105918973 / 2065797346370502952 media id: MJpidE9G IjTnEiLgOR8xGrHxsynB vDVs2Uk9peGryNQvLsdsd7L6ljseQJK",
+          "tags": [
+            "Hermes",
+            "X-like",
+            "auto-ingested",
+            "skill",
+            "telegram",
+            "公众号",
+            "内容生产"
+          ],
+          "concepts": [
+            "内容生产"
+          ]
+        },
+        {
+          "title": "Codex AGENTS Wiki 工作闭环规则落地",
+          "path": "vault/20_notes/2026-06-27/codex-agents-wiki-工作闭环规则落地.md",
+          "score": 12,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 2,
+          "excerpt_len": 135,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 135,
+          "evidence_tokens": 58,
+          "matched": [
+            "Skill"
+          ],
+          "evidence_preview": "…icarus fabric/Projects/Agent协作闭环/。 统计 obsidianmanager1 共有 119 个 [Skill]。 note taking 相关 [Skill] 7 个。 系统经验记忆 8 条，用户偏好记忆 10 条。 cron job…",
+          "tags": [
+            "agent-output",
+            "auto-ingested",
+            "codex",
+            "personal-os",
+            "personal-wiki",
+            "wiki",
+            "workflow"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "Personal Wiki"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 13,
+        "tokens": 1149,
+        "chars": 3832,
+        "kinds": {
+          "wiki": 5,
+          "project_event": 7,
+          "inbox": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 63,
+            "len": 135,
+            "preview": "…icarus fabric/Projects/Agent协作闭环/。 统计 obsidianmanager1 共有 119 个 [Skill]。 note taking 相关 [Skill] 7 个。 系统经验记忆 8 条，用户偏好记忆 10 条。 cron job…",
+            "source": "Codex AGENTS Wiki 工作闭环规则落地"
+          },
+          {
+            "kind": "project_event",
+            "score": 77,
+            "len": 502,
+            "preview": "本轮自动化使用 agent-reach/twitter-cli 扫描 X likes 120 条、home feed 80 条，以及 Hermes skill / Codex skill / Claude Code skill / MCP skill / agent workflow / agent memory / ",
+            "source": "Hermes Skill candidate collection 2026-07-18"
+          },
+          {
+            "kind": "wiki",
+            "score": 56,
+            "len": 207,
+            "preview": "…一个月 96 万曝光的方法，被做成了 Codex [Skill]：小红书图文开始进入“视觉导演”时代 source tweets: 2069826888105918973 / 2065797346370502952 media id: MJpidE9G IjTnEiLgOR8xGrHxsynB vDVs2Uk9peG",
+            "source": "公众号深拆文章纠偏：默认使用最新 X-like 真实素材"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1608,
+        "remainingTokens": 892,
+        "includedCount": 13,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "concept",
+      "q": "长期记忆",
+      "http": 200,
+      "latency_ms": 28.1,
+      "wiki_status": "ok",
+      "n_cand": 4,
+      "searched": [
+        "长期记忆"
+      ],
+      "total_evidence_tokens": 659,
+      "total_evidence_chars": 854,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 4,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 4,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "AI Agent记忆系统定时巡检质量门清单",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统定时巡检质量门清单.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 3,
+          "excerpt_len": 191,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 191,
+          "evidence_tokens": 152,
+          "matched": [
+            "长期记忆"
+          ],
+          "evidence_preview": "AI Agent记忆系统定时巡检质量门清单 AI Agent记忆系统定时巡检质量门清单 一句话结论 本手册为知识库管理员提供一套可执行的定时巡检质量门清单，确保 AI Agent 的记忆系统（[长期记忆]、短期记忆、工作记忆）在信息保真度、检索效率、安全合规三个维度持续满足生产级标准，避免“记忆腐烂”导致 Agent 输出幻觉或违规内容。 适用场景 知识库管",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "入库契约",
+            "检查清单",
+            "自动化执行"
+          ]
+        },
+        {
+          "title": "AI Agent记忆系统故障处理SOP（交付验收版）",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统故障处理sop-交付验收版.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 1,
+          "excerpt_len": 239,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 239,
+          "evidence_tokens": 172,
+          "matched": [
+            "长期记忆"
+          ],
+          "evidence_preview": "…等故障 项目PM需要协调技术团队快速定位记忆系统问题并给出修复方案 编写交付验收报告中的记忆系统稳定性章节 培训新入职PM理解记忆系统故障的标准处理流程 核心概念速览 短期记忆（Short term Memory） ：Agent在单次会话中暂存的信息，会话结束即清空 [长期记忆]（Long term Memory） ：跨会话持久化的用户信息、偏好、历史交互",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "SOP"
+          ]
+        },
+        {
+          "title": "AI Agent记忆系统故障处理SOP（定时巡检）",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统故障处理sop-定时巡检.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 2,
+          "excerpt_len": 244,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 244,
+          "evidence_tokens": 211,
+          "matched": [
+            "长期记忆"
+          ],
+          "evidence_preview": "…遗忘关键信息”“跨会话信息泄露”等异常后的事后排查。 新版本记忆策略上线前的回归检查。 面向审计或合规需求，生成记忆系统健康度报告。 核心概念速览 短期记忆 ：当前会话窗口内的上下文，Agent 直接可见。 [长期记忆] ：经向量化后存入知识库的持久化信息，需检索调用。 工作记忆 ：任务执行过程中的临时状态，如当前步骤、已收集参数。 记忆漂移 ：长期记忆中",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "SOP",
+            "自动化执行"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 4,
+        "tokens": 256,
+        "chars": 854,
+        "kinds": {
+          "wiki": 4
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 72,
+            "len": 180,
+            "preview": "…强依赖外部记忆系统（工作记忆、短期记忆、[长期记忆]）维持状态。 工作记忆（Working Memory） ：当前任务的活动上下文，如对话历史、工具调用栈、中间推理步骤。易失性最高。 短期记忆（Short Term Memory） ：当前会话或任务集的摘要与关键实体，通常存于快速缓存。 [长期记忆]（Long Ter",
+            "source": "AI Agent记忆系统故障处理SOP：面向Hermes执行Agent的状态恢复手册"
+          },
+          {
+            "kind": "wiki",
+            "score": 62,
+            "len": 244,
+            "preview": "…遗忘关键信息”“跨会话信息泄露”等异常后的事后排查。 新版本记忆策略上线前的回归检查。 面向审计或合规需求，生成记忆系统健康度报告。 核心概念速览 短期记忆 ：当前会话窗口内的上下文，Agent 直接可见。 [长期记忆] ：经向量化后存入知识库的持久化信息，需检索调用。 工作记忆 ：任务执行过程中的临时状态，如当前步",
+            "source": "AI Agent记忆系统故障处理SOP（定时巡检）"
+          },
+          {
+            "kind": "wiki",
+            "score": 59,
+            "len": 239,
+            "preview": "…等故障 项目PM需要协调技术团队快速定位记忆系统问题并给出修复方案 编写交付验收报告中的记忆系统稳定性章节 培训新入职PM理解记忆系统故障的标准处理流程 核心概念速览 短期记忆（Short term Memory） ：Agent在单次会话中暂存的信息，会话结束即清空 [长期记忆]（Long term Memory） ",
+            "source": "AI Agent记忆系统故障处理SOP（交付验收版）"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 720,
+        "remainingTokens": 1780,
+        "includedCount": 4,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "concept",
+      "q": "知识库检索",
+      "http": 200,
+      "latency_ms": 77.0,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "知识库检索"
+      ],
+      "total_evidence_tokens": 642,
+      "total_evidence_chars": 861,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 5,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 5,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "AI工具落地顾问销售页文案资产包：成交前跟进案例改写模板",
+          "path": "vault/20_notes/2026-06-26/ai工具落地顾问销售页文案资产包-成交前跟进案例改写模板.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 8,
+          "concepts_n": 6,
+          "excerpt_len": 166,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 166,
+          "evidence_tokens": 125,
+          "matched": [
+            "知识库检索"
+          ],
+          "evidence_preview": "…明确AI工具介入节点、配置方式与人工协同边界。 改写公式：[工具/模块] + [部署动作] + [关键参数/阈值/人工复核点] 示例：部署“[知识库检索]+LLM摘要层”，设定置信度阈值≥0.85自动回复，低于阈值转人工；首月仅替换30%标准化问答。 步骤3：结果显影（Result） 必须包含可验证指标，标注数据周期与复现条件…",
+          "tags": [
+            "asset-copy",
+            "asset-template",
+            "domain-copywriting",
+            "domain-sales",
+            "purpose-commercialization",
+            "purpose-content-production",
+            "type-copy-asset",
+            "type-template"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "成交前跟进",
+            "文案资产",
+            "模板资产",
+            "用户见证",
+            "销售转化"
+          ]
+        },
+        {
+          "title": "Agent记忆基准设计与输出排障手册",
+          "path": "vault/20_notes/2026-06-27/agent记忆基准设计与输出排障手册.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 2,
+          "excerpt_len": 144,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 144,
+          "evidence_tokens": 93,
+          "matched": [
+            "知识库检索"
+          ],
+          "evidence_preview": "…基准设计四阶框架（Design Inject Extract Verify） Design（场景构造） ：明确记忆分类（工作记忆/短期缓存、情景记忆/多轮轨迹、语义记忆/[知识库检索]、程序记忆/工具调用链），设定干扰项密度（建议15% 25%）与时间跨度（短程≤10轮、长程≥30轮…",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "Playbook",
+            "检查清单"
+          ]
+        },
+        {
+          "title": "RAG混合检索RRF实战指南：架构对比与召回质量评估",
+          "path": "vault/20_notes/2026-06-27/rag混合检索rrf实战指南-架构对比与召回质量评估.md",
+          "score": 12,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 3,
+          "excerpt_len": 184,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 184,
+          "evidence_tokens": 146,
+          "matched": [
+            "知识库检索"
+          ],
+          "evidence_preview": "将口语化查询改写为更利于检索的形式 自适应融合权重：根据查询类型动态调整稠密/稀疏权重，替代固定RRF 多路召回扩展：增加知识图谱、结构化字段检索作为第三路 评估体系升级：引入RAGAS等自动化评估框架，实现批量回归测试 检索关键词 混合检索 RRF 倒数排序融合 召回质量评估 BM25 稠密检索 稀疏检索 RAG架构选型 [知识库检索] Recall@K ",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "RAG",
+            "复购召回",
+            "混合检索"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 5,
+        "tokens": 258,
+        "chars": 861,
+        "kinds": {
+          "wiki": 5
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 76,
+            "len": 184,
+            "preview": "将口语化查询改写为更利于检索的形式 自适应融合权重：根据查询类型动态调整稠密/稀疏权重，替代固定RRF 多路召回扩展：增加知识图谱、结构化字段检索作为第三路 评估体系升级：引入RAGAS等自动化评估框架，实现批量回归测试 检索关键词 混合检索 RRF 倒数排序融合 召回质量评估 BM25 稠密检索 稀疏检索 RAG架构",
+            "source": "RAG混合检索RRF实战指南：架构对比与召回质量评估"
+          },
+          {
+            "kind": "wiki",
+            "score": 69,
+            "len": 144,
+            "preview": "…基准设计四阶框架（Design Inject Extract Verify） Design（场景构造） ：明确记忆分类（工作记忆/短期缓存、情景记忆/多轮轨迹、语义记忆/[知识库检索]、程序记忆/工具调用链），设定干扰项密度（建议15% 25%）与时间跨度（短程≤10轮、长程≥30轮…",
+            "source": "Agent记忆基准设计与输出排障手册"
+          },
+          {
+            "kind": "wiki",
+            "score": 61,
+            "len": 175,
+            "preview": "…分支B：阻塞原因分类（资源/技术/依赖/外部） 资源不足 → 触发资源池调度请求（附配额缺口与优先级） 技术卡点 → 触发专家Agent会诊/[知识库检索]（附错误码与日志片段） 依赖延迟 → 触发上游节点催办/备选路径切换（附SLA违约倒计时） 外部变更 → 触发需求基线评审流程（附变更影响面评估） 部分达成 → ",
+            "source": "项目日报结构化模板：面向Agent调度者的决策树"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 745,
+        "remainingTokens": 1755,
+        "includedCount": 5,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "concept",
+      "q": "Agent 任务认领",
+      "http": 200,
+      "latency_ms": 65.0,
+      "wiki_status": "ok",
+      "n_cand": 7,
+      "searched": [
+        "Agent 任务认领",
+        "任务认领"
+      ],
+      "total_evidence_tokens": 633,
+      "total_evidence_chars": 1011,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 7,
+      "blank_status_n": 0,
+      "no_concepts_n": 1,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 4.6,
+      "top": [
+        {
+          "title": "知识付费社群首单转化话术库：AI工具顾问案例改写与复购召回模板",
+          "path": "vault/20_notes/2026-06-26/知识付费社群首单转化话术库-ai工具顾问案例改写与复购召回模板.md",
+          "score": 8,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 6,
+          "excerpt_len": 164,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 164,
+          "evidence_tokens": 130,
+          "matched": [
+            "任务认领"
+          ],
+          "evidence_preview": "…我会教你用 ChatGPT 写爆款文案”），但用户买单的动力来自“我有个任务一直没完成，现在有人说能用 AI 帮我搞定”。 操作模板： 在免费群或体验课中，用“[任务认领]”话术筛选高意向用户： “请在聊天区打出你最近 1 周内，用 AI 工具尝试过但没搞定的一件事。比如：用 AI 写小红书文案，但改了好几版都不像自己写的…",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "AI工具顾问",
+            "复购召回",
+            "模板资产",
+            "用户见证",
+            "销售转化",
+            "首单转化"
+          ]
+        },
+        {
+          "title": "Personal OS任务分流与Owner Split手册：面向项目PM的提示词模板（状态恢复）",
+          "path": "vault/20_notes/2026-06-27/personal-os任务分流与owner-split手册-面向项目pm的提示词模板-状态恢复.md",
+          "score": 8,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 4,
+          "excerpt_len": 154,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 154,
+          "evidence_tokens": 117,
+          "matched": [
+            "任务认领"
+          ],
+          "evidence_preview": "…建议标注时区，避免“2小时响应”在对方深夜触发 检索关键词 任务分流 Owner Split 状态恢复 提示词模板 项目中断恢复 [任务认领] 阻塞管理 PM工作流 Personal OS 上下文切换 后续补强来源 待核验：认知心理学中关于任务切换成本的具体数据（当前业内常引用“中断后需 23 分钟恢复…",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "Personal OS",
+            "Playbook",
+            "模板资产",
+            "项目管理"
+          ]
+        },
+        {
+          "title": "GitHub 雷达评估：swarmclawai/swarmvault 2026-07-06",
+          "path": "vault/20_notes/2026-07-06/github-雷达评估-swarmclawai-swarmvault-2026-07-06.md",
+          "score": 8,
+          "source_type": "telegram",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 0,
+          "excerpt_len": 150,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 150,
+          "evidence_tokens": 64,
+          "matched": [
+            "任务认领"
+          ],
+          "evidence_preview": "…与 personal os/wiki 的适配点 personal os 已有 /api/agent/context、[任务认领]、/api/intake、wikiwritejob、.agent-runs/<task-id>/，无需引入 swarmvault 数据目录结构。 适配优先级应是 api…",
+          "tags": [
+            "auto-ingested",
+            "telegram"
+          ],
+          "concepts": []
+        }
+      ],
+      "memory": {
+        "n": 7,
+        "tokens": 303,
+        "chars": 1011,
+        "kinds": {
+          "wiki": 7
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 86,
+            "len": 150,
+            "preview": "…与 personal os/wiki 的适配点 personal os 已有 /api/agent/context、[任务认领]、/api/intake、wikiwritejob、.agent-runs/<task-id>/，无需引入 swarmvault 数据目录结构。 适配优先级应是 api…",
+            "source": "GitHub 雷达评估：swarmclawai/swarmvault 2026-07-06"
+          },
+          {
+            "kind": "wiki",
+            "score": 74,
+            "len": 129,
+            "preview": "Hermes [Agent] 定位 个人助理 / [agent] 调度层，连接 Personal OS、Personal Wiki 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 personal wiki、personal os…",
+            "source": "Hermes Agent"
+          },
+          {
+            "kind": "wiki",
+            "score": 69,
+            "len": 154,
+            "preview": "…建议标注时区，避免“2小时响应”在对方深夜触发 检索关键词 任务分流 Owner Split 状态恢复 提示词模板 项目中断恢复 [任务认领] 阻塞管理 PM工作流 Personal OS 上下文切换 后续补强来源 待核验：认知心理学中关于任务切换成本的具体数据（当前业内常引用“中断后需 23 分钟恢复…",
+            "source": "Personal OS任务分流与Owner Split手册：面向项目PM的提示词模板（状态恢复）"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 713,
+        "remainingTokens": 1787,
+        "includedCount": 7,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "concept",
+      "q": "如何部署 Personal Wiki",
+      "http": 200,
+      "latency_ms": 56.3,
+      "wiki_status": "ok",
+      "n_cand": 4,
+      "searched": [
+        "如何部署 Personal Wiki",
+        "如何部署"
+      ],
+      "total_evidence_tokens": 352,
+      "total_evidence_chars": 593,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 4,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 2.0,
+      "top": [
+        {
+          "title": "Agent 使用手册：赚钱导向个人知识库",
+          "path": "vault/20_notes/2026-05-05/agent-使用手册-赚钱导向个人知识库.md",
+          "score": 2,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 4,
+          "excerpt_len": 154,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 154,
+          "evidence_tokens": 102,
+          "matched": [
+            "如何部署 Personal Wiki"
+          ],
+          "evidence_preview": "Agent 使用手册：赚钱导向个人知识库 定位 [Personal] OS 不是大脑，也不是判断者。它只是保存任务、项目、Inbox、活动和状态的程序。 [Personal] [Wiki] 不是任务系统。它保存手册、证据、项目资料、复盘、部署记录和长期知识。 真正执行判断的是 Agent。任何 Agent…",
+          "tags": [
+            "domain-agent",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-codex-memory",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "Personal Wiki",
+            "Playbook",
+            "决策支持"
+          ]
+        },
+        {
+          "title": "Agent 反抽象输出提示词",
+          "path": "vault/20_notes/2026-05-05/agent-反抽象输出提示词.md",
+          "score": 2,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 133,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 133,
+          "evidence_tokens": 88,
+          "matched": [
+            "如何部署 Personal Wiki"
+          ],
+          "evidence_preview": "Agent 反抽象输出提示词 用途 这份提示词用于约束 Hermes / [Personal] OS / [Wiki] 管理 Agent 的说话方式，避免输出“整理、优化、推进、收敛”这类抽象废话。 核心提示词 固定输出格式 日计划 晚复盘 任务审查 示例 坏输出…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "项目管理"
+          ]
+        },
+        {
+          "title": "Hermes Agent",
+          "path": "vault/20_notes/2026-05-05/hermes-agent.md",
+          "score": 2,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 137,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 137,
+          "evidence_tokens": 61,
+          "matched": [
+            "如何部署 Personal Wiki"
+          ],
+          "evidence_preview": "Hermes Agent 定位 个人助理 / agent 调度层，连接 [Personal] OS、[Personal] [Wiki] 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 [personal] [wiki]、[personal] os…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 4,
+        "tokens": 177,
+        "chars": 593,
+        "kinds": {
+          "wiki": 4
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 85,
+            "len": 137,
+            "preview": "Hermes Agent 定位 个人助理 / agent 调度层，连接 [Personal] OS、[Personal] [Wiki] 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 [personal] [wiki]、[personal] os…",
+            "source": "Hermes Agent"
+          },
+          {
+            "kind": "wiki",
+            "score": 76,
+            "len": 154,
+            "preview": "Agent 使用手册：赚钱导向个人知识库 定位 [Personal] OS 不是大脑，也不是判断者。它只是保存任务、项目、Inbox、活动和状态的程序。 [Personal] [Wiki] 不是任务系统。它保存手册、证据、项目资料、复盘、部署记录和长期知识。 真正执行判断的是 Agent。任何 Agent…",
+            "source": "Agent 使用手册：赚钱导向个人知识库"
+          },
+          {
+            "kind": "wiki",
+            "score": 74,
+            "len": 169,
+            "preview": "[Personal] OS Agent 写入凭据交接说明 结论 [Personal] OS 的写入口已经通，问题不在服务端接口，而在调用方必须带写 token。 任何 Hermes / Codex / 其他 Agent 要写入 [Personal] OS，都必须先读取本机私有凭据文件： 然后所有写请求都要带： 当前验证",
+            "source": "Personal OS Agent 写入凭据交接说明"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 380,
+        "remainingTokens": 2120,
+        "includedCount": 4,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "concept",
+      "q": "图谱关系",
+      "http": 200,
+      "latency_ms": 64.0,
+      "wiki_status": "ok",
+      "n_cand": 1,
+      "searched": [
+        "图谱关系"
+      ],
+      "total_evidence_tokens": 127,
+      "total_evidence_chars": 166,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 1,
+      "blank_status_n": 0,
+      "no_concepts_n": 1,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 1,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "Personal OS 记忆产品改造：外部项目吸收方案与提示词影响",
+          "path": "vault/20_notes/2026-07-03/personal-os-记忆产品改造-外部项目吸收方案与提示词影响.md",
+          "score": 12,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 0,
+          "excerpt_len": 166,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 166,
+          "evidence_tokens": 127,
+          "matched": [
+            "图谱关系"
+          ],
+          "evidence_preview": "personal os 记忆产品改造：外部项目吸收方案与提示词影响 判断 外部项目不应该直接复制代码，而应该拆成可吸收的产品能力：分层记忆、混合召回、可观测检索、mcp 插件、[图谱关系]、记忆生命周期、评测基准、云向量适配器。短期优先改 personal os 的服务端召回链路和写回协议，不大改 agent 提示词。 吸收路线…",
+          "tags": [
+            "RAG",
+            "agent-memory",
+            "agent-output",
+            "auto-ingested",
+            "context-retrieval",
+            "personal-os",
+            "产品方案"
+          ],
+          "concepts": []
+        }
+      ],
+      "memory": {
+        "n": 1,
+        "tokens": 49,
+        "chars": 166,
+        "kinds": {
+          "wiki": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 55,
+            "len": 166,
+            "preview": "personal os 记忆产品改造：外部项目吸收方案与提示词影响 判断 外部项目不应该直接复制代码，而应该拆成可吸收的产品能力：分层记忆、混合召回、可观测检索、mcp 插件、[图谱关系]、记忆生命周期、评测基准、云向量适配器。短期优先改 personal os 的服务端召回链路和写回协议，不大改 agent 提示词。",
+            "source": "Personal OS 记忆产品改造：外部项目吸收方案与提示词影响"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 149,
+        "remainingTokens": 2351,
+        "includedCount": 1,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "concept",
+      "q": "RAG 记忆",
+      "http": 200,
+      "latency_ms": 45.6,
+      "wiki_status": "ok",
+      "n_cand": 6,
+      "searched": [
+        "RAG 记忆",
+        "RAG"
+      ],
+      "total_evidence_tokens": 627,
+      "total_evidence_chars": 972,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 6,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 14.3,
+      "top": [
+        {
+          "title": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选",
+          "path": "vault/20_notes/2026-06-25/github-知识雷达-2026-06-25-personal-os-wiki-自驱候选.md",
+          "score": 44,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 10,
+          "concepts_n": 2,
+          "excerpt_len": 167,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 167,
+          "evidence_tokens": 50,
+          "matched": [
+            "RAG",
+            "RAG 记忆"
+          ],
+          "evidence_preview": "…open source knowledge graph builder, [RAG] knowledge base, and agent memory store. Built on Andrej Karpathy's pattern. An Obsidian alternative for personal knowledge…",
+          "tags": [
+            "domain-agent",
+            "domain-devops",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-agent-output",
+            "topic-github-radar",
+            "topic-idea",
+            "type-research-note"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "RAG"
+          ]
+        },
+        {
+          "title": "AI_NovelGenerator",
+          "path": "vault/20_notes/2026-05-05/ai-novelgenerator.md",
+          "score": 10,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 5,
+          "concepts_n": 1,
+          "excerpt_len": 149,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 149,
+          "evidence_tokens": 92,
+          "matched": [
+            "RAG",
+            "RAG 记忆"
+          ],
+          "evidence_preview": "…3091，路径 /home/owner/AI NovelGenerator。 文档状态 当前状态是 部分，有项目说明，但图谱 / [RAG] 记忆设计仍需继续核对实现程度。 维护提醒 Git remote 指向上游项目，不应当作原创主体开源。 相关概念 业务项目索引 服务器 192.168.6…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "purpose-reference",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        },
+        {
+          "title": "里程碑拆解与验收 Playbook",
+          "path": "vault/20_notes/2026-06-25/里程碑拆解与验收-playbook.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 3,
+          "excerpt_len": 148,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 148,
+          "evidence_tokens": 116,
+          "matched": [
+            "RAG",
+            "RAG 记忆"
+          ],
+          "evidence_preview": "…策略落地） 个人/团队知识资产沉淀（如课程开发、SOP 编写、数据看板搭建） AI Agent 工作流编排与自动化任务调度（如多步 [RAG] 链路验证、自动化测试流水线） 任何具备明确起止时间、需阶段性产出物、且涉及 ≥2 个角色协作的中大型任务 核心方法 采用“逆向推导+正向校验”双轨法…",
+          "tags": [
+            "domain-general",
+            "purpose-reference",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Playbook",
+            "模板资产",
+            "项目管理"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 7,
+        "tokens": 435,
+        "chars": 1450,
+        "kinds": {
+          "wiki": 6,
+          "project_event": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 88,
+            "len": 167,
+            "preview": "…open source knowledge graph builder, [RAG] knowledge base, and agent memory store. Built on Andrej Karpathy's pattern. An Obsidian alternative for personal kno",
+            "source": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选"
+          },
+          {
+            "kind": "wiki",
+            "score": 75,
+            "len": 149,
+            "preview": "…3091，路径 /home/owner/AI NovelGenerator。 文档状态 当前状态是 部分，有项目说明，但图谱 / [RAG] 记忆设计仍需继续核对实现程度。 维护提醒 Git remote 指向上游项目，不应当作原创主体开源。 相关概念 业务项目索引 服务器 192.168.6…",
+            "source": "AI_NovelGenerator"
+          },
+          {
+            "kind": "wiki",
+            "score": 72,
+            "len": 151,
+            "preview": "…边界限制 ：本手册模板适用于基于提示词驱动的 Agent 系统（如 LangChain 记忆模块、OpenAI Assistants、自研 LLM Agent），不适用于符号化规则引擎或纯检索增强生成（[RAG]）系统的基础检索器巡检（[RAG] 的向量库巡检需另设流程）。 检索关键词 AI Age",
+            "source": "AI Agent记忆系统定时巡检手册：知识库管理员提示词模板"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 844,
+        "remainingTokens": 1656,
+        "includedCount": 7,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "ops",
+      "q": "WIKI_READ_TOKEN",
+      "http": 200,
+      "latency_ms": 25.3,
+      "wiki_status": "empty",
+      "n_cand": 0,
+      "searched": [
+        "WIKI_READ_TOKEN"
+      ],
+      "total_evidence_tokens": 0,
+      "total_evidence_chars": 0,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 0,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 0.0,
+      "top": [],
+      "memory": {
+        "n": 0,
+        "tokens": 0,
+        "chars": 0,
+        "kinds": {},
+        "samples": []
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 0,
+        "remainingTokens": 2500,
+        "includedCount": 0,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "ops",
+      "q": "3422",
+      "http": 200,
+      "latency_ms": 50.6,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "3422"
+      ],
+      "total_evidence_tokens": 301,
+      "total_evidence_chars": 698,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 5,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 5,
+      "avg_score": 12.0,
+      "top": [
+        {
+          "title": "Personal Wiki 智能体访问说明",
+          "path": "vault/20_notes/2026-05-05/personal-wiki-智能体访问说明.md",
+          "score": 12,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 6,
+          "concepts_n": 1,
+          "excerpt_len": 139,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 139,
+          "evidence_tokens": 68,
+          "matched": [
+            "3422"
+          ],
+          "evidence_preview": "…http://127.0.0.1:[3422]/api/graph loopback 读取不需要 token，方便本机 Hermes / Codex / 维护脚本工作。 运行在其他机器的智能体 需要带只读 Bearer： 不要把 token 写进 wiki 笔记。token…",
+          "tags": [
+            "domain-agent",
+            "domain-knowledge-os",
+            "purpose-automation",
+            "purpose-reference",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Personal Wiki"
+          ]
+        },
+        {
+          "title": "personal-wiki",
+          "path": "vault/20_notes/2026-05-05/personal-wiki.md",
+          "score": 12,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 5,
+          "concepts_n": 1,
+          "excerpt_len": 141,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 141,
+          "evidence_tokens": 77,
+          "matched": [
+            "3422"
+          ],
+          "evidence_preview": "personal wiki 定位 个人知识库 / Markdown vault / 图谱浏览服务，是这轮服务器台账入库的位置。 关联服务器 服务器 192.168.6.42 业务台账：主运行机，入口 [3422]，路径 /home/tun1/personal wiki。 文档状态…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "purpose-reference",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Personal Wiki"
+          ]
+        },
+        {
+          "title": "服务器 192.168.6.42 业务台账",
+          "path": "vault/20_notes/2026-05-05/服务器-192-168-6-42-业务台账.md",
+          "score": 12,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 10,
+          "concepts_n": 1,
+          "excerpt_len": 164,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 164,
+          "evidence_tokens": 54,
+          "matched": [
+            "3422"
+          ],
+          "evidence_preview": "…faceaboard / billing panel new api horizon hr system aihub backend 关键服务与端口 [3422]：personal wiki 3100：personal os app 3411 / 3400 / 3018：faceaboard / billing panel…",
+          "tags": [
+            "asset-dashboard",
+            "domain-agent",
+            "domain-devops",
+            "domain-project-management",
+            "purpose-automation",
+            "purpose-decision-support",
+            "purpose-reference",
+            "topic-codex-memory",
+            "type-index",
+            "type-technical-note"
+          ],
+          "concepts": [
+            "服务器运维"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 7,
+        "tokens": 563,
+        "chars": 1878,
+        "kinds": {
+          "wiki": 5,
+          "project_event": 2
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 65,
+            "len": 121,
+            "preview": "…[3422]。 同步把公开 NEXT PUBLIC APP URL / NEXT PUBLIC WIKI URL 调整为 <PERSONAL_OS_BASE_URL> / <PERSONAL_OS_BASE_URL>:[3422]，避免返回…",
+            "source": "6.37 Personal OS -> Wiki 链路修复记录 2026-06-27"
+          },
+          {
+            "kind": "wiki",
+            "score": 65,
+            "len": 133,
+            "preview": "…write status.status 为 ok，且 Wiki 返回 note path。 根因草案：OS 容器内使用 localhost:[3422] 指向自身，导致 fetch failed；修复为服务端内部 URL personal wiki:[3422]。",
+            "source": "Codex Personal OS Wiki Link 回归验证 2026-06-27"
+          },
+          {
+            "kind": "wiki",
+            "score": 54,
+            "len": 141,
+            "preview": "personal wiki 定位 个人知识库 / Markdown vault / 图谱浏览服务，是这轮服务器台账入库的位置。 关联服务器 服务器 192.168.6.42 业务台账：主运行机，入口 [3422]，路径 /home/tun1/personal wiki。 文档状态…",
+            "source": "personal-wiki"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 772,
+        "remainingTokens": 1728,
+        "includedCount": 7,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "ops",
+      "q": "docker compose",
+      "http": 200,
+      "latency_ms": 70.9,
+      "wiki_status": "ok",
+      "n_cand": 7,
+      "searched": [
+        "docker compose",
+        "docker",
+        "compose"
+      ],
+      "total_evidence_tokens": 517,
+      "total_evidence_chars": 1008,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 7,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 1,
+      "any_keyword_hits": 1,
+      "avg_score": 28.7,
+      "top": [
+        {
+          "title": "Docker Compose 生产更新守则：面向独立开发者的故障树（接口回归）",
+          "path": "vault/20_notes/2026-06-28/docker-compose-生产更新守则-面向独立开发者的故障树-接口回归.md",
+          "score": 121,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 1,
+          "excerpt_len": 178,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 178,
+          "evidence_tokens": 135,
+          "matched": [
+            "docker compose",
+            "docker",
+            "compose"
+          ],
+          "evidence_preview": "Docker [Compose] 生产更新守则：面向独立开发者的故障树（接口回归） 一句话结论 独立开发者在生产环境使用 Docker [Compose] 更新服务时，应以“接口回归验证”为第一防线，通过标准化故障树定位容器编排、网络路由与代码变更的耦合问题，实现分钟级回滚与零数据丢失。 适用场景 独立开发者或微型团队（1 3 人）维护的 Web 应用…",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "服务器运维"
+          ]
+        },
+        {
+          "title": "服务器 192.168.6.28 业务台账",
+          "path": "vault/20_notes/2026-05-05/服务器-192-168-6-28-业务台账.md",
+          "score": 18,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 10,
+          "concepts_n": 2,
+          "excerpt_len": 170,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 170,
+          "evidence_tokens": 114,
+          "matched": [
+            "docker",
+            "compose",
+            "docker compose"
+          ],
+          "evidence_preview": "…new api：部分 维护提醒 这台机子的问题不是“没服务”，而是服务太多，且托管方式不统一。 有一批服务是 systemd，也有一批是 [Docker] [Compose]，还有一批像 nohup / 常驻进程。 期货相关服务的文档已经和真实端口发生漂移，后续排障不能只信旧手册。 证据 SSH 用户：qihuo 关键路径：/home…",
+          "tags": [
+            "asset-dashboard",
+            "domain-agent",
+            "domain-devops",
+            "domain-project-management",
+            "purpose-automation",
+            "purpose-decision-support",
+            "purpose-reference",
+            "topic-codex-memory",
+            "type-index",
+            "type-technical-note"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "服务器运维"
+          ]
+        },
+        {
+          "title": "6.37 Personal OS -> Wiki 链路修复记录 2026-06-27",
+          "path": "vault/20_notes/2026-06-27/6-37-personal-os-wiki-链路修复记录-2026-06-27.md",
+          "score": 18,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 3,
+          "excerpt_len": 153,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 153,
+          "evidence_tokens": 53,
+          "matched": [
+            "docker",
+            "compose",
+            "docker compose"
+          ],
+          "evidence_preview": "…ts 的服务端 Wiki client 改为使用 wikiInternalUrl()。 /tmp/personal os wiki deploy/[docker] [compose].yml 为 OS 注入 PERSONAL WIKI INTERNAL URL=http://personal wiki…",
+          "tags": [
+            "6.37",
+            "agent-output",
+            "auto-ingested",
+            "codex",
+            "maintenance",
+            "personal-os",
+            "personal-wiki"
+          ],
+          "concepts": [
+            "Personal OS",
+            "Personal Wiki",
+            "服务器运维"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 9,
+        "tokens": 693,
+        "chars": 2312,
+        "kinds": {
+          "wiki": 7,
+          "project_event": 2
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 117,
+            "len": 153,
+            "preview": "…ts 的服务端 Wiki client 改为使用 wikiInternalUrl()。 /tmp/personal os wiki deploy/[docker] [compose].yml 为 OS 注入 PERSONAL WIKI INTERNAL URL=http://personal wiki…",
+            "source": "6.37 Personal OS -> Wiki 链路修复记录 2026-06-27"
+          },
+          {
+            "kind": "wiki",
+            "score": 106,
+            "len": 178,
+            "preview": "Docker [Compose] 生产更新守则：面向独立开发者的故障树（接口回归） 一句话结论 独立开发者在生产环境使用 Docker [Compose] 更新服务时，应以“接口回归验证”为第一防线，通过标准化故障树定位容器编排、网络路由与代码变更的耦合问题，实现分钟级回滚与零数据丢失。 适用场景 独立开发者或微型团队",
+            "source": "Docker Compose 生产更新守则：面向独立开发者的故障树（接口回归）"
+          },
+          {
+            "kind": "wiki",
+            "score": 101,
+            "len": 170,
+            "preview": "…new api：部分 维护提醒 这台机子的问题不是“没服务”，而是服务太多，且托管方式不统一。 有一批服务是 systemd，也有一批是 [Docker] [Compose]，还有一批像 nohup / 常驻进程。 期货相关服务的文档已经和真实端口发生漂移，后续排障不能只信旧手册。 证据 SSH 用户：qihuo 关",
+            "source": "服务器 192.168.6.28 业务台账"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1184,
+        "remainingTokens": 1316,
+        "includedCount": 9,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "ops",
+      "q": "FTS chunk",
+      "http": 200,
+      "latency_ms": 46.1,
+      "wiki_status": "ok",
+      "n_cand": 6,
+      "searched": [
+        "FTS chunk",
+        "FTS",
+        "chunk"
+      ],
+      "total_evidence_tokens": 429,
+      "total_evidence_chars": 984,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 6,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 9.0,
+      "top": [
+        {
+          "title": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选",
+          "path": "vault/20_notes/2026-06-25/github-知识雷达-2026-06-25-personal-os-wiki-自驱候选.md",
+          "score": 10,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 10,
+          "concepts_n": 2,
+          "excerpt_len": 172,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 172,
+          "evidence_tokens": 51,
+          "matched": [
+            "FTS",
+            "FTS chunk"
+          ],
+          "evidence_preview": "…context pack / task ledger；Hot / warm / cold memory tiering；Graph recall: [FTS]/vector/community/PPR/episodic traces；Agent lifecycle hooks / MCP integration；Doctor / next…",
+          "tags": [
+            "domain-agent",
+            "domain-devops",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-agent-output",
+            "topic-github-radar",
+            "topic-idea",
+            "type-research-note"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "RAG"
+          ]
+        },
+        {
+          "title": "AI Agent记忆系统故障处理SOP：证据归档",
+          "path": "vault/20_notes/2026-06-26/ai-agent记忆系统故障处理sop-证据归档.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 1,
+          "excerpt_len": 132,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 132,
+          "evidence_tokens": 64,
+          "matched": [
+            "chunk",
+            "FTS chunk"
+          ],
+          "evidence_preview": "…触发时间: 2024 05 12T14:30:00Z 故障类型: 检索偏差 原始输入: “查询Q3财报中云服务营收占比” 系统指令: sys prompt v4.2 hash: a1b2c3 检索证据: [chunk] 092 (sim: 0.41), chun",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "SOP"
+          ]
+        },
+        {
+          "title": "Agent Memory Benchmark 最小可行实现：面向知识库管理员的召回质量评估方案",
+          "path": "vault/20_notes/2026-06-27/agent-memory-benchmark-最小可行实现-面向知识库管理员的召回质量评估方案.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 2,
+          "concepts_n": 3,
+          "excerpt_len": 173,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 173,
+          "evidence_tokens": 88,
+          "matched": [
+            "chunk",
+            "FTS chunk"
+          ],
+          "evidence_preview": "…适用条件不同/版本过期） [ ] 每组随机抽取 2 个“软负例”（同领域但无关主题，用于测试向量空间区分度） [ ] 标注字段规范：query, positive [chunk] id, hard negatives[], soft negatives[], expected answer, domain tag 单条测试集 JSON 示例…",
+          "tags": [
+            "auto-ingested",
+            "inbox"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "复购召回",
+            "模板资产"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 7,
+        "tokens": 438,
+        "chars": 1462,
+        "kinds": {
+          "wiki": 6,
+          "project_event": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 94,
+            "len": 172,
+            "preview": "…context pack / task ledger；Hot / warm / cold memory tiering；Graph recall: [FTS]/vector/community/PPR/episodic traces；Agent lifecycle hooks / MCP integration；Do",
+            "source": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选"
+          },
+          {
+            "kind": "wiki",
+            "score": 87,
+            "len": 132,
+            "preview": "…触发时间: 2024 05 12T14:30:00Z 故障类型: 检索偏差 原始输入: “查询Q3财报中云服务营收占比” 系统指令: sys prompt v4.2 hash: a1b2c3 检索证据: [chunk] 092 (sim: 0.41), chun",
+            "source": "AI Agent记忆系统故障处理SOP：证据归档"
+          },
+          {
+            "kind": "wiki",
+            "score": 83,
+            "len": 173,
+            "preview": "…适用条件不同/版本过期） [ ] 每组随机抽取 2 个“软负例”（同领域但无关主题，用于测试向量空间区分度） [ ] 标注字段规范：query, positive [chunk] id, hard negatives[], soft negatives[], expected answer, domain tag 单",
+            "source": "Agent Memory Benchmark 最小可行实现：面向知识库管理员的召回质量评估方案"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 670,
+        "remainingTokens": 1830,
+        "includedCount": 7,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "noise",
+      "q": "今天天气怎么样",
+      "http": 200,
+      "latency_ms": 29.1,
+      "wiki_status": "empty",
+      "n_cand": 0,
+      "searched": [
+        "今天天气怎么样"
+      ],
+      "total_evidence_tokens": 0,
+      "total_evidence_chars": 0,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 0,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 0.0,
+      "top": [],
+      "memory": {
+        "n": 0,
+        "tokens": 0,
+        "chars": 0,
+        "kinds": {},
+        "samples": []
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 0,
+        "remainingTokens": 2500,
+        "includedCount": 0,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "noise",
+      "q": "完全不存在的专有名词XYZQWERTY999",
+      "http": 200,
+      "latency_ms": 52.7,
+      "wiki_status": "empty",
+      "n_cand": 0,
+      "searched": [
+        "完全不存在的专有名词XYZQWERTY999",
+        "XYZQWERTY999"
+      ],
+      "total_evidence_tokens": 0,
+      "total_evidence_chars": 0,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 0,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 0.0,
+      "top": [],
+      "memory": {
+        "n": 0,
+        "tokens": 0,
+        "chars": 0,
+        "kinds": {},
+        "samples": []
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 0,
+        "remainingTokens": 2500,
+        "includedCount": 0,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "multi",
+      "q": "Personal OS 和 Wiki 的边界是什么",
+      "http": 200,
+      "latency_ms": 29.6,
+      "wiki_status": "ok",
+      "n_cand": 4,
+      "searched": [
+        "Personal OS 和 Wiki 的边界是什么",
+        "的边界是什么"
+      ],
+      "total_evidence_tokens": 316,
+      "total_evidence_chars": 562,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 4,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 2.0,
+      "top": [
+        {
+          "title": "Agent 使用手册：赚钱导向个人知识库",
+          "path": "vault/20_notes/2026-05-05/agent-使用手册-赚钱导向个人知识库.md",
+          "score": 2,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 4,
+          "excerpt_len": 156,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 156,
+          "evidence_tokens": 102,
+          "matched": [
+            "Personal OS 和 Wiki 的边界是什么"
+          ],
+          "evidence_preview": "Agent 使用手册：赚钱导向个人知识库 定位 [Personal] [OS] 不是大脑，也不是判断者。它只是保存任务、项目、Inbox、活动和状态的程序。 [Personal] [Wiki] 不是任务系统。它保存手册、证据、项目资料、复盘、部署记录和长期知识。 真正执行判断的是 Agent。任何 Agent…",
+          "tags": [
+            "domain-agent",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-codex-memory",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Agent 工作流",
+            "Personal Wiki",
+            "Playbook",
+            "决策支持"
+          ]
+        },
+        {
+          "title": "Agent 反抽象输出提示词",
+          "path": "vault/20_notes/2026-05-05/agent-反抽象输出提示词.md",
+          "score": 2,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 135,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 135,
+          "evidence_tokens": 89,
+          "matched": [
+            "Personal OS 和 Wiki 的边界是什么"
+          ],
+          "evidence_preview": "Agent 反抽象输出提示词 用途 这份提示词用于约束 Hermes / [Personal] [OS] / [Wiki] 管理 Agent 的说话方式，避免输出“整理、优化、推进、收敛”这类抽象废话。 核心提示词 固定输出格式 日计划 晚复盘 任务审查 示例 坏输出…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "项目管理"
+          ]
+        },
+        {
+          "title": "Hermes Agent",
+          "path": "vault/20_notes/2026-05-05/hermes-agent.md",
+          "score": 2,
+          "source_type": "markdown-import",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 1,
+          "excerpt_len": 141,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 141,
+          "evidence_tokens": 62,
+          "matched": [
+            "Personal OS 和 Wiki 的边界是什么"
+          ],
+          "evidence_preview": "Hermes Agent 定位 个人助理 / agent 调度层，连接 [Personal] [OS]、[Personal] [Wiki] 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 [personal] [wiki]、[personal] [os]…",
+          "tags": [
+            "domain-agent",
+            "purpose-automation",
+            "topic-codex-memory",
+            "type-article"
+          ],
+          "concepts": [
+            "Agent 工作流"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 4,
+        "tokens": 168,
+        "chars": 562,
+        "kinds": {
+          "wiki": 4
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 99,
+            "len": 141,
+            "preview": "Hermes Agent 定位 个人助理 / agent 调度层，连接 [Personal] [OS]、[Personal] [Wiki] 和外部输入。 关联服务器 服务器 192.168.6.42 业务台账：与 [personal] [wiki]、[personal] [os]…",
+            "source": "Hermes Agent"
+          },
+          {
+            "kind": "wiki",
+            "score": 91,
+            "len": 130,
+            "preview": "Hermes Image Station 定位 图片站 / 图像入口服务，[和] Hermes 相关工作流有关。 关联服务器 服务器 192.168.6.28 业务台账：入口 53110，路径 /home/qihuo/hermes image station…",
+            "source": "Hermes Image Station"
+          },
+          {
+            "kind": "wiki",
+            "score": 85,
+            "len": 156,
+            "preview": "Agent 使用手册：赚钱导向个人知识库 定位 [Personal] [OS] 不是大脑，也不是判断者。它只是保存任务、项目、Inbox、活动和状态的程序。 [Personal] [Wiki] 不是任务系统。它保存手册、证据、项目资料、复盘、部署记录和长期知识。 真正执行判断的是 Agent。任何 Agent…",
+            "source": "Agent 使用手册：赚钱导向个人知识库"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 335,
+        "remainingTokens": 2165,
+        "includedCount": 4,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "multi",
+      "q": "X likes 知识流水线",
+      "http": 200,
+      "latency_ms": 40.4,
+      "wiki_status": "ok",
+      "n_cand": 7,
+      "searched": [
+        "X likes 知识流水线",
+        "likes",
+        "知识流水线"
+      ],
+      "total_evidence_tokens": 708,
+      "total_evidence_chars": 1103,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 7,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 8.0,
+      "top": [
+        {
+          "title": "X Likes 2026-06-30：10 条高价值内容拆解",
+          "path": "vault/20_notes/2026-06-30/x-likes-2026-06-30-10-条高价值内容拆解.md",
+          "score": 38,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 1,
+          "excerpt_len": 127,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 127,
+          "evidence_tokens": 49,
+          "matched": [
+            "likes"
+          ],
+          "evidence_preview": "X [Likes] 2026 06 30：10 条高价值内容拆解 title: X [Likes] 2026 06 30：10 条高价值内容拆解 type: source digest created by: hermes:worker task id…",
+          "tags": [
+            "agent-reach",
+            "auto-ingested",
+            "inbox",
+            "source-digest",
+            "tool-radar",
+            "twitter",
+            "xhs"
+          ],
+          "concepts": [
+            "API 集成"
+          ]
+        },
+        {
+          "title": "Agent 如何从“看资料”变成“有知识”：Personal OS 闭环",
+          "path": "vault/20_notes/2026-06-30/agent-如何从-看资料-变成-有知识-personal-os-闭环.md",
+          "score": 8,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 7,
+          "concepts_n": 1,
+          "excerpt_len": 158,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 158,
+          "evidence_tokens": 47,
+          "matched": [
+            "likes"
+          ],
+          "evidence_preview": "…codex twitter [likes] knowledge 2026 06 30 source type: agent output tags: [agent, personal os, knowledge management, workflow, wiki] created at: 2026 06 30…",
+          "tags": [
+            "agent",
+            "auto-ingested",
+            "inbox",
+            "knowledge-management",
+            "personal-os",
+            "wiki",
+            "workflow"
+          ],
+          "concepts": [
+            "Personal OS"
+          ]
+        },
+        {
+          "title": "目标设定与即时反馈机制·执行手册",
+          "path": "vault/20_notes/2026-06-25/目标设定与即时反馈机制-执行手册.md",
+          "score": 2,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 2,
+          "excerpt_len": 92,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 92,
+          "evidence_tokens": 53,
+          "matched": [
+            "X likes 知识流水线"
+          ],
+          "evidence_preview": "…S | 步骤 Step | 本周/本日可执行的单一动作 | “今天 15:00 由 A 独立完成模块 [X] 的 CR 提交” | 执行规则： 每个 G 对应 2 4 个 D，每个…",
+          "tags": [
+            "domain-behavior",
+            "purpose-reference",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Playbook",
+            "检查清单"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 16,
+        "tokens": 1204,
+        "chars": 4015,
+        "kinds": {
+          "wiki": 7,
+          "project_event": 7,
+          "inbox": 2
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 89,
+            "len": 92,
+            "preview": "…S | 步骤 Step | 本周/本日可执行的单一动作 | “今天 15:00 由 A 独立完成模块 [X] 的 CR 提交” | 执行规则： 每个 G 对应 2 4 个 D，每个…",
+            "source": "目标设定与即时反馈机制·执行手册"
+          },
+          {
+            "kind": "wiki",
+            "score": 87,
+            "len": 181,
+            "preview": "…今日核心进展 [[x]] 支付网关联调：100% | 状态：Completed | 产出物：联调报告v2.1/测试环境URL 2. 风险与阻塞 🔴 高风险：第三方短信服务商限流导致验证码下发延迟 | 影响范围：用户注册转化率 | 当前缓解措施：已切换备用通道，监控队列积压量 Agent对接规范 字段映射：状态枚举值严",
+            "source": "项目日报结构化模板"
+          },
+          {
+            "kind": "wiki",
+            "score": 85,
+            "len": 212,
+            "preview": "…需要[某人/某团队]在[时间]前提供[具体输入物]，否则将影响[下游任务/里程碑]。” “该阻塞已持续[[X]]天，按升级机制今天进入第二级，我会在会后发起升级记录单。” 验收标准清单 [ ] 项目启动时已明确三级升级的决策人名单与替补决策人。 [ ] 团队全员知晓阻塞的定义与升级触发时限。 [ ] 每个阻塞在任务看",
+            "source": "项目阻塞升级机制"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 1954,
+        "remainingTokens": 546,
+        "includedCount": 16,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "multi",
+      "q": "Obsidian 导入导出",
+      "http": 200,
+      "latency_ms": 81.7,
+      "wiki_status": "ok",
+      "n_cand": 5,
+      "searched": [
+        "Obsidian 导入导出",
+        "Obsidian",
+        "导入导出"
+      ],
+      "total_evidence_tokens": 502,
+      "total_evidence_chars": 815,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 5,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 10.0,
+      "top": [
+        {
+          "title": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选",
+          "path": "vault/20_notes/2026-06-25/github-知识雷达-2026-06-25-personal-os-wiki-自驱候选.md",
+          "score": 10,
+          "source_type": "agent-output",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 10,
+          "concepts_n": 2,
+          "excerpt_len": 180,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 180,
+          "evidence_tokens": 58,
+          "matched": [
+            "Obsidian",
+            "Obsidian 导入导出"
+          ],
+          "evidence_preview": "…An [Obsidian] alternative for personal knowledge management, AI second brain, and durable Claude Code / Codex / OpenClaw memory. Absorb: 把外部来源写成 source ledger：repos.json、evidence…",
+          "tags": [
+            "domain-agent",
+            "domain-devops",
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-automation",
+            "purpose-knowledge-retrieval",
+            "topic-agent-output",
+            "topic-github-radar",
+            "topic-idea",
+            "type-research-note"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "RAG"
+          ]
+        },
+        {
+          "title": "个人知识库标签体系 Playbook",
+          "path": "vault/20_notes/2026-06-25/个人知识库标签体系-playbook.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 4,
+          "excerpt_len": 189,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 189,
+          "evidence_tokens": 140,
+          "matched": [
+            "Obsidian",
+            "Obsidian 导入导出"
+          ],
+          "evidence_preview": "…适用场景 AI Agent 任务编排 ：用于自动化笔记打标、生成内容大纲、执行跨库知识检索或输出项目 SOP。 个人/团队知识管理 ：适用于 [Obsidian]、Notion、Logseq 等双链笔记工具的日常维护与资产沉淀。 内容生产与复盘 ：支撑文案素材快速调用、跨领域灵感碰撞、周期性知识审计与资产盘点。 核心方法：三层正交标签法 采用“三层正交标签",
+          "tags": [
+            "domain-knowledge-os",
+            "domain-rag",
+            "purpose-knowledge-retrieval",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Personal Wiki",
+            "Playbook",
+            "分类体系",
+            "模板资产"
+          ]
+        },
+        {
+          "title": "周复盘资产沉淀模板",
+          "path": "vault/20_notes/2026-06-25/周复盘资产沉淀模板.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 4,
+          "concepts_n": 3,
+          "excerpt_len": 152,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 152,
+          "evidence_tokens": 107,
+          "matched": [
+            "Obsidian",
+            "Obsidian 导入导出"
+          ],
+          "evidence_preview": "…STAR 行为事件访谈法、PDCA 循环（具体章节与版本待核验，建议结合《复盘：三步走》《高效能人士的七个习惯》交叉对照） 工具链建议 ：[Obsidian]/Notion 双向链接管理、JSON/YAML 结构化存储、Git 版本控制 迭代路径 ：每季度对沉淀资产进行“调用频次 业务价值”矩阵评估…",
+          "tags": [
+            "asset-template",
+            "domain-project-management",
+            "purpose-reference",
+            "type-template"
+          ],
+          "concepts": [
+            "检查清单",
+            "模板资产",
+            "项目管理"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 7,
+        "tokens": 461,
+        "chars": 1537,
+        "kinds": {
+          "wiki": 5,
+          "project_event": 1,
+          "inbox": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 110,
+            "len": 180,
+            "preview": "…An [Obsidian] alternative for personal knowledge management, AI second brain, and durable Claude Code / Codex / OpenClaw memory. Absorb: 把外部来源写成 source ledger：",
+            "source": "GitHub 知识雷达 2026-06-25 Personal OS Wiki 自驱候选"
+          },
+          {
+            "kind": "wiki",
+            "score": 99,
+            "len": 152,
+            "preview": "…STAR 行为事件访谈法、PDCA 循环（具体章节与版本待核验，建议结合《复盘：三步走》《高效能人士的七个习惯》交叉对照） 工具链建议 ：[Obsidian]/Notion 双向链接管理、JSON/YAML 结构化存储、Git 版本控制 迭代路径 ：每季度对沉淀资产进行“调用频次 业务价值”矩阵评估…",
+            "source": "周复盘资产沉淀模板"
+          },
+          {
+            "kind": "wiki",
+            "score": 96,
+            "len": 143,
+            "preview": "…证据归档标准”，确保每一个待办事项在进入 Codex 工程 Agent 前，已完成严格的资格核验与权责切割。 适用场景 个人知识库/任务管理系统（如 [Obsidian]、Notion、Logseq）中，需要由 AI Agent 自动执行“文案撰写、代码生成、SOP 草拟、风险检查…",
+            "source": "Personal OS 任务分流与 Owner Split 手册：面向 Codex 工程 Agent 的状态机（证据归档）"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 910,
+        "remainingTokens": 1590,
+        "includedCount": 7,
+        "omittedCount": 0
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    },
+    {
+      "cat": "multi",
+      "q": "任务复核 review",
+      "http": 200,
+      "latency_ms": 54.1,
+      "wiki_status": "ok",
+      "n_cand": 6,
+      "searched": [
+        "任务复核 review",
+        "任务复核",
+        "review"
+      ],
+      "total_evidence_tokens": 699,
+      "total_evidence_chars": 1061,
+      "thin_n": 0,
+      "empty_ev_n": 0,
+      "auto_status_n": 6,
+      "blank_status_n": 0,
+      "no_concepts_n": 0,
+      "title_keyword_hits": 0,
+      "any_keyword_hits": 0,
+      "avg_score": 10.0,
+      "top": [
+        {
+          "title": "任务验收标准写法库",
+          "path": "vault/20_notes/2026-06-25/任务验收标准写法库.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 2,
+          "excerpt_len": 170,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 170,
+          "evidence_tokens": 109,
+          "matched": [
+            "review",
+            "任务复核 review"
+          ],
+          "evidence_preview": "…官方定义与案例 GB/T 8567《计算机软件文档编制规范》现行版本验收测试要求 主流外包平台官方推荐验收条款模板 知名开源项目（Kubernetes/React）PR [Review] 通过标准 广告/设计行业协会服务交付标准文件 质检记录 主题ID：management 0095 生成模型：DeepSeek V4 Pro 编辑模型…",
+          "tags": [
+            "domain-project-management",
+            "purpose-reference",
+            "type-article"
+          ],
+          "concepts": [
+            "模板资产",
+            "项目管理"
+          ]
+        },
+        {
+          "title": "复盘中的非人格化反馈模板",
+          "path": "vault/20_notes/2026-06-25/复盘中的非人格化反馈模板.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 5,
+          "concepts_n": 3,
+          "excerpt_len": 187,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 187,
+          "evidence_tokens": 145,
+          "matched": [
+            "review",
+            "任务复核 review"
+          ],
+          "evidence_preview": "复盘中的非人格化反馈模板 复盘中的非人格化反馈模板 一句话结论 非人格化反馈模板通过剥离情绪与个人标签，将复盘焦点从“谁做错了”强制转向“系统/流程/机制如何优化”，是降低防御心理、沉淀可复用经验、支撑 Agent 自动化生成复盘材料与 SOP 迭代方案的标准化工具。 适用场景 项目结项复盘（Post Mortem）与线上事故根因分析（Incident [R",
+          "tags": [
+            "asset-template",
+            "domain-behavior",
+            "domain-project-management",
+            "purpose-reference",
+            "type-template"
+          ],
+          "concepts": [
+            "检查清单",
+            "模板资产",
+            "项目管理"
+          ]
+        },
+        {
+          "title": "目标设定与即时反馈机制·执行手册",
+          "path": "vault/20_notes/2026-06-25/目标设定与即时反馈机制-执行手册.md",
+          "score": 10,
+          "source_type": "inbox",
+          "status": "auto",
+          "quality_status": "auto",
+          "tags_n": 3,
+          "concepts_n": 2,
+          "excerpt_len": 150,
+          "snippet_len": 0,
+          "summary_len": 0,
+          "evidence_len": 150,
+          "evidence_tokens": 92,
+          "matched": [
+            "review",
+            "任务复核 review"
+          ],
+          "evidence_preview": "…周内可感知的成果 | “让团队具备独立交付能力” | | D | 驱动指标 Driver | 可量化的先行/后行指标 | “每周至少 2 人独立完成 Code [Review] 并通过” | | S | 步骤 Step | 本周/本日可执行的单一动作 | “今天 15:00 由 A 独立完成模块…",
+          "tags": [
+            "domain-behavior",
+            "purpose-reference",
+            "type-playbook"
+          ],
+          "concepts": [
+            "Playbook",
+            "检查清单"
+          ]
+        }
+      ],
+      "memory": {
+        "n": 15,
+        "tokens": 1604,
+        "chars": 5348,
+        "kinds": {
+          "wiki": 6,
+          "project_event": 8,
+          "inbox": 1
+        },
+        "samples": [
+          {
+            "kind": "wiki",
+            "score": 89,
+            "len": 170,
+            "preview": "…官方定义与案例 GB/T 8567《计算机软件文档编制规范》现行版本验收测试要求 主流外包平台官方推荐验收条款模板 知名开源项目（Kubernetes/React）PR [Review] 通过标准 广告/设计行业协会服务交付标准文件 质检记录 主题ID：management 0095 生成模型：DeepSeek V4",
+            "source": "任务验收标准写法库"
+          },
+          {
+            "kind": "wiki",
+            "score": 89,
+            "len": 150,
+            "preview": "…周内可感知的成果 | “让团队具备独立交付能力” | | D | 驱动指标 Driver | 可量化的先行/后行指标 | “每周至少 2 人独立完成 Code [Review] 并通过” | | S | 步骤 Step | 本周/本日可执行的单一动作 | “今天 15:00 由 A 独立完成模块…",
+            "source": "目标设定与即时反馈机制·执行手册"
+          },
+          {
+            "kind": "wiki",
+            "score": 87,
+            "len": 197,
+            "preview": "…版：项目绩效域与交付价值管理框架（理论映射待核验具体章节） Scrum Guide 2020：Definition of Done 与 Sprint [Review] 实践指南（敏捷验收标准参考） 《人月神话》：关于阶段性交付、进度估算与沟通成本的经典论述 内部知识库建议补强：历史项目验收复盘报告、各业务线标准交付物",
+            "source": "里程碑拆解与验收 Playbook"
+          }
+        ]
+      },
+      "budget": {
+        "maxTokens": 3000,
+        "reservedTokens": 500,
+        "estimatedTokens": 2395,
+        "remainingTokens": 105,
+        "includedCount": 15,
+        "omittedCount": 1
+      },
+      "tiers_present": true,
+      "evidence_present": true,
+      "evidence_type": "dict",
+      "evidence_n": 1,
+      "policy": {
+        "canReadWiki": true,
+        "canSuggestWikiUpdates": true,
+        "canAutoArchiveKnowledge": false,
+        "mustConfirmDelete": true,
+        "maxWikiCandidates": 8,
+        "note": "Personal OS 只做机械检索和规则约束；Hermes 负责判断候选知识是否可用。"
+      },
+      "debug_keys": [
+        "retrieval"
+      ],
+      "ctx_keys": [
+        "activity",
+        "budget",
+        "cited",
+        "debug",
+        "evidence",
+        "generatedAt",
+        "memoryItems",
+        "nextAction",
+        "omissions",
+        "policy",
+        "queryPlan",
+        "recentTasks",
+        "relatedIdeas",
+        "requiredRefs",
+        "searchQueries",
+        "swarmvault",
+        "task",
+        "tiers",
+        "tokenBudget",
+        "wiki"
+      ]
+    }
+  ]
+}
