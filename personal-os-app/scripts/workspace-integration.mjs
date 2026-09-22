@@ -38,7 +38,7 @@ try {
   start("python", ["../personal-wiki/api/workspace_server.py"], { ...environment, WIKI_DATA_DIR: temporary, WIKI_HOST: "127.0.0.1", WIKI_PORT: "3429" }, "wiki-test.log");
   start(process.execPath, ["node_modules/next/dist/bin/next", "start", "-H", "127.0.0.1", "-p", "3180"], environment, "app-test.log");
   await waitFor(base + "/auth/read"); await waitFor("http://127.0.0.1:3429/api/health"); await client.connect();
-  for (const actor of actors) await api("/api/agent-profiles", management, { id: actor.agentId, displayName: actor.role === "reviewer" ? "测试复核者" : "测试执行者", tags: ["测试"], allowedRiskLevel: "low", enabled: true, canWriteTasks: true });
+  for (const actor of actors) await api("/api/agent-profiles", management, { id: actor.agentId, displayName: actor.role === "reviewer" ? "测试复核者" : "测试执行者", tags: ["测试"], allowedRiskLevel: "low", enabled: true, canWriteTasks: true }, 201);
   async function newTask(title, wikiLinks = []) {
     const result = await api("/api/workspace/actions", management, { action: "create", payload: { title, status: "todo", nextAction: "执行隔离验证", definitionOfDone: "提供测试报告并独立复核", riskLevel: "low", executionMode: "agent_allowed", agentTags: ["测试"], wikiLinks } }, 201);
     return result.task;

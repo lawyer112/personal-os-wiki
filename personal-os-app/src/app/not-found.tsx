@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function NotFound() { return <section className="os-panel"><div className="os-empty"><span aria-hidden="true">◇</span><h1 style={{ fontSize: 24, margin: "16px 0" }}>没有找到此页面</h1><p>页面可能已移动，或当前地址不完整。已有项目和任务可以从工作台重新查找。</p><div className="os-actions" style={{ justifyContent: "center" }}><Link className="os-btn os-btn-primary" href="/">返回工作总览</Link><Link className="os-btn" href="/tasks">查找任务</Link></div></div></section>; }
