@@ -42,7 +42,7 @@ def main():
                 routes=[('/', '01-home'),('/notes','02-notes'),('/graph','03-graph'),('/tags','04-tags'),('/concepts','05-concepts'),('/note?'+urlencode({'path':notes[0]['path']}),'06-reader'),('/edit?'+urlencode({'path':notes[0]['path']}),'07-editor'),('/manual','08-manual'),('/auth/read','09-login')]
                 for route,name in routes:
                     response=page.goto(base+route);assert response.status==200,(route,response.status)
-                    page.wait_for_timeout(600)
+                    page.wait_for_timeout(650)
                     assert page.locator('html').get_attribute('lang')=='zh-CN'
                     assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1'),route
                     page.screenshot(path=str(output/(name+'.png')),full_page=True)
@@ -53,6 +53,11 @@ def main():
                 page.locator('[data-motion-switch]').click();page.wait_for_timeout(80)
                 before=page.locator('.art-lines').evaluate('n=>getComputedStyle(n).transform');page.wait_for_timeout(150);assert before==page.locator('.art-lines').evaluate('n=>getComputedStyle(n).transform')
                 passed('首页动效实际播放，并能暂停')
+                page.reload()
+                expect(page.locator('html')).to_have_attribute('data-motion', 'off')
+                for child in page.locator('main > *').all():
+                    expect(child).to_have_css('opacity', '1')
+                passed('暂停动效后重新打开页面，正文仍完整可见')
                 page.locator('[data-motion-switch]').click()
                 # 媒体查询事件异步派发，等待真实控件状态，而不是跳过减少动效检查。
                 page.emulate_media(reduced_motion='reduce')
@@ -61,7 +66,7 @@ def main():
                 passed('系统减少动效优先')
                 page.emulate_media(reduced_motion='no-preference')
                 expect(page.locator('[data-motion-switch]')).to_be_enabled()
-                page.locator('[data-theme-switch]').click();assert page.locator('html').get_attribute('data-theme')=='paper';page.reload();page.wait_for_timeout(600);assert page.locator('html').get_attribute('data-theme')=='paper';page.screenshot(path=str(output/'10-paper-home.png'),full_page=True);passed('纸白主题与偏好保存');page.locator('[data-theme-switch]').click()
+                page.locator('[data-theme-switch]').click();assert page.locator('html').get_attribute('data-theme')=='paper';page.reload();page.wait_for_timeout(650);assert page.locator('html').get_attribute('data-theme')=='paper';page.screenshot(path=str(output/'10-paper-home.png'),full_page=True);passed('纸白主题与偏好保存');page.locator('[data-theme-switch]').click()
                 page.keyboard.press('Control+k');assert page.locator('.global-search input').evaluate('n=>document.activeElement===n');passed('快捷键聚焦搜索')
                 page.goto(base+'/notes');page.locator('.filters input[name=q]').fill('知识库备份');page.locator('.filters button').click();page.wait_for_load_state();expect(page.locator('.note-card')).to_have_count(3);expect(page.locator('.note-card h3').filter(has_text='知识库备份与恢复')).to_be_visible();passed('真实正文、标题与双链引用检索')
                 page.goto(base+'/notes');page.locator('[data-view=list]').click();expect(page.locator('#note-collection')).to_have_class(re.compile(r'\bis-list\b'));page.reload();expect(page.locator('#note-collection')).to_have_class(re.compile(r'\bis-list\b'));passed('列表切换与偏好保存')
@@ -77,10 +82,10 @@ def main():
                 page.goto(base+'/edit?'+urlencode({'path':notes[1]['path']}));page.locator('#editor-content').fill('用户尚未提交的修改');knowledge.write_managed_note({'path':notes[1]['path'],'expectedRevision':notes[1]['revision'],'title':notes[1]['title'],'content':'另一执行者已修改'})
                 page.locator('[name=writeToken]').fill('wiki-ui-write-fixture');page.locator('button[type=submit]').last.click();expect(page.locator('#save-status')).to_contain_text('页面已被更新');assert page.locator('#editor-content').input_value()=='用户尚未提交的修改';passed('并发编辑冲突提示且不丢失正文')
                 page.on('dialog',lambda dialog:dialog.accept());page.goto(base+'/')
-                page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(400)
+                page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(650)
                 assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1');page.screenshot(path=str(output/'11-mobile-home.png'),full_page=True)
                 page.locator('[data-menu]').click();expect(page.locator('#sidebar')).to_have_css('transform', 'matrix(1, 0, 0, 1, 0, 0)');assert page.locator('#sidebar').evaluate('n=>!n.inert');page.keyboard.press('Escape');expect(page.locator('[data-menu]')).to_be_focused();passed('手机导航可操作、焦点返回且页面无溢出')
-                page.goto(base+'/graph');assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1');page.screenshot(path=str(output/'12-mobile-graph.png'),full_page=True);passed('手机图谱与关联详情可见')
+                page.goto(base+'/graph');expect(page.locator('.graph-node').first).to_be_visible();expect(page.locator('main > section').last).to_have_css('opacity', '1');assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1');page.screenshot(path=str(output/'12-mobile-graph.png'),full_page=True);passed('手机图谱与关联详情可见')
                 context.clear_cookies();page.goto(base+'/notes');assert '/auth/read?' in page.url;page.locator('[name=token]').fill('incorrect');page.locator('button[type=submit]').click();expect(page.locator('[role=alert]')).to_contain_text('读取凭证不正确');page.locator('[name=token]').fill('wiki-ui-read-fixture');page.locator('button[type=submit]').click();expect(page).to_have_url(base+'/notes');passed('登录拦截、中文错误与原页面返回')
                 assert not errors,errors;passed('全部页面没有浏览器运行异常')
                 browser.close()
