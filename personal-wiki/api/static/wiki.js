@@ -16,6 +16,12 @@
     const updateMotion = () => {
       const off = paused || reduced.matches || document.hidden;
       root.dataset.motion = off ? 'off' : 'on';
+      // 装饰动画可以暂停，但入场动画必须到达可见终点，避免新页面停在透明帧。
+      if (off) document.querySelectorAll('main > *').forEach(node => {
+        node.getAnimations().forEach(animation => {
+          if (animation.animationName === 'enter') animation.finish();
+        });
+      });
       if (motionButton) { motionButton.setAttribute('aria-pressed', String(!off)); motionButton.disabled = reduced.matches; motionButton.querySelector('span').textContent = reduced.matches ? '系统已减少动效' : paused ? '开启动效' : '暂停动效'; motionButton.title = reduced.matches ? '请在系统设置中更改减少动态效果偏好' : '暂停或恢复装饰动效'; }
     };
     $('[data-theme-switch]')?.addEventListener('click', () => { root.dataset.theme = root.dataset.theme === 'ink' ? 'paper' : 'ink'; write('personal-wiki.theme', root.dataset.theme); toast(root.dataset.theme === 'ink' ? '已切换墨色主题' : '已切换纸白主题'); });
