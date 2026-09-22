@@ -3,6 +3,7 @@
 from __future__ import annotations
 import json
 import os
+import re
 import sys
 import tempfile
 import threading
@@ -63,7 +64,7 @@ def main():
                 page.locator('[data-theme-switch]').click();assert page.locator('html').get_attribute('data-theme')=='paper';page.reload();page.wait_for_timeout(600);assert page.locator('html').get_attribute('data-theme')=='paper';page.screenshot(path=str(output/'10-paper-home.png'),full_page=True);passed('纸白主题与偏好保存');page.locator('[data-theme-switch]').click()
                 page.keyboard.press('Control+k');assert page.locator('.global-search input').evaluate('n=>document.activeElement===n');passed('快捷键聚焦搜索')
                 page.goto(base+'/notes');page.locator('.filters input[name=q]').fill('知识库备份');page.locator('.filters button').click();page.wait_for_load_state();expect(page.locator('.note-card')).to_have_count(3);expect(page.locator('.note-card h3').filter(has_text='知识库备份与恢复')).to_be_visible();passed('真实正文、标题与双链引用检索')
-                page.goto(base+'/notes');page.locator('[data-view=list]').click();page.wait_for_function("document.querySelector('#note-collection').classList.contains('is-list')");page.reload();page.wait_for_function("document.querySelector('#note-collection').classList.contains('is-list')");passed('列表切换与偏好保存')
+                page.goto(base+'/notes');page.locator('[data-view=list]').click();expect(page.locator('#note-collection')).to_have_class(re.compile(r'\bis-list\b'));page.reload();expect(page.locator('#note-collection')).to_have_class(re.compile(r'\bis-list\b'));passed('列表切换与偏好保存')
                 page.locator('[data-view=cards]').click()
                 page.goto(base+'/tags');page.locator('.facet-tile').first.click();assert page.locator('.note-card').count()>0;passed('标签索引进入真实筛选结果')
                 page.goto(base+'/graph');expect(page.locator('.graph-node')).to_have_count(len(wiki.load_graph()['nodes']));expect(page.locator('.graph-edge')).to_have_count(len(wiki.load_graph()['links']))
@@ -71,16 +72,16 @@ def main():
                 before=page.locator('#knowledge-graph>g').get_attribute('transform');page.locator('[data-zoom="1.2"]').click();assert before!=page.locator('#knowledge-graph>g').get_attribute('transform');passed('图谱使用真实索引，节点关联与缩放有效')
                 page.locator('#graph-search').fill('不存在的知识000');page.wait_for_timeout(240);assert page.locator('.graph-node').count()==0;passed('图谱搜索无命中时不伪造节点')
                 page.goto(base+'/note?'+urlencode({'path':notes[0]['path'],'revision':original['revision']}));assert page.locator('.notice').first.inner_text().find('历史快照')>=0;assert page.locator('.markdown').inner_text().find('补充版本引用和交付证据的说明')<0;passed('历史正文与当前版本准确区分')
-                page.goto(base+'/edit');page.locator('[name=title]').fill('浏览器真实写入验证');page.locator('#editor-content').fill('## 验证\n\n通过真实写入接口保存。');page.locator('[name=writeToken]').fill('wiki-ui-read-fixture');page.locator('button[type=submit]').last.click();page.wait_for_function("document.querySelector('#save-status').textContent.includes('读取凭证不能')");assert page.locator('#editor-content').input_value().find('真实写入')>=0;passed('只读凭证拒绝写入且保留编辑内容')
-                page.locator('[name=writeToken]').fill('wiki-ui-write-fixture');page.locator('button[type=submit]').last.click();page.wait_for_function("document.querySelector('#save-status').textContent.includes('已保存')");assert any(n['title']=='浏览器真实写入验证' for n in wiki.list_notes());expect(page.locator('[name=writeToken]')).to_have_value('');passed('独立编辑页真实保存且清空写入凭证')
+                page.goto(base+'/edit');page.locator('[name=title]').fill('浏览器真实写入验证');page.locator('#editor-content').fill('## 验证\n\n通过真实写入接口保存。');page.locator('[name=writeToken]').fill('wiki-ui-read-fixture');page.locator('button[type=submit]').last.click();expect(page.locator('#save-status')).to_contain_text('读取凭证不能');assert page.locator('#editor-content').input_value().find('真实写入')>=0;passed('只读凭证拒绝写入且保留编辑内容')
+                page.locator('[name=writeToken]').fill('wiki-ui-write-fixture');page.locator('button[type=submit]').last.click();expect(page.locator('#save-status')).to_contain_text('已保存');assert any(n['title']=='浏览器真实写入验证' for n in wiki.list_notes());expect(page.locator('[name=writeToken]')).to_have_value('');passed('独立编辑页真实保存且清空写入凭证')
                 page.goto(base+'/edit?'+urlencode({'path':notes[1]['path']}));page.locator('#editor-content').fill('用户尚未提交的修改');knowledge.write_managed_note({'path':notes[1]['path'],'expectedRevision':notes[1]['revision'],'title':notes[1]['title'],'content':'另一执行者已修改'})
-                page.locator('[name=writeToken]').fill('wiki-ui-write-fixture');page.locator('button[type=submit]').last.click();page.wait_for_function("document.querySelector('#save-status').textContent.includes('页面已被更新')");assert page.locator('#editor-content').input_value()=='用户尚未提交的修改';passed('并发编辑冲突提示且不丢失正文')
+                page.locator('[name=writeToken]').fill('wiki-ui-write-fixture');page.locator('button[type=submit]').last.click();expect(page.locator('#save-status')).to_contain_text('页面已被更新');assert page.locator('#editor-content').input_value()=='用户尚未提交的修改';passed('并发编辑冲突提示且不丢失正文')
                 page.on('dialog',lambda dialog:dialog.accept());page.goto(base+'/')
                 page.set_viewport_size({'width':390,'height':844});page.wait_for_timeout(400)
                 assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1');page.screenshot(path=str(output/'11-mobile-home.png'),full_page=True)
-                page.locator('[data-menu]').click();page.wait_for_function("document.querySelector('#sidebar').getBoundingClientRect().left>=-1");assert page.locator('#sidebar').evaluate('n=>!n.inert');page.keyboard.press('Escape');page.wait_for_timeout(330);assert page.locator('[data-menu]').evaluate('n=>document.activeElement===n');passed('手机导航可操作、焦点返回且页面无溢出')
+                page.locator('[data-menu]').click();expect(page.locator('#sidebar')).to_have_css('transform', 'matrix(1, 0, 0, 1, 0, 0)');assert page.locator('#sidebar').evaluate('n=>!n.inert');page.keyboard.press('Escape');expect(page.locator('[data-menu]')).to_be_focused();passed('手机导航可操作、焦点返回且页面无溢出')
                 page.goto(base+'/graph');assert page.evaluate('document.documentElement.scrollWidth<=innerWidth+1');page.screenshot(path=str(output/'12-mobile-graph.png'),full_page=True);passed('手机图谱与关联详情可见')
-                context.clear_cookies();page.goto(base+'/notes');assert '/auth/read?' in page.url;page.locator('[name=token]').fill('incorrect');page.locator('button[type=submit]').click();assert page.locator('[role=alert]').inner_text().find('读取凭证不正确')>=0;page.locator('[name=token]').fill('wiki-ui-read-fixture');page.locator('button[type=submit]').click();assert page.url.endswith('/notes');passed('登录拦截、中文错误与原页面返回')
+                context.clear_cookies();page.goto(base+'/notes');assert '/auth/read?' in page.url;page.locator('[name=token]').fill('incorrect');page.locator('button[type=submit]').click();expect(page.locator('[role=alert]')).to_contain_text('读取凭证不正确');page.locator('[name=token]').fill('wiki-ui-read-fixture');page.locator('button[type=submit]').click();expect(page).to_have_url(base+'/notes');passed('登录拦截、中文错误与原页面返回')
                 assert not errors,errors;passed('全部页面没有浏览器运行异常')
                 browser.close()
         finally:
