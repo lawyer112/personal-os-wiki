@@ -1,0 +1,32 @@
+name: Visual review snapshot
+on:
+  push:
+    branches: [codex/chinese-lan-workspace-20260922]
+    paths: [.github/workflows/visual-review-snapshot.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Resolve locked review dependencies
+        working-directory: personal-os-app
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Prepare source and dependency archives
+        run: |
+          git archive --format=tar.gz HEAD > "$RUNNER_TEMP/visual-source.tar.gz"
+          tar -czf "$RUNNER_TEMP/visual-dependencies.tar.gz" -C personal-os-app node_modules
+      - uses: actions/upload-artifact@v4
+        with:
+          name: visual-review-snapshot
+          path: |
+            ${{ runner.temp }}/visual-source.tar.gz
+            ${{ runner.temp }}/visual-dependencies.tar.gz
+          retention-days: 1
