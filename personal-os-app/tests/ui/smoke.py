@@ -160,6 +160,7 @@ async def main():
         assert await page.locator(".os-board-column").count() == 1
         assert "验证任务认领" in await page.locator(".os-card").inner_text()
         results.append({"case": "阶段导航与真实筛选联动", "passed": True})
+        (OUTPUT / "preview-views.json").write_text(json.dumps(snapshots, ensure_ascii=False))
         writable = False
         await page.goto(BASE + "/tasks")
         await page.get_by_role("heading", name="任务中心", exact=True).wait_for()
@@ -173,8 +174,9 @@ async def main():
         assert await page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1")
         await page.screenshot(path=str(OUTPUT / "10-mobile.png"), full_page=True)
         await page.get_by_role("button", name="展开导航", exact=True).click()
-        await page.wait_for_timeout(250)
-        assert await page.locator(".os-sidebar").evaluate("node => node.getBoundingClientRect().left >= 0")
+        # 等待动画实际完成，不把旧版固定延时当作新动效的完成信号。
+        await page.wait_for_function("Math.abs(document.querySelector('.os-sidebar').getBoundingClientRect().left) < 0.5", timeout=3000)
+        assert await page.locator(".os-sidebar").evaluate("node => Math.abs(node.getBoundingClientRect().left) < 0.5")
         await page.keyboard.press("Escape")
         assert await page.get_by_role("button", name="展开导航", exact=True).get_attribute("aria-expanded") == "false"
         assert await page.get_by_role("button", name="展开导航", exact=True).evaluate("el => el === document.activeElement")
