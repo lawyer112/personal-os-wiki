@@ -353,12 +353,9 @@ class Handler(wiki.Handler):
 
 
 def main() -> None:
-    wiki.ensure_dirs()
-    if not wiki.GRAPH_PATH.exists() or not wiki.NOTE_INDEX_PATH.exists():
-        wiki.refresh_public_indexes()
-    server = wiki.ThreadingHTTPServer((wiki.HOST, wiki.PORT), Handler)
-    print(f"中文知识服务已启动，端口 {wiki.PORT}", flush=True)
-    server.serve_forever()
+    # 所有受支持的启动方式共用新版独立 Wiki 页面与版本保护接口。
+    from site_server import main as start_site
+    start_site()
 
 
 if __name__ == "__main__":

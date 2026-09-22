@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
     environment:
       WIKI_DATA_DIR: /data
+      WIKI_OS_URL: https://${OS_DOMAIN:-personal-os.internal}
       WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:?必须设置知识读取凭证}
       WIKI_API_TOKEN: ${WIKI_API_TOKEN:?必须设置知识写入凭证}
       WIKI_REQUIRE_API_READ_AUTH: "true"
@@ -60,6 +61,7 @@ services:
       - "${LAN_BIND_ADDRESS:-127.0.0.1}:443:443"
     environment:
       OS_DOMAIN: ${OS_DOMAIN:-personal-os.internal}
+      WIKI_DOMAIN: ${WIKI_DOMAIN:-personal-wiki.internal}
     volumes:
       - ./deploy/Caddyfile.lan:/etc/caddy/Caddyfile:ro
       - gateway_data:/data
