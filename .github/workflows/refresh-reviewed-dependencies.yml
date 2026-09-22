@@ -1,0 +1,50 @@
+name: Refresh reviewed dependency lock once
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+jobs:
+  refresh:
+    if: github.repository == 'lawyer112/personal-os-wiki' && github.event.pull_request.number == 63 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'codex/chinese-lan-workspace-20260922'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    concurrency:
+      group: dependency-refresh-workspace-63
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/chinese-lan-workspace-20260922
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Resolve reviewed security versions without install hooks
+        working-directory: personal-os-app
+        run: npm install --package-lock-only --ignore-scripts --no-audit
+      - name: Record dependency audit for review
+        working-directory: personal-os-app
+        run: |
+          set +e
+          npm audit --omit=dev --json > "$RUNNER_TEMP/reviewed-dependency-audit.json"
+          result=$?
+          cat "$RUNNER_TEMP/reviewed-dependency-audit.json"
+          echo "Audit exit code: $result; the main CI audit gate remains mandatory."
+      - name: Commit the resolved lock only to the review branch
+        run: |
+          test "$(git branch --show-current)" = 'codex/chinese-lan-workspace-20260922'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add personal-os-app/package-lock.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix(deps): 锁定经审阅的安全版本，交由完整回归验证'
+          git push origin HEAD:refs/heads/codex/chinese-lan-workspace-20260922
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reviewed-dependency-audit
+          path: ${{ runner.temp }}/reviewed-dependency-audit.json
+          retention-days: 3
+          if-no-files-found: ignore

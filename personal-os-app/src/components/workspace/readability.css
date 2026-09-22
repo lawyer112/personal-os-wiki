@@ -1,0 +1,21 @@
+/* 中文正文与辅助信息的最小字号，避免大屏工作台依赖过细小字。 */
+.os-description{font-size:13px;line-height:1.9}
+.os-nav-link{font-size:14px}
+.os-brand div>span{font-size:12px}
+.os-nav-group>p,.os-eyebrow{font-size:12px}
+.os-btn,.os-toolbar input,.os-toolbar select{font-size:13px}
+.os-card h3,.os-task-row h3{font-size:14px}
+.os-card p,.os-task-row p{font-size:12px}
+.os-card-project,.os-card-foot,.os-column-hint,.os-project-foot{font-size:12px}
+.os-badge{font-size:11px}
+.os-table{font-size:13px}
+.os-table th,.os-table td small{font-size:12px}
+.os-inline-note,.os-check-row small,.os-panel-head p,.os-metric p{font-size:12px}
+.os-detail-facts,.os-tabs button,.os-field,.os-field input,.os-field textarea,.os-field select{font-size:13px}
+.os-inspector p{font-size:14px}
+.os-timeline li,.os-timeline li p,.os-timeline time{font-size:12px}
+.os-manual-tree button{font-size:13px}
+.os-manual-tree button small,.os-article-meta{font-size:12px}
+.os-evidence-link{font-size:12px}
+.os-help{font-size:13px}
+@media(max-width:760px){.os-description{font-size:13px}.os-live,.os-list-meta{font-size:11px}.os-table th,.os-table td small{font-size:11px}}
