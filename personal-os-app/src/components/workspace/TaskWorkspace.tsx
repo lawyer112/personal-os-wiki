@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { claimReasons, displayTime, label, stages, taskStage } from "@/lib/workspace";
+import { claimReasons, displayTime, stages, taskStage } from "@/lib/workspace";
 import type { AgentSummary, WorkTask } from "@/lib/workspace";
 import { Badge, Empty, LiveStatus, Loading, Notice, PageHeading, Pagination, requestJson, useAction, useLiveData } from "./shared";
 import { TaskDetails } from "./TaskDetails";

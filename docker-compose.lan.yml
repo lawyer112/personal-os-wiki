@@ -1,0 +1,75 @@
+# 正式局域网部署示例：不加载演示数据，不直接开放数据库和知识服务端口。
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: personal_os
+      POSTGRES_USER: personal_os
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?必须设置独立数据库密码}
+    volumes:
+      - os_database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U personal_os -d personal_os"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [internal]
+  wiki:
+    build:
+      context: ./personal-wiki
+      dockerfile: api/Dockerfile
+    restart: unless-stopped
+    environment:
+      WIKI_DATA_DIR: /data
+      WIKI_READ_TOKEN: ${WIKI_READ_TOKEN:?必须设置知识读取凭证}
+      WIKI_API_TOKEN: ${WIKI_API_TOKEN:?必须设置知识写入凭证}
+      WIKI_REQUIRE_API_READ_AUTH: "true"
+      WIKI_REQUIRE_PAGE_READ_AUTH: "true"
+      WIKI_ALLOW_UNAUTHENTICATED_WRITE: "false"
+    volumes:
+      - wiki_data:/data
+    networks: [internal]
+  personal-os:
+    build:
+      context: ./personal-os-app
+      args:
+        NPM_CONFIG_REGISTRY: https://registry.npmjs.org
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      wiki:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://personal_os:${POSTGRES_PASSWORD}@postgres:5432/personal_os?schema=public
+      PERSONAL_OS_API_TOKEN: ${PERSONAL_OS_API_TOKEN:?必须设置管理凭证}
+      PERSONAL_OS_READ_TOKEN: ${PERSONAL_OS_READ_TOKEN:?必须设置读取凭证}
+      PERSONAL_OS_AGENT_CREDENTIALS: ${PERSONAL_OS_AGENT_CREDENTIALS:-[]}
+      PERSONAL_OS_PUBLIC_ORIGIN: https://${OS_DOMAIN:-personal-os.internal}
+      WIKI_INTERNAL_URL: http://wiki:3422
+      WIKI_READ_TOKEN: ${WIKI_READ_TOKEN}
+      WIKI_API_TOKEN: ${WIKI_API_TOKEN}
+    networks: [internal]
+  gateway:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [personal-os]
+    ports:
+      - "${LAN_BIND_ADDRESS:-127.0.0.1}:443:443"
+    environment:
+      OS_DOMAIN: ${OS_DOMAIN:-personal-os.internal}
+    volumes:
+      - ./deploy/Caddyfile.lan:/etc/caddy/Caddyfile:ro
+      - gateway_data:/data
+      - gateway_config:/config
+    networks: [internal]
+networks:
+  internal:
+    driver: bridge
+volumes:
+  os_database:
+  wiki_data:
+  gateway_data:
+  gateway_config:

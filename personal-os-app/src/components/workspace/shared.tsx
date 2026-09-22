@@ -15,7 +15,7 @@ export async function requestJson<T>(url: string, init?: RequestInit): Promise<T
   return body as T;
 }
 export function useLiveData<T>(url: string | null, interval = 15000) {
-  const [result, setResult] = useState<{ data: T | null; error: string; updated: string }>({ data: null, error: "", updated: "" });
+  const [result, setResult] = useState<{ data: T | null; error: string; updated: string; url: string | null }>({ data: null, error: "", updated: "", url: null });
   const [version, setVersion] = useState(0);
   const sequence = useRef(0);
   const reload = useCallback(() => setVersion(n => n + 1), []);
@@ -28,9 +28,9 @@ export function useLiveData<T>(url: string | null, interval = 15000) {
       const current = ++sequence.current;
       try {
         const data = await requestJson<T>(url!, { signal: controller.signal });
-        if (!disposed && current === sequence.current) setResult({ data, error: "", updated: new Date().toISOString() });
+        if (!disposed && current === sequence.current) setResult({ data, error: "", updated: new Date().toISOString(), url });
       } catch (error) {
-        if (!disposed && current === sequence.current && !(error instanceof Error && error.name === "AbortError")) setResult(old => ({ ...old, error: error instanceof Error ? error.message : "连接中断，请重试。" }));
+        if (!disposed && current === sequence.current && !(error instanceof Error && error.name === "AbortError")) setResult(old => ({ ...old, url, data: old.url === url ? old.data : null, error: error instanceof Error ? error.message : "连接中断，请重试。" }));
       }
     }
     void load();
@@ -39,7 +39,7 @@ export function useLiveData<T>(url: string | null, interval = 15000) {
     document.addEventListener("visibilitychange", visible);
     return () => { disposed = true; controller?.abort(); if (timer) clearInterval(timer); document.removeEventListener("visibilitychange", visible); };
   }, [url, version, interval]);
-  return { ...result, reload };
+  return { ...result, data: result.url === url ? result.data : null, error: result.url === url ? result.error : "", reload };
 }
 export function useAction() {
   const [busy, setBusy] = useState(false);

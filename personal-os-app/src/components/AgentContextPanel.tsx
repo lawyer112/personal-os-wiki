@@ -152,9 +152,7 @@ export function AgentContextPanel({
           candidates.slice(0, 5).map((note) => (
             <a
               key={note.path}
-              href={note.url}
-              target="_blank"
-              rel="noreferrer"
+              href={`/wiki?path=${encodeURIComponent(note.path)}`}
               className="rounded-lg border border-emerald-200 bg-white p-3 hover:bg-emerald-50"
             >
               <div className="text-sm font-semibold leading-5 text-zinc-950">

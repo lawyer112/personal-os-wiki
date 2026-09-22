@@ -38,7 +38,8 @@ export const labels: Record<string, string> = {
   inferred: "推断", speculative: "待证实", draft: "草稿", published: "已发布", deprecated: "已停用",
   "task.claimed": "认领任务", "task.heartbeat": "续约心跳", "task.submitted": "提交成果",
   "task.reviewed": "复核任务", "task.contributed": "记录进展", "task.created": "创建任务",
-  "task.updated": "更新任务", user: "人工", system: "系统", link: "链接", file: "文件",
+  "task.updated": "更新任务", "task.blocked": "记录阻塞", "task.contribution": "记录进展",
+  cancelled: "已取消", expired: "已过期", idle: "空闲", stopped: "已停止", released: "已释放", user: "人工", system: "系统", link: "链接", file: "文件",
   artifact: "交付物", source: "原始资料", note: "知识页面", captured: "已收集", shaping: "整理中",
   someday: "暂缓处理", promoted: "已转任务", new: "待整理", processing: "处理中", processed: "已整理",
 };

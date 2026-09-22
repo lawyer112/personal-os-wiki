@@ -141,7 +141,8 @@ async function requestWiki<TBody>(
     ...authHeaders(token),
     ...headers,
   });
-  const url = wikiUrl(path);
+  const internalBase = process.env.WIKI_INTERNAL_URL;
+  const url = internalBase ? new URL(path, internalBase.endsWith("/") ? internalBase : `${internalBase}/`).toString() : wikiUrl(path);
 
   const response = await fetch(url, {
     cache: init.cache ?? "no-store",

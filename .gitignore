@@ -46,3 +46,6 @@ private-assets/
 uploads/
 attachments/
 screenshots/
+
+# Generated isolated verification reports and screenshots
+artifacts/

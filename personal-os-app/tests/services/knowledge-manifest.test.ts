@@ -20,7 +20,7 @@ function readJson(filePath: string) {
 }
 
 function runLint(files: string[]) {
-  return spawnSync(process.execPath, [lintScript, ...files], {
+  return spawnSync(process.execPath, [lintScript, "--at", "2026-07-01T00:00:00Z", ...files], {
     cwd: appRoot,
     encoding: "utf8",
   });
@@ -96,6 +96,12 @@ describe("Knowledge Object Manifest v0", () => {
     expect(result.stdout).toContain("no-source-must-be-speculative");
   });
 
+  it("still rejects expired fresh objects when audited after their deadline", () => {
+    const result = spawnSync(process.execPath, [lintScript, "--at", "2099-01-01T00:00:00Z", examplePaths[0]], { cwd: appRoot, encoding: "utf8" });
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain("freshness-status-inconsistent");
+  });
+
   it("detects source hash drift", () => {
     const base = readJson(path.join(appRoot, examplePaths[0]));
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "cko-manifest-"));
@@ -119,7 +125,7 @@ describe("Knowledge Object Manifest v0", () => {
   });
 
   it("lint script is executable by node without TypeScript build", () => {
-    const stdout = execFileSync(process.execPath, [lintScript, examplePaths[0]], {
+    const stdout = execFileSync(process.execPath, [lintScript, "--at", "2026-07-01T00:00:00Z", examplePaths[0]], {
       cwd: appRoot,
       encoding: "utf8",
     });

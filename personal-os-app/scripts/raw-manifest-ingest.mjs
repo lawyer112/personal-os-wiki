@@ -187,7 +187,7 @@ export async function ingestDirectory(args) {
     return { counts: { ingest: 0, skip: 0, update: 0, invalid: 0 }, items: [], payload: null, intakeResult: null };
   }
 
-  const lintResults = lintFiles(files, { baseDir: dir });
+  const lintResults = lintFiles(files, { baseDir: dir, ...(args.now ? { now: args.now } : {}) });
   const state = readState(args.stateFile);
   const items = [];
   const toIngest = [];

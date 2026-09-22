@@ -1,0 +1,13 @@
+{$OS_DOMAIN:personal-os.internal} {
+    tls internal
+    encode zstd gzip
+    request_body {
+        max_size 1MB
+    }
+    reverse_proxy personal-os:3000
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        X-Frame-Options DENY
+    }
+}

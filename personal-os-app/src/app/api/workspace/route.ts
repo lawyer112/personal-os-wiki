@@ -42,7 +42,7 @@ export async function GET(request: Request) {
       if (query.stage === "intake" || query.stage === "submitted") {
         where.status = "review";
         where.submittedAt = query.stage === "intake" ? null : { not: null };
-      } else if (query.stage !== "all") where.status = query.stage as Prisma.EnumTaskStatusFilter;
+      } else if (query.stage !== "all") where.status = { equals: query.stage as "todo" | "doing" | "waiting" | "blocked" | "done" | "archived" };
       else where.status = { not: "archived" };
       if (query.project) where.projectId = query.project;
       if (query.owner) where.ownerAgent = query.owner === "unassigned" ? null : query.owner;
@@ -99,9 +99,13 @@ export async function GET(request: Request) {
       return json({ ok: true, database, wiki, writable, configured: {
         read: Boolean(process.env.PERSONAL_OS_READ_TOKEN), write: Boolean(process.env.PERSONAL_OS_API_TOKEN),
         wikiRead: Boolean(process.env.WIKI_READ_TOKEN), wikiWrite: Boolean(process.env.WIKI_API_TOKEN),
-        agentCredentials: Boolean(process.env.PERSONAL_OS_AGENT_CREDENTIALS),
+        agentCredentials: hasAgentCredentials(),
       }, asOf: new Date().toISOString() });
     }
     throw new HttpError(400, "不支持的工作台视图");
   } catch (error) { return handleRouteError(error); }
+}
+
+function hasAgentCredentials() {
+  try { const credentials: unknown = JSON.parse(process.env.PERSONAL_OS_AGENT_CREDENTIALS || "[]"); return Array.isArray(credentials) && credentials.length > 0; } catch { return false; }
 }
