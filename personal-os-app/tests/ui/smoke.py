@@ -36,6 +36,7 @@ async def main():
     errors = []
     results = []
     writable = True
+    snapshots = {}
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(headless=True, executable_path=os.environ.get("CHROMIUM_EXECUTABLE") or None, args=["--no-sandbox"])
         context = await browser.new_context(viewport={"width": 1600, "height": 1100}, locale="zh-CN", device_scale_factor=1)
@@ -83,33 +84,82 @@ async def main():
         for path, title, name in [("/", "工作总览", "01-overview"), ("/tasks", "任务中心", "02-tasks"), ("/projects", "项目进度", "03-projects"), ("/agents", "智能体中心", "04-agents"), ("/wiki", "知识手册", "05-knowledge"), ("/reviews", "交付与复核", "06-review"), ("/settings", "系统管理", "07-settings")]:
             await page.goto(BASE + path)
             await page.get_by_role("heading", name=title, exact=True).wait_for()
-            await page.wait_for_timeout(350)
+            await page.wait_for_timeout(800)
             assert await page.locator("html").get_attribute("lang") == "zh-CN"
             assert await page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"), f"页面横向溢出：{path}"
             await page.screenshot(path=str(OUTPUT / f"{name}.png"), full_page=True)
+            snapshots[name] = await page.locator(".os-shell").evaluate("node => node.outerHTML")
+            if not (OUTPUT / "preview-styles.css").exists():
+                sheets = await page.locator('link[rel="stylesheet"]').evaluate_all("nodes => nodes.map(node => node.getAttribute('href'))")
+                styles = []
+                for sheet in sheets:
+                    if sheet.startswith("/_next/static/"):
+                        styles.append((Path.cwd() / ".next" / sheet.removeprefix("/_next/").split("?")[0]).read_text())
+                (OUTPUT / "preview-styles.css").write_text("\n".join(styles))
             results.append({"case": f"桌面页面 {title}", "passed": True})
         await page.goto(BASE + "/tasks")
         await page.locator(".os-card").filter(has_text=TITLES[0]).click()
         await page.locator(".os-inspector h2").filter(has_text=TITLES[0]).wait_for()
+        await page.wait_for_timeout(450)
+        snapshots["08-task-requirements"] = await page.locator(".os-shell").evaluate("node => node.outerHTML")
         await page.get_by_role("tab", name="参考知识").click()
         await page.get_by_role("link", name=NOTE["title"]).first.wait_for()
         assert "revision=" in (await page.get_by_role("link", name=NOTE["title"]).first.get_attribute("href"))
         await page.screenshot(path=str(OUTPUT / "08-task-detail.png"), full_page=True)
+        snapshots["08-task-detail"] = await page.locator(".os-shell").evaluate("node => node.outerHTML")
         results.append({"case": "任务详情联动及固定知识版本", "passed": True})
         await page.goto(BASE + "/wiki")
         await page.locator(".os-note-entry").first.click()
         await page.locator(".os-manual-article h1").first.wait_for()
         await page.screenshot(path=str(OUTPUT / "09-manual-reader.png"), full_page=True)
+        snapshots["09-manual-reader"] = await page.locator(".os-shell").evaluate("node => node.outerHTML")
         await page.get_by_role("button", name="编辑页面", exact=True).click()
         await page.get_by_role("textbox", name="页面标题").wait_for()
+        snapshots["09-manual-editor"] = await page.locator(".os-shell").evaluate("node => node.outerHTML")
         results.append({"case": "站内阅读与中文编辑表单", "passed": True})
         await page.goto(BASE + "/reviews")
         await page.get_by_role("button", name=TITLES[3], exact=True).click()
         await page.get_by_role("button", name="验收通过", exact=True).wait_for()
         assert await page.get_by_role("button", name="验收通过", exact=True).is_disabled()
+        snapshots["06-review-detail"] = await page.locator(".os-shell").evaluate("node => node.outerHTML")
         await page.get_by_role("checkbox").last.check()
         assert await page.get_by_role("button", name="验收通过", exact=True).is_enabled()
         results.append({"case": "验收必须先确认检查证据", "passed": True})
+        await page.goto(BASE + "/")
+        await page.locator(".os-orbit-sculpture").wait_for()
+        await page.wait_for_timeout(150)
+        first_frame = await page.locator(".os-orbit-sculpture").evaluate("el => getComputedStyle(el).transform")
+        await page.wait_for_timeout(200)
+        second_frame = await page.locator(".os-orbit-sculpture").evaluate("el => getComputedStyle(el).transform")
+        assert first_frame != second_frame, "知识环形线稿没有实际运动"
+        await page.locator(".os-motion-control").click()
+        assert await page.locator(".os-orbit-sculpture").evaluate("el => getComputedStyle(el).animationName") == "none"
+        await page.locator(".os-motion-control").click()
+        assert await page.locator(".os-orbit-sculpture").evaluate("el => getComputedStyle(el).animationName") != "none"
+        results.append({"case": "真实动效播放与暂停开关", "passed": True})
+        await page.get_by_role("button", name="切换纸白主题", exact=True).click()
+        assert await page.locator("html").get_attribute("data-appearance") == "paper"
+        await page.screenshot(path=str(OUTPUT / "12-paper-overview.png"), full_page=True)
+        await page.reload()
+        await page.get_by_role("button", name="切换墨色主题", exact=True).wait_for()
+        assert await page.locator("html").get_attribute("data-appearance") == "paper"
+        await page.get_by_role("button", name="切换墨色主题", exact=True).click()
+        results.append({"case": "双主题切换与本机偏好保持", "passed": True})
+        await page.emulate_media(reduced_motion="reduce")
+        await page.wait_for_timeout(80)
+        assert await page.locator(".os-orbit-sculpture").evaluate("el => getComputedStyle(el).animationName") == "none"
+        assert await page.locator(".os-motion-control").is_disabled()
+        await page.emulate_media(reduced_motion="no-preference")
+        results.append({"case": "系统减少动效设置优先", "passed": True})
+        await page.keyboard.press("Control+k")
+        assert await page.locator("#workspace-search").evaluate("el => el === document.activeElement")
+        results.append({"case": "键盘快捷搜索可用", "passed": True})
+        await page.goto(BASE + "/tasks")
+        await page.locator(".os-stage-rail").get_by_role("button", name="执行中").click()
+        await page.wait_for_timeout(300)
+        assert await page.locator(".os-board-column").count() == 1
+        assert "验证任务认领" in await page.locator(".os-card").inner_text()
+        results.append({"case": "阶段导航与真实筛选联动", "passed": True})
         writable = False
         await page.goto(BASE + "/tasks")
         await page.get_by_role("heading", name="任务中心", exact=True).wait_for()
@@ -125,11 +175,20 @@ async def main():
         await page.get_by_role("button", name="展开导航", exact=True).click()
         await page.wait_for_timeout(250)
         assert await page.locator(".os-sidebar").evaluate("node => node.getBoundingClientRect().left >= 0")
-        results.append({"case": "窄屏布局与导航抽屉", "passed": True})
+        await page.keyboard.press("Escape")
+        assert await page.get_by_role("button", name="展开导航", exact=True).get_attribute("aria-expanded") == "false"
+        assert await page.get_by_role("button", name="展开导航", exact=True).evaluate("el => el === document.activeElement")
+        results.append({"case": "窄屏布局、导航抽屉与键盘返回", "passed": True})
+        for mobile_path in ["/tasks", "/wiki", "/projects", "/agents", "/reviews", "/settings"]:
+            await page.goto(BASE + mobile_path)
+            await page.wait_for_timeout(500)
+            assert await page.evaluate("document.documentElement.scrollWidth <= window.innerWidth + 1"), mobile_path
+        results.append({"case": "六个工作页面的窄屏溢出检查", "passed": True})
         await page.goto(BASE + "/auth/read")
         await page.get_by_role("heading", name="进入知行工作台", exact=True).wait_for()
         await page.screenshot(path=str(OUTPUT / "11-login.png"), full_page=True)
         results.append({"case": "中文登录页", "passed": True})
+        (OUTPUT / "preview-views.json").write_text(json.dumps(snapshots, ensure_ascii=False))
         if errors: raise AssertionError("浏览器运行错误：" + "\n".join(errors))
         await browser.close()
     report = {"data": "虚构接口数据，真实生产构建，不代表生产数据库联调", "cases": results, "browser_errors": errors}
