@@ -62,7 +62,7 @@ def main():
                 expect(page.locator('[data-motion-switch]')).to_be_enabled()
                 page.locator('[data-theme-switch]').click();assert page.locator('html').get_attribute('data-theme')=='paper';page.reload();page.wait_for_timeout(600);assert page.locator('html').get_attribute('data-theme')=='paper';page.screenshot(path=str(output/'10-paper-home.png'),full_page=True);passed('纸白主题与偏好保存');page.locator('[data-theme-switch]').click()
                 page.keyboard.press('Control+k');assert page.locator('.global-search input').evaluate('n=>document.activeElement===n');passed('快捷键聚焦搜索')
-                page.goto(base+'/notes');page.locator('.filters input[name=q]').fill('知识库备份');page.locator('.filters button').click();page.wait_for_load_state();assert page.locator('.note-card').count()==1;passed('真实正文与标题检索')
+                page.goto(base+'/notes');page.locator('.filters input[name=q]').fill('知识库备份');page.locator('.filters button').click();page.wait_for_load_state();expect(page.locator('.note-card')).to_have_count(3);expect(page.locator('.note-card h3').filter(has_text='知识库备份与恢复')).to_be_visible();passed('真实正文、标题与双链引用检索')
                 page.goto(base+'/notes');page.locator('[data-view=list]').click();page.wait_for_function("document.querySelector('#note-collection').classList.contains('is-list')");page.reload();page.wait_for_function("document.querySelector('#note-collection').classList.contains('is-list')");passed('列表切换与偏好保存')
                 page.locator('[data-view=cards]').click()
                 page.goto(base+'/tags');page.locator('.facet-tile').first.click();assert page.locator('.note-card').count()>0;passed('标签索引进入真实筛选结果')
