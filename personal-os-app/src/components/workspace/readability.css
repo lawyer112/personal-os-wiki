@@ -18,4 +18,5 @@
 .os-manual-tree button small,.os-article-meta{font-size:12px}
 .os-evidence-link{font-size:12px}
 .os-help{font-size:13px}
-@media(max-width:760px){.os-description{font-size:13px}.os-live,.os-list-meta{font-size:11px}.os-table th,.os-table td small{font-size:11px}}
+.os-toolbar input[type="checkbox"]{appearance:auto;flex:none;width:16px;height:16px;min-width:16px;min-height:16px;margin:0;padding:0;accent-color:var(--os-accent)}
+@media(max-width:760px){.os-description{font-size:13px}.os-live,.os-list-meta{font-size:11px}.os-table th,.os-table td small{font-size:11px}.os-toolbar input[type="checkbox"]{flex-basis:auto;width:16px}}
