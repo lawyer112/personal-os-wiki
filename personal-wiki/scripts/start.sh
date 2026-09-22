@@ -39,6 +39,7 @@ export WIKI_REQUIRE_PAGE_READ_AUTH="${WIKI_REQUIRE_PAGE_READ_AUTH:-1}"
 export WIKI_CORS_ALLOW_ORIGIN="${WIKI_CORS_ALLOW_ORIGIN:-$(env_value WIKI_CORS_ALLOW_ORIGIN)}"
 export WIKI_SITE_TITLE="${WIKI_SITE_TITLE:-$(env_value WIKI_SITE_TITLE)}"
 export WIKI_SITE_TITLE="${WIKI_SITE_TITLE:-Personal Wiki}"
+export WIKI_OS_URL="${WIKI_OS_URL:-$(env_value WIKI_OS_URL)}"
 export WIKI_DATA_DIR="$DATA_DIR"
 export WIKI_HOST="${WIKI_HOST:-$(env_value WIKI_HOST)}"
 export WIKI_HOST="${WIKI_HOST:-127.0.0.1}"
@@ -51,7 +52,7 @@ if [[ -f "$APP_DIR/scripts/proxy-env.sh" ]]; then
 fi
 
 cd "$APP_DIR"
-nohup python3 "$APP_DIR/api/server.py" >> "$LOG_FILE" 2>&1 &
+nohup python3 "$APP_DIR/api/site_server.py" >> "$LOG_FILE" 2>&1 &
 pid="$!"
 echo "$pid" > "$PID_FILE"
 echo "started personal-wiki pid=$pid port=$WIKI_PORT"

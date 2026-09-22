@@ -23,6 +23,7 @@ describe("raw-manifest-ingest", () => {
     try {
       const result = await ingestDirectory({
         dir: fixtureDir,
+        now: new Date("2026-07-01T00:00:00Z"),
         dryRun: true,
         stateFile: registryPath,
       });
@@ -59,6 +60,7 @@ describe("raw-manifest-ingest", () => {
 
     const result = await ingestDirectory({
       dir: fixtureDir,
+        now: new Date("2026-07-01T00:00:00Z"),
       dryRun: true,
       stateFile: path.join(fixtureDir, ".raw-manifest-registry.json"),
     });

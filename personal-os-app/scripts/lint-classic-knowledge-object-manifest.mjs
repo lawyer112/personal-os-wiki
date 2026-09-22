@@ -273,7 +273,17 @@ function main(argv) {
     console.error("Usage: node scripts/lint-classic-knowledge-object-manifest.mjs <manifest-object.json> [...]");
     return 2;
   }
-  const results = lintFiles(argv, { baseDir: process.cwd() });
+  let files = argv;
+  let now;
+  if (argv[0] === "--at") {
+    now = parseDate(argv[1]);
+    if (!now || argv.length < 3) {
+      console.error("--at requires an ISO date and at least one manifest file.");
+      return 2;
+    }
+    files = argv.slice(2);
+  }
+  const results = lintFiles(files, { baseDir: process.cwd(), ...(now ? { now } : {}) });
   for (const result of results) {
     printResult(result);
   }

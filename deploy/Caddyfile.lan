@@ -1,0 +1,28 @@
+{$OS_DOMAIN:personal-os.internal} {
+    tls internal
+    encode zstd gzip
+    request_body {
+        max_size 1MB
+    }
+    reverse_proxy personal-os:3000
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        X-Frame-Options DENY
+    }
+}
+
+# 独立 Personal Wiki，保留独立域名与读取/写入凭证。
+{$WIKI_DOMAIN:personal-wiki.internal} {
+    tls internal
+    encode zstd gzip
+    request_body {
+        max_size 1MB
+    }
+    reverse_proxy wiki:3422
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        X-Frame-Options DENY
+    }
+}

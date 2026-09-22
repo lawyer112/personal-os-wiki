@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 from __future__ import annotations
 
 import datetime as dt
@@ -2332,12 +2332,9 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    ensure_dirs()
-    if not GRAPH_PATH.exists() or not NOTE_INDEX_PATH.exists():
-        refresh_public_indexes()
-    server = ThreadingHTTPServer((HOST, PORT), Handler)
-    print(f"Personal wiki serving on http://{HOST}:{PORT} data={DATA_DIR}", flush=True)
-    server.serve_forever()
+    # 所有受支持的启动方式共用新版独立 Wiki 页面与版本保护接口。
+    from site_server import main as start_site
+    start_site()
 
 
 if __name__ == "__main__":

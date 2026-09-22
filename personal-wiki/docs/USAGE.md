@@ -1,361 +1,116 @@
-﻿# Hermes Personal Wiki 使用手册
+# 知行知识库使用手册
 
-这套服务的定位很简单：Hermes 负责收材料、整理、维护；Personal Wiki 负责保存 Markdown vault、生成索引、提供浏览页面和维护 API。
+这是一套可以独立运行的 Personal Wiki 网站。它负责知识正文、标签、概念、双链、知识图谱和历史版本；Personal OS 工作台负责项目、任务、认领和复核。两边协作，但不是同一套数据库，也不共享访问凭证。
 
-当前服务地址：
+## 从哪里开始
 
-```text
-首页: http://localhost:3422/
-全部笔记: http://localhost:3422/notes
-健康检查: http://localhost:3422/api/health
-```
+| 页面 | 地址 | 用途 |
+| --- | --- | --- |
+| 知识总览 | `/` | 最近收录、知识数量与常用标签 |
+| 全部笔记 | `/notes` | 正文搜索、来源筛选、卡片或列表浏览 |
+| 阅读笔记 | `/note?path=笔记路径` | 正文、目录、双链、反向链接、来源和版本 |
+| 知识图谱 | `/graph` | 节点选择、关联观察、类型筛选与缩放 |
+| 标签索引 | `/tags` | 从分类进入相关笔记 |
+| 概念索引 | `/concepts` | 从双方括号引用进入相关笔记 |
+| 新建或编辑 | `/edit` | 保存笔记、整理元数据、保留版本 |
+| 使用与接入 | `/manual` | 这份中文说明的网页版本 |
+| 访问验证 | `/auth/read` | 使用知识库读取凭证登录 |
 
-## 日常怎么用
+原始 Markdown 手册仍可通过 `/docs/USAGE.md` 读取，便于智能体和脚本调用。
 
-你只需要把内容发给 Hermes。
+## 查找与阅读
 
-可以发：
+在顶栏搜索知识，或者按 `Ctrl + K`（Mac 使用 `Command + K`）聚焦搜索框。搜索匹配笔记标题、正文和索引内容；列表页还能按来源和发布状态过滤。标签、概念筛选与文字搜索可以组合使用。
 
-- 一个想法：一句话、一段话、语音转文字。
-- 一个链接：网页、视频、项目、论文、帖子。
-- 一个文件：PDF、Markdown、txt、导出的会议记录。
-- 一段 DeepTalk/钉钉转写：先用能拿到的方式导出，再发给 Hermes。
+列表每页显示 18 篇笔记。卡片与列表切换只影响显示方式，不改变知识内容。主题和显示偏好保存在当前浏览器，不是账号级设置。
 
-Hermes 做三件事：
+阅读页显示正文、来源、反向链接和历史版本。反向链接与关联笔记基于**当前索引**，不重建过去某个时点的完整关系网。
 
-1. 判断这是什么材料。
-2. 整理成一篇可读笔记。
-3. 调用 Personal Wiki API 入库。
+## 创建一篇笔记
 
-入库后你在浏览器看：
+点击“新建笔记”，填写标题和正文，再选择空间、手册、章节、维护人和少量稳定标签。操作类手册建议包含适用范围、前置条件、步骤、验收标准以及异常处理。
 
-- 最近几条看首页。
-- 查找历史资料进 `/notes`。
-- 标签、概念、来源都可以点。
-- 点图谱里的笔记、标签、概念进入对应页面。
-
-## Hermes 入库规范
-
-Hermes 调用：
-
-```text
-POST http://localhost:3422/api/ingest
-Authorization: Bearer <WIKI_API_TOKEN>
-Content-Type: application/json
-```
-
-请求体：
-
-```json
-{
-  "title": "笔记标题",
-  "content": "整理后的正文，使用 Markdown。可以使用 [[概念名]] 建立概念链接。",
-  "source_type": "telegram",
-  "source_url": "telegram://message/example",
-  "tags": ["inbox", "hermes"],
-  "metadata": {
-    "from": "Hermes Agent",
-    "raw_type": "text"
-  }
-}
-```
-
-字段约定：
-
-- `title`：给人看的标题，不要太长。
-- `content`：正文。这里应该是整理后的知识内容，不是流水账。
-- `source_type`：来源类型，例如 `telegram`、`link`、`file`、`voice-transcript`、`manual`。
-- `source_url`：原始来源地址；没有就留空。
-- `tags`：少量稳定标签。不要给每篇文章塞一堆临时标签。
-- `metadata`：机器信息，方便以后追踪来源。
-
-返回值：
-
-```json
-{
-  "status": "created",
-  "note_path": "vault/20_notes/2026-04-20/example.md",
-  "url": "/note?path=vault/20_notes/2026-04-20/example.md"
-}
-```
-
-`status` 可能是：
-
-- `created`：新笔记。
-- `duplicate`：同一来源已经有可见笔记。
-- `restored`：同一来源以前被归档了，这次重新生成了可见笔记。
-
-## 推荐的笔记正文格式
-
-Hermes 写入正文时用这个结构：
+编辑器使用 Markdown。当前阅读器支持标题、段落、基本有序和无序列表、任务清单、引用、代码块、表格、安全链接以及双方括号链接。复杂嵌套排版不是完整 CommonMark 编辑器；原始正文仍按输入保存。
 
 ```markdown
-# 标题
+## 核心结论
 
-## 结论
+记录结论、适用条件与不确定性。
 
-用 3 到 8 句话说清楚这条资料对我有什么用。
+## 操作步骤
 
-## 要点
+1. 先核对输入与权限。
+2. 留存可检查的结果。
 
-- 关键点 1。
-- 关键点 2。
-- 关键点 3。
+## 验收标准
 
-## 我的用法
+- [ ] 完成预期结果并提供证据。
 
-这条资料以后可能怎么用，和我当前哪些项目有关。
+## 相关知识
 
-## 相关概念
-
-- [[Hermes Agent]]
-- [[个人知识库]]
-- [[Obsidian]]
+[[另一篇笔记的标题]]
 ```
 
-原则：
+正文里的原生 HTML 不执行。外部图片只显示为来源链接，不会在打开私有知识页时自动请求第三方图片服务器。
 
-- 正文只写人读的内容。
-- 来源、标签、哈希、状态这些机器信息交给 API 写 frontmatter。
-- 概念链接用 `[[概念名]]`。
-- 标签用 API 的 `tags` 字段，不要主要依赖正文里的 `#tag`。
+## 读取权限和写入权限
 
-## 搜索和浏览
+`WIKI_READ_TOKEN` 用于登录、浏览和读取接口。`WIKI_API_TOKEN` 用于写入知识。它们应设置为不同的长随机凭证；工作台的管理密钥不能直接拿来登录知识库。
 
-浏览全部笔记：
+浏览器编辑页在保存时单独要求知识写入凭证。凭证不存入本地存储，不放进页面地址；保存请求结束后会清空输入。只读会话不能因为打开了编辑页就获得写入权限。
+
+“已核验”“内部资料”“私密资料”等字段是内容标注，不是逐篇文档的账号权限。分享读取凭证就会共享该凭证所能访问的知识空间。
+
+## 版本与并发修改
+
+保存时会同时提交读取时的内容版本。另一位维护者或智能体已经修改正文时，服务会拒绝覆盖，并保留页面里尚未保存的编辑。请先复制你的正文，再重新读取并合并，不要刷新后丢掉修改。
+
+通过版本接口保存的正文会留下历史快照。使用阅读页“复制版本链接”能固定到当前内容版本。历史版本不存在时，服务不会自动用最新版冒充。
+
+新建请求带有固定的请求标识，用来防止网络重试导致重复创建。请求超时时，先查找保存结果再决定是否重试。关闭页面前，尚未保存的内容不会自动写入服务器或浏览器本地存储。
+
+## 探索知识图谱
+
+图谱展示真实笔记、概念和标签节点。单击节点查看关联，再从右侧进入正文；拖动画布平移，用按钮缩放。键盘聚焦节点后可按回车或空格选择。
+
+关系有三类：显式引用来自双方括号；标签关联来自分类；算法关联来自已有的文本相似度规则。算法分数只是检索线索，不代表事实已验证。
+
+为限制浏览器负担，一次最多绘制 180 个节点，并显示当前绘制数量与全库数量。通过关键词或类型缩小范围。全文知识并没有因为图谱限额被删除。
+
+首页缓慢运动的线稿是概念装饰，不是实时数据。顶栏可以暂停装饰动效，系统“减少动态效果”设置优先；页面进入后台或图形离屏时暂停循环。
+
+## 智能体接口
+
+旧的只读、入库和重建接口保持兼容：`/api/notes`、`/api/note`、`/api/tags`、`/api/concepts`、`/api/graph`、`/api/ingest` 和 `/api/rebuild`。读取接口使用读取凭证，写入接口使用写入凭证。
+
+受管知识使用以下接口：
 
 ```text
-GET http://localhost:3422/api/notes?page=1&page_size=20
+GET  /api/workspace/notes?q=关键词
+GET  /api/workspace/note?path=笔记路径
+GET  /api/workspace/note?path=笔记路径&revision=版本哈希
+POST /api/workspace/note
+Authorization: Bearer <知识写入凭证>
 ```
 
-全文搜索：
+创建时发送 `requestId`、`title`、`content`、`tags` 与 `metadata`。编辑时发送 `path` 和 `expectedRevision`，加上需要保存的正文与属性。`requestId` 要使用每次创建唯一的标识，同一次重试保持不变。
 
-```text
-GET http://localhost:3422/api/notes?q=关键词
-```
+旧的直接修改、改标签、归档、删除和重连接口已由版本保护层限制；不要绕过接口直接覆盖受管手册，也不要同时启动旧服务进程操作同一个目录。此版本不提供网页一键删除或恢复归档。
 
-按标签：
+任务认领、执行、提交与复核继续由 Personal OS 的任务接口负责，不能把笔记状态当成任务完成状态。
 
-```text
-GET http://localhost:3422/api/notes?tag=hermes
-```
+## 启动与局域网访问
 
-按概念：
+默认 Docker 镜像入口为 `api/site_server.py`。原来的 `api/server.py` 和 `api/workspace_server.py` 命令行启动方式也转入同一套中文站点，避免启动不同入口时看到不同样式。
 
-```text
-GET http://localhost:3422/api/notes?concept=个人知识库
-```
+使用原有的数据目录或数据卷，升级前先备份正文、附件、索引与 `.workspace-history`。不要用演示数据覆盖实际知识库。
 
-按来源：
+独立知识网站使用自己的 HTTPS 域名。仓库局域网示例使用 `WIKI_DOMAIN`，工作台继续使用 `OS_DOMAIN`；两者必须不同。`WIKI_OS_URL` 只用于显示“前往工作台”链接，不转发凭证。
 
-```text
-GET http://localhost:3422/api/notes?source_type=telegram
-```
+不依赖数据库或工作台进程，也可以独立运行知识站点。完整任务闭环才需要同时运行工作台及其 PostgreSQL 数据库。
 
-读取单篇笔记：
+## 安全与恢复
 
-```text
-GET http://localhost:3422/api/note?path=vault/20_notes/2026-04-20/example.md
-```
+局域网不是免鉴权区域。替换演示凭证，通过受信任的 HTTPS 入口访问，避免公开原始服务端口。新网页设置了禁止缓存与内容安全策略，但这些措施不等于完成整站安全审计。
 
-获取标签、概念、图谱：
-
-```text
-GET http://localhost:3422/api/tags
-GET http://localhost:3422/api/concepts
-GET http://localhost:3422/api/graph
-```
-
-`/api/graph` 的 link 会包含 `score` 和 `strength`。显式 `[[概念]]` 连接是高置信；
-标签连接是低置信；笔记之间的 `related` 连接只有关系分数达到阈值才会输出，避免
-图谱因为 3% 或 10% 这类弱关系变成乱线。
-
-## Hermes 维护动作
-
-这些写操作都需要：
-
-```text
-Authorization: Bearer <WIKI_API_TOKEN>
-```
-
-更新笔记：
-
-```text
-POST /api/note/update
-```
-
-```json
-{
-  "path": "vault/20_notes/2026-04-20/example.md",
-  "title": "新的标题",
-  "content": "新的 Markdown 正文",
-  "tags": ["hermes", "wiki"]
-}
-```
-
-加减标签：
-
-```text
-POST /api/note/tag
-```
-
-```json
-{
-  "path": "vault/20_notes/2026-04-20/example.md",
-  "add": ["reviewed"],
-  "remove": ["inbox"]
-}
-```
-
-归档笔记：
-
-```text
-POST /api/note/archive
-```
-
-```json
-{
-  "path": "vault/20_notes/2026-04-20/example.md"
-}
-```
-
-删除笔记：
-
-```text
-POST /api/note/delete
-```
-
-```json
-{
-  "path": "vault/20_notes/2026-04-20/example.md"
-}
-```
-
-这里的 delete 是软删除，会移动到 `vault/90_archive/`，不会硬删。
-
-重命名概念链接：
-
-```text
-POST /api/relink
-```
-
-```json
-{
-  "from": "旧概念",
-  "to": "新概念"
-}
-```
-
-重建索引：
-
-```text
-POST /api/rebuild
-```
-
-用于手动改了 Markdown 文件以后刷新列表、搜索和图谱。
-
-## Hermes 工作规约
-
-可以把这一段放进 Hermes 的知识库管理员指令里：
-
-```text
-你是我的 Personal Wiki 管理员。用户发来的想法、链接、文件摘要、语音转文字都要整理成可读 Markdown，然后写入 Personal Wiki。
-
-入库规则：
-1. 不要问用户是否入库，默认入库。
-2. 标题要短，能让用户一眼知道这条笔记是什么。
-3. 正文用 Markdown，优先写结论、要点、我的用法、相关概念。
-4. 使用 [[概念名]] 建立知识图谱连接。
-5. tags 控制在 2 到 6 个，使用稳定标签，不要制造大量一次性标签。
-6. source_type 要反映来源，例如 telegram、link、file、voice-transcript、manual。
-7. 原始链接放 source_url；没有链接就留空。
-8. 如果用户后来纠错，调用 update/tag/relink/archive，而不是重复新增一篇。
-9. 如果发现同一来源返回 duplicate，读取原 note_path 后按需要 update。
-10. 如果返回 restored，说明旧笔记曾被归档，现在已经重新变成可见笔记。
-```
-
-## DeepTalk/钉钉转写接入
-
-现在没有稳定 API 的情况下，先按文件/文本入口走：
-
-1. 能导出文本时，把转写文本发给 Hermes。
-2. 能导出文件时，把文件发给 Hermes。
-3. Hermes 使用 `source_type: "voice-transcript"` 入库。
-4. `metadata` 里记录设备、会议时间、说话人等信息。
-
-示例：
-
-```json
-{
-  "title": "DeepTalk 语音记录：个人知识库想法",
-  "content": "# DeepTalk 语音记录：个人知识库想法\n\n## 结论\n\n这段语音主要是在讨论 [[个人知识库]] 的输入层和 Hermes 自动入库流程。\n\n## 要点\n\n- Telegram 是当前主入口。\n- DeepTalk 转写可以作为 voice-transcript 来源。\n- Hermes 负责整理，不需要人工确认。\n\n## 相关概念\n\n- [[Hermes Agent]]\n- [[个人知识库]]",
-  "source_type": "voice-transcript",
-  "source_url": "",
-  "tags": ["voice", "deeptalk", "wiki"],
-  "metadata": {
-    "device": "DeepTalk",
-    "export_method": "manual"
-  }
-}
-```
-
-以后如果找到 DeepTalk 自动导出办法，只需要把自动导出的文本/文件接到 Hermes 输入层，不需要改 Personal Wiki API。
-
-## 错误码
-
-```text
-200 成功
-400 请求格式不对，或者维护动作缺少必要字段
-401 Token 不对
-404 笔记不存在
-500 服务内部错误
-```
-
-Hermes 处理建议：
-
-- `400`：检查请求 JSON 和字段。
-- `401`：写接口检查 `WIKI_API_TOKEN`，读接口检查 `WIKI_READ_TOKEN`。
-- `404`：重新搜索笔记，不要盲目重试。
-- `500`：稍后重试，并通知用户或记录日志。
-
-## Example Linux Deployment
-
-The path below is an example for a self-hosted Linux install. It is not a
-private deployment requirement.
-
-服务目录示例：
-
-```text
-/opt/personal-wiki
-```
-
-常用命令：
-
-```bash
-cd /opt/personal-wiki
-scripts/status.sh
-scripts/restart.sh
-tail -f logs/personal-wiki.log
-```
-
-数据目录：
-
-```text
-/opt/personal-wiki/data
-```
-
-关键结构：
-
-```text
-data/
-  vault/
-    10_sources/   原始来源 JSON
-    20_notes/     可见 Markdown 笔记
-    90_archive/   归档/软删除
-  public/
-    graph-data.json
-    note-index.json
-  .git/
-```
-
-每次成功写入或维护都会刷新索引，并提交到 Git。出问题时先看日志，再看 Git 历史。
+备份至少覆盖知识正文、原始资料、附件、历史快照和必要部署配置，并在隔离目录实际还原验证。不要把真实凭证、私人资料或内网资产记录提交到公开仓库。

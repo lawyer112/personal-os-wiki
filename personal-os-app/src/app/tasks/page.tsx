@@ -1,37 +1,8 @@
-import { TaskCard } from "@/components/TaskCard";
-import { prisma } from "@/lib/db";
-import type { TaskView } from "@/lib/view-models";
-
+import { TaskWorkspace } from "@/components/workspace/TaskWorkspace";
+import type { TaskWorkspaceInitial } from "@/components/workspace/TaskWorkspace";
 export const dynamic = "force-dynamic";
-
-export default async function TasksPage() {
-  const tasks = (await prisma.task.findMany({
-    orderBy: [{ priority: "asc" }, { updatedAt: "desc" }],
-    include: {
-      project: true,
-      sourceInboxItem: true,
-      sourceAgentRun: true,
-      wikiLinks: true,
-      claims: { orderBy: { claimedAt: "desc" }, take: 3 },
-      contributions: { orderBy: { createdAt: "desc" }, take: 5 },
-      artifacts: { orderBy: { createdAt: "desc" }, take: 5 },
-      runs: { orderBy: { startedAt: "desc" }, take: 3 },
-      agentActionLogs: { orderBy: { createdAt: "desc" }, take: 8 },
-      reviews: { orderBy: { createdAt: "desc" }, take: 3 },
-    },
-  })) as TaskView[];
-
-  return (
-    <section>
-      <h1 className="text-3xl font-bold tracking-tight">全部任务</h1>
-      <p className="mt-2 text-sm leading-6 text-zinc-600">
-        这里是完整任务池。今日任务页只抽取今日要做、待确认、等待中、卡住了和今日已完成的部分。
-      </p>
-      <div className="mt-5 grid gap-3 lg:grid-cols-2">
-        {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} tone="review" />
-        ))}
-      </div>
-    </section>
-  );
+export default async function TasksPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const params = await searchParams;
+  const initial = Object.fromEntries(Object.entries(params).filter((entry): entry is [string, string] => typeof entry[1] === "string")) as TaskWorkspaceInitial;
+  return <TaskWorkspace initial={initial} />;
 }

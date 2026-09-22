@@ -1,5 +1,7 @@
 # Personal OS + Personal Wiki
 
+> 中文工作台改造说明：[`docs/CHINESE_WORKSPACE.md`](docs/CHINESE_WORKSPACE.md)。独立智能体接入：[`docs/AGENT_V2_ZH.md`](docs/AGENT_V2_ZH.md)。新局域网安装使用 `docker-compose.lan.yml`，升级前先备份并核对既有数据卷。
+
 <p align="center">
   <img src="./docs/assets/readme/hero.en.svg" alt="Personal OS + Personal Wiki hero: Stop collecting. Start closing loops." width="100%">
 </p>

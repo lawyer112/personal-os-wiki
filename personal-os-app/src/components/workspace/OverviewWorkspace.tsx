@@ -1,0 +1,20 @@
+"use client";
+import Link from "next/link";
+import { AtlasHero } from "./AtlasHero";
+import { Icon } from "./Icons";
+import type { WorkTask } from "@/lib/workspace";
+import { displayTime, label, taskStage } from "@/lib/workspace";
+import { Badge, Empty, LiveStatus, Loading, Notice, PageHeading, useLiveData } from "./shared";
+type Overview = { counts: { status: string; _count: { _all: number } }[]; submitted: number; tasks: WorkTask[]; projects: number; expired: number; activity: { id: string; action: string; targetType: string; targetId: string; createdAt: string }[] };
+export function OverviewWorkspace() {
+  const live = useLiveData<Overview>("/api/workspace?view=overview");
+  const data = live.data;
+  const count = (status: string) => data?.counts.find(item => item.status === status)?._count._all ?? 0;
+  return <><div className="os-overview-heading"><PageHeading eyebrow="工作空间 / 全局进展" title="工作总览" description="从全局看进展，从细节开始行动。" actions={<Link className="os-btn" href="/tasks?create=1"><Icon name="plus" size={16} /> 创建任务</Link>} /></div><AtlasHero />{live.error && <Notice error>{live.error}</Notice>}{!data ? <Loading /> : <>
+    <section className="os-metrics" aria-label="当前工作概况">{[{ title: "正在执行", value: count("doing"), note: "查看负责人和最近进展", href: "/tasks?stage=doing", accent: true }, { title: "需要人工处理", value: count("blocked"), note: "查看阻塞原因与解除条件", href: "/tasks?stage=blocked" }, { title: "交付待验收", value: data.submitted, note: "逐项核对成果与完成标准", href: "/reviews" }, { title: "推进中的项目", value: data.projects, note: "按项目检查任务完成情况", href: "/projects" }].map((metric, index) => <Link href={metric.href} className={`os-metric${metric.accent ? " os-metric-accent" : ""}`} key={metric.title}><span className="os-metric-name"><i>0{index + 1}</i>{metric.title}<Icon name="external" size={15} /></span><strong>{metric.value}</strong><p>{metric.note}</p></Link>)}</section>
+    <div className="os-columns"><section className="os-panel"><header className="os-panel-head"><div><h2>当前工作焦点</h2><p>按优先级排列的 12 项工作，不等同于今日新增任务。</p></div><Link className="os-link" href="/tasks">全部任务 ↗</Link></header>{data.tasks.length ? data.tasks.map(task => <Link href={`/tasks?task=${encodeURIComponent(task.id)}`} key={task.id} className="os-task-row"><span className="os-avatar">{taskStage(task) === "submitted" ? "审" : task.status === "blocked" ? "!" : "→"}</span><div className="os-task-row-main"><h3>{task.title}</h3><p>{task.nextAction}</p><small className="os-inline-note">{task.project?.name ?? "独立任务"} · {task.ownerAgent ?? "待认领"}</small></div><aside><Badge value={taskStage(task)} /><Badge value={task.priority} /></aside></Link>) : <Empty title="还没有需要推进的任务">先收集想法，再明确下一步和验收标准。</Empty>}</section>
+    <div className="os-stack"><section className="os-panel"><header className="os-panel-head"><h2>需要关注</h2><span aria-hidden="true">◎</span></header><div className="os-panel-body"><Link className="os-check-row" href="/tasks?stage=blocked"><div>工作遇到阻塞<small>补充缺失条件，避免执行器反复空转。</small></div><Badge value="blocked">{count("blocked")} 项</Badge></Link><Link className="os-check-row" href="/tasks?stage=doing"><div>执行租约已过期<small>检查原执行器后再接管，不自动重复执行。</small></div><Badge value={data.expired ? "waiting" : "done"}>{data.expired} 项</Badge></Link><Link className="os-check-row" href="/reviews?stage=intake"><div>需求还未确认<small>确认目标、下一步和完成标准。</small></div><Badge value="intake">{count("review") - data.submitted} 项</Badge></Link></div></section>
+    <section className="os-panel"><header className="os-panel-head"><h2>最近工作记录</h2><Link className="os-link" href="/activity">查看记录 ↗</Link></header><div className="os-panel-body">{data.activity.length ? <ol className="os-timeline">{data.activity.slice(0, 7).map(item => <li key={item.id}><strong>{label(item.action)}</strong><time>{displayTime(item.createdAt)}</time>{item.targetType === "task" && <Link className="os-link" href={`/tasks?task=${encodeURIComponent(item.targetId)}`}>查看相关任务</Link>}</li>)}</ol> : <Empty title="尚无活动记录" />}</div></section></div></div>
+    <div style={{ marginTop: 22 }}><LiveStatus updated={live.updated} error={live.error} reload={live.reload} /></div>
+  </>}</>;
+}
