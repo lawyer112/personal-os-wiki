@@ -27,6 +27,8 @@
 
 [English README](./README.md)
 
+[90 秒招聘向产品案例](./docs/HIRING_CASE.zh-CN.md)
+
 [macOS 部署指南](./docs/MACOS_DEPLOYMENT.zh-CN.md)
 
 **项目类型：** 本地优先 Agent 工作台、LLM Wiki 风格 Markdown 知识库、知识图谱、任务执行协议。
